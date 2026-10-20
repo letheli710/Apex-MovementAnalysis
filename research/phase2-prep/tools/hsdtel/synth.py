@@ -218,7 +218,7 @@ def write_logs(out_dir, seed=1, base_wall=36000.0):
         rel = r["t"] - t0
         if r["run"] != cur_run:
             for side, lines, pref in (("cl", cl_scr, "Script(C): "), ("sv", sv_scr, "Script(S): ")):
-                seq_line = head(side, "run", r["run"]) + f" prev={cur_run} t={r['t']:.4f}"
+                seq_line = head(side, "run", r["run"]) + f" prev={cur_run} t={r['t']:.5f}"
                 lines.append(_stamp(base_wall, rel - 0.0005) + pref + seq_line + "\n")
             cur_run = r["run"]
         # client: prediction log, then the script sample of the same frame
@@ -228,19 +228,19 @@ def write_logs(out_dir, seed=1, base_wall=36000.0):
         po, pv = r["post_o"], r["post_v"]
         st = _state(po, pv, r["post_ground"], r["post_slide"], r["in_duck"])
         cl_scr.append(_stamp(base_wall, rel + 0.0002) + "Script(C): " + head("cl", "frame", r["run"])
-                      + f" t={r['t']:.4f} ft={sim.ft:.5f} {st} ang=0.000,{r['yaw']:.3f} in_jump={r['in_jump']}"
+                      + f" t={r['t']:.5f} ft={sim.ft:.5f} {st} ang=0.000,{r['yaw']:.3f} in_jump={r['in_jump']}"
                       f" in_duck={r['in_duck']} in_fwd={r['in_fwd']} ax_fwd={r['ax_fwd']:.3f} ax_right={r['ax_right']:.3f}\n")
         if r["pre_ground"] == 1 and r["post_ground"] == 0:
             gt = r["t"] - ground_start if ground_start is not None else 0.0
             takeoff = (r["t"], math.hypot(pv[0], pv[1]), 0.0)
             cl_scr.append(_stamp(base_wall, rel + 0.0003) + "Script(C): " + head("cl", "takeoff", r["run"])
-                          + f" t={r['t']:.4f} groundtime={gt:.4f} hop=0 {st}\n")
+                          + f" t={r['t']:.5f} groundtime={gt:.4f} hop=0 {st}\n")
         if takeoff and r["post_ground"] == 0:
             takeoff = (takeoff[0], takeoff[1], max(takeoff[2], math.hypot(pv[0], pv[1])))
         if r["pre_ground"] == 0 and r["post_ground"] == 1 and takeoff:
             spd = math.hypot(pv[0], pv[1])
             cl_scr.append(_stamp(base_wall, rel + 0.0003) + "Script(C): " + head("cl", "land", r["run"])
-                          + f" t={r['t']:.4f} airtime={r['t'] - takeoff[0]:.4f} takeoff={takeoff[1]:.3f}"
+                          + f" t={r['t']:.5f} airtime={r['t'] - takeoff[0]:.4f} takeoff={takeoff[1]:.3f}"
                           f" peak={takeoff[2]:.3f} land={spd:.3f} gain={spd - takeoff[1]:.3f} hop=0 {st}\n")
             ground_start = r["t"]
         if r["pre_ground"] == 1 and ground_start is None:
@@ -259,7 +259,7 @@ def write_logs(out_dir, seed=1, base_wall=36000.0):
             evts.append("END_SLIDE")
         for e in evts:
             sv_scr.append(_stamp(base_wall, batch_rel + 0.0001) + "Script(S): " + head("sv", "evt", r["run"])
-                          + f" evt={e} t={r['t']:.4f} ent=1 bot=0 {st}\n")
+                          + f" evt={e} t={r['t']:.5f} ent=1 bot=0 {st}\n")
     paths = {}
     for name, d, lines in (("cl_message", cl_dir, cl_msg), ("cl_script", cl_dir, cl_scr),
                            ("sv_message", sv_dir, sv_msg), ("sv_script", sv_dir, sv_scr)):

@@ -17,9 +17,9 @@ from collections import OrderedDict
 COLUMNS = OrderedDict([
     ("file", ("meta", "", "source log file (basename)")),
     ("line_no", ("meta", "", "1-based line number in that file")),
-    ("source", ("meta", "", "MT = SDK [MOVE-TRACE]; HSD = HSD.MoveDiag mod")),
+    ("source", ("meta", "", "MT = SDK [MOVE-TRACE]; HSD = HSD.MoveDiag mod; CV = SDK [CLASSVAR] bridge_classvar_get output")),
     ("side", ("obs", "", "cl = S21 client prediction, sv = S3 dedi; from the log prefix Native(C)/Script(S)/... or --side")),
-    ("kind", ("obs", "", "cmd (MT) | frame | evt | takeoff | land | mark | run | setting | dump | dumpfile | init | error")),
+    ("kind", ("obs", "", "cmd (MT) | classvar (CV) | frame | evt | takeoff | land | mark | run | setting | dump | dumpfile | init | error")),
     ("wall", ("obs", "s", "log-sink wall clock from the [YYYY-MM-DD HH:MM:SS.mmm] file prefix, as seconds since 1970 reading the logged local time as if UTC; ms resolution; time the line was written, not simulation time; empty on console copies")),
     ("run", ("obs", "", "HSD: value of hsd_md_run when the line was printed")),
     ("seq", ("obs", "", "HSD: per-VM line counter (gaps = lost lines)")),
@@ -140,3 +140,26 @@ def as_json():
         ],
         "hsd_required_keys": {k: list(v) for k, v in HSD_REQUIRED.items()},
     }
+
+
+def as_markdown():
+    lines = ["| column | provenance | unit | description |", "|---|---|---|---|"]
+    for n, (p, u, d) in COLUMNS.items():
+        lines.append(f"| `{n}` | {p} | {u} | {d.replace('|', '/')} |")
+    return "\n".join(lines) + "\n"
+
+
+BEGIN_MARK = "<!-- BEGIN GENERATED COLUMNS -->\n"
+END_MARK = "<!-- END GENERATED COLUMNS -->"
+
+
+def update_doc(path):
+    """Rewrite the generated column table between the markers in a Markdown file."""
+    with open(path, encoding="utf-8") as fh:
+        text = fh.read()
+    start = text.index(BEGIN_MARK) + len(BEGIN_MARK)
+    end = text.index(END_MARK)
+    new = text[:start] + as_markdown() + text[end:]
+    with open(path, "w", encoding="utf-8", newline="\n") as fh:
+        fh.write(new)
+    return new != text

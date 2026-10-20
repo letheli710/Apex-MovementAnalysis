@@ -484,3 +484,78 @@ def census(rows):
                            if t.get(col) not in (None, "-"))
         t["differs"] = int(len(nums) > 1 and (max(nums) - min(nums)) > 1e-4 * max(1.0, max(abs(x) for x in nums)))
     return list(table.values())
+
+
+# ---------------------------------------------------------------- slides
+def slides(rows):
+    """One row per contiguous slide (slide flag 1) in every frame/cmd stream.
+    boost = peak speed in the slide minus the speed on the sample before it."""
+    out = []
+    for key, srows in streams(rows).items():
+        source, side, fam, _ent = key
+        if fam not in ("frame", "cmd"):
+            continue
+        series = time_series([r for r in srows if not r.get("replay")], source)
+        cur, before = None, None
+        for idx, (t, r) in enumerate(series):
+            sl = r.get("slide")
+            if sl == 1 and cur is None:
+                cur = {"t": [t], "v": [speed_of(r)], "run": r.get("drv_run")}
+                before = speed_of(series[idx - 1][1]) if idx else None
+            elif sl == 1:
+                cur["t"].append(t)
+                cur["v"].append(speed_of(r))
+            elif cur is not None:
+                out.append(_slide_row(source, side, cur, before))
+                cur = None
+        if cur is not None:
+            out.append(_slide_row(source, side, cur, before))
+    return out
+
+
+def _slide_row(source, side, cur, before):
+    ts, vs = cur["t"], cur["v"]
+    dur = ts[-1] - ts[0]
+    lr = _linreg(ts, vs) if len(ts) >= 3 else None
+    return OrderedDict([
+        ("source", source), ("side", side), ("drv_run", cur["run"]), ("samples", len(ts)),
+        ("duration_s", dur), ("speed_before", before), ("speed_first", vs[0]), ("speed_peak", max(vs)),
+        ("speed_last", vs[-1]), ("boost", (max(vs) - before) if before is not None else None),
+        ("mean_decel", -lr[0] if lr else None),
+        ("linear_r2", r2(vs, [lr[1] + lr[0] * t for t in ts]) if lr else None),
+    ])
+
+
+# ---------------------------------------------------------------- smoke test
+def smoke(rows, issues, min_join=0.9):
+    """Pipeline acceptance for a first short session (T0). Returns [(check, ok, detail)]."""
+    from collections import Counter
+    sev = Counter(i.severity for i in issues)
+    n = Counter((r["source"], r.get("side"), r.get("kind")) for r in rows)
+    res = []
+    res.append(("MT client rows", n[("MT", "cl", "cmd")] > 0, n[("MT", "cl", "cmd")]))
+    res.append(("MT dedi rows", n[("MT", "sv", "cmd")] > 0, n[("MT", "sv", "cmd")]))
+    res.append(("HSD client init line", n[("HSD", "cl", "init")] > 0, n[("HSD", "cl", "init")]))
+    res.append(("HSD dedi init line", n[("HSD", "sv", "init")] > 0, n[("HSD", "sv", "init")]))
+    res.append(("HSD client frames (hsd_md_cl_trace 1)", n[("HSD", "cl", "frame")] > 0, n[("HSD", "cl", "frame")]))
+    res.append(("HSD dedi movement events", n[("HSD", "sv", "evt")] > 0, n[("HSD", "sv", "evt")]))
+    res.append(("validation errors == 0", sev.get("error", 0) == 0, sev.get("error", 0)))
+    cl = {r["cmd"] for r in rows if r["source"] == "MT" and r.get("side") == "cl" and not r.get("replay")}
+    sv = {r["cmd"] for r in rows if r["source"] == "MT" and r.get("side") == "sv"}
+    join = len(cl & sv) / len(cl) if cl else 0.0
+    res.append((f"client cmds with a dedi line >= {min_join:.0%}", join >= min_join, f"{join:.1%}"))
+    fts = [r["ft"] for r in rows if r["source"] == "HSD" and r.get("kind") == "frame" and r.get("side") == "cl"
+           and isinstance(r.get("ft"), float) and r["ft"] > 0]
+    dts = [r["drv_dt_est"] for r in rows if r["source"] == "MT" and r.get("side") == "cl" and r.get("drv_dt_est")
+           and not r.get("replay") and r.get("ground") == 1 and r.get("drv_spd2d_post", 0) > 100]
+    if fts and dts:
+        ratio = _median(dts) / _median(fts)
+        res.append(("MT dt_est median / HSD FrameTime median within 15%", abs(ratio - 1) <= 0.15, f"{ratio:.3f}"))
+    else:
+        res.append(("MT dt_est vs HSD FrameTime comparable", False, f"dt_est={len(dts)} ft={len(fts)} samples"))
+    api = sum(1 for r in rows if r["source"] == "HSD" and r.get("kind") == "frame"
+              and (r.get("ground") == -1 or r.get("slide") == -1))
+    res.append(("HSD ground/slide APIs available (no -1)", api == 0, api))
+    runs = {r.get("drv_run") for r in rows if r["source"] == "HSD" and r.get("kind") == "frame"}
+    res.append(("at least one non-zero hsd_md_run label", any(x not in (None, "r0") for x in runs), sorted(runs)))
+    return res

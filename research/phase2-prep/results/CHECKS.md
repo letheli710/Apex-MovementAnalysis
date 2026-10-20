@@ -1,8 +1,9 @@
 # Cloud check run
 
-- date (UTC): 2026-10-20T14:42:05+00:00
+- date (UTC): 2026-10-20T14:58:31+00:00
 - python: 3.13.16 on Linux
 - base scripts: /home/user/research-src/s21-platform/scripts/vscripts
+- source clones for reference checks: /home/user/research-src
 
 All data used below is SYNTHETIC (hsdtel.synth) or static source; no game was run.
 
@@ -15,13 +16,13 @@ $ python -m unittest discover -s research/phase2-prep/tests -v
 ```
 
 ```
-test_dt_est_matches_synthetic_frametime (test_derive_validate.TestDerive.test_dt_est_matches_synthetic_frametime) ... ok
-test_pressed_edges_and_runs (test_derive_validate.TestDerive.test_pressed_edges_and_runs) ... ok
 test_spd_and_heading (test_derive_validate.TestDerive.test_spd_and_heading) ... ok
 test_wish_yaw (test_derive_validate.TestDerive.test_wish_yaw) ... ok
 test_clean_fixture_has_no_errors_or_warnings (test_derive_validate.TestValidate.test_clean_fixture_has_no_errors_or_warnings) ... ok
 test_empty_input (test_derive_validate.TestValidate.test_empty_input) ... ok
 test_faulty_fixture_flags_every_injected_defect (test_derive_validate.TestValidate.test_faulty_fixture_flags_every_injected_defect) ... ok
+test_references_resolve (test_docs.TestDocs.test_references_resolve) ... ok
+test_schema_table_in_doc_is_current (test_docs.TestDocs.test_schema_table_in_doc_is_current) ... ok
 test_fixture_counts (test_parse.TestFiles.test_fixture_counts) ... ok
 test_rotated_order (test_parse.TestFiles.test_rotated_order) ... ok
 test_side_from_path_when_no_prefix (test_parse.TestFiles.test_side_from_path_when_no_prefix) ... ok
@@ -37,7 +38,7 @@ test_nonfinite_spellings (test_parse.TestLines.test_nonfinite_spellings) ... ok
 test_truncated_mt_is_rejected (test_parse.TestLines.test_truncated_mt_is_rejected) ... ok
 
 ----------------------------------------------------------------------
-Ran 43 tests in 31.413s
+Ran 52 tests in 34.069s
 
 OK
 ```
@@ -156,5 +157,38 @@ $ python research/phase2-prep/tools/hsd_tel.py schema -o research/phase2-prep/TE
 
 ```
 
+## PASS smoke checks on SYNTHETIC fixture
 
-**8/8 steps passed.**
+```
+$ python research/phase2-prep/tools/hsd_tel.py smoke research/phase2-prep/fixtures/synthetic/platform/logs
+(exit 0, expected 0)
+```
+
+```
+PASS  MT client rows  [2111]
+PASS  MT dedi rows  [2070]
+PASS  HSD client init line  [1]
+PASS  HSD dedi init line  [1]
+PASS  HSD client frames (hsd_md_cl_trace 1)  [2070]
+PASS  HSD dedi movement events  [20]
+PASS  validation errors == 0  [0]
+PASS  client cmds with a dedi line >= 90%  [100.0%]
+PASS  MT dt_est median / HSD FrameTime median within 15%  [1.000]
+PASS  HSD ground/slide APIs available (no -1)  [0]
+PASS  at least one non-zero hsd_md_run label  [['r1', 'r2', 'r3']]
+11/11 smoke checks passed [SYNTHETIC - not Apex data]
+```
+
+## PASS documentation references (check_refs)
+
+```
+$ python research/phase2-prep/tools/check_refs.py --src-root ../research-src
+(exit 0, expected 0)
+```
+
+```
+refs: ambiguous=60, bare_name=3, ok=439
+```
+
+
+**10/10 steps passed.**

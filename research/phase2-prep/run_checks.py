@@ -11,6 +11,8 @@ Steps (each prints PASS/FAIL/SKIP and its exact command):
   5. hsd_tel.py validate on the clean and the faulty SYNTHETIC fixtures
   6. hsd_tel.py report on the SYNTHETIC fixtures -> results/synthetic_report/
   7. hsd_tel.py schema -> TELEMETRY-SCHEMA.json
+  8. check_refs.py: every `path:line` reference and Markdown link in the
+     research docs resolves (external refs need --src-root clones)
 Exit code 0 only when nothing FAILed.
 """
 import argparse
@@ -47,6 +49,8 @@ def main(argv):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--base", default=os.environ.get("HSD_BASE_SCRIPTS",
                     "/home/user/research-src/s21-platform/scripts/vscripts"))
+    ap.add_argument("--src-root", default=os.environ.get("HSD_SRC_ROOT", "/home/user/research-src"),
+                    help="folder holding s21-r5sdk/, s21-platform/, launcher/ clones")
     a = ap.parse_args(argv)
     os.makedirs(RESULTS, exist_ok=True)
     tools = os.path.join(HERE, "tools")
@@ -54,7 +58,8 @@ def main(argv):
     mod = os.path.join(REPO, "research", "phase1", "mod", "hsd_movediag")
     log = [f"# Cloud check run\n\n- date (UTC): {datetime.datetime.now(datetime.timezone.utc).isoformat(timespec='seconds')}\n"
            f"- python: {platform.python_version()} on {platform.system()}\n"
-           f"- base scripts: {a.base if os.path.isfile(os.path.join(a.base, 'scripts.rson')) else 'not available'}\n\n"
+           f"- base scripts: {a.base if os.path.isfile(os.path.join(a.base, 'scripts.rson')) else 'not available'}\n"
+           f"- source clones for reference checks: {a.src_root if os.path.isdir(a.src_root) else 'not available (external refs unchecked)'}\n\n"
            "All data used below is SYNTHETIC (hsdtel.synth) or static source; no game was run.\n\n"]
     results = []
 
@@ -85,6 +90,11 @@ def main(argv):
                          "-o", os.path.join(RESULTS, "synthetic_report")])[0])
     results.append(step(log, "schema export",
                         [os.path.join(tools, "hsd_tel.py"), "schema", "-o", os.path.join(HERE, "TELEMETRY-SCHEMA.json")])[0])
+    results.append(step(log, "smoke checks on SYNTHETIC fixture",
+                        [os.path.join(tools, "hsd_tel.py"), "smoke", os.path.join(fixtures, "platform", "logs")])[0])
+    ok, r = step(log, "documentation references (check_refs)",
+                 [os.path.join(tools, "check_refs.py"), "--src-root", a.src_root])
+    results.append(ok)
     failed = results.count(False)
     log.append(f"\n**{len(results) - failed}/{len(results)} steps passed.**\n")
     with open(os.path.join(RESULTS, "CHECKS.md"), "w") as fh:

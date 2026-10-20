@@ -188,7 +188,7 @@ void function HSD_MD_PollRun( string side )
 		return
 	int prev = file.run
 	file.run = run
-	printt( format( "%s prev=%d t=%.4f", HSD_MD_Head( side, "run" ), prev, Time() ) )
+	printt( format( "%s prev=%d t=%.5f", HSD_MD_Head( side, "run" ), prev, Time() ) )
 }
 
 // Values are read with the typed getters the base scripts use. Bool fields have
@@ -319,7 +319,7 @@ void function HSD_MD_LogEvent( entity player, string eventName )
 	{
 		if ( !HSD_MD_Enabled() || !IsValid( player ) )
 			return
-		printt( format( "%s evt=%s t=%.4f ent=%d bot=%d %s", HSD_MD_Head( "sv", "evt" ), eventName, Time(),
+		printt( format( "%s evt=%s t=%.5f ent=%d bot=%d %s", HSD_MD_Head( "sv", "evt" ), eventName, Time(),
 			HSD_MD_EntIndex( player ), player.IsBot() ? 1 : 0, HSD_MD_StateTokens( player ) ) )
 	}
 	catch ( eEvt )
@@ -357,7 +357,7 @@ void function HSD_MD_ServerSample_Thread( entity player )
 				return
 			if ( HSD_MD_ConVarInt( "hsd_md_sv_trace", 0 ) == 0 || !HSD_MD_Enabled() || !IsAlive( player ) )
 				continue
-			printt( format( "%s t=%.4f ft=%.5f ent=%d bot=%d %s", HSD_MD_Head( "sv", "frame" ), Time(), FrameTime(),
+			printt( format( "%s t=%.5f ft=%.5f ent=%d bot=%d %s", HSD_MD_Head( "sv", "frame" ), Time(), FrameTime(),
 				HSD_MD_EntIndex( player ), player.IsBot() ? 1 : 0, HSD_MD_StateTokens( player ) ) )
 		}
 		catch ( eSample )
@@ -403,7 +403,7 @@ void function HSD_MD_ClientCommand_Mark( entity player, array<string> args )
 		if ( !IsValid( player ) || !player.IsPlayer() )
 			return
 		string label = args.len() > 0 ? args[0] : "mark"
-		printt( format( "%s t=%.4f ent=%d label=%s %s", HSD_MD_Head( "sv", "mark" ), Time(),
+		printt( format( "%s t=%.5f ent=%d label=%s %s", HSD_MD_Head( "sv", "mark" ), Time(),
 			HSD_MD_EntIndex( player ), label, HSD_MD_StateTokens( player ) ) )
 	}
 	catch ( eMark )
@@ -545,7 +545,7 @@ void function HSD_MD_ClientSample_Thread()
 
 			if ( HSD_MD_ConVarInt( "hsd_md_cl_trace", 0 ) != 0 )
 			{
-				printt( format( "%s t=%.4f ft=%.5f %s ang=%s in_jump=%d in_duck=%d in_fwd=%d ax_fwd=%.3f ax_right=%.3f",
+				printt( format( "%s t=%.5f ft=%.5f %s ang=%s in_jump=%d in_duck=%d in_fwd=%d ax_fwd=%.3f ax_right=%.3f",
 					HSD_MD_Head( "cl", "frame" ), now, FrameTime(), HSD_MD_StateTokens( player ), HSD_MD_Angles( player ),
 					HSD_MD_InputHeld( player, IN_JUMP ), HSD_MD_InputHeld( player, IN_DUCK ),
 					HSD_MD_InputHeld( player, IN_FORWARD ),
@@ -563,13 +563,13 @@ void function HSD_MD_ClientSample_Thread()
 				airStart = now
 				takeoffSpeed = spd
 				peakSpeed = spd
-				printt( format( "%s t=%.4f groundtime=%.4f hop=%d %s", HSD_MD_Head( "cl", "takeoff" ),
+				printt( format( "%s t=%.5f groundtime=%.4f hop=%d %s", HSD_MD_Head( "cl", "takeoff" ),
 					now, groundTime, hops, HSD_MD_StateTokens( player ) ) )
 			}
 			else if ( prevGround == 0 && ground == 1 )
 			{
 				groundStart = now
-				printt( format( "%s t=%.4f airtime=%.4f takeoff=%.3f peak=%.3f land=%.3f gain=%.3f hop=%d %s",
+				printt( format( "%s t=%.5f airtime=%.4f takeoff=%.3f peak=%.3f land=%.3f gain=%.3f hop=%d %s",
 					HSD_MD_Head( "cl", "land" ), now, now - airStart, takeoffSpeed, peakSpeed, spd,
 					spd - takeoffSpeed, hops, HSD_MD_StateTokens( player ) ) )
 			}

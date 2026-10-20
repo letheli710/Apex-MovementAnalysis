@@ -10,10 +10,15 @@ Inputs are log files or folders (e.g. <game>/platform/logs/client/<GUID>/ and
   events    <inputs...> -o f.csv    takeoff/land/slide/jump events
   hops      <inputs...> -o f.csv    land -> takeoff pairs (HSD client frames)
   census    <inputs...> -o f.csv    E0: settings key x reader table (classvar get / mod dumps)
+  slides    <inputs...> -o f.csv    one row per slide segment (E5)
+  smoke     <inputs...>             T0 pipeline acceptance checks; exit 4 when any fails
   summary   <inputs...> -o f.csv    per-run metrics incl. ground accel/decel fits
   compare   <inputs...> --baseline r1 [-o f.csv]
   fit-ground / fit-air / fit-vertical <inputs...>   JSON to stdout
   plot      <inputs...> -o f.svg [--y spd2d|vz] [--source HSD|MT] [--side cl|sv]
+  export-contract <inputs...> --run r1 -o TRIAL_DIR   hsdmove-trial/1 for Unity comparison
+  check-contract  TRIAL_DIR                         contract conformance; exit 2 on problems
+  compare-contracts REF_DIR TEST_DIR [--json f]     step-aligned comparison; exit 3 when it fails
   synth     -o DIR                  write SYNTHETIC example logs (not Apex data)
   schema    [-o f.json]             column contract as JSON
 
@@ -28,7 +33,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from hsdtel import analysis, derive as derive_mod, parse as parse_mod, plot as plot_mod, schema, synth, validate as val  # noqa: E402
+from hsdtel import analysis, contract, derive as derive_mod, parse as parse_mod, plot as plot_mod, schema, synth, validate as val  # noqa: E402
 
 
 def _write(path, text, lines=False):
@@ -113,6 +118,7 @@ def cmd_report(a):
     ev = analysis.events(rows)
     write_csv(P("events.csv"), ev)
     write_csv(P("hops.csv"), analysis.hops(rows))
+    write_csv(P("slides.csv"), analysis.slides(rows))
     cen = analysis.census(rows)
     if cen:
         write_csv(P("census.csv"), cen)
@@ -174,7 +180,7 @@ def main(argv):
         if out:
             p.add_argument("-o", "--out", required=out_required, default="-")
 
-    for name in ("parse", "events", "hops", "summary", "census"):
+    for name in ("parse", "events", "hops", "summary", "census", "slides"):
         common(sub.add_parser(name))
     p = sub.add_parser("report")
     common(p, out=False)
@@ -198,11 +204,29 @@ def main(argv):
     p.add_argument("--y", default="spd2d", choices=["spd2d", "vz"])
     p.add_argument("--source", default="HSD", choices=["HSD", "MT"])
     p.add_argument("--plot-side", default="cl", choices=["cl", "sv"])
+    p = sub.add_parser("smoke")
+    common(p, out=False)
+    p = sub.add_parser("export-contract")
+    common(p, out_required=True)
+    p.add_argument("--run", required=True)
+    p.add_argument("--contract-side", default="cl", choices=["cl", "sv"])
+    p.add_argument("--trial-id")
+    p.add_argument("--experiment", default="")
+    p.add_argument("--source-label", default="r5flowstate")
+    p.add_argument("--params", help="census.csv (from 'census'/'report') to fill the manifest parameters")
+    p = sub.add_parser("check-contract")
+    p.add_argument("trial")
+    p = sub.add_parser("compare-contracts")
+    p.add_argument("ref")
+    p.add_argument("test")
+    p.add_argument("--json")
     p = sub.add_parser("synth")
     p.add_argument("-o", "--out", required=True)
     p.add_argument("--seed", type=int, default=1)
     p = sub.add_parser("schema")
     p.add_argument("-o", "--out", default="-")
+    p.add_argument("--markdown", action="store_true", help="column table as Markdown instead of JSON")
+    p.add_argument("--update-doc", metavar="MD", help="rewrite the generated table in this Markdown file")
     a = ap.parse_args(argv)
 
     if a.cmd == "synth":
@@ -214,7 +238,10 @@ def main(argv):
         print("expected issue codes in faulty/:", ",".join(sorted(expected)))
         return 0
     if a.cmd == "schema":
-        text = json.dumps(schema.as_json(), indent=2)
+        if a.update_doc:
+            print("updated" if schema.update_doc(a.update_doc) else "unchanged", a.update_doc)
+            return 0
+        text = schema.as_markdown() if a.markdown else json.dumps(schema.as_json(), indent=2)
         if a.out == "-":
             print(text)
         else:
@@ -222,8 +249,28 @@ def main(argv):
         return 0
     if a.cmd == "report":
         return cmd_report(a)
+    if a.cmd == "check-contract":
+        problems = contract.check_trial(a.trial)
+        for pr in problems:
+            print("PROBLEM", pr)
+        print(f"{len(problems)} problem(s)")
+        return 2 if problems else 0
+    if a.cmd == "compare-contracts":
+        res = contract.compare_trials(a.ref, a.test)
+        text = json.dumps(res, indent=2)
+        print(text)
+        if a.json:
+            _write(a.json, text)
+        return 0 if res.get("pass") else 3
 
     files, rows, issues = load(a.inputs, a.side, a.burst_gap)
+    if a.cmd == "smoke":
+        checks = analysis.smoke(rows, val.validate(rows, issues))
+        for name, ok, detail in checks:
+            print(f"{'PASS' if ok else 'FAIL'}  {name}  [{detail}]")
+        failed = sum(1 for _, ok, _ in checks if not ok)
+        print(f"{len(checks) - failed}/{len(checks)} smoke checks passed" + synth_suffix(files))
+        return 4 if failed else 0
     if a.cmd == "parse":
         write_rows(a.out, rows)
     elif a.cmd == "validate":
@@ -240,8 +287,18 @@ def main(argv):
         write_csv(a.out, analysis.events(rows))
     elif a.cmd == "hops":
         write_csv(a.out, analysis.hops(rows))
+    elif a.cmd == "export-contract":
+        source = a.source_label
+        if synth_suffix(files):
+            source = "synthetic"
+        params = contract.parameters_from_census(a.params) if a.params else None
+        m, smp = contract.export_trial(rows, a.run, a.out, a.contract_side, a.trial_id, source, a.experiment,
+                                       parameters=params)
+        print(f"wrote {a.out}: {len(smp)} steps, source={m['source']}")
     elif a.cmd == "census":
         write_csv(a.out, analysis.census(rows))
+    elif a.cmd == "slides":
+        write_csv(a.out, analysis.slides(rows))
     elif a.cmd == "summary":
         write_csv(a.out, analysis.run_summary(rows))
     elif a.cmd == "compare":

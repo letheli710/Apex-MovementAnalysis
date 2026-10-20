@@ -86,6 +86,25 @@ class TestFits(unittest.TestCase):
         self.assertGreater(m["delta"], 200)   # strafing gained speed in r2
 
 
+class TestSlidesAndSmoke(unittest.TestCase):
+    def test_slide_decel_recovered(self):
+        _, rows, _ = hsd_tel.load([LOGS])
+        sl = analysis.slides(rows)
+        self.assertEqual(len(sl), 3)                     # MT cl, HSD cl, MT sv
+        for r in sl:
+            self.assertAlmostEqual(r["mean_decel"], P["slide_decel"], delta=0.01 * P["slide_decel"])
+
+    def test_smoke_passes_on_clean_and_fails_on_faulty(self):
+        from _common import FAULTY
+        from hsdtel import validate
+        _, rows, iss = hsd_tel.load([LOGS])
+        self.assertTrue(all(ok for _, ok, _ in analysis.smoke(rows, validate.validate(rows, iss))))
+        _, rows, iss = hsd_tel.load([FAULTY])
+        failed = [n for n, ok, _ in analysis.smoke(rows, validate.validate(rows, iss)) if not ok]
+        self.assertIn("validation errors == 0", failed)
+        self.assertIn("MT dedi rows", failed)
+
+
 class TestCensus(unittest.TestCase):
     def test_census_merges_readers_and_flags_differences(self):
         _, rows, _ = hsd_tel.load([LOGS])
@@ -96,6 +115,88 @@ class TestCensus(unittest.TestCase):
         self.assertEqual(c["doubleJump"]["differs"], 0)        # "false" == 0
         self.assertEqual(c["dodgeSpeed"]["readers"], 0)
         self.assertEqual(c["dodgeSpeed"]["cl_classvar_type"], "unknown")
+
+
+class TestContract(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        _, cls.rows, _ = hsd_tel.load([LOGS])
+
+    def test_export_check_compare(self):
+        import tempfile, csv, os
+        from hsdtel import contract
+        with tempfile.TemporaryDirectory() as d:
+            for run in ("r1", "r2", "r3"):
+                m, samples = contract.export_trial(self.rows, run, os.path.join(d, run), source="synthetic")
+                self.assertEqual(contract.check_trial(os.path.join(d, run)), [], run)
+                self.assertEqual(m["contract"], "hsdmove-trial/1")
+            same = contract.compare_trials(os.path.join(d, "r2"), os.path.join(d, "r2"))
+            self.assertTrue(same["pass"])
+            self.assertEqual(same["pos_rms_u"], 0.0)
+            # perturb: shift positions by 10 u and drop the first LAND event
+            path = os.path.join(d, "r2", "samples.csv")
+            with open(path, newline="") as fh:
+                rows = list(csv.DictReader(fh))
+            dropped = False
+            for r in rows:
+                r["pos_x"] = str(float(r["pos_x"]) + 10.0)
+                if "LAND" in r["events"] and not dropped:
+                    r["events"] = ""
+                    dropped = True
+            os.makedirs(os.path.join(d, "bad"))
+            with open(os.path.join(d, "bad", "samples.csv"), "w", newline="") as fh:
+                w = csv.DictWriter(fh, fieldnames=list(rows[0]))
+                w.writeheader()
+                w.writerows(rows)
+            with open(os.path.join(d, "r2", "trial.json")) as src, open(os.path.join(d, "bad", "trial.json"), "w") as dst:
+                dst.write(src.read())
+            res = contract.compare_trials(os.path.join(d, "r2"), os.path.join(d, "bad"))
+            self.assertFalse(res["pass"])
+            self.assertFalse(res["checks"]["pos_rms_u"])
+            self.assertFalse(res["checks"]["events"])
+            self.assertTrue(res["checks"]["vel_rms_ups"])
+
+    def test_parameters_from_census(self):
+        import tempfile, os, csv
+        from hsdtel import contract
+        with tempfile.TemporaryDirectory() as d:
+            path = os.path.join(d, "census.csv")
+            rows = analysis.census(self.rows)
+            with open(path, "w", newline="") as fh:
+                w = csv.DictWriter(fh, fieldnames=list(rows[0].keys()) + ["cl_setting", "cl_setting_type"],
+                                   extrasaction="ignore")
+                w.writeheader()
+                w.writerows(rows)
+            params = contract.parameters_from_census(path)
+            self.assertEqual(params["airSpeed"]["reader"], "sv_setting")
+            self.assertTrue(params["airSpeed"]["differs_between_readers"])
+            self.assertNotIn("dodgeSpeed", params)
+            m, _ = contract.export_trial(self.rows, "r1", os.path.join(d, "t"), parameters=params)
+            self.assertIn("airAcceleration", m["parameters"])
+
+    def test_dt_matches_frametime(self):
+        import tempfile, os
+        from hsdtel import contract
+        with tempfile.TemporaryDirectory() as d:
+            _, samples = contract.export_trial(self.rows, "r1", d)
+            for s in samples[1:]:
+                self.assertAlmostEqual(s["dt"], 1 / 144.0, delta=2e-5)
+
+    def test_missing_run_is_a_clear_error(self):
+        import tempfile
+        from hsdtel import contract
+        with tempfile.TemporaryDirectory() as d:
+            with self.assertRaises(ValueError) as cm:
+                contract.export_trial(self.rows, "r99", d)
+            self.assertIn("hsd_md_cl_trace", str(cm.exception))
+
+    def test_unity_axes(self):
+        from hsdtel import contract
+        # Source +Y is "left"; Unity +X is "right" -> left maps to -X.
+        self.assertEqual(contract.to_unity_position(0, 1, 0), (-0.0254, 0.0, 0.0))
+        self.assertEqual(contract.to_unity_position(1, 0, 0), (0.0, 0.0, 0.0254))
+        self.assertEqual(contract.to_unity_position(0, 0, 1), (-0.0, 0.0254, 0.0))
+        self.assertEqual(contract.to_unity_yaw(90.0), -90.0)
 
 
 class TestPlot(unittest.TestCase):

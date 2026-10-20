@@ -118,7 +118,7 @@ After:  SourcePush → SlopeLaunch → WallClimbTap → WallLaunch
 
 ### 3.3 Movement-related CPlayer fields (dedi side, mainly from `game/server/player.h`)
 
-- Ground: `m_hGroundEntity` @0x3C4 (client @0x324; `autobunnyhop.cpp` S:21 / C:56), `m_groundNormal` @0x5DA4 (`slope_launch.cpp:22`)
+- Ground: `m_hGroundEntity` @0x3C4 (client @0x324; `game/server/autobunnyhop.cpp:21`, `game/client/autobunnyhop.cpp:21`), `m_groundNormal` @0x5DA4 (`slope_launch.cpp:22`)
 - Time stamps: `m_flTimeLastTouchedWall / TouchedGround / LastJumped / LastLanded`, `m_bHasJumpedSinceTouchedGround`, `m_bDoMultiJumpPenalty` (`player.h:336-345`); `m_flTimeLastLanded` @0x621C doubles as the Jump anti-bhop "skip window" timestamp (`mantle_boost.cpp:56,63`)
 - Crouch/hull: `m_duckState` @0x65F0, Stand/Duck Hull @0x65FC–0x6620 (`player.h:415-423`, `player_stance.cpp:14-21`)
 - Wall: `m_wallrunFrictionScale`, `m_groundFrictionScale`, `m_wallHanging`, the traversal family (`player.h:437-470`)
