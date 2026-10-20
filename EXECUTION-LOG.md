@@ -19,7 +19,13 @@ Newest entries at the bottom. Problems are tagged **[ISSUE]** and also listed in
   - **[ISSUE]** Empty-handed runs carry a 1.15 move scale. Every experiment must hold the weapon state fixed and log `msc`.
   - Unity 6000.6.5f1 batch run: the project opens and compiles; PlayMode 104/104 passed in 150 s.
   - **[ISSUE]** The batch run re-serialized `ProjectSettings.asset`. Only a hash was taken beforehand, so the exact delta is unknown. From now on, copy `ProjectSettings/` before every Unity run.
-  - **M0 accepted.** Started M1 source research on deterministic input and reset (read-only subagent).
+  - **M0 accepted.** PR #1 opened and merged into `claude/laughing-einstein-nlvqcs` (`5646224`).
+- **M1 started** on branch `phase2-local/m1-loop`. Three subagents run in parallel, and none of them drives the game or Unity:
+  - A: source research on deterministic input and reset (defect 1);
+  - B: hsdtel defects 3–6, in worktree `../wt-m1-telemetry` (branch `phase2-local/m1-telemetry`);
+  - C: offline sampling-phase analysis of the T0 data (defect 2).
+- Decision (user, relayed by another session): Unity work for M1+ happens in a **new Unity project inside the workspace** `C:\Workspace\Playground\ReApex-DataAnalysis\`. The original project `High Speed Doom LAB\High Speed Test 01` is no longer touched; it is read-only reference from here on. This supersedes the "new branch in the original project" rule in SESSION-BASELINE §5.
+- User update (relayed): the old Unity project is **deprecated**. I7 is closed as won't fix.
 
 ## Open issues
 
@@ -30,5 +36,5 @@ Newest entries at the bottom. Problems are tagged **[ISSUE]** and also listed in
 | I3 | M0 | `DevTextBufferDumpToFile` returns false | low priority; values are in `script.log` |
 | I4 | M0 | REA has no native provider | only if offline disassembly is approved and time-boxed |
 | I5 | M0 | Weapon move scale (1.15 empty-handed) | fix the weapon state per run; measure a weapon-held condition in M2 |
-| I6 | M0 | Unity project: most of the existing work is uncommitted on `main` | protect it; M1 Unity work goes on a new branch in its own folder |
-| I7 | M0 | The Unity batch run rewrote `ProjectSettings.asset`; delta unknown | copy `ProjectSettings/` before each Unity run |
+| I6 | M0 | Unity project: most of the existing work is uncommitted on `main` | **closed**: the old project is deprecated; M1+ uses a new project in the workspace |
+| I7 | M0 | The Unity batch run rewrote `ProjectSettings.asset`; delta unknown | **closed, won't fix**: the user says the old project is deprecated |

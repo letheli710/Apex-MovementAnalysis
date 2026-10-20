@@ -60,9 +60,8 @@ Details of the repairs and the first real run are in [m0/M0-REPORT.md](m0/M0-REP
 | PlayMode tests | **104/104 passed**, 0 failed, 0 skipped (same count as the project README) |
 | Files touched by the batch run | The five `*.csproj` were regenerated; they are ignored by `.gitignore:54`. `ProjectSettings/ProjectSettings.asset` was re-serialized (hash changed). Only hashes were taken beforehand, so the exact batch delta cannot be told apart from the user's own uncommitted edits. Its diff against HEAD contains only project settings (product name, run in background, cloud ids…). From now on, copy `ProjectSettings/` before every Unity run |
 
-Rule for Unity work from M1 on:
+Rule for Unity work from M1 on (user decision, 2026-10-20):
 
-- Never touch `main` or the user's uncommitted files.
-- Work on a new branch.
-- Keep new code under its own folder (`Assets/HighSpeedDoom/R5Replay/`, planned) so it can be committed without sweeping in unrelated work.
+- Unity work happens in a **new Unity project inside the workspace** `C:\Workspace\Playground\ReApex-DataAnalysis\`, with its own git repository.
+- The original project above is **read-only reference**: no editor or batch runs and no file changes. Code may be read or copied out of it.
 - Only one Unity instance at a time, and never while the game is being driven.
