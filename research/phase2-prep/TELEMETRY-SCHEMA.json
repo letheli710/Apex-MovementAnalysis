@@ -1,0 +1,502 @@
+{
+  "schema": "hsdtel1",
+  "columns": [
+    {
+      "name": "file",
+      "provenance": "meta",
+      "unit": "",
+      "description": "source log file (basename)"
+    },
+    {
+      "name": "line_no",
+      "provenance": "meta",
+      "unit": "",
+      "description": "1-based line number in that file"
+    },
+    {
+      "name": "source",
+      "provenance": "meta",
+      "unit": "",
+      "description": "MT = SDK [MOVE-TRACE]; HSD = HSD.MoveDiag mod"
+    },
+    {
+      "name": "side",
+      "provenance": "obs",
+      "unit": "",
+      "description": "cl = S21 client prediction, sv = S3 dedi; from the log prefix Native(C)/Script(S)/... or --side"
+    },
+    {
+      "name": "kind",
+      "provenance": "obs",
+      "unit": "",
+      "description": "cmd (MT) | frame | evt | takeoff | land | mark | run | setting | dump | dumpfile | init | error"
+    },
+    {
+      "name": "wall",
+      "provenance": "obs",
+      "unit": "s",
+      "description": "log-sink wall clock from the [YYYY-MM-DD HH:MM:SS.mmm] file prefix, as seconds since 1970 reading the logged local time as if UTC; ms resolution; time the line was written, not simulation time; empty on console copies"
+    },
+    {
+      "name": "run",
+      "provenance": "obs",
+      "unit": "",
+      "description": "HSD: value of hsd_md_run when the line was printed"
+    },
+    {
+      "name": "seq",
+      "provenance": "obs",
+      "unit": "",
+      "description": "HSD: per-VM line counter (gaps = lost lines)"
+    },
+    {
+      "name": "t",
+      "provenance": "obs",
+      "unit": "s",
+      "description": "HSD: script Time() (game clock)"
+    },
+    {
+      "name": "ft",
+      "provenance": "obs",
+      "unit": "s",
+      "description": "HSD: script FrameTime()"
+    },
+    {
+      "name": "cmd",
+      "provenance": "obs",
+      "unit": "",
+      "description": "MT: usercmd command_number"
+    },
+    {
+      "name": "ent",
+      "provenance": "obs",
+      "unit": "",
+      "description": "MT ent= / HSD ent= entity index"
+    },
+    {
+      "name": "bot",
+      "provenance": "obs",
+      "unit": "",
+      "description": "HSD server: 1 = fake client"
+    },
+    {
+      "name": "replay",
+      "provenance": "obs",
+      "unit": "",
+      "description": "MT client: 1 = re-predicted command (rp=1)"
+    },
+    {
+      "name": "ox",
+      "provenance": "obs",
+      "unit": "u",
+      "description": "origin x (MT: before the move)"
+    },
+    {
+      "name": "oy",
+      "provenance": "obs",
+      "unit": "u",
+      "description": "origin y"
+    },
+    {
+      "name": "oz",
+      "provenance": "obs",
+      "unit": "u",
+      "description": "origin z"
+    },
+    {
+      "name": "vx",
+      "provenance": "obs",
+      "unit": "u/s",
+      "description": "velocity x (MT: before the move)"
+    },
+    {
+      "name": "vy",
+      "provenance": "obs",
+      "unit": "u/s",
+      "description": "velocity y"
+    },
+    {
+      "name": "vz",
+      "provenance": "obs",
+      "unit": "u/s",
+      "description": "velocity z"
+    },
+    {
+      "name": "pox",
+      "provenance": "obs",
+      "unit": "u",
+      "description": "MT: origin x after the move"
+    },
+    {
+      "name": "poy",
+      "provenance": "obs",
+      "unit": "u",
+      "description": "MT: origin y after the move"
+    },
+    {
+      "name": "poz",
+      "provenance": "obs",
+      "unit": "u",
+      "description": "MT: origin z after the move"
+    },
+    {
+      "name": "pvx",
+      "provenance": "obs",
+      "unit": "u/s",
+      "description": "MT: velocity x after the move"
+    },
+    {
+      "name": "pvy",
+      "provenance": "obs",
+      "unit": "u/s",
+      "description": "MT: velocity y after the move"
+    },
+    {
+      "name": "pvz",
+      "provenance": "obs",
+      "unit": "u/s",
+      "description": "MT: velocity z after the move"
+    },
+    {
+      "name": "pitch",
+      "provenance": "obs",
+      "unit": "deg",
+      "description": "HSD client: EyeAngles().x"
+    },
+    {
+      "name": "yaw",
+      "provenance": "obs",
+      "unit": "deg",
+      "description": "HSD client: EyeAngles().y"
+    },
+    {
+      "name": "ground",
+      "provenance": "obs",
+      "unit": "",
+      "description": "1/0; MT ge= (ground entity before the move); HSD IsOnGround(); -1 = API unavailable"
+    },
+    {
+      "name": "slide",
+      "provenance": "obs",
+      "unit": "",
+      "description": "1/0; MT slide= (before the move); HSD IsSliding(); -1 = unavailable"
+    },
+    {
+      "name": "sprint",
+      "provenance": "obs",
+      "unit": "",
+      "description": "1/0; MT spr=; HSD IsSprinting(); -1 = unavailable"
+    },
+    {
+      "name": "crouch",
+      "provenance": "obs",
+      "unit": "",
+      "description": "HSD IsCrouched(); -1 = unavailable"
+    },
+    {
+      "name": "duck",
+      "provenance": "obs",
+      "unit": "",
+      "description": "MT duck= m_duckState (0 stand, 2 ducked)"
+    },
+    {
+      "name": "buttons",
+      "provenance": "obs",
+      "unit": "",
+      "description": "MT b= m_nButtons (held) as integer; bits per in_buttons.h"
+    },
+    {
+      "name": "fwd",
+      "provenance": "obs",
+      "unit": "",
+      "description": "MT fwd= forwardmove"
+    },
+    {
+      "name": "sidemove",
+      "provenance": "obs",
+      "unit": "",
+      "description": "MT sd= sidemove"
+    },
+    {
+      "name": "maxspeed",
+      "provenance": "obs",
+      "unit": "u/s",
+      "description": "MT ms= CMoveData maxspeed"
+    },
+    {
+      "name": "movescale",
+      "provenance": "obs",
+      "unit": "",
+      "description": "MT msc= m_cachedMoveScale"
+    },
+    {
+      "name": "in_jump",
+      "provenance": "obs",
+      "unit": "",
+      "description": "HSD client IsInputCommandHeld(IN_JUMP); -1 = unavailable"
+    },
+    {
+      "name": "in_duck",
+      "provenance": "obs",
+      "unit": "",
+      "description": "HSD client IsInputCommandHeld(IN_DUCK)"
+    },
+    {
+      "name": "in_fwd",
+      "provenance": "obs",
+      "unit": "",
+      "description": "HSD client IsInputCommandHeld(IN_FORWARD)"
+    },
+    {
+      "name": "ax_fwd",
+      "provenance": "obs",
+      "unit": "",
+      "description": "HSD client GetInputAxisForward(); -9 = unavailable"
+    },
+    {
+      "name": "ax_right",
+      "provenance": "obs",
+      "unit": "",
+      "description": "HSD client GetInputAxisRight(); -9 = unavailable"
+    },
+    {
+      "name": "evt",
+      "provenance": "obs",
+      "unit": "",
+      "description": "HSD server movement event name"
+    },
+    {
+      "name": "label",
+      "provenance": "obs",
+      "unit": "",
+      "description": "HSD mark label"
+    },
+    {
+      "name": "key",
+      "provenance": "obs",
+      "unit": "",
+      "description": "HSD setting key"
+    },
+    {
+      "name": "vtype",
+      "provenance": "obs",
+      "unit": "",
+      "description": "HSD setting getter that succeeded: float|int|string|ERR"
+    },
+    {
+      "name": "value",
+      "provenance": "obs",
+      "unit": "",
+      "description": "HSD setting value as printed"
+    },
+    {
+      "name": "msg",
+      "provenance": "obs",
+      "unit": "",
+      "description": "HSD error text"
+    },
+    {
+      "name": "where",
+      "provenance": "obs",
+      "unit": "",
+      "description": "HSD error: which mod function contained the error"
+    },
+    {
+      "name": "prev",
+      "provenance": "obs",
+      "unit": "",
+      "description": "HSD run: previous run label"
+    },
+    {
+      "name": "ok",
+      "provenance": "obs",
+      "unit": "",
+      "description": "HSD dump: keys read successfully"
+    },
+    {
+      "name": "total",
+      "provenance": "obs",
+      "unit": "",
+      "description": "HSD dump: keys attempted"
+    },
+    {
+      "name": "dumpfile_ok",
+      "provenance": "obs",
+      "unit": "",
+      "description": "HSD dumpfile: DevTextBufferDumpToFile return value"
+    },
+    {
+      "name": "mod",
+      "provenance": "obs",
+      "unit": "",
+      "description": "HSD init: mod version"
+    },
+    {
+      "name": "ing_airtime",
+      "provenance": "ing",
+      "unit": "s",
+      "description": "mod: Time() between sampled takeoff and landing"
+    },
+    {
+      "name": "ing_groundtime",
+      "provenance": "ing",
+      "unit": "s",
+      "description": "mod: Time() on the ground before a takeoff"
+    },
+    {
+      "name": "ing_takeoff",
+      "provenance": "ing",
+      "unit": "u/s",
+      "description": "mod: horizontal speed at the takeoff sample"
+    },
+    {
+      "name": "ing_peak",
+      "provenance": "ing",
+      "unit": "u/s",
+      "description": "mod: max horizontal speed sampled in the air"
+    },
+    {
+      "name": "ing_land",
+      "provenance": "ing",
+      "unit": "u/s",
+      "description": "mod: horizontal speed at the landing sample"
+    },
+    {
+      "name": "ing_gain",
+      "provenance": "ing",
+      "unit": "u/s",
+      "description": "mod: land - takeoff"
+    },
+    {
+      "name": "ing_hop",
+      "provenance": "ing",
+      "unit": "",
+      "description": "mod: consecutive takeoffs with < 0.1 s ground time"
+    },
+    {
+      "name": "drv_run",
+      "provenance": "drv",
+      "unit": "",
+      "description": "trial id: HSD run if present, else MT burst index"
+    },
+    {
+      "name": "drv_burst",
+      "provenance": "drv",
+      "unit": "",
+      "description": "MT: index of a contiguous command range (gap > --burst-gap cmds starts a new one)"
+    },
+    {
+      "name": "drv_spd2d",
+      "provenance": "drv",
+      "unit": "u/s",
+      "description": "hypot(vx, vy)"
+    },
+    {
+      "name": "drv_spd2d_post",
+      "provenance": "drv",
+      "unit": "u/s",
+      "description": "MT: hypot(pvx, pvy)"
+    },
+    {
+      "name": "drv_dspd2d",
+      "provenance": "drv",
+      "unit": "u/s",
+      "description": "MT: post - pre horizontal speed within one command"
+    },
+    {
+      "name": "drv_dheading",
+      "provenance": "drv",
+      "unit": "deg",
+      "description": "MT: change of horizontal velocity direction within one command"
+    },
+    {
+      "name": "drv_dt",
+      "provenance": "drv",
+      "unit": "s",
+      "description": "HSD: t - previous t of the same side/kind; MT: drv_dt_est"
+    },
+    {
+      "name": "drv_dt_est",
+      "provenance": "drv",
+      "unit": "s",
+      "description": "MT: |po_xy - o_xy| / |pv_xy| when |pv_xy| > 20 u/s (assumes origin += post velocity * frametime and no collision; positions are printed with 3 decimals, so the relative error is about 0.0005 u / displacement)"
+    },
+    {
+      "name": "drv_accel2d",
+      "provenance": "drv",
+      "unit": "u/s^2",
+      "description": "HSD: (spd2d - prev spd2d) / drv_dt; MT: drv_dspd2d / drv_dt_est"
+    },
+    {
+      "name": "drv_pressed",
+      "provenance": "drv",
+      "unit": "",
+      "description": "MT: buttons pressed this command vs the previous line of the stream"
+    },
+    {
+      "name": "drv_wish_yaw",
+      "provenance": "drv",
+      "unit": "deg",
+      "description": "HSD client: yaw + atan2(-ax_right, ax_fwd); empty without input"
+    },
+    {
+      "name": "drv_flags",
+      "provenance": "drv",
+      "unit": "",
+      "description": "quality flags: nonfinite|teleport|api_missing"
+    }
+  ],
+  "hsd_required_keys": {
+    "frame": [
+      "t",
+      "o",
+      "vel",
+      "ground"
+    ],
+    "evt": [
+      "evt",
+      "t",
+      "o",
+      "vel"
+    ],
+    "takeoff": [
+      "t",
+      "o",
+      "vel",
+      "groundtime"
+    ],
+    "land": [
+      "t",
+      "o",
+      "vel",
+      "airtime",
+      "takeoff",
+      "peak",
+      "land"
+    ],
+    "mark": [
+      "t",
+      "label"
+    ],
+    "run": [
+      "prev"
+    ],
+    "setting": [
+      "key",
+      "vtype",
+      "value"
+    ],
+    "dump": [
+      "ok",
+      "total"
+    ],
+    "dumpfile": [
+      "file"
+    ],
+    "init": [],
+    "error": [
+      "where",
+      "msg"
+    ]
+  }
+}

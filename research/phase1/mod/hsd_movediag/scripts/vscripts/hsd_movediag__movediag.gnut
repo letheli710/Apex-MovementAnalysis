@@ -1,20 +1,30 @@
 //=============================================================================
-// HSD.MoveDiag -- observe-only movement diagnostic (Phase 1 prototype).
+// HSD.MoveDiag v0.2 -- observe-only movement telemetry.
 //
-// Changes no movement state. Every line it prints starts with "[HSD-MD]" and is
-// a list of key=value tokens, so research/phase1/tools/hsd_movelog.py can turn a
-// console log into CSV.
+// Changes no movement state. Every line it prints starts with "[HSD-MD]",
+// carries "ver=2" and is a list of key=value tokens with no spaces inside a
+// value (an optional trailing msg= takes the rest of the line). The parser is
+// research/phase2-prep/tools/hsd_tel.py; the line formats are specified in
+// research/phase2-prep/TELEMETRY-SCHEMA.md.
 //
-//   SERVER: one line per engine movement event (ePlayerMovementEvents through
-//           AddPlayerMovementEventCallback), optional per-server-frame samples
-//           (hsd_md_sv_trace 1), and a live player-settings dump on the client
-//           command "hsd_md_dump".
-//   CLIENT: per-render-frame sampler of the local, predicted player. Prints one
-//           summary per takeoff and per landing (airtime, takeoff/peak/landing
-//           horizontal speed); with hsd_md_cl_trace 1 also one line per frame.
+//   SERVER: one line per engine movement event (AddPlayerMovementEventCallback),
+//           optional per-server-frame samples (hsd_md_sv_trace 1), a settings
+//           dump when hsd_md_dump_now is set to 1 on the dedi console (or on the
+//           client command "hsd_md_dump"), run labels from hsd_md_run.
+//   CLIENT: per-render-frame sampler of the local predicted player: takeoff and
+//           landing summaries always, one line per frame with hsd_md_cl_trace 1,
+//           settings dump when hsd_md_dump_now is set to 1 on the client console,
+//           run labels from hsd_md_run.
 //
-// NOT RUN: written and statically checked without a game install. API names
-// come from the base scripts; see research/phase1/Modding-Capabilities.md.
+// Static rules this file follows (research/phase2-prep/VALIDATION-REPORT.md):
+//   - Every global function / constant used in a VM has a base-script use in
+//     that same VM (hsd_vmcheck.py). IN_BACK, IN_MOVELEFT, IN_MOVERIGHT and
+//     IN_SPEED have no CLIENT evidence, so the client uses the input axes.
+//   - Every entity method call that could be missing is inside try/catch.
+//   - Every SERVER callback/thread body is inside try/catch: an uncaught
+//     server-VM error schedules HS_GAME_SHUTDOWN (s21-r5sdk/AGENTS.md:202).
+//
+// NOT RUN: compiled and executed nowhere yet.
 //=============================================================================
 
 #if SERVER
@@ -25,12 +35,12 @@ global function CodeCallback_HSD_MoveDiag_ModInit
 global function ClientCodeCallback_HSD_MoveDiag_ModInit
 #endif // CLIENT
 
-const string HSD_MD_TAG = "[HSD-MD]"
+const string HSD_MD_TAG = "[HSD-MD] ver=2"
 
 // Keys proven to exist somewhere in the class-var/settings surface:
 // sh_surf_movement.gnut:5-21, gameui/IClassVarLab.cpp:29-54, cfg/speed.cfg,
 // game/server/wallclimb.cpp:44-65, game/server/slide_super_jump.cpp:5-8.
-// A key the settings block lacks is reported as ERR, not fatal.
+// A key the settings block lacks is reported as vtype=ERR, not fatal.
 const array<string> HSD_MD_SETTINGS_KEYS = [
 	"speed", "sprintspeed", "acceleration", "deceleration", "lowSpeed", "lowAcceleration",
 	"sprintAcceleration", "sprintDeceleration",
@@ -52,12 +62,13 @@ const array<string> HSD_MD_SETTINGS_KEYS = [
 struct
 {
 	bool inited
+	int seq
+	int run
+	int errors
 #if SERVER
 	table<entity, bool> hooked
+	bool watcherStarted
 #endif // SERVER
-#if CLIENT
-	bool samplerStarted
-#endif // CLIENT
 } file
 
 //-----------------------------------------------------------------------------
@@ -80,6 +91,25 @@ bool function HSD_MD_Enabled()
 	return HSD_MD_ConVarInt( "hsd_md_enable", 1 ) != 0
 }
 
+// Line prefix shared by every record: tag, side, kind, run label, line counter.
+string function HSD_MD_Head( string side, string kind )
+{
+	file.seq++
+	return format( "%s side=%s kind=%s run=%d seq=%d", HSD_MD_TAG, side, kind, file.run, file.seq )
+}
+
+// Contained failure report. msg= is last: the parser takes the rest of the line.
+// Callers convert the caught value with string( e ) inside their catch block,
+// the same pattern as ai/_ai_utility.gnut:781-783.
+void function HSD_MD_Error( string side, string where, string text )
+{
+	file.errors++
+	if ( file.errors > 50 )
+		return
+	printt( format( "%s where=%s count=%d msg=%s", HSD_MD_Head( side, "error" ), where, file.errors, text ) )
+}
+
+// -1 = the method was not available or threw (never a real state).
 int function HSD_MD_OnGround( entity player )
 {
 	try
@@ -104,13 +134,113 @@ int function HSD_MD_Sliding( entity player )
 	return -1
 }
 
+int function HSD_MD_Sprinting( entity player )
+{
+	try
+	{
+		return player.IsSprinting() ? 1 : 0
+	}
+	catch ( eSprint )
+	{
+	}
+	return -1
+}
+
+int function HSD_MD_Crouched( entity player )
+{
+	try
+	{
+		return player.IsCrouched() ? 1 : 0
+	}
+	catch ( eCrouch )
+	{
+	}
+	return -1
+}
+
+int function HSD_MD_EntIndex( entity player )
+{
+	try
+	{
+		return player.GetEntIndex()
+	}
+	catch ( eIndex )
+	{
+	}
+	return -1
+}
+
+// Observed kinematics + state flags. Names match TELEMETRY-SCHEMA.md.
 string function HSD_MD_StateTokens( entity player )
 {
 	vector vel = player.GetVelocity()
 	vector org = player.GetOrigin()
-	return format( "spd2d=%.2f vz=%.2f v=%.2f,%.2f,%.2f o=%.2f,%.2f,%.2f ground=%d slide=%d",
-		Length2D( vel ), vel.z, vel.x, vel.y, vel.z, org.x, org.y, org.z,
-		HSD_MD_OnGround( player ), HSD_MD_Sliding( player ) )
+	return format( "o=%.3f,%.3f,%.3f vel=%.3f,%.3f,%.3f spd2d=%.3f vz=%.3f ground=%d slide=%d sprint=%d crouch=%d",
+		org.x, org.y, org.z, vel.x, vel.y, vel.z, Length2D( vel ), vel.z,
+		HSD_MD_OnGround( player ), HSD_MD_Sliding( player ), HSD_MD_Sprinting( player ), HSD_MD_Crouched( player ) )
+}
+
+// hsd_md_run is a plain integer label typed on each console before a trial.
+void function HSD_MD_PollRun( string side )
+{
+	int run = HSD_MD_ConVarInt( "hsd_md_run", 0 )
+	if ( run == file.run )
+		return
+	int prev = file.run
+	file.run = run
+	printt( format( "%s prev=%d t=%.4f", HSD_MD_Head( side, "run" ), prev, Time() ) )
+}
+
+// Values are read with the typed getters the base scripts use. Bool fields have
+// no base getter (GetPlayerSettingBool has no use anywhere), so a bool key is
+// expected to come back through Int or as ERR.
+void function HSD_MD_DumpSettings( string side, entity player )
+{
+	int nOk = 0
+	foreach ( string key in HSD_MD_SETTINGS_KEYS )
+	{
+		string value = ""
+		string vtype = "ERR"
+		try
+		{
+			value = format( "%.6f", player.GetPlayerSettingFloat( key ) )
+			vtype = "float"
+		}
+		catch ( eFloat )
+		{
+		}
+#if SERVER
+		// GetPlayerSettingInt has a SERVER use only (mp_ability_holopilot.nut:571).
+		if ( vtype == "ERR" )
+		{
+			try
+			{
+				value = format( "%d", player.GetPlayerSettingInt( key ) )
+				vtype = "int"
+			}
+			catch ( eInt )
+			{
+			}
+		}
+#endif // SERVER
+		if ( vtype == "ERR" )
+		{
+			try
+			{
+				value = player.GetPlayerSettingString( key )
+				vtype = "string"
+			}
+			catch ( eString )
+			{
+			}
+		}
+		if ( vtype != "ERR" )
+			nOk++
+		printt( format( "%s ent=%d key=%s vtype=%s value=%s", HSD_MD_Head( side, "setting" ),
+			HSD_MD_EntIndex( player ), key, vtype, value == "" ? "-" : value ) )
+	}
+	printt( format( "%s ent=%d ok=%d total=%d", HSD_MD_Head( side, "dump" ),
+		HSD_MD_EntIndex( player ), nOk, HSD_MD_SETTINGS_KEYS.len() ) )
 }
 
 //=============================================================================
@@ -119,55 +249,83 @@ string function HSD_MD_StateTokens( entity player )
 #if SERVER
 void function CodeCallback_HSD_MoveDiag_ModInit()
 {
-	// ModSystem_RunCallbacks is reached from more than one init chain
-	// (_sh_init.gnut:91 and :990); register once.
+	// Reached once per level per VM: from SV_CL_Init on maps and from
+	// Shared_Lobby_Init in the lobby (_sh_init.gnut:30-43,91,990). Guarded anyway.
 	if ( file.inited )
 		return
 	file.inited = true
 
-	AddCallback_OnPlayerRespawned( HSD_MD_OnPlayerRespawned )
-	AddClientCommandCallback( "hsd_md_dump", HSD_MD_ClientCommand_Dump )
-	AddClientCommandCallback( "hsd_md_mark", HSD_MD_ClientCommand_Mark )
+	try
+	{
+		if ( IsLobby() )
+			return
 
-	printt( HSD_MD_TAG + " side=sv kind=init" )
+		AddCallback_OnPlayerRespawned( HSD_MD_OnPlayerRespawned )
+		AddClientCommandCallback( "hsd_md_dump", HSD_MD_ClientCommand_Dump )
+		AddClientCommandCallback( "hsd_md_mark", HSD_MD_ClientCommand_Mark )
+		printt( HSD_MD_Head( "sv", "init" ) + " mod=0.2.0" )
+	}
+	catch ( eInit )
+	{
+		HSD_MD_Error( "sv", "init", string( eInit ) )
+	}
 }
 
 void function HSD_MD_OnPlayerRespawned( entity player )
 {
-	if ( !IsValid( player ) || !player.IsPlayer() )
-		return
-
-	// The movement-event table lives on the player entity and survives a
-	// respawn; AddPlayerMovementEventCallback asserts on a second add.
-	if ( !( player in file.hooked ) )
+	try
 	{
-		file.hooked[ player ] <- true
-		AddPlayerMovementEventCallback( player, ePlayerMovementEvents.JUMP, HSD_MD_OnJump )
-		AddPlayerMovementEventCallback( player, ePlayerMovementEvents.DOUBLE_JUMP, HSD_MD_OnDoubleJump )
-		AddPlayerMovementEventCallback( player, ePlayerMovementEvents.DODGE, HSD_MD_OnDodge )
-		AddPlayerMovementEventCallback( player, ePlayerMovementEvents.LEAVE_GROUND, HSD_MD_OnLeaveGround )
-		AddPlayerMovementEventCallback( player, ePlayerMovementEvents.TOUCH_GROUND, HSD_MD_OnTouchGround )
-		AddPlayerMovementEventCallback( player, ePlayerMovementEvents.MANTLE, HSD_MD_OnMantle )
-		AddPlayerMovementEventCallback( player, ePlayerMovementEvents.BEGIN_WALLRUN, HSD_MD_OnBeginWallrun )
-		AddPlayerMovementEventCallback( player, ePlayerMovementEvents.END_WALLRUN, HSD_MD_OnEndWallrun )
-		AddPlayerMovementEventCallback( player, ePlayerMovementEvents.BEGIN_WALLHANG, HSD_MD_OnBeginWallhang )
-		AddPlayerMovementEventCallback( player, ePlayerMovementEvents.END_WALLHANG, HSD_MD_OnEndWallhang )
-		AddPlayerMovementEventCallback( player, ePlayerMovementEvents.BEGIN_SLIDE, HSD_MD_OnBeginSlide )
-		AddPlayerMovementEventCallback( player, ePlayerMovementEvents.END_SLIDE, HSD_MD_OnEndSlide )
-		thread HSD_MD_ServerSample_Thread( player )
-	}
+		if ( !IsValid( player ) || !player.IsPlayer() )
+			return
 
-	HSD_MD_LogEvent( player, "RESPAWN" )
+		// The movement-event table lives on the player entity and survives a
+		// respawn; AddPlayerMovementEventCallback asserts on a second add
+		// (_codecallbacks_common.gnut:958-970).
+		if ( !( player in file.hooked ) )
+		{
+			file.hooked[ player ] <- true
+			AddPlayerMovementEventCallback( player, ePlayerMovementEvents.JUMP, HSD_MD_OnJump )
+			AddPlayerMovementEventCallback( player, ePlayerMovementEvents.DOUBLE_JUMP, HSD_MD_OnDoubleJump )
+			AddPlayerMovementEventCallback( player, ePlayerMovementEvents.DODGE, HSD_MD_OnDodge )
+			AddPlayerMovementEventCallback( player, ePlayerMovementEvents.LEAVE_GROUND, HSD_MD_OnLeaveGround )
+			AddPlayerMovementEventCallback( player, ePlayerMovementEvents.TOUCH_GROUND, HSD_MD_OnTouchGround )
+			AddPlayerMovementEventCallback( player, ePlayerMovementEvents.MANTLE, HSD_MD_OnMantle )
+			AddPlayerMovementEventCallback( player, ePlayerMovementEvents.BEGIN_WALLRUN, HSD_MD_OnBeginWallrun )
+			AddPlayerMovementEventCallback( player, ePlayerMovementEvents.END_WALLRUN, HSD_MD_OnEndWallrun )
+			AddPlayerMovementEventCallback( player, ePlayerMovementEvents.BEGIN_WALLHANG, HSD_MD_OnBeginWallhang )
+			AddPlayerMovementEventCallback( player, ePlayerMovementEvents.END_WALLHANG, HSD_MD_OnEndWallhang )
+			AddPlayerMovementEventCallback( player, ePlayerMovementEvents.BEGIN_SLIDE, HSD_MD_OnBeginSlide )
+			AddPlayerMovementEventCallback( player, ePlayerMovementEvents.END_SLIDE, HSD_MD_OnEndSlide )
+			thread HSD_MD_ServerSample_Thread( player )
+		}
+
+		if ( !file.watcherStarted )
+		{
+			file.watcherStarted = true
+			thread HSD_MD_ServerWatch_Thread()
+		}
+
+		HSD_MD_LogEvent( player, "RESPAWN" )
+	}
+	catch ( eSpawn )
+	{
+		HSD_MD_Error( "sv", "respawn", string( eSpawn ) )
+	}
 }
 
 void function HSD_MD_LogEvent( entity player, string eventName )
 {
-	if ( !HSD_MD_Enabled() || !IsValid( player ) )
-		return
-
-	printt( format( "%s side=sv kind=evt evt=%s t=%.4f who=%s bot=%d %s",
-		HSD_MD_TAG, eventName, Time(), player.GetPlayerName(), player.IsBot() ? 1 : 0,
-		HSD_MD_StateTokens( player ) ) )
+	try
+	{
+		if ( !HSD_MD_Enabled() || !IsValid( player ) )
+			return
+		printt( format( "%s evt=%s t=%.4f ent=%d bot=%d %s", HSD_MD_Head( "sv", "evt" ), eventName, Time(),
+			HSD_MD_EntIndex( player ), player.IsBot() ? 1 : 0, HSD_MD_StateTokens( player ) ) )
+	}
+	catch ( eEvt )
+	{
+		HSD_MD_Error( "sv", "evt_" + eventName, string( eEvt ) )
+	}
 }
 
 void function HSD_MD_OnJump( entity player ) { HSD_MD_LogEvent( player, "JUMP" ) }
@@ -185,7 +343,7 @@ void function HSD_MD_OnEndSlide( entity player ) { HSD_MD_LogEvent( player, "END
 
 // Server frames only (base_tickinterval_mp 0.05 -> 20 Hz). One server frame can
 // run several usercmds, so this is a coarse view; per-command data comes from
-// the SDK's bridge_move_trace (Experiment-Plan.md).
+// the SDK's bridge_move_trace.
 void function HSD_MD_ServerSample_Thread( entity player )
 {
 	player.EndSignal( "OnDestroy" )
@@ -193,62 +351,100 @@ void function HSD_MD_ServerSample_Thread( entity player )
 	while ( true )
 	{
 		WaitFrame()
-		if ( !IsValid( player ) )
-			return
-		if ( HSD_MD_ConVarInt( "hsd_md_sv_trace", 0 ) == 0 || !HSD_MD_Enabled() || !IsAlive( player ) )
-			continue
-
-		printt( format( "%s side=sv kind=frame t=%.4f who=%s bot=%d %s",
-			HSD_MD_TAG, Time(), player.GetPlayerName(), player.IsBot() ? 1 : 0,
-			HSD_MD_StateTokens( player ) ) )
-	}
-}
-
-// "hsd_md_mark <label>" -- drops a labelled line into the log so trials can be
-// cut apart afterwards. Labels are reduced to [A-Za-z0-9_-] by the parser.
-void function HSD_MD_ClientCommand_Mark( entity player, array<string> args )
-{
-	if ( !IsValid( player ) || !player.IsPlayer() )
-		return
-
-	string label = args.len() > 0 ? args[0] : "mark"
-	printt( format( "%s side=sv kind=mark t=%.4f who=%s label=%s %s",
-		HSD_MD_TAG, Time(), player.GetPlayerName(), label, HSD_MD_StateTokens( player ) ) )
-}
-
-// "hsd_md_dump" -- the live settings values the server reads for this player.
-// GetPlayerSettingFloat is the read path the base scripts use
-// (_script_movers.gnut:2180-2181). Whether it reflects Player_SetClassVar
-// writes or only the setfile is an open question (Findings-and-Gaps.md).
-void function HSD_MD_ClientCommand_Dump( entity player, array<string> args )
-{
-	if ( !IsValid( player ) || !player.IsPlayer() )
-		return
-
-	DevTextBufferClear()
-	DevTextBufferWrite( "key,value\n" )
-
-	int nOk = 0
-	foreach ( string key in HSD_MD_SETTINGS_KEYS )
-	{
-		string value = "ERR"
 		try
 		{
-			value = format( "%.4f", player.GetPlayerSettingFloat( key ) )
-			nOk++
+			if ( !IsValid( player ) )
+				return
+			if ( HSD_MD_ConVarInt( "hsd_md_sv_trace", 0 ) == 0 || !HSD_MD_Enabled() || !IsAlive( player ) )
+				continue
+			printt( format( "%s t=%.4f ft=%.5f ent=%d bot=%d %s", HSD_MD_Head( "sv", "frame" ), Time(), FrameTime(),
+				HSD_MD_EntIndex( player ), player.IsBot() ? 1 : 0, HSD_MD_StateTokens( player ) ) )
 		}
-		catch ( eSetting )
+		catch ( eSample )
 		{
+			HSD_MD_Error( "sv", "sample", string( eSample ) )
 		}
-		printt( format( "%s side=sv kind=setting who=%s key=%s value=%s", HSD_MD_TAG, player.GetPlayerName(), key, value ) )
-		DevTextBufferWrite( key + "," + value + "\n" )
 	}
+}
 
-	// script_convar_guard.cpp:300-341 keeps only the base name, allows
-	// .txt/.csv/.log/.json and prefixes "scriptdump_".
-	bool dumped = DevTextBufferDumpToFile( "hsd_movediag_settings.csv" )
-	printt( format( "%s side=sv kind=dump who=%s ok=%d total=%d file=%d", HSD_MD_TAG,
-		player.GetPlayerName(), nOk, HSD_MD_SETTINGS_KEYS.len(), dumped ? 1 : 0 ) )
+// Dedi-console levers that need no client->server command routing:
+// hsd_md_run <n> labels the following lines, hsd_md_dump_now 1 dumps every
+// player's settings once and resets itself to 0.
+void function HSD_MD_ServerWatch_Thread()
+{
+	while ( true )
+	{
+		WaitFrame()
+		try
+		{
+			HSD_MD_PollRun( "sv" )
+			if ( HSD_MD_ConVarInt( "hsd_md_dump_now", 0 ) == 0 )
+				continue
+			SetConVarInt( "hsd_md_dump_now", 0 )
+			foreach ( entity player in GetPlayerArray() )
+			{
+				if ( IsValid( player ) )
+					HSD_MD_DumpSettings( "sv", player )
+			}
+		}
+		catch ( eWatch )
+		{
+			HSD_MD_Error( "sv", "watch", string( eWatch ) )
+		}
+	}
+}
+
+// "hsd_md_mark <label>" -- labelled line for cutting trials apart. Reaching the
+// server from the client console is unverified (see LOCAL-SETUP.md).
+void function HSD_MD_ClientCommand_Mark( entity player, array<string> args )
+{
+	try
+	{
+		if ( !IsValid( player ) || !player.IsPlayer() )
+			return
+		string label = args.len() > 0 ? args[0] : "mark"
+		printt( format( "%s t=%.4f ent=%d label=%s %s", HSD_MD_Head( "sv", "mark" ), Time(),
+			HSD_MD_EntIndex( player ), label, HSD_MD_StateTokens( player ) ) )
+	}
+	catch ( eMark )
+	{
+		HSD_MD_Error( "sv", "mark", string( eMark ) )
+	}
+}
+
+// "hsd_md_dump" -- the settings values the server reads for this player, plus
+// a CSV through DevTextBufferDumpToFile. That native has an unguarded SERVER
+// use (survival_loot.gnut:8538); the SDK keeps only the base name and prefixes
+// "scriptdump_" (vscript/script_convar_guard.cpp:300-341).
+void function HSD_MD_ClientCommand_Dump( entity player, array<string> args )
+{
+	try
+	{
+		if ( !IsValid( player ) || !player.IsPlayer() )
+			return
+		HSD_MD_DumpSettings( "sv", player )
+
+		DevTextBufferClear()
+		DevTextBufferWrite( "key,float_value\n" )
+		foreach ( string key in HSD_MD_SETTINGS_KEYS )
+		{
+			string value = "ERR"
+			try
+			{
+				value = format( "%.6f", player.GetPlayerSettingFloat( key ) )
+			}
+			catch ( eCsv )
+			{
+			}
+			DevTextBufferWrite( key + "," + value + "\n" )
+		}
+		bool dumped = DevTextBufferDumpToFile( "hsd_movediag_settings.csv" )
+		printt( format( "%s file=%d", HSD_MD_Head( "sv", "dumpfile" ), dumped ? 1 : 0 ) )
+	}
+	catch ( eDump )
+	{
+		HSD_MD_Error( "sv", "dump", string( eDump ) )
+	}
 }
 #endif // SERVER
 
@@ -262,16 +458,53 @@ void function ClientCodeCallback_HSD_MoveDiag_ModInit()
 		return
 	file.inited = true
 
-	AddCallback_LocalClientPlayerSpawned( HSD_MD_OnLocalPlayerSpawned )
-	printt( HSD_MD_TAG + " side=cl kind=init" )
+	if ( IsLobby() )
+		return
+
+	// Started directly from init like SurfMovement_ApplyWhenReady_THREAD
+	// (sh_surf_movement.gnut:77), so it never depends on spawn-callback order;
+	// the loop idles until a live local player exists.
+	thread HSD_MD_ClientSample_Thread()
+	printt( HSD_MD_Head( "cl", "init" ) + " mod=0.2.0" )
 }
 
-void function HSD_MD_OnLocalPlayerSpawned( entity player )
+int function HSD_MD_InputHeld( entity player, int button )
 {
-	if ( file.samplerStarted )
-		return
-	file.samplerStarted = true
-	thread HSD_MD_ClientSample_Thread()
+	try
+	{
+		return player.IsInputCommandHeld( button ) ? 1 : 0
+	}
+	catch ( eInput )
+	{
+	}
+	return -1
+}
+
+float function HSD_MD_Axis( entity player, bool forward )
+{
+	try
+	{
+		return forward ? player.GetInputAxisForward() : player.GetInputAxisRight()
+	}
+	catch ( eAxis )
+	{
+	}
+	return -9.0
+}
+
+// View angles as "pitch,yaw"; the base builds a move intention from the input
+// axes rotated by EyeAngles().y (sh_doors.nut:1577-1580).
+string function HSD_MD_Angles( entity player )
+{
+	try
+	{
+		vector ang = player.EyeAngles()
+		return format( "%.3f,%.3f", ang.x, ang.y )
+	}
+	catch ( eAngles )
+	{
+	}
+	return "nan,nan"
 }
 
 // Samples the predicted local player once per client frame. Edges are found on
@@ -288,49 +521,69 @@ void function HSD_MD_ClientSample_Thread()
 	while ( true )
 	{
 		WaitFrame()
-
-		entity player = GetLocalClientPlayer()
-		if ( !IsValid( player ) || !player.IsPlayer() || !IsAlive( player ) || !HSD_MD_Enabled() )
+		try
 		{
-			prevGround = -1
-			continue
+			HSD_MD_PollRun( "cl" )
+
+			entity player = GetLocalClientPlayer()
+			if ( !IsValid( player ) || !player.IsPlayer() || !IsAlive( player ) || !HSD_MD_Enabled() )
+			{
+				prevGround = -1
+				continue
+			}
+
+			if ( HSD_MD_ConVarInt( "hsd_md_dump_now", 0 ) != 0 )
+			{
+				SetConVarInt( "hsd_md_dump_now", 0 )
+				HSD_MD_DumpSettings( "cl", player )
+			}
+
+			float now = Time()
+			vector vel = player.GetVelocity()
+			float spd = Length2D( vel )
+			int ground = HSD_MD_OnGround( player )
+
+			if ( HSD_MD_ConVarInt( "hsd_md_cl_trace", 0 ) != 0 )
+			{
+				printt( format( "%s t=%.4f ft=%.5f %s ang=%s in_jump=%d in_duck=%d in_fwd=%d ax_fwd=%.3f ax_right=%.3f",
+					HSD_MD_Head( "cl", "frame" ), now, FrameTime(), HSD_MD_StateTokens( player ), HSD_MD_Angles( player ),
+					HSD_MD_InputHeld( player, IN_JUMP ), HSD_MD_InputHeld( player, IN_DUCK ),
+					HSD_MD_InputHeld( player, IN_FORWARD ),
+					HSD_MD_Axis( player, true ), HSD_MD_Axis( player, false ) ) )
+			}
+
+			if ( ground == 0 && spd > peakSpeed )
+				peakSpeed = spd
+
+			if ( prevGround == 1 && ground == 0 )
+			{
+				// Ground contact shorter than 0.1 s between two airtimes counts as a hop chain.
+				float groundTime = now - groundStart
+				hops = ( groundTime < 0.1 ) ? hops + 1 : 0
+				airStart = now
+				takeoffSpeed = spd
+				peakSpeed = spd
+				printt( format( "%s t=%.4f groundtime=%.4f hop=%d %s", HSD_MD_Head( "cl", "takeoff" ),
+					now, groundTime, hops, HSD_MD_StateTokens( player ) ) )
+			}
+			else if ( prevGround == 0 && ground == 1 )
+			{
+				groundStart = now
+				printt( format( "%s t=%.4f airtime=%.4f takeoff=%.3f peak=%.3f land=%.3f gain=%.3f hop=%d %s",
+					HSD_MD_Head( "cl", "land" ), now, now - airStart, takeoffSpeed, peakSpeed, spd,
+					spd - takeoffSpeed, hops, HSD_MD_StateTokens( player ) ) )
+			}
+			else if ( prevGround == -1 && ground == 1 )
+			{
+				groundStart = now
+			}
+
+			prevGround = ground
 		}
-
-		float now = Time()
-		vector vel = player.GetVelocity()
-		float spd = Length2D( vel )
-		int ground = HSD_MD_OnGround( player )
-
-		if ( HSD_MD_ConVarInt( "hsd_md_cl_trace", 0 ) != 0 )
-			printt( format( "%s side=cl kind=frame t=%.4f %s", HSD_MD_TAG, now, HSD_MD_StateTokens( player ) ) )
-
-		if ( ground == 0 && spd > peakSpeed )
-			peakSpeed = spd
-
-		if ( prevGround == 1 && ground == 0 )
+		catch ( eClient )
 		{
-			// Ground contact shorter than ~0.1 s between two airtimes counts as a hop chain.
-			float groundTime = now - groundStart
-			hops = ( groundTime < 0.1 ) ? hops + 1 : 0
-			airStart = now
-			takeoffSpeed = spd
-			peakSpeed = spd
-			printt( format( "%s side=cl kind=takeoff t=%.4f groundtime=%.4f hop=%d %s",
-				HSD_MD_TAG, now, groundTime, hops, HSD_MD_StateTokens( player ) ) )
+			HSD_MD_Error( "cl", "sample", string( eClient ) )
 		}
-		else if ( prevGround == 0 && ground == 1 )
-		{
-			groundStart = now
-			printt( format( "%s side=cl kind=land t=%.4f airtime=%.4f takeoff=%.2f peak=%.2f land=%.2f gain=%.2f hop=%d %s",
-				HSD_MD_TAG, now, now - airStart, takeoffSpeed, peakSpeed, spd, spd - takeoffSpeed, hops,
-				HSD_MD_StateTokens( player ) ) )
-		}
-		else if ( prevGround == -1 && ground == 1 )
-		{
-			groundStart = now
-		}
-
-		prevGround = ground
 	}
 }
 #endif // CLIENT

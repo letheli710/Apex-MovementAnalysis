@@ -30,7 +30,8 @@ BUTTONS = {
 # tapstrafe.cpp:26 -- IN_FORWARD|IN_BACK|IN_MOVELEFT|IN_MOVERIGHT
 LURCH_MASK = 0x618
 
-_F = r"(-?\d+(?:\.\d+)?(?:[eE][-+]?\d+)?|-?nan|-?inf)"
+# MSVC prints NaN/Inf as "-nan(ind)", "nan", "inf" (or "1.#INF" on old CRTs).
+_F = r"(-?\d+(?:\.\d+)?(?:[eE][-+]?\d+)?|-?nan(?:\([a-z]+\))?|-?inf|-?1\.#(?:INF|IND|QNAN)\d*)"
 TRACE_RE = re.compile(
     r"\[MOVE-TRACE\] cmd=(-?\d+) ent=(-?\d+) ms=" + _F + r" spr=(\d+) duck=(-?\d+) slide=(\d+) ge=(\d+) "
     r"fwd=" + _F + r" sd=" + _F + r" b=([0-9A-Fa-f]{8}) msc=" + _F +
@@ -38,6 +39,15 @@ TRACE_RE = re.compile(
     r" po=" + _F + " " + _F + " " + _F + r" pv=" + _F + " " + _F + " " + _F + r"( rp=1)?")
 HSD_RE = re.compile(r"\[HSD-MD\](.*)$")
 KV_RE = re.compile(r"([A-Za-z_][A-Za-z0-9_]*)=(\S+)")
+
+
+def _num(text):
+    t = text.lower()
+    if "nan" in t or "#ind" in t or "#qnan" in t:
+        return float("nan")
+    if "inf" in t:
+        return float("-inf") if t.startswith("-") else float("inf")
+    return float(t)
 
 
 def button_names(mask):
@@ -49,16 +59,16 @@ def parse_trace_line(line):
     if not m:
         return None
     g = m.groups()
-    f = [float(x) for x in g[2:3]]  # ms
+    f = [_num(x) for x in g[2:3]]  # ms
     row = {
         "cmd": int(g[0]), "ent": int(g[1]), "maxspeed": f[0],
         "sprint": int(g[3]), "duck": int(g[4]), "slide": int(g[5]), "ground": int(g[6]),
-        "fwd": float(g[7]), "side": float(g[8]), "buttons": int(g[9], 16), "movescale": float(g[10]),
+        "fwd": _num(g[7]), "side": _num(g[8]), "buttons": int(g[9], 16), "movescale": _num(g[10]),
     }
-    o = [float(x) for x in g[11:14]]
-    v = [float(x) for x in g[14:17]]
-    po = [float(x) for x in g[17:20]]
-    pv = [float(x) for x in g[20:23]]
+    o = [_num(x) for x in g[11:14]]
+    v = [_num(x) for x in g[14:17]]
+    po = [_num(x) for x in g[17:20]]
+    pv = [_num(x) for x in g[20:23]]
     row.update(ox=o[0], oy=o[1], oz=o[2], vx=v[0], vy=v[1], vz=v[2],
                pox=po[0], poy=po[1], poz=po[2], pvx=pv[0], pvy=pv[1], pvz=pv[2],
                replay=1 if g[23] else 0)
@@ -181,6 +191,8 @@ def selftest():
     assert h["kind"] == "land" and h["gain"] == "10.00" and h["v"] == "1,2,3", h
     m = parse_hsd_line("[HSD-MD] side=sv kind=mark t=1.0 who=me label=tap/strafe#1")
     assert m["label"] == "tapstrafe1"
+    nanline = sv.replace("v=300.000 ", "v=-nan(ind) ")
+    assert parse_trace_line(nanline) is not None and math.isnan(parse_trace_line(nanline)["vx"])
     print("selftest ok")
     return 0
 

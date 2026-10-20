@@ -1,0 +1,41 @@
+{
+  "files": [
+    "/home/user/Apex-MovementAnalysis/research/phase2-prep/fixtures/synthetic/platform/logs/client/00000000-synth-client/message.log",
+    "/home/user/Apex-MovementAnalysis/research/phase2-prep/fixtures/synthetic/platform/logs/client/00000000-synth-client/script.log",
+    "/home/user/Apex-MovementAnalysis/research/phase2-prep/fixtures/synthetic/platform/logs/server/00000000-synth-server/message.log",
+    "/home/user/Apex-MovementAnalysis/research/phase2-prep/fixtures/synthetic/platform/logs/server/00000000-synth-server/script.log"
+  ],
+  "summary": {
+    "errors": 0,
+    "warnings": 0,
+    "infos": 3,
+    "codes": {
+      "I_SETTING_ERR": 1,
+      "I_REPLAYS": 1,
+      "I_JOIN": 1
+    }
+  },
+  "issues": [
+    {
+      "severity": "info",
+      "code": "I_SETTING_ERR",
+      "file": "script.log",
+      "line_no": 6,
+      "message": "settings key dodgeSpeed unreadable"
+    },
+    {
+      "severity": "info",
+      "code": "I_REPLAYS",
+      "file": "message.log",
+      "line_no": 0,
+      "message": "41 re-predicted (rp=1) rows in ('MT', 'cl', 'cmd', 1)"
+    },
+    {
+      "severity": "info",
+      "code": "I_JOIN",
+      "file": "",
+      "line_no": 0,
+      "message": "100.0% of client commands have a dedi line with the same cmd (2070/2070)"
+    }
+  ]
+}
