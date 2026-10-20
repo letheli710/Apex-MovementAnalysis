@@ -1,0 +1,13 @@
+/*
+HSD.MoveDiag compile list. Brace-less root, plain-string entries, and a When
+built only from SERVER CLIENT UI SP MP DEV with && || ! (see the header of
+s21-platform/scripts/vscripts/scripts.rson and Script_ModRsonIsSafe in
+s21-r5sdk/src/vscript/vscript.cpp:440-446). Same shape as the base list's
+"SERVER || CLIENT" block that loads sh_surf_movement.gnut.
+*/
+
+When: "SERVER || CLIENT"
+Scripts:
+[
+	hsd_movediag__movediag.gnut
+]

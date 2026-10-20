@@ -1,0 +1,50 @@
+"ModSystem"
+{
+	"name"			"HSD Movement Diagnostic"
+	"id"			"HSD.MoveDiag"
+	"author"		"High Speed Doom research"
+	"description"	"Observe-only movement logger: server movement events, client per-frame predicted speed, live player-settings dump. Changes no movement."
+	"version"		"0.1.0"
+	"realm"			"both"
+
+	// Mod ConVars are created per engine only when the name is still free
+	// (s21-r5sdk/src/pluginsystem/modsystem.cpp:1043-1137). Scripts read them
+	// through try/catch and fall back to the defaults below, so a missing
+	// ConVar never breaks the VM.
+	"ConVars"
+	{
+		"hsd_md_enable"
+		{
+			"helpText"	"[HSD-MD] master enable for the movement diagnostic mod (observe only)."
+			"flags"		"RELEASE"
+			"Values"
+			{
+				"default"	"1"
+				"min"		"0"
+				"max"		"1"
+			}
+		}
+		"hsd_md_cl_trace"
+		{
+			"helpText"	"[HSD-MD] client: 1 = print one line per client frame (high volume), 0 = takeoff/landing summaries only."
+			"flags"		"RELEASE"
+			"Values"
+			{
+				"default"	"0"
+				"min"		"0"
+				"max"		"1"
+			}
+		}
+		"hsd_md_sv_trace"
+		{
+			"helpText"	"[HSD-MD] server: 1 = print one line per server frame per player (20 Hz at base_tickinterval_mp 0.05)."
+			"flags"		"RELEASE"
+			"Values"
+			{
+				"default"	"0"
+				"min"		"0"
+				"max"		"1"
+			}
+		}
+	}
+}
