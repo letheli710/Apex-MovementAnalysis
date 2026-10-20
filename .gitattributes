@@ -1,0 +1,5 @@
+# Fixtures and generated results are compared byte-for-byte (TestDeterminism),
+# so checkouts must not translate line endings on any OS.
+* text=auto eol=lf
+# csv.writer emits CRLF rows; keep those bytes exactly as generated.
+*.csv -text

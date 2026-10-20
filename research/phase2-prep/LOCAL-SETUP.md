@@ -8,16 +8,16 @@ Each step says what to look for and what to do when it is missing. Facts taken f
 
 | Item | How to check |
 |---|---|
-| Python ≥ 3.8 (stdlib only; developed on 3.13) | `py --version` |
+| Python ≥ 3.8 (stdlib only; developed on 3.13) | `py -3 --version`. Always pass `-3`: without it `py` follows the scripts' `#!/usr/bin/env python3` shebang to the first `python3` on PATH, which is often the Microsoft Store stub (exit 9009, no output) |
 | This repository, branch `claude/laughing-einstein-nlvqcs` | `git pull` |
 | The game root: the folder with `r5apex.exe` and `platform/`. Below it is called `<game>` | the launcher's install path |
-| Optional: matplotlib, for PNG copies of the SVG plots | `py -m pip install matplotlib` |
+| Optional: matplotlib, for PNG copies of the SVG plots | `py -3 -m pip install matplotlib` |
 
 ## 1. Pre-flight on the PC (no game running)
 
 ```powershell
 cd <repo>
-py research\phase2-prep\run_checks.py --base "<game>\platform\scripts\vscripts"
+py -3 research\phase2-prep\run_checks.py --base "<game>\platform\scripts\vscripts"
 ```
 
 All steps should read `PASS`.
@@ -44,6 +44,8 @@ In the launcher, tick **Keep my file changes**. The tooltip says it stops replac
 
 ## 3. Launch (launcher → Play Local, Advanced layout)
 
+Scripted alternative, verified locally in M0: `research\phase2-local\tools\hsd_launch.ps1` starts the same dedi + client pair without the GUI, and `research\phase2-local\tools\hsd_input.ps1` drives keys and the console. See [../phase2-local/m0/M0-REPORT.md](../phase2-local/m0/M0-REPORT.md) §6 and §9.
+
 Labels come from `launcher/src/R5Flowstate.Shell/Loc/english.json`.
 
 1. **ADVANCED** layout. In the **CLIENT** section tick **Developer**: it launches with `-dev -devsdk`, which unlocks developer ConVars and turns on file logs. In the **DEDICATED SERVER** section also tick **Developer**. Tick **Cheats** (`sv_cheats` on the local server).
@@ -69,8 +71,8 @@ Labels come from `launcher/src/R5Flowstate.Shell/Loc/english.json`.
 Quit the match (or keep playing) and collect:
 
 ```powershell
-py research\phase2-prep\tools\hsd_collect.py --game "<game>" --label T0_smoke
-py research\phase2-prep\tools\hsd_tel.py smoke research\data\<stamp>_T0_smoke\platform\logs
+py -3 research\phase2-prep\tools\hsd_collect.py --game "<game>" --label T0_smoke
+py -3 research\phase2-prep\tools\hsd_tel.py smoke research\data\<stamp>_T0_smoke\platform\logs
 ```
 
 `hsd_collect.py` copies the newest `platform\logs\client\<GUID>` and `server\<GUID>` sessions, Movement Lab profiles and any `scriptdump_*` into `research\data\<stamp>_<label>\`. It is read-only on the game folder, and then it writes `report\`.

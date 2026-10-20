@@ -53,7 +53,7 @@ About the reference check:
 | M5 | Mod ConVars are registered on **each** engine in `Activate()` (not `CLIENT_DLL`-guarded). Flag string `RELEASE` is the exact map key (case-sensitive) | verified | `pluginsystem/modsystem.cpp:771-773,1043-1137`; `tier1/cvar.cpp:12,40,76-99` |
 | M6 | Every global function and constant used in a VM has a base-script use compiled in that VM; every method has a base use in that VM | pass (`hsd_vmcheck.py --strict` 0 errors, 0 WEAK; table in `results/vmcheck.txt`) | `tools/hsd_vmcheck.py` |
 | M7 | Client code avoids `IN_BACK`, `IN_MOVELEFT`, `IN_MOVERIGHT`, `IN_SPEED`, `IN_DODGE` (SERVER-only evidence) and uses `GetInputAxisForward/Right` (both VMs) | fixed in v0.2 | `vmcheck --why` output: e.g. `IN_MOVELEFT` only `gamemodes/fs_1v1/_input_detector.nut:55` (SERVER) |
-| M8 | Movement events: `AddPlayerMovementEventCallback` and the 12 `CodeCallback_OnPlayer*` dispatchers exist (SERVER VM only); a second add asserts, so registration is once per entity | verified | `_codecallbacks_common.gnut:958-970,1006-1139`; `scripts.rson:630-637` |
+| M8 | Movement events: `AddPlayerMovementEventCallback` and the 12 `CodeCallback_OnPlayer*` dispatchers exist (SERVER VM only); a second add asserts, so registration is once per entity | verified | `_codecallbacks_common.gnut:958-970,1006-1139`; `s21-platform/scripts/vscripts/scripts.rson:630-637` |
 | M9 | Error containment: an uncaught server-VM error schedules `HS_GAME_SHUTDOWN`. v0.2 wraps every server callback/thread body in `try/catch` and converts errors with `string( e )` | fixed in v0.2 (v0.1 had no containment) | `s21-r5sdk/AGENTS.md:202-207`; pattern `ai/_ai_utility.gnut:781-783`; `return`/`continue` inside `try` appear 55×/11× in the base scripts |
 | M10 | `AddClientCommandCallback` callbacks return `void` | verified | `_codecallbacks_common.gnut:751` |
 | M11 | Settings getters: `GetPlayerSettingFloat` (both VMs), `GetPlayerSettingInt` (SERVER evidence only, so `#if SERVER`), `GetPlayerSettingString` (both). `GetPlayerSettingBool` has **no** base use and is not called | verified | `vmcheck` sites: `_script_movers.gnut:2180`, `weapons/mp_ability_holopilot.nut:571`, `_utility_shared.nut:4378` |
@@ -141,7 +141,7 @@ Additions that refine Phase 1 (not errors):
 
 ## 7. Tomorrow — ordered checklist
 
-1. `git pull`; `py research\phase2-prep\run_checks.py --base "<game>\platform\scripts\vscripts"` → all PASS (this re-checks the mod against **your** installed scripts).
+1. `git pull`; `py -3 research\phase2-prep\run_checks.py --base "<game>\platform\scripts\vscripts"` → all PASS (this re-checks the mod against **your** installed scripts).
 2. Copy `research\phase1\mod\hsd_movediag` → `<game>\mods\hsd_movediag`, and `research\phase2-prep\cfg\*.cfg` → `<game>\platform\cfg\user\`.
 3. Launcher → ADVANCED → tick **Developer** (client and dedi) and **Cheats** → PLAY on a flat open map.
 4. Client: `exec user/hsd_client`, `exec user/hsd_runs`. Dedi: `exec user/hsd_dedi`. Confirm both `kind=init` lines.

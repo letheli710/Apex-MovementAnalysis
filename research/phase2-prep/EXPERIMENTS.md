@@ -14,7 +14,7 @@ A dry run of every analysis command works today on the SYNTHETIC fixtures: repla
 - **Settings to write down once per session:** map and playlist, legend, `fps_max`, and the sprint setting (autosprint, hold or toggle; see the `player_setting_*sprint*` ConVars in `ui/panel_hud_options.nut:298-300`).
 - **Collect after each experiment:**
   ```
-  py research\phase2-prep\tools\hsd_collect.py --game "<game>" --label <E#>
+  py -3 research\phase2-prep\tools\hsd_collect.py --game "<game>" --label <E#>
   ```
   This writes `research\data\<stamp>_<E#>\` containing `platform\logs\...` and `report\`. Below, `<L>` stands for `research\data\<stamp>_<E#>\platform\logs`.
 - **Acceptance levels.**
@@ -39,7 +39,7 @@ A dry run of every analysis command works today on the SYNTHETIC fixtures: repla
 
 **Check.**
 ```
-py research\phase2-prep\tools\hsd_tel.py smoke <L>
+py -3 research\phase2-prep\tools\hsd_tel.py smoke <L>
 ```
 
 **P.** 11/11 PASS. That covers:
@@ -75,7 +75,7 @@ py research\phase2-prep\tools\hsd_tel.py smoke <L>
 
 **Analyse.**
 ```
-py research\phase2-prep\tools\hsd_tel.py census <L> -o census_E0.csv
+py -3 research\phase2-prep\tools\hsd_tel.py census <L> -o census_E0.csv
 ```
 Columns: `key, cl_classvar, cl_setting, sv_setting, *_type, readers, differs`.
 
@@ -106,11 +106,11 @@ Before starting, run on the client: `hsd_md_cl_trace 1` (already set by `hsd_cli
 
 **Analyse.**
 ```
-py research\phase2-prep\tools\hsd_tel.py summary <L> -o E1_summary.csv
-py research\phase2-prep\tools\hsd_tel.py fit-ground <L> --run r11            (HSD client frames, observed Time())
-py research\phase2-prep\tools\hsd_tel.py fit-ground <L> --run r11 --source MT (per-command, dt_est time axis)
-py research\phase2-prep\tools\hsd_tel.py fit-ground <L> --run r11 --source MT --fit-side sv
-py research\phase2-prep\tools\hsd_tel.py plot <L> -o E1_speed.svg
+py -3 research\phase2-prep\tools\hsd_tel.py summary <L> -o E1_summary.csv
+py -3 research\phase2-prep\tools\hsd_tel.py fit-ground <L> --run r11            (HSD client frames, observed Time())
+py -3 research\phase2-prep\tools\hsd_tel.py fit-ground <L> --run r11 --source MT (per-command, dt_est time axis)
+py -3 research\phase2-prep\tools\hsd_tel.py fit-ground <L> --run r11 --source MT --fit-side sv
+py -3 research\phase2-prep\tools\hsd_tel.py plot <L> -o E1_speed.svg
 ```
 
 **Model shapes tried** (`tools/hsdtel/analysis.py`):
@@ -146,10 +146,10 @@ Matches or mismatches go into `VALIDATION-REPORT.md` with the run ids.
 
 **Analyse.**
 ```
-py research\phase2-prep\tools\hsd_tel.py fit-vertical <L>
-py research\phase2-prep\tools\hsd_tel.py fit-air <L> --run r31      (repeat per run; or omit --run for all)
-py research\phase2-prep\tools\hsd_tel.py events <L> -o E2_events.csv
-py research\phase2-prep\tools\hsd_tel.py plot <L> --y vz -o E2_vz.svg
+py -3 research\phase2-prep\tools\hsd_tel.py fit-vertical <L>
+py -3 research\phase2-prep\tools\hsd_tel.py fit-air <L> --run r31      (repeat per run; or omit --run for all)
+py -3 research\phase2-prep\tools\hsd_tel.py events <L> -o E2_events.csv
+py -3 research\phase2-prep\tools\hsd_tel.py plot <L> --y vz -o E2_vz.svg
 ```
 
 `fit-air` uses HSD client frame pairs. It needs `ang=` and `ax_*` to be present: **check that `rows.csv` has `yaw` and `ax_fwd` filled, and no `-9`/`nan`.** If they are missing, the input APIs failed at run time; log that in `VALIDATION-REPORT.md` and keep the vertical results only.
@@ -181,8 +181,8 @@ Optional but recommended: a wheel jump bind for frame-tight re-jumps, `bind MWHE
 
 **Analyse.**
 ```
-py research\phase2-prep\tools\hsd_tel.py hops <L> -o E4_hops.csv
-py research\phase2-prep\tools\hsd_tel.py compare <L> --baseline r51 -o E4_compare.csv
+py -3 research\phase2-prep\tools\hsd_tel.py hops <L> -o E4_hops.csv
+py -3 research\phase2-prep\tools\hsd_tel.py compare <L> --baseline r51 -o E4_compare.csv
 ```
 
 `hops.csv` has one row per land→take-off pair: `ground_time`, `spd_air_before_land`, `spd_at_takeoff`, `loss_on_ground`.
@@ -206,9 +206,9 @@ py research\phase2-prep\tools\hsd_tel.py compare <L> --baseline r51 -o E4_compar
 
 **Analyse.**
 ```
-py research\phase2-prep\tools\hsd_tel.py slides <L> -o E5_slides.csv
-py research\phase2-prep\tools\hsd_tel.py events <L> -o E5_events.csv
-py research\phase2-prep\tools\hsd_tel.py plot <L> -o E5_speed.svg
+py -3 research\phase2-prep\tools\hsd_tel.py slides <L> -o E5_slides.csv
+py -3 research\phase2-prep\tools\hsd_tel.py events <L> -o E5_events.csv
+py -3 research\phase2-prep\tools\hsd_tel.py plot <L> -o E5_speed.svg
 ```
 
 `slides.csv`: `speed_before`, `speed_peak`, `boost = peak − before`, `duration_s`, `mean_decel`, `linear_r2` per slide, for each of MT/cl, HSD/cl and MT/sv.
@@ -223,10 +223,10 @@ py research\phase2-prep\tools\hsd_tel.py plot <L> -o E5_speed.svg
 
 ## After the session
 
-1. Run `py research\phase2-prep\run_checks.py --base "<game>\platform\scripts\vscripts"` (repo still green).
+1. Run `py -3 research\phase2-prep\run_checks.py --base "<game>\platform\scripts\vscripts"` (repo still green).
 2. For each experiment, add to `VALIDATION-REPORT.md` → "Local session results": P/M outcome, numbers with spread, run ids and anomalies.
 3. Export one clean trial per experiment for Unity:
    ```
-   py research\phase2-prep\tools\hsd_tel.py export-contract <L> --run r11 --experiment E1 -o research\data\trials\E1_r11
+   py -3 research\phase2-prep\tools\hsd_tel.py export-contract <L> --run r11 --experiment E1 -o research\data\trials\E1_r11
    ```
 4. Commit `research\data\<stamp>_*\report\` and the trials.

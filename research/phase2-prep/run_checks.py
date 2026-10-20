@@ -28,6 +28,16 @@ RESULTS = os.path.join(HERE, "results")
 PY = sys.executable
 
 
+def default_src_root():
+    """HSD_SRC_ROOT, else the cloud path, else a research-src/ folder beside the repository."""
+    if os.environ.get("HSD_SRC_ROOT"):
+        return os.environ["HSD_SRC_ROOT"]
+    for p in ("/home/user/research-src", os.path.join(REPO, os.pardir, "research-src")):
+        if os.path.isdir(p):
+            return os.path.normpath(p)
+    return "/home/user/research-src"
+
+
 def rel(p):
     return os.path.relpath(p, REPO)
 
@@ -48,8 +58,8 @@ def step(log, name, args, expect=0, cwd=None):
 def main(argv):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--base", default=os.environ.get("HSD_BASE_SCRIPTS",
-                    "/home/user/research-src/s21-platform/scripts/vscripts"))
-    ap.add_argument("--src-root", default=os.environ.get("HSD_SRC_ROOT", "/home/user/research-src"),
+                    os.path.join(default_src_root(), "s21-platform", "scripts", "vscripts")))
+    ap.add_argument("--src-root", default=default_src_root(),
                     help="folder holding s21-r5sdk/, s21-platform/, launcher/ clones")
     a = ap.parse_args(argv)
     os.makedirs(RESULTS, exist_ok=True)

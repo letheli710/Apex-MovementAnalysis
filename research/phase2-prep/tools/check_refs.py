@@ -26,6 +26,16 @@ RUNTIME_RE = re.compile(r"(^|/)(mods\.vdf|required_mods\.vdf|allowed_mods\.vdf|s
 SKIP_MARK = "refcheck:skip"   # put <!-- refcheck:skip --> on a line that quotes an old/wrong reference on purpose
 
 
+def default_src_root():
+    """HSD_SRC_ROOT, else the cloud path, else a research-src/ folder beside the repository."""
+    if os.environ.get("HSD_SRC_ROOT"):
+        return os.environ["HSD_SRC_ROOT"]
+    for p in ("/home/user/research-src", os.path.join(REPO, os.pardir, "research-src")):
+        if os.path.isdir(p):
+            return os.path.normpath(p)
+    return "/home/user/research-src"
+
+
 def line_numbers(spec):
     out = []
     for part in spec.replace(" ", "").split(","):
@@ -108,6 +118,10 @@ def check(docs, src_root):
                     rows.append((doc, ln, ref + (":" + spec if spec else ""), status, ""))
                     continue
                 okc = [c for c in cands if not lines or max(lines) <= res.count(c)]
+                if not okc and not have_src and external(ref) and "/" not in ref:
+                    # only an unrelated in-repo file shares the basename; the real file is in a clone
+                    rows.append((doc, ln, ref + (":" + spec if spec else ""), "unchecked", ""))
+                    continue
                 if not okc:
                     status = "line_out_of_range"
                     detail = f"max cited {max(lines)} > {res.count(cands[0])} lines in {os.path.relpath(cands[0], REPO if REPO in cands[0] else src_root)}"
@@ -127,7 +141,7 @@ def check(docs, src_root):
 def main(argv):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("docs", nargs="*")
-    ap.add_argument("--src-root", default=os.environ.get("HSD_SRC_ROOT", "/home/user/research-src"))
+    ap.add_argument("--src-root", default=default_src_root())
     ap.add_argument("--verbose", action="store_true")
     a = ap.parse_args(argv)
     docs = a.docs or sorted(
