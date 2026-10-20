@@ -304,3 +304,53 @@ def write_console_copy(src_paths, out_path, n=200):
             lines.append(body + "\x1b[0m\n")
     _write(out_path, lines, lines=True)
     return out_path
+
+
+def write_two_sessions(out_dir, seed=1, runs=(1, 2), base_wall=36000.0, gap_s=600.0):
+    """Two recordings (separate client and dedi log-session folders, 10 minutes
+    apart) whose usercmd numbers both start at 1, so every command number
+    occurs twice. Session A walks along +X, session B along +Y, so a
+    cross-session join is visible in the positions. Returns {session: {name: path}}."""
+    out = {}
+    for n, (letter, run, yaw) in enumerate((("a", runs[0], 0.0), ("b", runs[1], 90.0))):
+        sim = Sim(seed + n)
+        sim.cmd = 0
+        sim.hold(0.2, ax_fwd=0, ax_right=0, yaw=yaw, run=run)
+        sim.hold(1.0, ax_fwd=1, ax_right=0, yaw=yaw, run=run)
+        sim.hold(0.3, ax_fwd=0, ax_right=0, yaw=yaw, run=run)
+        rng = random.Random(seed + 10 + n)
+        wall = base_wall + n * gap_s
+        t0 = sim.records[0]["t"] - sim.ft
+        cl_dir = os.path.join(out_dir, "platform", "logs", "client", f"00000000-synth-{letter}-client")
+        sv_dir = os.path.join(out_dir, "platform", "logs", "server", f"00000000-synth-{letter}-server")
+        os.makedirs(cl_dir, exist_ok=True)
+        os.makedirs(sv_dir, exist_ok=True)
+        cl_msg, cl_scr, sv_msg, sv_scr = [HEADER], [HEADER], [HEADER], [HEADER]
+        cl_msg.append(_stamp(wall, -0.5) + "Native(E): [BRIDGE] CONNACCEPT map='mp_synth_flat' -- queuing CONNECTED\n")
+        sv_msg.append(_stamp(wall, -1.0) + "Native(E): CHostState::State_NewGame: Loading level: 'mp_synth_flat'\n")
+        seq = {"cl": 0, "sv": 0}
+
+        def head(side, kind, r):
+            seq[side] += 1
+            return f"[HSD-MD] ver=2 side={side} kind={kind} run={r} seq={seq[side]}"
+
+        cl_scr.append(_stamp(wall, -0.4) + "Script(C): " + head("cl", "init", 0) + " mod=0.2.0\n")
+        sv_scr.append(_stamp(wall, -0.9) + "Script(S): " + head("sv", "init", 0) + " mod=0.2.0\n")
+        for side, lines, pref in (("cl", cl_scr, "Script(C): "), ("sv", sv_scr, "Script(S): ")):
+            lines.append(_stamp(wall, -0.01) + pref + head(side, "run", run) + f" prev=0 t={t0:.5f}\n")
+        for r in sim.records:
+            rel = r["t"] - t0
+            cl_msg.append(_stamp(wall, rel) + "Native(C): " + _mt(r) + "\n")
+            st = _state(r["post_o"], r["post_v"], r["post_ground"], r["post_slide"], r["in_duck"])
+            cl_scr.append(_stamp(wall, rel + 0.0002) + "Script(C): " + head("cl", "frame", run)
+                          + f" t={r['t']:.5f} ft={sim.ft:.5f} {st} ang=0.000,{r['yaw']:.3f} in_jump={r['in_jump']}"
+                          f" in_duck={r['in_duck']} in_fwd={r['in_fwd']} ax_fwd={r['ax_fwd']:.3f} ax_right={r['ax_right']:.3f}\n")
+            sv_msg.append(_stamp(wall, math.ceil(rel / 0.05) * 0.05 + 0.004) + "Native(S): " + _mt(r, 0.0005, rng) + "\n")
+        paths = {}
+        for name, d, lines in (("cl_message", cl_dir, cl_msg), ("cl_script", cl_dir, cl_scr),
+                               ("sv_message", sv_dir, sv_msg), ("sv_script", sv_dir, sv_scr)):
+            fn = os.path.join(d, "message.log" if "message" in name else "script.log")
+            _write(fn, lines, lines=True)
+            paths[name] = fn
+        out[letter] = paths
+    return out

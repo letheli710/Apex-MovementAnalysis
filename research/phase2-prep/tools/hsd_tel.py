@@ -16,9 +16,10 @@ Inputs are log files or folders (e.g. <game>/platform/logs/client/<GUID>/ and
   compare   <inputs...> --baseline r1 [-o f.csv]
   fit-ground / fit-air / fit-vertical <inputs...>   JSON to stdout
   plot      <inputs...> -o f.svg [--y spd2d|vz] [--source HSD|MT] [--side cl|sv]
-  export-contract <inputs...> --run r1 -o TRIAL_DIR   hsdmove-trial/1 for Unity comparison
-  check-contract  TRIAL_DIR                         contract conformance; exit 2 on problems
-  compare-contracts REF_DIR TEST_DIR [--json f]     step-aligned comparison; exit 3 when it fails
+  export-contract <inputs...> --run r1 -o TRIAL_DIR [--params census.csv|logs] [--course-note TEXT]
+                                    hsdmove-trial/2 for Unity comparison
+  check-contract  TRIAL_DIR                         strict contract conformance; exit 2 on problems
+  compare-contracts REF_DIR TEST_DIR [--json f]     usercmd-aligned comparison; exit 3 when it fails
   synth     -o DIR                  write SYNTHETIC example logs (not Apex data)
   schema    [-o f.json]             column contract as JSON
 
@@ -213,7 +214,13 @@ def main(argv):
     p.add_argument("--trial-id")
     p.add_argument("--experiment", default="")
     p.add_argument("--source-label", default="r5flowstate")
-    p.add_argument("--params", help="census.csv (from 'census'/'report') to fill the manifest parameters")
+    p.add_argument("--params", help="census.csv (from 'census'/'report'), or 'logs' for the census of the inputs, "
+                                    "to fill the manifest parameters")
+    p.add_argument("--params-side", choices=["cl", "sv"],
+                   help="side whose readings fill the parameters (default: --contract-side)")
+    p.add_argument("--session", help="log session GUID when the run label occurs in several sessions")
+    p.add_argument("--map", help="map name for terrain.map (default: the level-load line of the session)")
+    p.add_argument("--course-note", default="", help="free-text description of the course/terrain")
     p = sub.add_parser("check-contract")
     p.add_argument("trial")
     p = sub.add_parser("compare-contracts")
@@ -233,7 +240,8 @@ def main(argv):
         paths, _ = synth.write_logs(a.out, a.seed)
         faulty, expected = synth.write_faulty(paths, os.path.join(a.out, "faulty"))
         console = synth.write_console_copy(paths, os.path.join(a.out, "console_copy_client.txt"))
-        for p in list(paths.values()) + faulty + [console]:
+        two = synth.write_two_sessions(os.path.join(a.out, "two_sessions"), a.seed)
+        for p in list(paths.values()) + faulty + [console] + [f for s in two.values() for f in s.values()]:
             print("SYNTHETIC", p)
         print("expected issue codes in faulty/:", ",".join(sorted(expected)))
         return 0
@@ -261,6 +269,9 @@ def main(argv):
         print(text)
         if a.json:
             _write(a.json, text)
+        al = res["alignment"]
+        print(f"alignment by {al['by']}: {'ok' if al['ok'] else 'FAILED'} - {al['message']}")
+        print("PASS" if res.get("pass") else "FAIL")
         return 0 if res.get("pass") else 3
 
     files, rows, issues = load(a.inputs, a.side, a.burst_gap)
@@ -291,10 +302,22 @@ def main(argv):
         source = a.source_label
         if synth_suffix(files):
             source = "synthetic"
-        params = contract.parameters_from_census(a.params) if a.params else None
+        pside = a.params_side or a.contract_side
+        params, pissues = None, []
+        if a.params == "logs":
+            params, pissues = contract.parameters_from_census_rows(analysis.census(rows), pside)
+        elif a.params:
+            params, pissues = contract.parameters_from_census(a.params, side=pside)
+        if pside != a.contract_side:
+            pissues.insert(0, f"parameters taken from side {pside} on request; the trajectory is {a.contract_side}")
         m, smp = contract.export_trial(rows, a.run, a.out, a.contract_side, a.trial_id, source, a.experiment,
-                                       parameters=params)
-        print(f"wrote {a.out}: {len(smp)} steps, source={m['source']}")
+                                       parameters=params, parameter_issues=pissues, parameters_side=pside,
+                                       session=a.session, course_note=a.course_note, map_name=a.map)
+        for i in pissues:
+            print("PARAM", i)
+        tm = m["timing"]
+        print(f"wrote {a.out}: {len(smp)} steps, usercmd {tm['cmd_first']}..{tm['cmd_last']}, "
+              f"frames without usercmd {tm['frames_without_cmd']}, source={m['source']}, map={m['terrain']['map'] or '-'}")
     elif a.cmd == "census":
         write_csv(a.out, analysis.census(rows))
     elif a.cmd == "slides":

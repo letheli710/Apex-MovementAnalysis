@@ -227,6 +227,11 @@ py -3 research\phase2-prep\tools\hsd_tel.py plot <L> -o E5_speed.svg
 2. For each experiment, add to `VALIDATION-REPORT.md` → "Local session results": P/M outcome, numbers with spread, run ids and anomalies.
 3. Export one clean trial per experiment for Unity:
    ```
-   py -3 research\phase2-prep\tools\hsd_tel.py export-contract <L> --run r11 --experiment E1 -o research\data\trials\E1_r11
+   py -3 research\phase2-prep\tools\hsd_tel.py export-contract <L> --run r11 --experiment E1 --params logs --course-note "flat ground" -o research\data\trials\E1_r11
    ```
+   - `--params logs` fills the manifest parameters from the client readers of the same logs.
+   - Mismatches between client and dedi are printed as `PARAM` lines and listed in `parameter_issues`.
+   - `--course-note` describes the ground.
+
+   Then run `check-contract` on the trial (`UNITY-DATA-CONTRACT.md` §7).
 4. Commit `research\data\<stamp>_*\report\` and the trials.
