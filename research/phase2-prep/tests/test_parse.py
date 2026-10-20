@@ -105,6 +105,34 @@ class TestFiles(unittest.TestCase):
             self.assertEqual(rows[0]["side"], "unknown")
             self.assertEqual([i.code for i in issues], ["W_SIDE_UNKNOWN"])
 
+    def test_session_from_guid_folder(self):
+        with tempfile.TemporaryDirectory() as d:
+            guid = "89a3c0fc-cd4e-4cfc-b10f-512fd968dd4c"
+            p = os.path.join(d, "platform", "logs", "client", guid, "message.1.log")
+            os.makedirs(os.path.dirname(p))
+            _write(p, MT + "\n")
+            rows, _ = parse.parse_file(p)
+            self.assertEqual(rows[0]["session"], guid)
+            loose = os.path.join(d, "copies", "x.log")
+            os.makedirs(os.path.dirname(loose))
+            _write(loose, MT + "\n")
+            self.assertEqual(parse.parse_file(loose)[0][0]["session"], "copies")
+
+    def test_level_load_lines(self):
+        with tempfile.TemporaryDirectory() as d:
+            sv = os.path.join(d, "server", "00000000-x", "message.log")
+            cl = os.path.join(d, "client", "00000000-y", "message.log")
+            for p, line in ((sv, "Native(E):CHostState::State_NewGame: Loading level: 'mp_rr_x'"),
+                            (cl, "Native(E):[BRIDGE] CONNACCEPT map='mp_rr_x' -- queuing CONNECTED")):
+                os.makedirs(os.path.dirname(p))
+                _write(p, "[2026-10-20 19:00:52.421] [18.605] " + line + "\n"
+                       "[2026-10-20 19:01:20.424] [19.815] Native(E):[BRIDGE] challenge 0x04 map='mp_rr_x'\n")
+            for p, side in ((sv, "sv"), (cl, "cl")):
+                rows, issues = parse.parse_file(p)
+                self.assertEqual([(r["source"], r["kind"], r["value"], r["side"]) for r in rows],
+                                 [("LOG", "map", "mp_rr_x", side)])
+                self.assertEqual(issues, [])
+
     def test_fixture_counts(self):
         files, rows, issues = parse.parse_inputs([LOGS])
         self.assertEqual(len(files), 4)

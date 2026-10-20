@@ -5,7 +5,7 @@ from collections import Counter
 
 from .parse import Issue
 from .schema import HSD_REQUIRED
-from .derive import streams
+from .derive import streams, join_stats
 
 
 def validate(rows, parse_issues, min_join=0.9):
@@ -34,12 +34,12 @@ def validate(rows, parse_issues, min_join=0.9):
         if r.get("kind") == "setting" and r.get("vtype") == "ERR":
             issues.append(Issue("info", "I_SETTING_ERR", r["file"], r["line_no"], f"settings key {r.get('key')} unreadable"))
 
-    # seq continuity per (file, side) for HSD v2
+    # seq continuity per (session, file, side) for HSD v2
     per = {}
     for r in sorted(hsd, key=lambda x: (x["_rank"], x["line_no"])):
         if r.get("_ver") != "2" or r.get("seq") is None:
             continue
-        k = (r["file"], r["side"])
+        k = (r.get("session"), r["file"], r["side"])
         last = per.get(k)
         s = int(r["seq"])
         if last is not None:
@@ -69,11 +69,16 @@ def validate(rows, parse_issues, min_join=0.9):
             if flags[f] > 5:
                 issues.append(Issue("warning", "W_MORE", srows[0]["file"], 0, f"{flags[f] - 5} more {f} rows in {key}"))
         if source == "MT":
-            seen = Counter(r["cmd"] for r in srows if not r.get("replay"))
-            dups = [c for c, n in seen.items() if n > 1]
+            # a command number may repeat only across reset batches (counter restart)
+            seen = Counter((r.get("drv_batch", 0), r["cmd"]) for r in srows if not r.get("replay"))
+            dups = [c for (_b, c), n in seen.items() if n > 1]
             if dups:
                 issues.append(Issue("warning", "W_DUP_CMD", srows[0]["file"], 0,
                                     f"{len(dups)} command number(s) logged twice without rp=1 in {key} (e.g. {dups[:3]})"))
+            batches = len({r.get("drv_batch", 0) for r in srows})
+            if batches > 1:
+                issues.append(Issue("info", "I_RESET_BATCH", srows[0]["file"], 0,
+                                    f"{batches} reset batches (command counter restarted) in {key}"))
             bursts = len({r.get("drv_burst") for r in srows})
             if bursts > 1:
                 issues.append(Issue("info", "I_BURSTS", srows[0]["file"], 0, f"{bursts} command bursts in {key}"))
@@ -92,14 +97,17 @@ def validate(rows, parse_issues, min_join=0.9):
                 if isinstance(t, float) and math.isfinite(t):
                     prev = t
 
-    # client/server command coverage
-    cl = {r["cmd"] for r in mt if r.get("side") == "cl" and not r.get("replay")}
-    sv = {r["cmd"] for r in mt if r.get("side") == "sv"}
-    if cl and sv:
-        ratio = len(cl & sv) / len(cl)
-        sev = "info" if ratio >= min_join else "warning"
+    # client/server command coverage, joined on (session, ent, reset batch, cmd) (derive.join_sides)
+    js = join_stats(rows)
+    if js["cl"] and js["sv"]:
+        sev = "info" if js["ratio"] >= min_join else "warning"
         issues.append(Issue(sev, "I_JOIN" if sev == "info" else "W_JOIN_LOW", "", 0,
-                            f"{ratio:.1%} of client commands have a dedi line with the same cmd ({len(cl & sv)}/{len(cl)})"))
+                            f"{js['ratio']:.1%} of client commands have a dedi line for the same usercmd "
+                            f"(session, ent, reset batch, cmd) ({js['ok']}/{js['cl']}; ambiguous {js['ambiguous']})"))
+        if js["ambiguous"]:
+            issues.append(Issue("warning", "W_JOIN_AMBIGUOUS", "", 0,
+                                f"{js['ambiguous']} client command(s) match more than one dedi line "
+                                "(overlapping sessions or entities); left unjoined"))
     return issues
 
 

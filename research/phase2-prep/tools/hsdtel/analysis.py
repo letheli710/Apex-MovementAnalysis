@@ -8,7 +8,7 @@ evidence for it, not proof of the game's code.
 import math
 from collections import OrderedDict
 
-from .derive import streams, jump_press
+from .derive import streams, jump_press, join_stats
 
 
 # ---------------------------------------------------------------- utilities
@@ -80,7 +80,7 @@ def events(rows):
     jump presses (MT) and the mod's own server events (passed through)."""
     out = []
     for key, srows in streams(rows).items():
-        source, side, fam, ent = key
+        source, side, fam, ent = key[:4]
         if fam not in ("cmd", "frame"):
             if source == "HSD" and fam == "evt":
                 for r in srows:
@@ -390,7 +390,7 @@ def run_summary(rows):
     """One metrics row per (source, side, drv_run) for frame/cmd streams."""
     out = []
     for key, srows in streams(rows).items():
-        source, side, fam, _ent = key
+        source, side, fam, _ent = key[:4]
         if fam not in ("frame", "cmd"):
             continue
         by_run = OrderedDict()
@@ -449,12 +449,37 @@ def compare(summary_rows, baseline, metrics=None):
 
 
 # ---------------------------------------------------------------- E0 census
+# reader column -> (side, what it reads)
+CENSUS_READERS = OrderedDict([
+    ("cl_classvar", ("cl", "client class var: bridge_classvar_get on the live class-var block")),
+    ("cl_setting", ("cl", "client setting: HSD client dump, GetPlayerSetting* on the local player")),
+    ("sv_setting", ("sv", "server setting: HSD dedi dump, GetPlayerSetting*")),
+])
+
+
+def census_number(v):
+    """A census reading as a float (true/false -> 1/0), or None when not numeric."""
+    if v in (None, "", "-"):
+        return None
+    text = str(v).split()[0].strip('"').lower() if str(v).split() else ""
+    if text in ("true", "false"):
+        return 1.0 if text == "true" else 0.0
+    try:
+        return float(text)
+    except ValueError:
+        return None
+
+
+def values_differ(nums):
+    nums = [x for x in nums if x is not None]
+    return len(nums) > 1 and (max(nums) - min(nums)) > 1e-4 * max(1.0, max(abs(x) for x in nums))
+
+
 def census(rows):
-    """One row per settings key: the latest value seen from each reader.
-      cl_classvar  bridge_classvar_get on the client (live class-var block)
-      cl_setting   HSD client dump (GetPlayerSettingFloat/String on the local player)
-      sv_setting   HSD server dump (GetPlayerSettingFloat/Int/String)
-    'differs' compares the numeric readings that exist (tolerance 1e-4 relative)."""
+    """One row per settings key: the latest value seen from each reader
+    (CENSUS_READERS; the column prefix is the side that read it).
+    'differs' compares the numeric readings that exist (tolerance 1e-4 relative);
+    'cl_sv_differs' compares the client readings against the dedi reading only."""
     table = OrderedDict()
     for r in sorted(rows, key=lambda x: (x.get("_rank", 0), x.get("line_no", 0))):
         if r.get("kind") not in ("classvar", "setting"):
@@ -467,22 +492,11 @@ def census(rows):
         t[col] = r.get("value")
         t[col + "_type"] = r.get("vtype")
     for t in table.values():
-        nums = []
-        for col in ("cl_classvar", "cl_setting", "sv_setting"):
-            v = t.get(col)
-            if v in (None, "-"):
-                continue
-            text = str(v).split()[0].strip('"').lower()
-            if text in ("true", "false"):
-                nums.append(1.0 if text == "true" else 0.0)
-                continue
-            try:
-                nums.append(float(text))
-            except ValueError:
-                pass
-        t["readers"] = sum(1 for col in ("cl_classvar", "cl_setting", "sv_setting")
-                           if t.get(col) not in (None, "-"))
-        t["differs"] = int(len(nums) > 1 and (max(nums) - min(nums)) > 1e-4 * max(1.0, max(abs(x) for x in nums)))
+        nums = {col: census_number(t.get(col)) for col in CENSUS_READERS}
+        t["readers"] = sum(1 for col in CENSUS_READERS if t.get(col) not in (None, "-"))
+        t["differs"] = int(values_differ(list(nums.values())))
+        sv = nums["sv_setting"]
+        t["cl_sv_differs"] = int(sv is not None and any(values_differ([nums[c], sv]) for c in ("cl_classvar", "cl_setting")))
     return list(table.values())
 
 
@@ -492,7 +506,7 @@ def slides(rows):
     boost = peak speed in the slide minus the speed on the sample before it."""
     out = []
     for key, srows in streams(rows).items():
-        source, side, fam, _ent = key
+        source, side, fam, _ent = key[:4]
         if fam not in ("frame", "cmd"):
             continue
         series = time_series([r for r in srows if not r.get("replay")], source)
@@ -540,10 +554,9 @@ def smoke(rows, issues, min_join=0.9):
     res.append(("HSD client frames (hsd_md_cl_trace 1)", n[("HSD", "cl", "frame")] > 0, n[("HSD", "cl", "frame")]))
     res.append(("HSD dedi movement events", n[("HSD", "sv", "evt")] > 0, n[("HSD", "sv", "evt")]))
     res.append(("validation errors == 0", sev.get("error", 0) == 0, sev.get("error", 0)))
-    cl = {r["cmd"] for r in rows if r["source"] == "MT" and r.get("side") == "cl" and not r.get("replay")}
-    sv = {r["cmd"] for r in rows if r["source"] == "MT" and r.get("side") == "sv"}
-    join = len(cl & sv) / len(cl) if cl else 0.0
-    res.append((f"client cmds with a dedi line >= {min_join:.0%}", join >= min_join, f"{join:.1%}"))
+    js = join_stats(rows)  # keyed on (session, ent, reset batch, cmd), see derive.join_sides
+    res.append((f"client cmds with a dedi line >= {min_join:.0%}", js["ratio"] >= min_join,
+                f"{js['ratio']:.1%} ({js['ok']}/{js['cl']}, ambiguous {js['ambiguous']})"))
     fts = [r["ft"] for r in rows if r["source"] == "HSD" and r.get("kind") == "frame" and r.get("side") == "cl"
            and isinstance(r.get("ft"), float) and r["ft"] > 0]
     dts = [r["drv_dt_est"] for r in rows if r["source"] == "MT" and r.get("side") == "cl" and r.get("drv_dt_est")

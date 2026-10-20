@@ -17,19 +17,25 @@
       "name": "source",
       "provenance": "meta",
       "unit": "",
-      "description": "MT = SDK [MOVE-TRACE]; HSD = HSD.MoveDiag mod; CV = SDK [CLASSVAR] bridge_classvar_get output"
+      "description": "MT = SDK [MOVE-TRACE]; HSD = HSD.MoveDiag mod; CV = SDK [CLASSVAR] bridge_classvar_get output; LOG = engine level-load line"
     },
     {
       "name": "side",
       "provenance": "obs",
       "unit": "",
-      "description": "cl = S21 client prediction, sv = S3 dedi; from the log prefix Native(C)/Script(S)/... or --side"
+      "description": "cl = S21 client prediction, sv = S3 dedi; from the log prefix Native(C)/Script(S)/... or --side (LOG rows: from the folder)"
+    },
+    {
+      "name": "session",
+      "provenance": "meta",
+      "unit": "",
+      "description": "log session: the GUID folder of the file (platform/logs/<side>/<GUID>/), else the name of its folder; one game process"
     },
     {
       "name": "kind",
       "provenance": "obs",
       "unit": "",
-      "description": "cmd (MT) | classvar (CV) | frame | evt | takeoff | land | mark | run | setting | dump | dumpfile | init | error"
+      "description": "cmd (MT) | classvar (CV) | map (LOG) | frame | evt | takeoff | land | mark | run | setting | dump | dumpfile | init | error"
     },
     {
       "name": "wall",
@@ -287,7 +293,7 @@
       "name": "value",
       "provenance": "obs",
       "unit": "",
-      "description": "HSD setting value as printed"
+      "description": "HSD setting value as printed; LOG map: the map name"
     },
     {
       "name": "msg",
@@ -384,6 +390,18 @@
       "provenance": "drv",
       "unit": "",
       "description": "MT: index of a contiguous command range (gap > --burst-gap cmds starts a new one)"
+    },
+    {
+      "name": "drv_batch",
+      "provenance": "drv",
+      "unit": "",
+      "description": "MT: reset batch within the stream; +1 when cmd goes backwards, or jumps > --burst-gap across a level load / VM start / dedi RESPAWN / position jump (TELEMETRY-SCHEMA.md 5)"
+    },
+    {
+      "name": "drv_join",
+      "provenance": "drv",
+      "unit": "",
+      "description": "MT: ok = paired with the other side's line for the same usercmd on (session, ent, drv_batch, cmd); none; ambiguous (more than one candidate)"
     },
     {
       "name": "drv_spd2d",

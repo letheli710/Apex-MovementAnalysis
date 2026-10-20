@@ -129,7 +129,7 @@ class TestContract(unittest.TestCase):
             for run in ("r1", "r2", "r3"):
                 m, samples = contract.export_trial(self.rows, run, os.path.join(d, run), source="synthetic")
                 self.assertEqual(contract.check_trial(os.path.join(d, run)), [], run)
-                self.assertEqual(m["contract"], "hsdmove-trial/1")
+                self.assertEqual(m["contract"], "hsdmove-trial/2")
             same = contract.compare_trials(os.path.join(d, "r2"), os.path.join(d, "r2"))
             self.assertTrue(same["pass"])
             self.assertEqual(same["pos_rms_u"], 0.0)
@@ -167,12 +167,19 @@ class TestContract(unittest.TestCase):
                                    extrasaction="ignore")
                 w.writeheader()
                 w.writerows(rows)
-            params = contract.parameters_from_census(path)
-            self.assertEqual(params["airSpeed"]["reader"], "sv_setting")
+            params, issues = contract.parameters_from_census(path)
+            # client trajectory -> client readers; the class var wins over the client setting
+            self.assertEqual(params["airSpeed"]["side"], "cl")
+            self.assertEqual(params["airSpeed"]["reader"], "cl_classvar")
+            self.assertEqual(params["airSpeed"]["value"], "40")
             self.assertTrue(params["airSpeed"]["differs_between_readers"])
+            self.assertEqual(params["airSpeed"]["same_side_readings"], {"cl_setting": "45.000000"})
+            self.assertFalse(params["airSpeed"]["side_mismatch"])
             self.assertNotIn("dodgeSpeed", params)
+            self.assertEqual(issues, [])
             m, _ = contract.export_trial(self.rows, "r1", os.path.join(d, "t"), parameters=params)
             self.assertIn("airAcceleration", m["parameters"])
+            self.assertEqual(m["parameters_side"], "cl")
 
     def test_dt_matches_frametime(self):
         import tempfile, os
