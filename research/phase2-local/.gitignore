@@ -1,0 +1,9 @@
+# Raw game logs stay on the local machine: they carry local paths and the
+# command line, and they can be regenerated only by rerunning the game.
+# The repository keeps the derived, path-free report/ outputs instead.
+data/**/platform/
+data/**/scriptdump_*
+# Unified per-row table (several MB per session); rebuilt from the raw logs by hsd_tel.py report.
+data/**/report/rows.csv
+__pycache__/
+*.pyc
