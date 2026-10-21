@@ -284,13 +284,36 @@ SCHEDULES.update({
                      "tap moveright; wait 2.5s",
 })
 
+# M6-A3 ziplines (geometry m6zip; m6/SOURCE-AUDIT.md E-Z). The player starts under the flat rope Z1 (100 u above the
+# floor) facing along it, mounts with +use, then rides / jumps off / crouches off. z5 = Super Jump: a second jump K
+# frames after the jump-off.
+_Z_MOUNT = "wait 72; tap use; "
+SCHEDULES.update({
+    "z0_off0": _Z_MOUNT + "wait 2.0s", "z0_off40": _Z_MOUNT + "wait 2.0s", "z0_off80": _Z_MOUNT + "wait 2.0s",
+    "z0_off120": _Z_MOUNT + "wait 2.0s", "z0_off160": _Z_MOUNT + "wait 2.0s",
+    "z0_nouse": "wait 72; wait 2.0s",
+    "z1_ride": _Z_MOUNT + "wait 5.0s",
+    "z2_jump_none": _Z_MOUNT + "wait 0.8s; tap jump; wait 2.0s",
+    "z2_jump_fwd": _Z_MOUNT + "wait 0.8s; down forward; tap jump; wait 2.0s; up forward",
+    "z2_jump_back": _Z_MOUNT + "wait 0.8s; down backward; tap jump; wait 2.0s; up backward",
+    "z2_jump_right": _Z_MOUNT + "wait 0.8s; down moveright; tap jump; wait 2.0s; up moveright",
+    "z2_jump_pu30": _Z_MOUNT + "wait 0.8s; tap jump; wait 2.0s",
+    "z2_jump_pd30": _Z_MOUNT + "wait 0.8s; tap jump; wait 2.0s",
+    "z3_crouch": _Z_MOUNT + "wait 0.8s; tap duck; wait 2.0s",
+    "z6_up": _Z_MOUNT + "wait 6.0s",
+    "z6_vert": _Z_MOUNT + "wait 5.0s",
+    "z7_air": "wait 72; down forward; tap jump; wait 0.25s; tap use; up forward; wait 2.0s",
+})
+SCHEDULES.update({"z5_sj_k%d" % k: _Z_MOUNT + "wait 0.5s; tap jump; waitf %d; tap jump; wait 2.0s" % k
+                  for k in (1, 2, 3, 4, 6, 8, 12, 40)})
+
 KEYS = {"forward", "backward", "moveleft", "moveright", "jump", "duck", "speed", "left", "right", "lookup", "lookdown",
-        "offhand1", "offhand4"}
+        "offhand1", "offhand4", "use", "attack"}
 # Client cvars a schedule may change with 'set' (constant-rate view turns, M4b).
 VIEW_CVARS = ("cl_yawspeed", "cl_pitchspeed")
 
 # View pitch per schedule (Source: + = down). Grapple trials aim slightly up at the test wall.
-SCHEDULE_PITCH = {"m55_nomod_hold": -10.0, "m4_grapple_hold": -10.0, "m4_grapple_jump": -10.0, "m4_grapple_fwd": -10.0,
+SCHEDULE_PITCH = {"z2_jump_pu30": -30.0, "z2_jump_pd30": 30.0, "m55_nomod_hold": -10.0, "m4_grapple_hold": -10.0, "m4_grapple_jump": -10.0, "m4_grapple_fwd": -10.0,
                   "m4_grapple_near": -10.0, "m4_grapple_far": -10.0, "m4_grapple_p0": 0.0, "m4_grapple_p20": -20.0,
                   "m4b_swing_side": -10.0, "m4b_swing_turn": -10.0, "m4b_swing_turn_w": -10.0, "m4b_swing_jump": -10.0,
                   "m4b_swing_turn_jump": -10.0, "m4b_swing_cross": -10.0, "m4b_swing_cross_w": -10.0,
@@ -311,8 +334,30 @@ SCHEDULE_PRE = {
     "m4_lift_": 'thread SpaceElevator_PropDeploy( p, o + <120, 0, 0>, <0, 0, 0>, null )\npre = " lift=deployed"\n',
 }
 
+# M6-A3 ropes on the clear lanes (m6/SOURCE-AUDIT.md E-Z): Z1 flat 1600 u on lane C 100 u above the floor, Z2 uphill
+# 1600 u (+300 u) at y 6350, Z3 vertical 800 u at (-14700, 6500). CreateZipline picks vertical above |dir.z| 0.7.
+ZIP_SERVER = r'''
+string out = ""
+try
+{
+	foreach ( entity e in GetEntArrayByScriptName( "hsd_zip" ) ) e.Destroy()
+	array<entity> all
+	all.extend( CreateZipline( <-14600, 6800, 394.92>, <-13000, 6800, 394.92>, false, 100 ) )
+	all.extend( CreateZipline( <-14500, 6350, 394.92>, <-12900, 6350, 694.92>, false, 100 ) )
+	all.extend( CreateZipline( <-14700, 6500, 314.92>, <-14700, 6500, 1114.92> ) )
+	foreach ( entity e in all ) e.SetScriptName( "hsd_zip" )
+	out = "zip_ents=" + all.len()
+}
+catch ( err ) { out = "error=" + string( err ) }
+AgentLink_Reply( out )
+'''
+# every zipline schedule starts off the rope (never destroy a rope that is being ridden)
+_ZIP_RESET = 'if ( p.IsZiplining() ) p.Zipline_Stop()\npre = " zip=" + p.IsZiplining()\n'
+SCHEDULE_PRE["z_"] = _ZIP_RESET
+SCHEDULE_PRE["g3_"] = _ZIP_RESET
+
 # Facing so that the schedule's ground motion runs along +X (Source yaw: 0 = +X, 90 = +Y; right = (sin, -cos)).
-SCHEDULE_YAW = {"e1_side": 90.0, "e1_back": 180.0, "e1_diag": 45.0,
+SCHEDULE_YAW = {"z7_air": 90.0, "e1_side": 90.0, "e1_back": 180.0, "e1_diag": 45.0,
                 "m4b_swing_side": 20.0, "m4b_swing_turn": 20.0, "m4b_swing_turn_w": 20.0, "m4b_swing_jump": 20.0,
                 "m4b_swing_turn_jump": 20.0, "m4b_swing_cross": 90.0, "m4b_swing_cross_w": 90.0, "m4b_swing_cross_walk": 90.0}
 
@@ -323,10 +368,17 @@ LANE_B = (-14200.0, 5900.0, 294.92)
 # Lane C: y 6800 is flat from x -14825 to -12475 (m3/map/field_fine.json) and 81 u clear of the wall's bounds.
 LANE_C = (-14800.0, 6800.0, 294.92)
 SPAWN_PAD = (-11699.0, 512.0, 1577.046)  # visible firing-range floor (M0/M1)
-SCHEDULE_ORIGIN_PREFIX = {"a1_wb": LANE_A, "a1_": LANE_B, "m4b_view": LANE_C, "m4b_pad": LANE_C, "m4_valk": LANE_C, "m4_pounce": LANE_C, "m4_stim": LANE_C, "m4_ctrl": LANE_C, "m4_pad": LANE_C, "m4_lift": LANE_C,
+SCHEDULE_ORIGIN_PREFIX = {"z": (-14550.0, 6800.0, 294.92), "a1_wb": LANE_A, "a1_": LANE_B, "m4b_view": LANE_C, "m4b_pad": LANE_C, "m4_valk": LANE_C, "m4_pounce": LANE_C, "m4_stim": LANE_C, "m4_ctrl": LANE_C, "m4_pad": LANE_C, "m4_lift": LANE_C,
                           "m4_grapple": LANE_A, "x_pad_": SPAWN_PAD, "e8_hop350": LANE_C, "e3_": LANE_B, "e8_fast": LANE_C, "e8_slide": LANE_C, "e6_": LANE_A, "e7_": LANE_A,
                           "e8_drop": LANE_A}
 
+
+# M6-A3: under rope Z1 (y 6800) with lateral offsets toward -Y; uphill rope Z2 at y 6350; beside the vertical rope Z3
+_Z1 = (-14550.0, 6800.0, 294.92)
+SCHEDULE_ZIP_ORIGIN = {"z0_off40": (-14550.0, 6760.0, 294.92), "z0_off80": (-14550.0, 6720.0, 294.92),
+                       "z0_off120": (-14550.0, 6680.0, 294.92), "z0_off160": (-14550.0, 6640.0, 294.92),
+                       "z6_up": (-14450.0, 6350.0, 294.92), "z6_vert": (-14740.0, 6500.0, 294.92),
+                       "z7_air": (-14550.0, 6600.0, 294.92)}
 
 # Exact-name origins take precedence over prefixes (grapple distance variants on lane A).
 SCHEDULE_ORIGIN = {"m4_grapple_near": (-13950.0, 6500.0, 294.92), "m4_grapple_far": (-14400.0, 6500.0, 294.92)}
@@ -347,6 +399,8 @@ SCHEDULE_ORIGIN.update({n: (-14100.0, 6050.0, 294.92) for n in ("m4b_swing_cross
 def origin_for(name, default):
     if name in SCHEDULE_ORIGIN:
         return SCHEDULE_ORIGIN[name]
+    if name in SCHEDULE_ZIP_ORIGIN:
+        return SCHEDULE_ZIP_ORIGIN[name]
     for prefix, o in SCHEDULE_ORIGIN_PREFIX.items():
         if name.startswith(prefix):
             return o
@@ -440,6 +494,14 @@ void functionref() f = void function() : ( steps ) {
 			continue
 		}
 		string key = parts[1]
+		if ( verb == "wheel" )
+		{
+			// a mouse-wheel bind: press and release on the same frame (M6-A1 scroll tap strafe)
+			p.ClientCommand( "+" + key )
+			p.ClientCommand( "-" + key )
+			printt( "[HSD-SCHED] ver=1 trial=$trial run=$run edge=wheel key=" + key + " frame=" + ( FrameCount() - f0 ) + " fc=" + FrameCount() + " pt=" + PlatformTime() + " t=" + Time() )
+			continue
+		}
 		if ( verb == "down" || verb == "tap" )
 		{
 			p.ClientCommand( "+" + key )
@@ -481,6 +543,54 @@ def get_schedule(name):
                 "wait 0.9s; up moveright; wait 0.5s" % k)
     return None
 
+
+# M6 client state logger: traversal / hang / zipline / grapple / phase / glide meter per frame while the trial label is set.
+# Each getter is probed once; a missing one prints -1 (the getter list comes from m6/SOURCE-AUDIT.md section A2).
+STATE_CLIENT = string.Template(r'''
+void function f()
+{
+	entity p = GetLocalClientPlayer()
+	int w = 0
+	while ( GetConVarInt( "hsd_md_run" ) != $run && w < 2400 )
+	{
+		WaitFrame()
+		w++
+	}
+	array<string> names = [ "trav", "mant", "hang", "wr", "zip", "gr", "ph", "glide" ]
+	array<bool> ok = [ true, true, true, true, true, true, true, true ]
+	while ( IsValid( p ) && GetConVarInt( "hsd_md_run" ) == $run )
+	{
+		string line = "[HSD-STATE] run=$run fc=" + FrameCount() + " t=" + Time()
+		for ( int i = 0; i < names.len(); i++ )
+		{
+			string v = "-1"
+			if ( ok[i] )
+			{
+				try
+				{
+					if ( i == 0 ) v = p.IsTraversing() ? "1" : "0"
+					else if ( i == 1 ) v = p.IsMantling() ? "1" : "0"
+					else if ( i == 2 ) v = p.IsWallHanging() ? "1" : "0"
+					else if ( i == 3 ) v = p.IsWallRunning() ? "1" : "0"
+					else if ( i == 4 ) v = p.IsZiplining() ? "1" : "0"
+					else if ( i == 5 ) v = p.IsGrappleActive() ? "1" : "0"
+					else if ( i == 6 ) v = p.IsPhaseShifted() ? "1" : "0"
+					else v = string( p.GetGlideMeter() )
+				}
+				catch ( e )
+				{
+					ok[i] = false
+				}
+			}
+			line += " " + names[i] + "=" + v
+		}
+		printt( line )
+		WaitFrame()
+	}
+}
+thread f()
+AgentLink_Reply( "state logger run=$run" )
+''')
 
 # Refill tactical, ultimate and glide/jet meters at every reset when --kit is set (_weapon_utility.nut:3810-3865).
 # The refill also puts the range-doubling dev mod on the grapple (DevAbilities_RefillWeapon, M5.5 finding); from M6 on every
@@ -547,6 +657,9 @@ def parse_schedule(spec, fps=144.0):
         if verb in ("waitair", "waitland"):
             continue
         if verb in ("down", "up", "tap"):
+            if arg not in KEYS:
+                raise ValueError(f"unknown key in {s!r}")
+        elif verb == "wheel":
             if arg not in KEYS:
                 raise ValueError(f"unknown key in {s!r}")
         elif verb == "set":
@@ -626,8 +739,14 @@ def main(argv):
                     help="legend set at session start with Agent_SetLegend (sv_agent_api.nut:739-774); the firing "
                          "range otherwise spawns a random legend per session (M2: Pathfinder, Wraith), and legends "
                          "differ in some class vars (Wraith sprintAcceleration 102 vs 100); '' keeps the spawn legend")
-    ap.add_argument("--geometry", choices=["none", "m3"], default="none",
-                    help="m3: (re)spawn the test wall on lane A before the trials (test_geometry.py)")
+    ap.add_argument("--geometry", default="none",
+                    help="comma list: m3 = the test wall on lane A (test_geometry.py); h<H> = the same rock sunk so its top "
+                         "is H u above the floor (M6-A2 ledge heights); m6zip = the M6 ziplines (ZIP_SERVER)")
+    ap.add_argument("--state-log", action="store_true", help="M6: client [HSD-STATE] logger thread per trial")
+    ap.add_argument("--both-cvar", action="append", default=[],
+                    help="NAME=VALUE set on the dedi and client consoles for the session, restored afterwards")
+    ap.add_argument("--m6-census", action="store_true",
+                    help="also exec user/hsd_m6_classvars (client) and the M6 cvar finds on both consoles")
     ap.add_argument("--kit", action="store_true",
                     help="equip the legend's tactical, ultimate and passives (Agent_SetLegend changes only the setfile; "
                          "m4/ABILITY-TRIGGERS.md) and refill abilities at every reset")
@@ -673,11 +792,16 @@ def main(argv):
         if a.fps != 144.0:
             client.cmd(f"fps_max {a.fps:g}")
             time.sleep(3.0)
-        if a.geometry == "m3":
+        geos = [g for g in a.geometry.split(",") if g and g != "none"]
+        wall = next((g for g in geos if g == "m3" or (g.startswith("h") and g[1:].isdigit())), None)
+        if wall:
             import test_geometry as tg
+            # the rock's top is 232 u above its origin floor (M3); sink it to get a ledge H u above the floor
+            wz = tg.M3_WALL_ORIGIN[2] - (232.0 - float(wall[1:])) if wall != "m3" else tg.M3_WALL_ORIGIN[2]
             server.eval(tg.CLEAR, check=False)
             r = server.eval(tg.SPAWN % dict(model=tg.M3_WALL_MODEL, x=tg.M3_WALL_ORIGIN[0], y=tg.M3_WALL_ORIGIN[1],
-                                            z=tg.M3_WALL_ORIGIN[2], yaw=0.0), check=False)
+                                            z=wz, yaw=0.0), check=False)
+            manifest["geometry_wall_z"] = wz
             manifest["geometry"] = {"wall": r.get("reply", "")}
             for side in (server, client):  # [MB-TRIG] per press edge, [MB-APPLY] per boost finish
                 side.cmd("bridge_mantle_boost_trig_log 1")
@@ -686,6 +810,21 @@ def main(argv):
             if "prop=" not in r.get("reply", "") or "invalid" in r.get("reply", ""):
                 raise SystemExit("test wall could not be spawned")
             time.sleep(2.0)
+        if "m6zip" in geos:
+            r = server.eval(ZIP_SERVER, check=False)
+            manifest["geometry_zip"] = r.get("reply", "")
+            print("ziplines:", manifest["geometry_zip"])
+            if "zip_ents=" not in manifest["geometry_zip"]:
+                raise SystemExit("ziplines could not be spawned")
+            time.sleep(1.0)
+        restore = []
+        for nv in a.both_cvar:
+            name, _, val = nv.partition("=")
+            for side in (server, client):
+                old = side.eval(f'AgentLink_Reply( GetConVarString( "{name}" ) )', check=False).get("reply", "")
+                restore.append((side, name, old))
+                side.cmd(f"{name} {val}")
+        manifest["both_cvars"] = {nv.partition("=")[0]: nv.partition("=")[2] for nv in a.both_cvar}
         if a.legend:
             r = server.eval('Agent_SetLegend( "me", "%s" )' % a.legend.replace('"', ''))
             manifest["legend_reply"] = r.get("reply", "")
@@ -705,6 +844,12 @@ def main(argv):
             for side, line in ((client, "exec user/hsd_e0_classvars"), (client, "hsd_md_dump_now 1"),
                                (server, "hsd_md_dump_now 1")):
                 side.cmd(line)
+            time.sleep(2.0)
+        if a.m6_census:
+            client.cmd("exec user/hsd_m6_classvars")
+            for side in (server, client):
+                for f in ("jump_grace", "zipline", "mantle_boost", "lurch"):
+                    side.cmd(f"find {f}")
             time.sleep(2.0)
         plan = [(names[0], 90 + w, 900 + w, True) for w in range(a.warmup)]
         k = 0
@@ -728,6 +873,8 @@ def main(argv):
             for st in steps:
                 if st.startswith("set "):
                     client.cmd(st[4:])
+            if a.state_log:
+                client.eval(STATE_CLIENT.substitute(run=run), check=False)
             sched = client.eval(SCHED_CLIENT.substitute(
                 steps=", ".join(json.dumps(s) for s in steps), ox=ox, oy=oy, oz=oz,
                 settle_frames=a.settle_frames, settle_timeout=a.settle_timeout, trial=trial, run=run))
@@ -746,6 +893,9 @@ def main(argv):
             print(f"{tag}trial {trial} run r{run} {name}: {'ok' if ok else 'FAILED (' + why + ')'} fps={fps}")
             time.sleep(1.0)
 
+        for side, name, old in restore:
+            if old:
+                side.cmd(f"{name} {old}")
         if a.fps != 144.0:
             client.cmd("fps_max 144")
     out = os.path.join(a.out, f"{stamp}_{a.label}")
