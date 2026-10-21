@@ -16,7 +16,7 @@ This folder is the infrastructure for the first local R5Flowstate telemetry sess
 | File | Contents |
 |---|---|
 | [TELEMETRY-SCHEMA.md](TELEMETRY-SCHEMA.md) / `TELEMETRY-SCHEMA.json` | sources, line formats, quality codes, CSV columns with provenance (observed / in-game / offline-derived) |
-| [UNITY-DATA-CONTRACT.md](UNITY-DATA-CONTRACT.md) | `hsdmove-trial/1` trial format, axes/units, replay and compare procedure, tolerances |
+| [UNITY-DATA-CONTRACT.md](UNITY-DATA-CONTRACT.md) | `hsdmove-trial/2` trial format (usercmds, input edges, initial state, terrain, side-explicit parameters), axes/units, strict checks, replay and compare procedure, tolerances |
 | [fixtures/synthetic/README.md](fixtures/synthetic/README.md) | what the synthetic fixtures contain and how they were generated |
 
 ## Tools (Python ≥ 3.8, standard library only)

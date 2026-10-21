@@ -1,0 +1,672 @@
+{
+  "ground": [
+    {
+      "source": "HSD",
+      "side": "cl",
+      "drv_run": "r0",
+      "accel": {
+        "ok": false,
+        "reason": "no accel-from-rest phase"
+      },
+      "decel": {
+        "ok": false,
+        "reason": "no coast-down phase"
+      }
+    },
+    {
+      "source": "HSD",
+      "side": "cl",
+      "drv_run": "r21",
+      "accel": {
+        "ok": true,
+        "n": 433,
+        "n_fit": 17,
+        "vmax": 199.52501853401745,
+        "models": {
+          "linear": {
+            "a": 1285.9828006193195,
+            "r2": 0.7315860634536524
+          },
+          "first_order": {
+            "k": 18.039638391859285,
+            "r2": 0.98701057185848
+          }
+        },
+        "best": "first_order",
+        "good": true
+      },
+      "decel": {
+        "ok": true,
+        "n": 24,
+        "v0": 199.52501853401745,
+        "models": {
+          "linear": {
+            "d": 1249.969414432432,
+            "r2": 0.9999999755537673
+          },
+          "friction": {
+            "k": 8.440498250592453,
+            "stopspeed": 135.67701260313186,
+            "r2": 0.9930307344245325
+          }
+        },
+        "best": "linear",
+        "good": true
+      }
+    },
+    {
+      "source": "HSD",
+      "side": "cl",
+      "drv_run": "r22",
+      "accel": {
+        "ok": true,
+        "n": 433,
+        "n_fit": 18,
+        "vmax": 199.525,
+        "models": {
+          "linear": {
+            "a": 1214.2299627490077,
+            "r2": 0.6851623375608589
+          },
+          "first_order": {
+            "k": 17.67298553872076,
+            "r2": 0.985566358305449
+          }
+        },
+        "best": "first_order",
+        "good": true
+      },
+      "decel": {
+        "ok": true,
+        "n": 24,
+        "v0": 199.525,
+        "models": {
+          "linear": {
+            "d": 1249.9035438579149,
+            "r2": 0.9999997044162426
+          },
+          "friction": {
+            "k": 8.424854061703863,
+            "stopspeed": 135.67700000000002,
+            "r2": 0.9932346237871867
+          }
+        },
+        "best": "linear",
+        "good": true
+      }
+    },
+    {
+      "source": "HSD",
+      "side": "cl",
+      "drv_run": "r23",
+      "accel": {
+        "ok": true,
+        "n": 433,
+        "n_fit": 17,
+        "vmax": 199.525,
+        "models": {
+          "linear": {
+            "a": 1091.0695161693263,
+            "r2": 0.577248298825941
+          },
+          "first_order": {
+            "k": 16.85843185286218,
+            "r2": 0.9804877805219224
+          }
+        },
+        "best": "first_order",
+        "good": true
+      },
+      "decel": {
+        "ok": true,
+        "n": 24,
+        "v0": 199.525,
+        "models": {
+          "linear": {
+            "d": 1250.0056623611406,
+            "r2": 0.9999999953523704
+          },
+          "friction": {
+            "k": 8.458201389361863,
+            "stopspeed": 135.67700000000002,
+            "r2": 0.9929350243872834
+          }
+        },
+        "best": "linear",
+        "good": true
+      }
+    },
+    {
+      "source": "HSD",
+      "side": "cl",
+      "drv_run": "r24",
+      "accel": {
+        "ok": true,
+        "n": 433,
+        "n_fit": 17,
+        "vmax": 199.525,
+        "models": {
+          "linear": {
+            "a": 1286.7253783502101,
+            "r2": 0.7375105942500504
+          },
+          "first_order": {
+            "k": 17.8068265650242,
+            "r2": 0.9862815138826749
+          }
+        },
+        "best": "first_order",
+        "good": true
+      },
+      "decel": {
+        "ok": true,
+        "n": 24,
+        "v0": 199.525,
+        "models": {
+          "linear": {
+            "d": 1249.9244239397635,
+            "r2": 0.9999999902793937
+          },
+          "friction": {
+            "k": 8.436816509933438,
+            "stopspeed": 135.67700000000002,
+            "r2": 0.9931795795431386
+          }
+        },
+        "best": "linear",
+        "good": true
+      }
+    },
+    {
+      "source": "HSD",
+      "side": "cl",
+      "drv_run": "r25",
+      "accel": {
+        "ok": true,
+        "n": 433,
+        "n_fit": 18,
+        "vmax": 199.525,
+        "models": {
+          "linear": {
+            "a": 1220.567468622746,
+            "r2": 0.6885021584479913
+          },
+          "first_order": {
+            "k": 17.657619200242486,
+            "r2": 0.9854169512409703
+          }
+        },
+        "best": "first_order",
+        "good": true
+      },
+      "decel": {
+        "ok": true,
+        "n": 24,
+        "v0": 199.525,
+        "models": {
+          "linear": {
+            "d": 1249.8996358852003,
+            "r2": 0.999999968106613
+          },
+          "friction": {
+            "k": 8.437113242662406,
+            "stopspeed": 135.67700000000002,
+            "r2": 0.9932230888963836
+          }
+        },
+        "best": "linear",
+        "good": true
+      }
+    },
+    {
+      "source": "MT",
+      "side": "cl",
+      "drv_run": "b0",
+      "accel": {
+        "ok": false,
+        "reason": "no accel-from-rest phase"
+      },
+      "decel": {
+        "ok": false,
+        "reason": "no coast-down phase"
+      }
+    },
+    {
+      "source": "MT",
+      "side": "cl",
+      "drv_run": "r21",
+      "accel": {
+        "ok": true,
+        "n": 433,
+        "n_fit": 17,
+        "vmax": 199.52501853401745,
+        "models": {
+          "linear": {
+            "a": 1285.978889859483,
+            "r2": 0.7316163123789521
+          },
+          "first_order": {
+            "k": 18.03961382459747,
+            "r2": 0.9870156307659843
+          }
+        },
+        "best": "first_order",
+        "good": true
+      },
+      "decel": {
+        "ok": true,
+        "n": 24,
+        "v0": 199.52501853401745,
+        "models": {
+          "linear": {
+            "d": 1249.8732226989428,
+            "r2": 0.9999999668735443
+          },
+          "friction": {
+            "k": 8.440785260183668,
+            "stopspeed": 135.67701260313186,
+            "r2": 0.9930372990392562
+          }
+        },
+        "best": "linear",
+        "good": true
+      }
+    },
+    {
+      "source": "MT",
+      "side": "cl",
+      "drv_run": "r22",
+      "accel": {
+        "ok": true,
+        "n": 433,
+        "n_fit": 18,
+        "vmax": 199.525,
+        "models": {
+          "linear": {
+            "a": 1214.3730044238412,
+            "r2": 0.6849661211363578
+          },
+          "first_order": {
+            "k": 17.675316442345338,
+            "r2": 0.9855401140408225
+          }
+        },
+        "best": "first_order",
+        "good": true
+      },
+      "decel": {
+        "ok": true,
+        "n": 24,
+        "v0": 199.525,
+        "models": {
+          "linear": {
+            "d": 1250.0934806280884,
+            "r2": 0.999999629779887
+          },
+          "friction": {
+            "k": 8.426468096930428,
+            "stopspeed": 135.67700000000002,
+            "r2": 0.9932176473932811
+          }
+        },
+        "best": "linear",
+        "good": true
+      }
+    },
+    {
+      "source": "MT",
+      "side": "cl",
+      "drv_run": "r23",
+      "accel": {
+        "ok": true,
+        "n": 433,
+        "n_fit": 17,
+        "vmax": 199.525,
+        "models": {
+          "linear": {
+            "a": 1091.185099737367,
+            "r2": 0.5782955397299754
+          },
+          "first_order": {
+            "k": 16.859670767787513,
+            "r2": 0.9806429727900883
+          }
+        },
+        "best": "first_order",
+        "good": true
+      },
+      "decel": {
+        "ok": true,
+        "n": 24,
+        "v0": 199.525,
+        "models": {
+          "linear": {
+            "d": 1249.9472141772183,
+            "r2": 0.9999999936761227
+          },
+          "friction": {
+            "k": 8.457656881022947,
+            "stopspeed": 135.67700000000002,
+            "r2": 0.9929297839497451
+          }
+        },
+        "best": "linear",
+        "good": true
+      }
+    },
+    {
+      "source": "MT",
+      "side": "cl",
+      "drv_run": "r24",
+      "accel": {
+        "ok": true,
+        "n": 433,
+        "n_fit": 17,
+        "vmax": 199.525,
+        "models": {
+          "linear": {
+            "a": 1286.6306462237592,
+            "r2": 0.7371679404863671
+          },
+          "first_order": {
+            "k": 17.806082983033132,
+            "r2": 0.9862337166240469
+          }
+        },
+        "best": "first_order",
+        "good": true
+      },
+      "decel": {
+        "ok": true,
+        "n": 24,
+        "v0": 199.525,
+        "models": {
+          "linear": {
+            "d": 1249.7146922543373,
+            "r2": 0.9999996982690458
+          },
+          "friction": {
+            "k": 8.435875843656738,
+            "stopspeed": 135.67700000000002,
+            "r2": 0.9931979660687354
+          }
+        },
+        "best": "linear",
+        "good": true
+      }
+    },
+    {
+      "source": "MT",
+      "side": "cl",
+      "drv_run": "r25",
+      "accel": {
+        "ok": true,
+        "n": 433,
+        "n_fit": 18,
+        "vmax": 199.525,
+        "models": {
+          "linear": {
+            "a": 1220.3375729861868,
+            "r2": 0.6885198694330275
+          },
+          "first_order": {
+            "k": 17.654289877604583,
+            "r2": 0.985418654403114
+          }
+        },
+        "best": "first_order",
+        "good": true
+      },
+      "decel": {
+        "ok": true,
+        "n": 24,
+        "v0": 199.525,
+        "models": {
+          "linear": {
+            "d": 1250.265667769435,
+            "r2": 0.9999992954704611
+          },
+          "friction": {
+            "k": 8.437126526381348,
+            "stopspeed": 135.67700000000002,
+            "r2": 0.993155116512198
+          }
+        },
+        "best": "linear",
+        "good": true
+      }
+    },
+    {
+      "source": "MT",
+      "side": "sv",
+      "drv_run": "b0",
+      "accel": {
+        "ok": false,
+        "reason": "no accel-from-rest phase"
+      },
+      "decel": {
+        "ok": false,
+        "reason": "no coast-down phase"
+      }
+    },
+    {
+      "source": "MT",
+      "side": "sv",
+      "drv_run": "r21",
+      "accel": {
+        "ok": true,
+        "n": 433,
+        "n_fit": 17,
+        "vmax": 199.52501853401745,
+        "models": {
+          "linear": {
+            "a": 1285.978889859483,
+            "r2": 0.7316163123789521
+          },
+          "first_order": {
+            "k": 18.03961382459747,
+            "r2": 0.9870156307659843
+          }
+        },
+        "best": "first_order",
+        "good": true
+      },
+      "decel": {
+        "ok": true,
+        "n": 24,
+        "v0": 199.52501853401745,
+        "models": {
+          "linear": {
+            "d": 1249.8732226989428,
+            "r2": 0.9999999668735443
+          },
+          "friction": {
+            "k": 8.440785260183668,
+            "stopspeed": 135.67701260313186,
+            "r2": 0.9930372990392562
+          }
+        },
+        "best": "linear",
+        "good": true
+      }
+    },
+    {
+      "source": "MT",
+      "side": "sv",
+      "drv_run": "r22",
+      "accel": {
+        "ok": true,
+        "n": 433,
+        "n_fit": 18,
+        "vmax": 199.525,
+        "models": {
+          "linear": {
+            "a": 1214.3730044238412,
+            "r2": 0.6849661211363578
+          },
+          "first_order": {
+            "k": 17.675316442345338,
+            "r2": 0.9855401140408225
+          }
+        },
+        "best": "first_order",
+        "good": true
+      },
+      "decel": {
+        "ok": true,
+        "n": 24,
+        "v0": 199.525,
+        "models": {
+          "linear": {
+            "d": 1250.0934806280884,
+            "r2": 0.999999629779887
+          },
+          "friction": {
+            "k": 8.426468096930428,
+            "stopspeed": 135.67700000000002,
+            "r2": 0.9932176473932811
+          }
+        },
+        "best": "linear",
+        "good": true
+      }
+    },
+    {
+      "source": "MT",
+      "side": "sv",
+      "drv_run": "r23",
+      "accel": {
+        "ok": true,
+        "n": 433,
+        "n_fit": 17,
+        "vmax": 199.525,
+        "models": {
+          "linear": {
+            "a": 1091.185099737367,
+            "r2": 0.5782955397299754
+          },
+          "first_order": {
+            "k": 16.859670767787513,
+            "r2": 0.9806429727900883
+          }
+        },
+        "best": "first_order",
+        "good": true
+      },
+      "decel": {
+        "ok": true,
+        "n": 24,
+        "v0": 199.525,
+        "models": {
+          "linear": {
+            "d": 1249.9472141772183,
+            "r2": 0.9999999936761227
+          },
+          "friction": {
+            "k": 8.457656881022947,
+            "stopspeed": 135.67700000000002,
+            "r2": 0.9929297839497451
+          }
+        },
+        "best": "linear",
+        "good": true
+      }
+    },
+    {
+      "source": "MT",
+      "side": "sv",
+      "drv_run": "r24",
+      "accel": {
+        "ok": true,
+        "n": 433,
+        "n_fit": 17,
+        "vmax": 199.525,
+        "models": {
+          "linear": {
+            "a": 1286.6306462237592,
+            "r2": 0.7371679404863671
+          },
+          "first_order": {
+            "k": 17.806082983033132,
+            "r2": 0.9862337166240469
+          }
+        },
+        "best": "first_order",
+        "good": true
+      },
+      "decel": {
+        "ok": true,
+        "n": 24,
+        "v0": 199.525,
+        "models": {
+          "linear": {
+            "d": 1249.7146922543373,
+            "r2": 0.9999996982690458
+          },
+          "friction": {
+            "k": 8.435875843656738,
+            "stopspeed": 135.67700000000002,
+            "r2": 0.9931979660687354
+          }
+        },
+        "best": "linear",
+        "good": true
+      }
+    },
+    {
+      "source": "MT",
+      "side": "sv",
+      "drv_run": "r25",
+      "accel": {
+        "ok": true,
+        "n": 433,
+        "n_fit": 18,
+        "vmax": 199.525,
+        "models": {
+          "linear": {
+            "a": 1220.3375729861868,
+            "r2": 0.6885198694330275
+          },
+          "first_order": {
+            "k": 17.654289877604583,
+            "r2": 0.985418654403114
+          }
+        },
+        "best": "first_order",
+        "good": true
+      },
+      "decel": {
+        "ok": true,
+        "n": 24,
+        "v0": 199.525,
+        "models": {
+          "linear": {
+            "d": 1250.265667769435,
+            "r2": 0.9999992954704611
+          },
+          "friction": {
+            "k": 8.437126526381348,
+            "stopspeed": 135.67700000000002,
+            "r2": 0.993155116512198
+          }
+        },
+        "best": "linear",
+        "good": true
+      }
+    }
+  ],
+  "air": {
+    "cl": {
+      "ok": false,
+      "reason": "only 0 airborne input samples"
+    }
+  },
+  "vertical": [
+    {
+      "side": "cl",
+      "segments": 5,
+      "gravity_median": 750.0068917275084,
+      "takeoff_vz_median": 282.009
+    }
+  ]
+}

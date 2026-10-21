@@ -16,6 +16,12 @@ The files reproduce the real line formats and log layout:
 - `.../script.log` holds `[HSD-MD] ver=2` lines in the HSD.MoveDiag v0.2 format (`research/phase2-prep/TELEMETRY-SCHEMA.md`).
 - `faulty/` is a copy of the client logs with one injected defect of each kind. The expected validator codes are `E_MALFORMED_MT`, `E_NONFINITE`, `W_TELEPORT`, `W_SEQ_GAP`, `E_MISSING_FIELD`, `W_API_MISSING`, `W_SCRIPT_ERROR`.
 - `console_copy_client.txt` mimics the in-game console: ANSI colour codes and no file timestamp.
+- `two_sessions/` holds two recordings 10 minutes apart:
+  - each has its own client and dedi session folder and a level-load line;
+  - both start their usercmd numbers at 1, so every command number occurs twice;
+  - session A walks along +X (run `r1`), session B along +Y (run `r2`).
+
+  The client/dedi join must pair them on `(session, ent, reset batch, cmd)` (`tests/test_derive_validate.py::TestJoin`).
 
 Scenario (runs are set by `hsd_md_run`):
 

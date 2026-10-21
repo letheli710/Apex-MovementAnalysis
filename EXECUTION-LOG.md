@@ -19,16 +19,38 @@ Newest entries at the bottom. Problems are tagged **[ISSUE]** and also listed in
   - **[ISSUE]** Empty-handed runs carry a 1.15 move scale. Every experiment must hold the weapon state fixed and log `msc`.
   - Unity 6000.6.5f1 batch run: the project opens and compiles; PlayMode 104/104 passed in 150 s.
   - **[ISSUE]** The batch run re-serialized `ProjectSettings.asset`. Only a hash was taken beforehand, so the exact delta is unknown. From now on, copy `ProjectSettings/` before every Unity run.
-  - **M0 accepted.** Started M1 source research on deterministic input and reset (read-only subagent).
+  - **M0 accepted.** PR #1 opened and merged into `claude/laughing-einstein-nlvqcs` (`5646224`).
+- **M1 started** on branch `phase2-local/m1-loop`. Three subagents run in parallel, and none of them drives the game or Unity:
+  - A: source research on deterministic input and reset (defect 1);
+  - B: hsdtel defects 3–6, in worktree `../wt-m1-telemetry` (branch `phase2-local/m1-telemetry`);
+  - C: offline sampling-phase analysis of the T0 data (defect 2).
+- Decision (user, relayed by another session): Unity work for M1+ happens in a **new Unity project inside the workspace** `C:\Workspace\Playground\ReApex-DataAnalysis\`. The original project `High Speed Doom LAB\High Speed Test 01` is no longer touched; it is read-only reference from here on. This supersedes the "new branch in the original project" rule in SESSION-BASELINE §5.
+- User update (relayed): the old Unity project is **deprecated**. I7 is closed as won't fix.
+- Subagent results, each checked by the lead before use:
+  - A: AgentLink is the native control channel. No SDK path drives the human player's usercmds directly; bots and R5Dem replay are dedi-only.
+  - C: an HSD frame is the post-state of the latest usercmd (lag 0). Re-ran its script; its result holds.
+  - B: defects 3–6. Merged; 81 tests and 10/10 re-run by the lead.
+- Built the AgentLink runner (`agentlink.py`, `hsd_trial.py`, `hsd_session.py`): dedi reset over EVAL, then a client thread sends frame-indexed `ClientCommand` input. Probe: each edge lands in the next usercmd; the first forward command has `fwd` 0.5.
+- **[ISSUE→fixed]** Session s1: the unfocused client ran at 18.7 fps, so the 3 s forward segment lasted 23 s. Fixed with `not_focus_sleep 0` and a per-trial fps check (±3 %). s1 is kept as `_REJECTED`.
+- **[ISSUE→fixed]** s3/s4: the first trial after a level load hitched (126/133 fps), and the check rejected it. Fixed with a 15 s settle plus a warm-up trial.
+- **[ISSUE→fixed]** The client run label covered the teleport, which corrupted `initial_state`. The schedule thread now sets the label after the player has settled.
+- s7 (5 trials) and s8 (after a restart, 1 trial): identical event spacings (432/22/410/1/109 usercmds), 0 gaps, 100 % join, smoke 11/11 on both. **M1 A1, A2, A4 pass.**
+- Exported `hsdmove-trial/2` trials r41, r42, r46 (check-contract: 0 problems). Started the Unity replay subagent: new project `..\HSD-Unity`, the only Unity instance; the game stays off meanwhile.
+- **[ISSUE]** `compare-contracts` aligns by absolute usercmd number, so it cannot compare two different trials (O1 in the M1 report).
+- **[ISSUE]** Take-off vz is 276.8 u/s, against 289.8 u/s predicted from `jumpHeight` (O2; M2/E4).
+- Unity subagent: created `..\HSD-Unity` with the R5Replay pipeline. The lead re-ran it: 26/26 EditMode tests, batch replay exit 0.
+  - First error report: position RMS 32 u. Ground acceleration dominates: R5 shows a low-speed branch at about 2875 u/s² and move-scale-scaled acceleration. Jump apex is 56.0 in sim against 55.0 in R5.
+- Created the private repo `letheli710/HSD-Unity`: `main` holds the empty project, `m1/r5-replay` holds the pipeline.
+- **M1 accepted** (A1–A4). Next: M2 (E0 census per session, E1 ground, E2 air, E4 jump, E5 slide).
 
 ## Open issues
 
 | # | Since | Issue | Owner / next step |
 |---|---|---|---|
-| I1 | M0 | Input is wall-clock SendInput, not frame-exact; it needs the window in front | M1 defect 1: deterministic input + reset layer |
-| I2 | M0 | `+hsd_md_run` cmdline ignored | set labels after load (done); revisit in the M1 runner |
+| I1 | M0 | Input is wall-clock SendInput, not frame-exact; it needs the window in front | **fixed in M1**: AgentLink runner, frame-indexed and focus-free. cmd-exact edges remain open (M1 report O3) |
+| I2 | M0 | `+hsd_md_run` cmdline ignored | **closed**: labels are set by the runner and the schedule thread |
 | I3 | M0 | `DevTextBufferDumpToFile` returns false | low priority; values are in `script.log` |
 | I4 | M0 | REA has no native provider | only if offline disassembly is approved and time-boxed |
 | I5 | M0 | Weapon move scale (1.15 empty-handed) | fix the weapon state per run; measure a weapon-held condition in M2 |
-| I6 | M0 | Unity project: most of the existing work is uncommitted on `main` | protect it; M1 Unity work goes on a new branch in its own folder |
-| I7 | M0 | The Unity batch run rewrote `ProjectSettings.asset`; delta unknown | copy `ProjectSettings/` before each Unity run |
+| I6 | M0 | Unity project: most of the existing work is uncommitted on `main` | **closed**: the old project is deprecated; M1+ uses a new project in the workspace |
+| I7 | M0 | The Unity batch run rewrote `ProjectSettings.asset`; delta unknown | **closed, won't fix**: the user says the old project is deprecated |

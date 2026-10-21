@@ -8,6 +8,15 @@ Recognised inputs
     older for larger N (spdlog rotating sink, 10 MiB x 16; core/logdef.h:13,19).
   - Console copies of the same lines, with or without ANSI colour codes.
   - HSD.MoveDiag v1 (Phase 1) and v2 lines.
+  - Level-load lines (kind=map, source LOG): the dedi's
+    "CHostState::State_NewGame: Loading level: '<map>'" (engine/host_state.cpp:475)
+    and the client's "[BRIDGE] CONNACCEPT map='<map>'"
+    (engine/client/net_bridge_install.cpp:8537). They name the map and mark a
+    reset (command numbers restart on a new connection).
+
+Every row carries `session`: the log-session GUID folder its file sits in
+(platform/logs/<client|server>/<GUID>/), so rows of two game processes or two
+recordings never share a stream even when their command numbers overlap.
 """
 import calendar
 import math
@@ -32,6 +41,12 @@ CV_TAG = "[CLASSVAR]"
 CV_GET_RE = re.compile(r"\[CLASSVAR\] (\S+) = (.*) \(type=(\d+) off=(\d+)\)\s*$")
 CV_UNKNOWN_RE = re.compile(r"\[CLASSVAR\] unknown key '([^']*)'")
 KV_RE = re.compile(r"([A-Za-z_][A-Za-z0-9_]*)=(\S*)")
+MAP_SV_RE = re.compile(r"Loading level: '([^']+)'")
+MAP_CL_RE = re.compile(r"\[BRIDGE\] CONNACCEPT map='([^']+)'")
+MAP_TAGS = ("Loading level: '", "CONNACCEPT map='")
+# platform/logs/<side>/<GUID>/ session folder (the SDK names it with a GUID;
+# the synthetic fixtures use 00000000-synth-<side>)
+SESSION_RE = re.compile(r"^[0-9A-Fa-f]{8}-[0-9A-Za-z-]+$")
 
 # HSD key -> unified column for scalar values
 HSD_SCALARS = {
@@ -181,6 +196,21 @@ def expand_inputs(paths):
     return sorted(dict.fromkeys(files), key=key)
 
 
+def session_of(path):
+    """Session id of a log file: the nearest GUID-named folder on its path, else
+    the name of the folder that holds it (loose copies: keep one session per folder)."""
+    parts = os.path.normpath(os.path.abspath(path)).replace("\\", "/").split("/")[:-1]
+    for part in reversed(parts):
+        if SESSION_RE.match(part):
+            return part
+    return parts[-1] if parts and parts[-1] else "-"
+
+
+def parse_map(rest):
+    m = MAP_SV_RE.search(rest) or MAP_CL_RE.search(rest)
+    return {"source": "LOG", "kind": "map", "value": m.group(1)} if m else None
+
+
 def guess_side_from_path(path):
     p = path.replace("\\", "/").lower()
     if "/client/" in p or "client" in os.path.basename(p):
@@ -194,12 +224,20 @@ def parse_file(path, side_hint=None, file_rank=0):
     rows, issues = [], []
     base = os.path.basename(path)
     path_side = side_hint or guess_side_from_path(path)
+    session = session_of(path)
     with open(path, "r", encoding="utf-8", errors="replace") as fh:
         for ln, raw in enumerate(fh, 1):
             if MT_TAG not in raw and HSD_TAG not in raw and CV_TAG not in raw:
-                continue
+                if not any(t in raw for t in MAP_TAGS):
+                    continue
             wall, ctx_side, rest = split_prefix(raw)
-            if CV_TAG in rest and MT_TAG not in rest and HSD_TAG not in rest:
+            if MT_TAG not in rest and HSD_TAG not in rest and CV_TAG not in rest:
+                row = parse_map(rest)
+                if row is None:
+                    continue
+                # both producers print under the ENGINE context: the side comes from the folder
+                row["side"] = path_side or "unknown"
+            elif CV_TAG in rest and MT_TAG not in rest and HSD_TAG not in rest:
                 row = parse_classvar(rest)
                 if row is None:
                     continue  # other [CLASSVAR] chatter (resolve, writes, replays)
@@ -224,6 +262,7 @@ def parse_file(path, side_hint=None, file_rank=0):
                     issues.append(Issue("warning", "W_SIDE_MISMATCH", base, ln,
                                         f"line says side={row['side']} but log prefix says {ctx_side}"))
             row["file"] = base
+            row["session"] = session
             row["line_no"] = ln
             row["wall"] = wall
             row["_rank"] = file_rank

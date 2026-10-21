@@ -17,9 +17,10 @@ from collections import OrderedDict
 COLUMNS = OrderedDict([
     ("file", ("meta", "", "source log file (basename)")),
     ("line_no", ("meta", "", "1-based line number in that file")),
-    ("source", ("meta", "", "MT = SDK [MOVE-TRACE]; HSD = HSD.MoveDiag mod; CV = SDK [CLASSVAR] bridge_classvar_get output")),
-    ("side", ("obs", "", "cl = S21 client prediction, sv = S3 dedi; from the log prefix Native(C)/Script(S)/... or --side")),
-    ("kind", ("obs", "", "cmd (MT) | classvar (CV) | frame | evt | takeoff | land | mark | run | setting | dump | dumpfile | init | error")),
+    ("source", ("meta", "", "MT = SDK [MOVE-TRACE]; HSD = HSD.MoveDiag mod; CV = SDK [CLASSVAR] bridge_classvar_get output; LOG = engine level-load line")),
+    ("side", ("obs", "", "cl = S21 client prediction, sv = S3 dedi; from the log prefix Native(C)/Script(S)/... or --side (LOG rows: from the folder)")),
+    ("session", ("meta", "", "log session: the GUID folder of the file (platform/logs/<side>/<GUID>/), else the name of its folder; one game process")),
+    ("kind", ("obs", "", "cmd (MT) | classvar (CV) | map (LOG) | frame | evt | takeoff | land | mark | run | setting | dump | dumpfile | init | error")),
     ("wall", ("obs", "s", "log-sink wall clock from the [YYYY-MM-DD HH:MM:SS.mmm] file prefix, as seconds since 1970 reading the logged local time as if UTC; ms resolution; time the line was written, not simulation time; empty on console copies")),
     ("run", ("obs", "", "HSD: value of hsd_md_run when the line was printed")),
     ("seq", ("obs", "", "HSD: per-VM line counter (gaps = lost lines)")),
@@ -62,7 +63,7 @@ COLUMNS = OrderedDict([
     ("label", ("obs", "", "HSD mark label")),
     ("key", ("obs", "", "HSD setting key")),
     ("vtype", ("obs", "", "HSD setting getter that succeeded: float|int|string|ERR")),
-    ("value", ("obs", "", "HSD setting value as printed")),
+    ("value", ("obs", "", "HSD setting value as printed; LOG map: the map name")),
     ("msg", ("obs", "", "HSD error text")),
     ("where", ("obs", "", "HSD error: which mod function contained the error")),
     ("prev", ("obs", "", "HSD run: previous run label")),
@@ -79,6 +80,8 @@ COLUMNS = OrderedDict([
     ("ing_hop", ("ing", "", "mod: consecutive takeoffs with < 0.1 s ground time")),
     ("drv_run", ("drv", "", "trial id: HSD run if present, else MT burst index")),
     ("drv_burst", ("drv", "", "MT: index of a contiguous command range (gap > --burst-gap cmds starts a new one)")),
+    ("drv_batch", ("drv", "", "MT: reset batch within the stream; +1 when cmd goes backwards, or jumps > --burst-gap across a level load / VM start / dedi RESPAWN / position jump (TELEMETRY-SCHEMA.md 5)")),
+    ("drv_join", ("drv", "", "MT: ok = paired with the other side's line for the same usercmd on (session, ent, drv_batch, cmd); none; ambiguous (more than one candidate)")),
     ("drv_spd2d", ("drv", "u/s", "hypot(vx, vy)")),
     ("drv_spd2d_post", ("drv", "u/s", "MT: hypot(pvx, pvy)")),
     ("drv_dspd2d", ("drv", "u/s", "MT: post - pre horizontal speed within one command")),
@@ -97,7 +100,7 @@ NUMERIC = {
     "pox", "poy", "poz", "pvx", "pvy", "pvz", "pitch", "yaw", "ground", "slide", "sprint", "crouch", "duck", "buttons",
     "fwd", "sidemove", "maxspeed", "movescale", "in_jump", "in_duck", "in_fwd", "ax_fwd", "ax_right",
     "ing_airtime", "ing_groundtime", "ing_takeoff", "ing_peak", "ing_land", "ing_gain", "ing_hop",
-    "drv_burst", "drv_spd2d", "drv_spd2d_post", "drv_dspd2d", "drv_dheading", "drv_dt", "drv_dt_est",
+    "drv_burst", "drv_batch", "drv_spd2d", "drv_spd2d_post", "drv_dspd2d", "drv_dheading", "drv_dt", "drv_dt_est",
     "drv_accel2d", "drv_pressed", "drv_wish_yaw",
 }
 
@@ -124,6 +127,7 @@ BUTTON_BITS = OrderedDict([
 ])
 IN_JUMP = BUTTON_BITS["JUMP"]
 IN_DUCK = BUTTON_BITS["DUCK"]
+IN_SPEED = BUTTON_BITS["SPEED"]
 LURCH_MASK = 0x618  # tapstrafe.cpp:26
 
 
