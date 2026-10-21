@@ -1,0 +1,263 @@
+M6-B legend mobility analysis. Sessions: 20261021_175730_M6B_alter (alter, 15 scored), 20261021_181108_M6B_pilot_alter (alter, 6 scored), 20261021_180124_M6B_loba (loba, 25 scored), 20261021_180406_M6B_ash (ash, 15 scored), 20261021_181301_M6B_pilot_ash (ash, 2 scored), 20261021_181926_M6B_ash2 (ash, 9 scored), 20261021_182355_M6B_ash3 (ash, 9 scored), 20261021_180800_M6B_valk (valkyrie, 10 scored)
+
+== CENSUS ([CLASSVAR], client) ==
+  alter     jetpack/glide keys: 
+  loba      jetpack/glide keys: 
+  ash       jetpack/glide keys: 
+  valkyrie  jetpackEnabled = true
+  valkyrie  jetpackThrust = 1.9
+  valkyrie  jetpackMeterRate = 1
+  valkyrie  jetpackMeterOnActivation = 1
+  valkyrie  jetpackTacticalMeterRate = 1
+  valkyrie  jetpackThrustScaleOnActivation = 1.8
+  valkyrie  jetpackThrustScaleTimeOnActivation = 0.5
+  valkyrie  jetpackPostEffectTime = 3
+  valkyrie  jetpackPostEffectGravity = 0.45
+  valkyrie  jetpackPostEffectDrag = 0.000125
+  valkyrie  jetpackTightnessUp = 0.27
+  valkyrie  jetpackTightnessDown = 0.1
+  valkyrie  jetpackTightnessSideways = 0.11
+  valkyrie  jetpackTightnessForwardBack = 0.14
+  valkyrie  glideDuration = 8
+  valkyrie  glideEnabled = false
+  valkyrie  hoverEnabled = false
+  valkyrie  glideRechargeOnlyInGroundedState = false
+  valkyrie  glideRechargeOnlyWhenFeetOnGround = false
+
+== ALTER, Void Passage (mp_ability_phase_door) ==
+-- 20261021_175730_M6B_alter: [OPL-SRV] message types (session): entrance edgecorrection failed entrance x7788; edgecorrection: overhang excess  over  on dir x7783; entrance edgecorrection pre x55; exit probe loop x55; shallow exit accepted depth x55; exit normal coarse x55; placement accepted entrance x55; edgecorrection: initial validation blocked frac x5; object_placement_model scan:  weapon txts,  placement model(s) registered x1; UpdateHeldObjectPlacement first call player x1; StoreWeaponPlacement first call weapon x1; placement eye seed first call useCmdView x1; PhaseDoor_CheckInvalidEnt resolved x1; tossget first call weapon x1
+-- 20261021_181108_M6B_pilot_alter: [OPL-SRV] message types (session): entrance edgecorrection failed entrance x2262; edgecorrection: overhang excess  over  on dir x2260; entrance edgecorrection pre x26; exit probe loop x26; exit normal coarse x26; placement accepted entrance x26; shallow exit accepted depth x26; edgecorrection: initial validation blocked frac x2; object_placement_model scan:  weapon txts,  placement model(s) registered x1; UpdateHeldObjectPlacement first call player x1; StoreWeaponPlacement first call weapon x1; placement eye seed first call useCmdView x1; PhaseDoor_CheckInvalidEnt resolved x1; tossget first call weapon x1
+session                      sched              run   acc shal efail thick  depth ph tele altTP hol  maxX     face-gap  vmax
+M6B_alter                    b_alter_sprint      4201   3    3   625  216.6   1.1  0    0     0   1 -13724.82   18.82  299.00
+M6B_alter                    b_alter_sprint      4202   3    3   614  216.6   1.1  0    0     0   1 -13724.82   18.82  299.00
+M6B_alter                    b_alter_sprint      4203   4    4   626  216.6   1.1  0    0     0   1 -13724.82   18.82  299.00
+M6B_alter                    b_alter_sprint      4204   4    4   639  216.5   1.1  0    0     0   1 -13724.82   18.82  299.00
+M6B_alter                    b_alter_sprint      4205   2    2   654  216.6   1.1  0    0     0   1 -13724.82   18.82  299.00
+M6B_alter                    b_alter_walk        4206   4    4   717  216.5   1.1  0    0     0   1 -13724.82   18.82  199.53
+M6B_alter                    b_alter_walk        4207   4    4   596  216.5   1.1  0    0     0   1 -13724.82   18.82  199.53
+M6B_alter                    b_alter_walk        4208   4    4   519  216.5   1.1  0    0     0   1 -13724.82   18.82  199.53
+M6B_alter                    b_alter_walk        4209   3    3   484  216.5   1.1  0    0     0   1 -13724.82   18.82  199.53
+M6B_alter                    b_alter_walk        4210   3    3   464  216.5   1.1  0    0     0   1 -13724.82   18.82  199.53
+M6B_alter                    b_alter_stand       4211   4    4   238  216.5   1.1  0    0     0   1 -13724.82   18.82  199.53
+M6B_alter                    b_alter_stand       4212   4    4   244  216.5   1.1  0    0     0   1 -13724.82   18.82  199.53
+M6B_alter                    b_alter_stand       4213   4    4   280  216.5   1.1  0    0     0   1 -13724.82   18.82  199.53
+M6B_alter                    b_alter_stand       4214   2    2   232  216.5   1.1  0    0     0   1 -13724.82   18.82  199.53
+M6B_alter                    b_alter_stand       4215   2    2   233  216.5   1.1  0    0     0   1 -13724.82   18.82  199.53
+M6B_pilot_alter              bp_alter_hold12     4401   4    4   386  216.5   1.1  0    0     0   1 -13724.82   18.82  199.53
+M6B_pilot_alter              bp_alter_hold12     4402   4    4   388  216.5   1.1  0    0     0   1 -13724.82   18.82  199.53
+M6B_pilot_alter              bp_alter_hold_att   4403   2    2   256  216.5   1.1  0    0     0   1 -13724.82   18.82  199.53
+M6B_pilot_alter              bp_alter_hold_att   4404   4    4   251  216.5   1.1  0    0     0   1 -13724.82   18.82  199.53
+M6B_pilot_alter              bp_alter_tap_att    4405   5    5   269  216.5   1.1  0    0     0   1 -13724.82   18.82  199.53
+M6B_pilot_alter              bp_alter_tap_att    4406   3    3   256  216.5   1.1  0    0     0   1 -13724.82   18.82  199.53
+summary: 21 scored trials; portal/teleport in 0; trials with >=1 '[OPL-SRV] placement accepted' 21; all accepted exits shallow (depth < 8): True
+  exit-probe thickness 216.5 (sd 0.0, 216.5..216.6, n=21) u; exit depth 1.10 (sd 0.00, 1.10..1.10, n=21) u
+  max x reached -13724.82 (sd 0.00, -13724.82..-13724.82, n=21) (rock face x -13706.0); edge-correction failures per trial 427 (sd 176, 232..717, n=21)
+
+== LOBA, Burglar's Best Friend (mp_ability_translocation) ==
+throw marker: dedi script 'LockWeaponsAndMelee from TranslocationLifetimeThread' (printed once per toss); [TRANSLOC] tossloop begin/end are budget-limited SDK diag lines (not printed for every throw)
+-- 20261021_180124_M6B_loba: 16 throws, 12 'tossloop begin', 12 'tossloop end', 15 non-reset teleports
+sched              run   wu reset_weapon               thr  thr-p1  p2-thr  loopEnd held  teleports in window (whose throw, t after throw, t after this window's 1st press, dist from throw pos, dz, |v| k0/k1/k12/k24)
+b_loba_drop_t07       90 w  mp_weapon_melee_survival    1  1.201 -0.501    -   -     -
+b_loba_drop_t07     4241    mp_ability_translocation    0    -      -      -   4.55  prev(90) +5.55s p1+1.151s d=3857.2 dz=-491.8 v=[0.0, 0.0, 0.0, 0.0]
+b_loba_drop_t07     4242    mp_weapon_melee_survival    1  1.252 -0.552    -   -     -
+b_loba_drop_t07     4243    mp_ability_translocation    0    -      -      -   4.54  prev(4242) +5.548s p1+1.15s d=3854.8 dz=-492.1 v=[0.0, 0.0, 0.0, 0.0]
+b_loba_drop_t07     4244    mp_weapon_melee_survival    1  1.201 -0.501    -   -     -
+b_loba_drop_t07     4245    mp_ability_translocation    0    -      -      -   4.53  prev(4244) +5.549s p1+1.149s d=3857.3 dz=-491.8 v=[0.0, 0.0, 0.0, 0.0]
+b_loba_drop_t09     4246    mp_weapon_melee_survival    1  1.251 -0.301    -   -     -
+b_loba_drop_t09     4247    mp_ability_translocation    0    -      -      -   4.84  prev(4246) +5.75s p1+1.1s d=3870.8 dz=-487.4 v=[0.0, 0.0, 0.0, 0.0]
+b_loba_drop_t09     4248    mp_weapon_melee_survival    1  1.202 -0.302    -   -     -
+b_loba_drop_t09     4249    mp_ability_translocation    0    -      -      -   4.85  prev(4248) +5.749s p1+1.1s d=3869.8 dz=-487.7 v=[0.0, 0.0, 0.0, 0.0]
+b_loba_drop_t09     4250    mp_weapon_melee_survival    1  1.251 -0.301    -   -     -
+b_loba_drop_t12     4251    mp_ability_translocation    0    -      -      -   4.84  prev(4250) +5.749s p1+1.1s d=3870.8 dz=-487.4 v=[0.0, 0.0, 0.0, 0.0]
+b_loba_drop_t12     4252    mp_weapon_melee_survival    1  1.152  0.048    -   -     -
+b_loba_drop_t12     4253    mp_ability_translocation    0    -      -      -   5.09  prev(4252) +5.948s p1+0.999s d=3883.4 dz=-482.0 v=[0.0, 0.0, 0.0, 0.0]
+b_loba_drop_t12     4254    mp_weapon_melee_survival    1  1.152  0.048    -   -     -
+b_loba_drop_t12     4255    mp_ability_translocation    0    -      -      -   5.08  prev(4254) +5.949s p1+1.0s d=3884.5 dz=-481.6 v=[0.0, 0.0, 0.0, 0.0]
+b_loba_drop_t15     4256    mp_weapon_melee_survival    1  1.201  0.348  0.448 0.49  own +1.049s p1+2.25s d=918.0 dz=0.0 v=[0.0, 0.0, 0.0, 0.0]
+b_loba_drop_t15     4257    mp_weapon_melee_survival    1  1.152  0.348  0.448 0.49  own +1.048s p1+2.2s d=932.2 dz=0.0 v=[0.0, 0.0, 0.0, 0.0]
+b_loba_drop_t15     4258    mp_weapon_melee_survival    1  1.152  0.348  0.448 0.48  own +1.048s p1+2.2s d=901.3 dz=0.0 v=[0.0, 0.0, 0.0, 0.0]
+b_loba_drop_t15     4259    mp_weapon_melee_survival    1  1.251  0.298  0.348 0.44  own +0.949s p1+2.2s d=832.0 dz=0.0 v=[0.0, 0.0, 0.0, 0.0]
+b_loba_drop_t15     4260    mp_weapon_melee_survival    1  1.251  0.298    -   -     own +0.948s p1+2.199s d=831.9 dz=0.0 v=[0.0, 0.0, 0.0, 0.0]
+b_loba_sprint_t09   4261    mp_weapon_melee_survival    1  1.202 -0.302    -   -     -
+b_loba_sprint_t09   4262    mp_ability_translocation    0    -      -      -   -     prev(4261) +4.549s p1+Nones d=2502.5 dz=-456.4 v=[0.0, 0.0, 0.0, 168.905]
+b_loba_sprint_t09   4263    mp_weapon_melee_survival    1  1.251 -0.301    -   -     -
+b_loba_sprint_t09   4264    mp_ability_translocation    0    -      -      -   -     prev(4263) +4.55s p1+Nones d=2502.0 dz=-456.3 v=[0.0, 0.0, 23.865, 173.258]
+b_loba_sprint_t09   4265    mp_weapon_melee_survival    1  1.202 -0.302    -   -     -
+summary per schedule (scored trials):
+  b_loba_drop_t07    n=5 trials with a throw=2; own-throw teleport inside the trial=0; carried-over teleport (an earlier trial's throw)=3; throw-press1 1.227 (sd 0.036, 1.201..1.252, n=2); press2-throw -0.526 (sd 0.036, -0.552..-0.501, n=2)
+      carried-over: dist 3856.4 (sd 1.4, 3854.8..3857.3, n=3) u, dz -491.9 (sd 0.2, -492.1..-491.8, n=3); t after throw 5.549 (sd 0.001, 5.548..5.550, n=3); t after this window's 1st press 1.150 (sd 0.001, 1.149..1.151, n=3)
+  b_loba_drop_t09    n=5 trials with a throw=3; own-throw teleport inside the trial=0; carried-over teleport (an earlier trial's throw)=2; throw-press1 1.235 (sd 0.028, 1.202..1.251, n=3); press2-throw -0.301 (sd 0.001, -0.302..-0.301, n=3)
+      carried-over: dist 3870.3 (sd 0.7, 3869.8..3870.8, n=2) u, dz -487.5 (sd 0.2, -487.7..-487.4, n=2); t after throw 5.749 (sd 0.001, 5.749..5.750, n=2); t after this window's 1st press 1.100 (sd 0.000, 1.100..1.100, n=2)
+  b_loba_drop_t12    n=5 trials with a throw=2; own-throw teleport inside the trial=0; carried-over teleport (an earlier trial's throw)=3; throw-press1 1.152 (sd 0.000, 1.152..1.152, n=2); press2-throw 0.048 (sd 0.000, 0.048..0.048, n=2)
+      carried-over: dist 3879.6 (sd 7.6, 3870.8..3884.5, n=3) u, dz -483.7 (sd 3.2, -487.4..-481.6, n=3); t after throw 5.882 (sd 0.115, 5.749..5.949, n=3); t after this window's 1st press 1.033 (sd 0.058, 0.999..1.100, n=3)
+  b_loba_drop_t15    n=5 trials with a throw=5; own-throw teleport inside the trial=5; carried-over teleport (an earlier trial's throw)=0; throw-press1 1.201 (sd 0.050, 1.152..1.251, n=5); press2-throw 0.328 (sd 0.027, 0.298..0.348, n=5)
+      own: dist 883.1 (sd 47.9, 831.9..932.2, n=5) u; t after throw 1.008 (sd 0.055, 0.948..1.049, n=5); t after loop end 0.601 (sd 0.001, 0.600..0.601, n=4); held 0.477 (sd 0.025, 0.441..0.495, n=4)
+  b_loba_sprint_t09  n=5 trials with a throw=3; own-throw teleport inside the trial=0; carried-over teleport (an earlier trial's throw)=2; throw-press1 1.218 (sd 0.028, 1.202..1.251, n=3); press2-throw -0.302 (sd 0.001, -0.302..-0.301, n=3)
+      carried-over: dist 2502.2 (sd 0.4, 2502.0..2502.5, n=2) u, dz -456.4 (sd 0.1, -456.4..-456.3, n=2); t after throw 4.550 (sd 0.001, 4.549..4.550, n=2); t after this window's 1st press n=0
+all teleports (incl. warm-up windows): n=15; |v| pre on the teleport cmd 0.000 (sd 0.000, 0.000..0.000, n=15), next cmd 0.000 (sd 0.000, 0.000..0.000, n=15)
+press -> throw latency from a melee-active start (incl. warm-up): 1.208 (sd 0.040, 1.152..1.252, n=16) s
+carried-over teleports < 2 s after that window's first offhand1 press: 8 / 10; t after that press 1.094 (sd 0.063, 0.999..1.151, n=8) s
+
+== ASH, Phase Breach (mp_weapon_phase_breach, ultimate, +offhand4) ==
+breach = dedi 'PhaseTunnel_PhaseEntity'; travel = dedi MOVE-TRACE command gap (no MT while frozen/parented); re-entry = a PhaseEntity that comes right before a runner reset (reset placed the player on the 15 s entry portal)
+session        sched            run   ok wu rst_weapon              o4 at ent  re  gap(cmd) gap_s  plat_s att->ent  dist    aim  short  exit_dz |v_exit| land ph_dur why
+M6B_ash        b_ash_600           90 n  w mp_weapon_melee_survival   1  0  0         -       -      -      -      -     -      -      -      -    -      - frame rate 111.33 outside 120.0 +/- 3%
+M6B_ash        b_ash_600         4291 Y    mp_weapon_phase_breach     1  0  0         -       -      -      -      -     -      -      -      -    -      - 
+M6B_ash        b_ash_600         4292 Y    mp_weapon_melee_survival   1  0  0         -       -      -      -      -     -      -      -      -    -      - 
+M6B_ash        b_ash_600         4293 Y    mp_weapon_phase_breach     1  0  0         -       -      -      -      -     -      -      -      -    -      - 
+M6B_ash        b_ash_600         4294 Y    mp_weapon_melee_survival   1  0  0         -       -      -      -      -     -      -      -      -    -      - 
+M6B_ash        b_ash_600         4295 Y    mp_weapon_phase_breach     1  0  0         -       -      -      -      -     -      -      -      -    -      - 
+M6B_ash        b_ash_1200        4296 Y    mp_weapon_melee_survival   1  0  0         -       -      -      -      -     -      -      -      -    -      - 
+M6B_ash        b_ash_1200        4297 Y    mp_weapon_phase_breach     1  0  0         -       -      -      -      -     -      -      -      -    -      - 
+M6B_ash        b_ash_1200        4298 Y    mp_weapon_melee_survival   1  0  0         -       -      -      -      -     -      -      -      -    -      - 
+M6B_ash        b_ash_1200        4299 Y    mp_weapon_phase_breach     1  0  0         -       -      -      -      -     -      -      -      -    -      - 
+M6B_ash        b_ash_1200        4300 Y    mp_weapon_melee_survival   1  0  0         -       -      -      -      -     -      -      -      -    -      - 
+M6B_ash        b_ash_2000        4301 Y    mp_weapon_phase_breach     1  0  0         -       -      -      -      -     -      -      -      -    -      - 
+M6B_ash        b_ash_2000        4302 Y    mp_weapon_melee_survival   1  0  0         -       -      -      -      -     -      -      -      -    -      - 
+M6B_ash        b_ash_2000        4303 Y    mp_weapon_phase_breach     1  0  0         -       -      -      -      -     -      -      -      -    -      - 
+M6B_ash        b_ash_2000        4304 Y    mp_weapon_melee_survival   1  0  0         -       -      -      -      -     -      -      -      -    -      - 
+M6B_ash        b_ash_2000        4305 Y    mp_weapon_phase_breach     1  0  0         -       -      -      -      -     -      -      -      -    -      - 
+M6B_pilot_ash  bp_ash_att          90 Y  w mp_weapon_melee_survival   1  1  2       130   1.083  1.099  0.401 1102.8  1201   98.3   5.00  0.000   11  1.092 
+                                                                                R    126   1.050  1.049      - 1102.8     -      -   5.01  0.000   11        
+M6B_pilot_ash  bp_ash_att        4421 n    mp_weapon_melee_survival   0  0  0         -       -      -      -      -     -      -      -      -    -      - no start/end edge (settle timeout?)
+M6B_pilot_ash  bp_ash_att        4422 Y    mp_weapon_melee_survival   1  1  2       126   1.050  1.098  0.401 1102.8  1201   98.3   5.00  0.000   11  1.092 
+                                                                                R    132   1.100  1.100      - 1102.8     -      -   5.01  0.000   11        
+M6B_pilot_ash  bp_ash_hold_att   4423 n    mp_weapon_melee_survival   0  0  0         -       -      -      -      -     -      -      -      -    -      - no start/end edge (settle timeout?)
+M6B_pilot_ash  bp_ash_hold_att   4424 Y    mp_weapon_melee_survival   1  1  1       132   1.100  1.099  0.450 1102.8  1201   98.3   5.00  0.000   11  1.092 
+M6B_ash2       b_ash_600           90 Y  w mp_weapon_melee_survival   1  1  2        84   0.700  0.700  0.450  551.2   600   48.8   5.00  0.000   11  0.633 
+                                                                                R     84   0.700  0.699      -  551.2     -      -   5.01  0.000   11        
+M6B_ash2       b_ash_600         4441 n    mp_weapon_melee_survival   0  0  0         -       -      -      -      -     -      -      -      -    -      - no start/end edge (settle timeout?)
+M6B_ash2       b_ash_600         4442 Y    mp_weapon_melee_survival   1  1  2        84   0.700  0.699  0.401  551.2   600   48.8   5.00  0.000   11  0.683 
+                                                                                R     78   0.650  0.650      -  551.2     -      -   5.01  0.000   11        
+M6B_ash2       b_ash_600         4443 n    mp_weapon_melee_survival   0  0  0         -       -      -      -      -     -      -      -      -    -      - no start/end edge (settle timeout?)
+M6B_ash2       b_ash_600         4444 Y    mp_weapon_melee_survival   1  1  2        76   0.633  0.649  0.401  551.2   600   48.8   5.00  0.000   11  0.691 
+                                                                                R     78   0.650  0.649      -  551.2     -      -   5.01  0.000   11        
+M6B_ash2       b_ash_600         4445 n    mp_weapon_melee_survival   0  0  0         -       -      -      -      -     -      -      -      -    -      - no start/end edge (settle timeout?)
+M6B_ash2       b_ash_600         4446 Y    mp_weapon_melee_survival   1  1  2        77   0.642  0.650  0.400  551.2   600   48.8   5.00  0.000   11  0.706 
+                                                                                R     84   0.700  0.700      -  551.2     -      -   5.01  0.000   11        
+M6B_ash2       b_ash_1200        4447 n    mp_weapon_melee_survival   0  0  0         -       -      -      -      -     -      -      -      -    -      - no start/end edge (settle timeout?)
+M6B_ash2       b_ash_1200        4448 Y    mp_weapon_melee_survival   1  1  2       131   1.092  1.100  0.400 1102.8  1201   98.3   5.00  0.000   11  1.100 
+                                                                                R    125   1.042  1.049      - 1102.8     -      -   5.01  0.000   11        
+M6B_ash2       b_ash_1200        4449 n    mp_weapon_melee_survival   0  0  0         -       -      -      -      -     -      -      -      -    -      - no start/end edge (settle timeout?)
+M6B_ash2       b_ash_1200        4450 Y    mp_weapon_melee_survival   1  1  2       126   1.050  1.050  0.400 1102.8  1201   98.3   5.00  0.000   11  1.100 
+                                                                                R    132   1.100  1.098      - 1102.8     -      -   5.01  0.000   11        
+M6B_ash2       b_ash_1200        4451 n    mp_weapon_melee_survival   0  0  0         -       -      -      -      -     -      -      -      -    -      - no start/end edge (settle timeout?)
+M6B_ash2       b_ash_1200        4452 Y    mp_weapon_melee_survival   1  1  2       130   1.083  1.099  0.401 1102.8  1201   98.3   5.00  0.000   11  1.090 
+                                                                                R    132   1.100  1.099      - 1102.8     -      -   5.01  0.000   11        
+M6B_ash2       b_ash_2000        4453 n    mp_weapon_melee_survival   0  0  0         -       -      -      -      -     -      -      -      -    -      - no start/end edge (settle timeout?)
+M6B_ash2       b_ash_2000        4454 Y    mp_weapon_melee_survival   1  1  2       203   1.692  1.699  0.401 1832.5  1998  165.6   5.00  0.000   11  1.699 
+                                                                                R    204   1.700  1.700      - 1832.5     -      -   5.01  0.000   11        
+M6B_ash2       b_ash_2000        4455 n    mp_weapon_melee_survival   0  0  0         -       -      -      -      -     -      -      -      -    -      - no start/end edge (settle timeout?)
+M6B_ash2       b_ash_2000        4456 Y    mp_weapon_melee_survival   1  1  2       202   1.683  1.699  0.402 1832.5  1998  165.6   5.00  0.000   11  1.700 
+                                                                                R    198   1.650  1.649      - 1832.5     -      -   5.01  0.000   11        
+M6B_ash2       b_ash_2000        4457 n    mp_weapon_melee_survival   0  0  0         -       -      -      -      -     -      -      -      -    -      - no start/end edge (settle timeout?)
+M6B_ash2       b_ash_2000        4458 Y    mp_weapon_melee_survival   1  1  1       203   1.692  1.700  0.400 1832.5  1998  165.6   5.00  0.000   11  1.700 
+M6B_ash3       b_ash_600           90 Y  w mp_weapon_melee_survival   1  1  1        79   0.658  0.699  0.401  551.2   600   48.8   5.00  0.000   11  0.658 
+M6B_ash3       b_ash_600         4471 Y    mp_weapon_melee_survival   1  1  1        82   0.683  0.699  0.400  551.2   600   48.8   5.00  0.000   11  0.667 
+M6B_ash3       b_ash_600         4472 Y    mp_weapon_melee_survival   1  1  1        74   0.617  0.649  0.401  551.2   600   48.8   5.00  0.000   11  0.683 
+M6B_ash3       b_ash_600         4473 Y    mp_weapon_melee_survival   1  1  1        77   0.642  0.650  0.400  551.2   600   48.8   5.00  0.000   11  0.691 
+M6B_ash3       b_ash_1200        4474 Y    mp_weapon_melee_survival   1  1  1       132   1.100  1.100  0.401 1102.8  1201   98.3   5.00  0.000   11  1.091 
+M6B_ash3       b_ash_1200        4475 Y    mp_weapon_melee_survival   1  1  1       126   1.050  1.049  0.401 1102.8  1201   98.3   5.00  0.000   11  1.100 
+M6B_ash3       b_ash_1200        4476 Y    mp_weapon_melee_survival   1  1  1       130   1.083  1.099  0.400 1102.8  1201   98.3   5.00  0.000   11  1.092 
+M6B_ash3       b_ash_2000        4477 Y    mp_weapon_melee_survival   1  1  1       197   1.642  1.649  0.401 1832.5  1998  165.6   5.00  0.000   11  1.691 
+M6B_ash3       b_ash_2000        4478 Y    mp_weapon_melee_survival   1  1  1       202   1.683  1.700  0.400 1832.5  1998  165.6   5.00  0.000   11  1.693 
+M6B_ash3       b_ash_2000        4479 Y    mp_weapon_melee_survival   1  1  1       197   1.642  1.649  0.400 1832.5  1998  165.6   5.00  0.000   11  1.700 
+summary (primary breaches in ok, non-warm-up trials):
+  b_ash_1200       n=6 dist 1102.8 (sd 0.0, 1102.8..1102.8, n=6); freeze gap 1.076 (sd 0.021, 1.050..1.100, n=6) s (cmds 129.2 (sd 2.6, 126.0..132.0, n=6)); source path time 0.919 (sd 0.000, 0.919..0.919, n=6) (9 (sd 0, 9..9, n=6) x 0.1 s path frames)
+      attack->entry 0.401 (sd 0.001, 0.400..0.401, n=6) s; exit short of aim 98.3 (sd 0.0, 98.3..98.3, n=6) u; exit dz 5.00 (sd 0.00, 5.00..5.00, n=6); |v| at exit 0.000 (sd 0.000, 0.000..0.000, n=6); client ph 1.096 (sd 0.005, 1.090..1.100, n=6) s; land after 11.0 (sd 0.0, 11.0..11.0, n=6) cmds, vz -62.51 (sd 0.13, -62.71..-62.31, n=6)
+  b_ash_2000       n=6 dist 1832.5 (sd 0.0, 1832.5..1832.5, n=6); freeze gap 1.672 (sd 0.024, 1.642..1.692, n=6) s (cmds 200.7 (sd 2.9, 197.0..203.0, n=6)); source path time 1.527 (sd 0.000, 1.527..1.527, n=6) (15 (sd 0, 15..15, n=6) x 0.1 s path frames)
+      attack->entry 0.401 (sd 0.001, 0.400..0.402, n=6) s; exit short of aim 165.6 (sd 0.0, 165.6..165.6, n=6) u; exit dz 5.00 (sd 0.00, 5.00..5.00, n=6); |v| at exit 0.000 (sd 0.000, 0.000..0.000, n=6); client ph 1.698 (sd 0.004, 1.691..1.700, n=6) s; land after 11.0 (sd 0.0, 11.0..11.0, n=6) cmds, vz -62.52 (sd 0.03, -62.54..-62.46, n=6)
+  b_ash_600        n=6 dist 551.2 (sd 0.0, 551.2..551.2, n=6); freeze gap 0.653 (sd 0.032, 0.617..0.700, n=6) s (cmds 78.3 (sd 3.8, 74.0..84.0, n=6)); source path time 0.459 (sd 0.000, 0.459..0.459, n=6) (5 (sd 0, 5..5, n=6) x 0.1 s path frames)
+      attack->entry 0.401 (sd 0.001, 0.400..0.401, n=6) s; exit short of aim 48.8 (sd 0.0, 48.8..48.8, n=6) u; exit dz 5.00 (sd 0.00, 5.00..5.00, n=6); |v| at exit 0.000 (sd 0.000, 0.000..0.000, n=6); client ph 0.687 (sd 0.013, 0.667..0.706, n=6) s; land after 11.0 (sd 0.0, 11.0..11.0, n=6) cmds, vz -62.60 (sd 0.13, -62.76..-62.51, n=6)
+  bp_ash_att       n=1 dist 1102.8 (n=1); freeze gap 1.050 (n=1) s (cmds 126.0 (n=1)); source path time 0.919 (n=1) (9 (n=1) x 0.1 s path frames)
+      attack->entry 0.401 (n=1) s; exit short of aim 98.3 (n=1) u; exit dz 5.00 (n=1); |v| at exit 0.000 (n=1); client ph 1.092 (n=1) s; land after 11.0 (n=1) cmds, vz -62.51 (n=1)
+  bp_ash_hold_att  n=1 dist 1102.8 (n=1); freeze gap 1.100 (n=1) s (cmds 132.0 (n=1)); source path time 0.919 (n=1) (9 (n=1) x 0.1 s path frames)
+      attack->entry 0.450 (n=1) s; exit short of aim 98.3 (n=1) u; exit dz 5.00 (n=1); |v| at exit 0.000 (n=1); client ph 1.092 (n=1) s; land after 11.0 (n=1) cmds, vz -62.16 (n=1)
+  re-entries (reset onto the live entry portal): n=11; freeze gap 1.040 (sd 0.368, 0.650..1.700, n=11) s; dist 1034.9 (sd 472.4, 551.2..1832.5, n=11); |v| at exit 0.000 (sd 0.000, 0.000..0.000, n=11); entry 6.49 (sd 0.13, 6.39..6.65, n=11) s after the trial's reset
+  freeze gap vs source path frames: gap = 0.1516 + 0.1017 * frames (rms 0.0251 s, n=20)
+  freeze gap vs distance: gap = 0.2064 + 0.7970 ms/u * d (rms 0.0251 s; 1/slope 1255 u/s)
+  first run (tap offhand4 only): breach entries 0 in 15 ok trials; attack presses 0; reset weapon per trial: B m B m B m B m B m B m B m B (B = breach weapon still raised)
+  failed (not ok) trials: 12; why: ['frame rate 111.33 outside 120.0 +/- 3%', 'no start/end edge (settle timeout?)']
+
+== VALKYRIE, VTOL jets (passive; hold +jump airborne) ==
+-- b_valk_hold10 run 4331: meter at start 8.0, apex 1889.1 u, landing vz -1342.4
+   jets 0: hold 10.000 s, meter 8.0000, drop on the first state frame 1.0083 (+1 frame), drain 1.0001/s (rms 0.00003), activation cost 1.0000, meter at release 0.0000, empty 7.000 s after the press
+   meter change in the pulse gaps []; airborne after the last jets 0.0000; landed 0.592 s after the last release; recharge start 4.417 s after landing (5.008 after the last release, 8.008 after empty) at 0.7501/s; trial ends 6.008 s after landing with meter 1.1931
+   dedi jets k0=5975: 1200 held cmds; M4 one-step vz residual rms 0.0204 max 0.3510 (>0.1: 5 of 840); peak pre vz 366.46; terminal pre vz 260.131 (n 421); fuel stop 7.000 s after activation: post vz 253.877 -> next pre 101.551 (x0.40000); then low-g 358 cmds (2.983 s), full-g 68 cmds, first full g 3.000 s after the stop at h 659.5 u
+-- b_valk_hold10 run 4332: meter at start 8.0, apex 1889.0 u, landing vz -1342.4
+   jets 0: hold 10.000 s, meter 8.0000, drop on the first state frame 1.0083 (+1 frame), drain 1.0001/s (rms 0.00004), activation cost 1.0000, meter at release 0.0000, empty 7.000 s after the press
+   meter change in the pulse gaps []; airborne after the last jets 0.0000; landed 0.592 s after the last release; recharge start 4.432 s after landing (5.024 after the last release, 8.024 after empty) at 0.7495/s; trial ends 6.008 s after landing with meter 1.1801
+   dedi jets k0=8218: 1200 held cmds; M4 one-step vz residual rms 0.0672 max 1.7555 (>0.1: 14 of 840); peak pre vz 366.27; terminal pre vz 260.130 (n 421); fuel stop 7.000 s after activation: post vz 253.877 -> next pre 101.551 (x0.40000); then low-g 358 cmds (2.983 s), full-g 68 cmds, first full g 3.000 s after the stop at h 659.2 u
+-- b_valk_hold10 run 4333: meter at start 8.0, apex 1889.1 u, landing vz -1342.4
+   jets 0: hold 10.000 s, meter 8.0000, drop on the first state frame 1.0083 (+1 frame), drain 1.0001/s (rms 0.00028), activation cost 0.9996, meter at release 0.0000, empty 7.000 s after the press
+   meter change in the pulse gaps []; airborne after the last jets 0.0000; landed 0.592 s after the last release; recharge start 4.425 s after landing (5.017 after the last release, 8.017 after empty) at 0.7501/s; trial ends 6.000 s after landing with meter 1.1813
+   dedi jets k0=10491: 1200 held cmds; M4 one-step vz residual rms 0.0187 max 0.2031 (>0.1: 7 of 840); peak pre vz 366.35; terminal pre vz 260.131 (n 421); fuel stop 7.000 s after activation: post vz 253.877 -> next pre 101.551 (x0.40000); then low-g 359 cmds (2.992 s), full-g 69 cmds, first full g 3.000 s after the stop at h 659.4 u
+-- b_valk_hold10 run 4334: meter at start 8.0, apex 1888.8 u, landing vz -1346.5
+   jets 0: hold 10.058 s, meter 8.0000, drop on the first state frame 1.0083 (+1 frame), drain 1.0003/s (rms 0.00030), activation cost 0.9999, meter at release 0.0000, empty 7.000 s after the press
+   meter change in the pulse gaps []; airborne after the last jets 0.0000; landed 0.534 s after the last release; recharge start 4.441 s after landing (4.975 after the last release, 8.033 after empty) at 0.7490/s; trial ends 6.000 s after landing with meter 1.1669
+   dedi jets k0=12764: 1200 held cmds; M4 one-step vz residual rms 0.2181 max 1.2641 (>0.1: 147 of 833); peak pre vz 366.26; terminal pre vz 260.107 (n 421); fuel stop 6.942 s after activation: post vz 253.782 -> next pre 101.513 (x0.40000); then low-g 355 cmds (2.958 s), full-g 70 cmds, first full g 2.992 s after the stop at h 665.3 u
+-- b_valk_hold10 run 4335: meter at start 8.0, apex 1889.7 u, landing vz -1342.7
+   jets 0: hold 10.000 s, meter 8.0000, drop on the first state frame 1.0084 (+1 frame), drain 1.0005/s (rms 0.00028), activation cost 0.9997, meter at release 0.0000, empty 7.000 s after the press
+   meter change in the pulse gaps []; airborne after the last jets 0.0000; landed 0.592 s after the last release; recharge start 4.433 s after landing (5.025 after the last release, 8.025 after empty) at 0.7485/s; trial ends 6.008 s after landing with meter 1.1795
+   dedi jets k0=15008: 1200 held cmds; M4 one-step vz residual rms 0.0122 max 0.1790 (>0.1: 4 of 840); peak pre vz 366.26; terminal pre vz 260.130 (n 421); fuel stop 7.000 s after activation: post vz 253.877 -> next pre 101.551 (x0.40000); then low-g 357 cmds (2.975 s), full-g 68 cmds, first full g 3.000 s after the stop at h 659.1 u
+-- b_valk_pulse run 4336: meter at start 8.0, apex 633.4 u, landing vz -969.7
+   jets 0: hold 0.300 s, meter 8.0000, drop on the first state frame 1.0083 (+1 frame), drain 1.0007/s (rms 0.00028), activation cost 0.9997, meter at release 6.6998, empty - s after the press
+   jets 1: hold 0.300 s, meter 6.6998, drop on the first state frame 1.0083 (+1 frame), drain 0.9700/s (rms 0.02502), activation cost 0.9901, meter at release 5.3996, empty - s after the press
+   jets 2: hold 0.300 s, meter 5.3996, drop on the first state frame 1.0083 (+1 frame), drain 0.9701/s (rms 0.02502), activation cost 0.9900, meter at release 4.0995, empty - s after the press
+   jets 3: hold 0.300 s, meter 4.0995, drop on the first state frame 1.0083 (+1 frame), drain 0.9701/s (rms 0.02502), activation cost 0.9901, meter at release 2.7993, empty - s after the press
+   meter change in the pulse gaps [0.0083, 0.0083, 0.0083]; airborne after the last jets 0.0083; landed 1.742 s after the last release; recharge start - s after landing (- after the last release, - after empty) at -/s; trial ends 3.000 s after landing with meter 2.7993
+   dedi jets k0=17281: 36 held cmds; M4 one-step vz residual rms 0.0326 max 0.1825 (>0.1: 1 of 36); peak pre vz 356.28; terminal pre vz - (n 0); release: post vz 351.854 -> next pre 351.854 (x1.00000); then low-g 0 cmds (0.000 s), full-g 41 cmds, first full g 0.000 s after the stop at h 127.2 u
+   dedi jets k0=17359: 36 held cmds; M4 one-step vz residual rms 0.0075 max 0.0157 (>0.1: 0 of 36); peak pre vz 339.73; terminal pre vz - (n 0); release: post vz 335.651 -> next pre 335.651 (x1.00000); then low-g 0 cmds (0.000 s), full-g 41 cmds, first full g 0.000 s after the stop at h 279.9 u
+   dedi jets k0=17437: 36 held cmds; M4 one-step vz residual rms 0.0070 max 0.0151 (>0.1: 0 of 36); peak pre vz 332.07; terminal pre vz - (n 0); release: post vz 328.156 -> next pre 328.156 (x1.00000); then low-g 0 cmds (0.000 s), full-g 41 cmds, first full g 0.000 s after the stop at h 423.6 u
+   dedi jets k0=17515: 36 held cmds; M4 one-step vz residual rms 0.0075 max 0.0150 (>0.1: 0 of 36); peak pre vz 328.52; terminal pre vz - (n 0); release: post vz 324.683 -> next pre 324.683 (x1.00000); then low-g 0 cmds (0.000 s), full-g 197 cmds, first full g 0.000 s after the stop at h 563.1 u
+-- b_valk_pulse run 4337: meter at start 8.0, apex 633.2 u, landing vz -969.5
+   jets 0: hold 0.300 s, meter 8.0000, drop on the first state frame 1.0083 (+1 frame), drain 1.0005/s (rms 0.00027), activation cost 1.0000, meter at release 6.6999, empty - s after the press
+   jets 1: hold 0.300 s, meter 6.6999, drop on the first state frame 1.0083 (+1 frame), drain 0.9480/s (rms 0.02808), activation cost 0.9909, meter at release 5.3997, empty - s after the press
+   jets 2: hold 0.300 s, meter 5.3997, drop on the first state frame 1.0083 (+1 frame), drain 0.9481/s (rms 0.02808), activation cost 0.9909, meter at release 4.0995, empty - s after the press
+   jets 3: hold 0.300 s, meter 4.0995, drop on the first state frame 1.0083 (+1 frame), drain 0.9477/s (rms 0.02807), activation cost 0.9909, meter at release 2.7995, empty - s after the press
+   meter change in the pulse gaps [0.0083, 0.0083, 0.0083]; airborne after the last jets 0.0083; landed 1.742 s after the last release; recharge start - s after landing (- after the last release, - after empty) at -/s; trial ends 3.000 s after landing with meter 2.7995
+   dedi jets k0=18378: 36 held cmds; M4 one-step vz residual rms 0.0074 max 0.0129 (>0.1: 0 of 36); peak pre vz 356.21; terminal pre vz - (n 0); release: post vz 351.783 -> next pre 351.783 (x1.00000); then low-g 0 cmds (0.000 s), full-g 41 cmds, first full g 0.000 s after the stop at h 127.2 u
+   dedi jets k0=18456: 36 held cmds; M4 one-step vz residual rms 0.0071 max 0.0154 (>0.1: 0 of 36); peak pre vz 339.69; terminal pre vz - (n 0); release: post vz 335.610 -> next pre 335.610 (x1.00000); then low-g 0 cmds (0.000 s), full-g 41 cmds, first full g 0.000 s after the stop at h 279.9 u
+   dedi jets k0=18534: 36 held cmds; M4 one-step vz residual rms 0.0056 max 0.0116 (>0.1: 0 of 36); peak pre vz 332.03; terminal pre vz - (n 0); release: post vz 328.115 -> next pre 328.115 (x1.00000); then low-g 0 cmds (0.000 s), full-g 40 cmds, first full g 0.000 s after the stop at h 423.5 u
+   dedi jets k0=18612: 36 held cmds; M4 one-step vz residual rms 0.0076 max 0.0147 (>0.1: 0 of 36); peak pre vz 328.46; terminal pre vz - (n 0); release: post vz 324.626 -> next pre 324.626 (x1.00000); then low-g 0 cmds (0.000 s), full-g 204 cmds, first full g 0.000 s after the stop at h 563.0 u
+-- b_valk_pulse run 4338: meter at start 8.0, apex 633.3 u, landing vz -970.2
+   jets 0: hold 0.300 s, meter 8.0000, drop on the first state frame 1.0083 (+1 frame), drain 1.0003/s (rms 0.00027), activation cost 1.0000, meter at release 6.6999, empty - s after the press
+   jets 1: hold 0.300 s, meter 6.6999, drop on the first state frame 1.0083 (+1 frame), drain 0.9702/s (rms 0.02499), activation cost 0.9904, meter at release 5.3997, empty - s after the press
+   jets 2: hold 0.300 s, meter 5.3997, drop on the first state frame 1.0083 (+1 frame), drain 0.9700/s (rms 0.02503), activation cost 0.9903, meter at release 4.0997, empty - s after the press
+   jets 3: hold 0.300 s, meter 4.0997, drop on the first state frame 1.0083 (+1 frame), drain 0.9491/s (rms 0.02740), activation cost 0.9913, meter at release 2.7995, empty - s after the press
+   meter change in the pulse gaps [0.0083, 0.0083, 0.0083]; airborne after the last jets 0.0083; landed 1.743 s after the last release; recharge start - s after landing (- after the last release, - after empty) at -/s; trial ends 3.007 s after landing with meter 2.7995
+   dedi jets k0=19476: 36 held cmds; M4 one-step vz residual rms 0.0080 max 0.0262 (>0.1: 0 of 36); peak pre vz 356.23; terminal pre vz - (n 0); release: post vz 351.803 -> next pre 351.803 (x1.00000); then low-g 0 cmds (0.000 s), full-g 41 cmds, first full g 0.000 s after the stop at h 127.2 u
+   dedi jets k0=19554: 36 held cmds; M4 one-step vz residual rms 0.0516 max 0.3003 (>0.1: 1 of 36); peak pre vz 339.75; terminal pre vz - (n 0); release: post vz 335.676 -> next pre 335.676 (x1.00000); then low-g 0 cmds (0.000 s), full-g 28 cmds, first full g 0.000 s after the stop at h 279.9 u
+   dedi jets k0=19632: 36 held cmds; M4 one-step vz residual rms 0.0070 max 0.0132 (>0.1: 0 of 36); peak pre vz 332.01; terminal pre vz - (n 0); release: post vz 328.093 -> next pre 328.093 (x1.00000); then low-g 0 cmds (0.000 s), full-g 41 cmds, first full g 0.000 s after the stop at h 423.5 u
+   dedi jets k0=19710: 36 held cmds; M4 one-step vz residual rms 0.3842 max 0.7285 (>0.1: 12 of 36); peak pre vz 328.60; terminal pre vz - (n 0); release: post vz 324.763 -> next pre 324.763 (x1.00000); then low-g 0 cmds (0.000 s), full-g 112 cmds, first full g 0.000 s after the stop at h 563.0 u
+-- b_valk_pulse run 4339: meter at start 8.0, apex 633.3 u, landing vz -969.7
+   jets 0: hold 0.300 s, meter 8.0000, drop on the first state frame 1.0083 (+1 frame), drain 1.0004/s (rms 0.00028), activation cost 0.9997, meter at release 6.6998, empty - s after the press
+   jets 1: hold 0.300 s, meter 6.6998, drop on the first state frame 1.0083 (+1 frame), drain 0.9701/s (rms 0.02502), activation cost 0.9900, meter at release 5.3997, empty - s after the press
+   jets 2: hold 0.300 s, meter 5.3997, drop on the first state frame 1.0083 (+1 frame), drain 0.9700/s (rms 0.02502), activation cost 0.9900, meter at release 4.0995, empty - s after the press
+   jets 3: hold 0.300 s, meter 4.0995, drop on the first state frame 1.0083 (+1 frame), drain 0.9701/s (rms 0.02496), activation cost 0.9901, meter at release 2.7994, empty - s after the press
+   meter change in the pulse gaps [0.0083, 0.0083, 0.0083]; airborne after the last jets 0.0083; landed 1.742 s after the last release; recharge start - s after landing (- after the last release, - after empty) at -/s; trial ends 3.000 s after landing with meter 2.7994
+   dedi jets k0=20574: 36 held cmds; M4 one-step vz residual rms 0.0070 max 0.0125 (>0.1: 0 of 36); peak pre vz 356.22; terminal pre vz - (n 0); release: post vz 351.796 -> next pre 351.796 (x1.00000); then low-g 0 cmds (0.000 s), full-g 41 cmds, first full g 0.000 s after the stop at h 127.2 u
+   dedi jets k0=20652: 36 held cmds; M4 one-step vz residual rms 0.0083 max 0.0344 (>0.1: 0 of 36); peak pre vz 339.69; terminal pre vz - (n 0); release: post vz 335.608 -> next pre 335.608 (x1.00000); then low-g 0 cmds (0.000 s), full-g 41 cmds, first full g 0.000 s after the stop at h 279.9 u
+   dedi jets k0=20730: 36 held cmds; M4 one-step vz residual rms 0.0054 max 0.0107 (>0.1: 0 of 36); peak pre vz 332.03; terminal pre vz - (n 0); release: post vz 328.112 -> next pre 328.112 (x1.00000); then low-g 0 cmds (0.000 s), full-g 41 cmds, first full g 0.000 s after the stop at h 423.5 u
+   dedi jets k0=20808: 36 held cmds; M4 one-step vz residual rms 0.0540 max 0.3110 (>0.1: 1 of 36); peak pre vz 328.50; terminal pre vz - (n 0); release: post vz 324.663 -> next pre 324.663 (x1.00000); then low-g 0 cmds (0.000 s), full-g 204 cmds, first full g 0.000 s after the stop at h 563.0 u
+-- b_valk_pulse run 4340: meter at start 8.0, apex 633.0 u, landing vz -969.6
+   jets 0: hold 0.300 s, meter 8.0000, drop on the first state frame 1.0083 (+1 frame), drain 1.0003/s (rms 0.00028), activation cost 0.9997, meter at release 6.6998, empty - s after the press
+   jets 1: hold 0.300 s, meter 6.6998, drop on the first state frame 1.0083 (+1 frame), drain 0.9697/s (rms 0.02501), activation cost 0.9899, meter at release 5.3999, empty - s after the press
+   jets 2: hold 0.300 s, meter 5.3999, drop on the first state frame 1.0083 (+1 frame), drain 0.9700/s (rms 0.02502), activation cost 0.9900, meter at release 4.0998, empty - s after the press
+   jets 3: hold 0.300 s, meter 4.0998, drop on the first state frame 1.0083 (+1 frame), drain 0.9698/s (rms 0.02502), activation cost 0.9900, meter at release 2.7997, empty - s after the press
+   meter change in the pulse gaps [0.0083, 0.0083, 0.0083]; airborne after the last jets 0.0083; landed 1.742 s after the last release; recharge start - s after landing (- after the last release, - after empty) at -/s; trial ends 3.000 s after landing with meter 2.7997
+   dedi jets k0=21672: 36 held cmds; M4 one-step vz residual rms 0.0069 max 0.0122 (>0.1: 0 of 36); peak pre vz 356.21; terminal pre vz - (n 0); release: post vz 351.785 -> next pre 351.785 (x1.00000); then low-g 0 cmds (0.000 s), full-g 40 cmds, first full g 0.000 s after the stop at h 127.2 u
+   dedi jets k0=21750: 36 held cmds; M4 one-step vz residual rms 0.0215 max 0.0604 (>0.1: 0 of 36); peak pre vz 339.57; terminal pre vz - (n 0); release: post vz 335.504 -> next pre 335.504 (x1.00000); then low-g 0 cmds (0.000 s), full-g 40 cmds, first full g 0.000 s after the stop at h 279.8 u
+   dedi jets k0=21828: 36 held cmds; M4 one-step vz residual rms 0.0058 max 0.0111 (>0.1: 0 of 36); peak pre vz 331.97; terminal pre vz - (n 0); release: post vz 328.052 -> next pre 328.052 (x1.00000); then low-g 0 cmds (0.000 s), full-g 41 cmds, first full g 0.000 s after the stop at h 423.4 u
+   dedi jets k0=21906: 36 held cmds; M4 one-step vz residual rms 0.0085 max 0.0222 (>0.1: 0 of 36); peak pre vz 328.41; terminal pre vz - (n 0); release: post vz 324.572 -> next pre 324.572 (x1.00000); then low-g 0 cmds (0.000 s), full-g 204 cmds, first full g 0.000 s after the stop at h 562.8 u
+summary:
+  meter at trial start [8.0] (the runner reset refills it; census glideDuration 8)
+  drain while held (hold10) 1.0002 (sd 0.0002, 1.0001..1.0005, n=5) /s; activation cost (hold10, fit extrapolated to the press) 0.9998 (sd 0.0002, 0.9996..1.0000, n=5)
+  activation cost from pulses (meter drop - drain x hold) 1.0001 (sd 0.0001, 0.9999..1.0001, n=20); activations per pulse trial (dedi) [4, 4, 4, 4, 4]
+  hold10: meter empty 7.000 (sd 0.000, 7.000..7.000, n=5) s after the press (= (8 - 1) / 1); dedi fuel stop 6.988 (sd 0.026, 6.942..7.000, n=5) s after activation; vz scale at the fuel stop 0.40000 (sd 0.00000, 0.40000..0.40000, n=5); low-g after the fuel stop 2.978 (sd 0.013, 2.958..2.992, n=5) s (census jetpackPostEffectTime 3); full g resumes at h 660.5 (sd 2.7, 659.1..665.3, n=5) u
+  pulse releases (0.3 s holds): post vz at release 335.0 (sd 10.7, 324.6..351.9, n=20); next-pre/post 1.00000 (sd 0.00000, 1.00000..1.00000, n=20); low-g cmds after release [0]; peak pre vz per pulse 339.1 (sd 11.0, 328.4..356.3, n=20)
+  terminal pre vz (3..6.5 s, no input) 260.126 (sd 0.010, 260.107..260.131, n=5) (M4 model 260.13); M4 one-step residual rms per activation 0.0395 (sd 0.0840, 0.0054..0.3842, n=25) u/s; |resid| > 0.1 u/s in 192 of 4913 cmds
+  recharge: rate 0.7494 (sd 0.0007, 0.7485..0.7501, n=5) /s; start after landing 4.430 (sd 0.009, 4.417..4.441, n=5) s; after the last release 5.010 (sd 0.021, 4.975..5.025, n=5) s; after empty 8.022 (sd 0.009, 8.008..8.033, n=5) s
+  airborne meter change between the last release and landing: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0083, 0.0083, 0.0083, 0.0083, 0.0083]
+  apex: hold10 1889.1 (sd 0.3, 1888.8..1889.7, n=5) u, pulse 633.2 (sd 0.1, 633.0..633.4, n=5) u; landing vz hold10 -1343.3 (sd 1.8, -1346.5..-1342.4, n=5), pulse -969.7 (sd 0.3, -970.2..-969.5, n=5)
+
