@@ -322,7 +322,7 @@ def export_trial(rows, run, out_dir, side="cl", trial_id=None, source="r5flowsta
         "n_cmds": "drv (count of MOVE-TRACE lines assigned to the frame)",
         "in_fwd": "obs GetInputAxisForward", "in_right": "obs GetInputAxisRight",
         "in_jump": "obs IsInputCommandHeld(IN_JUMP)", "in_duck": "obs IsInputCommandHeld(IN_DUCK)",
-        "in_sprint": "obs MOVE-TRACE b= IN_SPEED bit (1<<17) of the step's last usercmd",
+        "in_sprint": "obs MOVE-TRACE b= sprint bit (1<<15 in this build; see schema.BUTTON_BITS) of the step's last usercmd",
         "buttons": "obs MOVE-TRACE b=", "cmd_fwd": "obs MOVE-TRACE fwd=", "cmd_side": "obs MOVE-TRACE sd=",
         "movescale": "obs MOVE-TRACE msc=", "maxspeed": "obs MOVE-TRACE ms=",
         "pressed": "drv (MOVE-TRACE b= bits and fwd=/sd= signs, per usercmd, against the previous usercmd)",

@@ -27,7 +27,7 @@ TOOLS = os.path.normpath(os.path.join(HERE, "..", "..", "..", "phase2-prep", "to
 sys.path.insert(0, TOOLS)
 from hsdtel import derive, parse  # noqa: E402
 
-IN_JUMP, IN_DUCK, IN_SPEED = 0x2, 0x4, 1 << 17
+IN_JUMP, IN_DUCK, IN_SPEED = 0x2, 0x4, 1 << 15  # sprint is bit 15 in this build (see hsdtel schema.BUTTON_BITS)
 PLAT_RE = re.compile(r"^\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}\]\s*\[\s*(-?\d+\.\d+)\]")
 TOL = 0.0016  # print precision %.3f (+ rounding of both prints)
 

@@ -123,7 +123,10 @@ HSD_REQUIRED = {
 BUTTON_BITS = OrderedDict([
     ("ATTACK", 1 << 0), ("JUMP", 1 << 1), ("DUCK", 1 << 2), ("FORWARD", 1 << 3), ("BACK", 1 << 4),
     ("USE", 1 << 5), ("MOVELEFT", 1 << 9), ("MOVERIGHT", 1 << 10), ("ATTACK2", 1 << 11),
-    ("SPEED", 1 << 17), ("DODGE", 1 << 28),
+    # +speed (sprint) is bit 15 in this build: observed in every sprinting usercmd of M2 (2160/2160 with the
+    # bit set, 0 with 1 << 17), although s21-r5sdk public/game/shared/in_buttons.h:34 names 1 << 17 IN_SPEED
+    # (that header is Source/TF2-derived; it calls bit 15 IN_ALT2).
+    ("SPEED", 1 << 15), ("DODGE", 1 << 28),
 ])
 IN_JUMP = BUTTON_BITS["JUMP"]
 IN_DUCK = BUTTON_BITS["DUCK"]

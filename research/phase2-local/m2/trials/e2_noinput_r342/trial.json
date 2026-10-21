@@ -67,7 +67,7 @@
     "standable_source": "ground flag at trial start (ge= / IsOnGround); null = not on ground or unknown",
     "ground_normal": null,
     "ground_normal_source": "not recorded: neither MOVE-TRACE nor HSD.MoveDiag prints a surface normal",
-    "course_note": "M2 test field z 294.92 (map_scan); schedule e2_noinput @144 fps; Gibraltar empty-handed"
+    "course_note": "M2 test field z 294.92 (map_scan); schedule e2_noinput @144 fps; legend per session census (Pathfinder main, Wraith rerun); empty-handed"
   },
   "parameters_side": "cl",
   "parameters": {
@@ -969,7 +969,7 @@
     "in_pitch": "obs",
     "in_jump": "obs IsInputCommandHeld(IN_JUMP)",
     "in_duck": "obs IsInputCommandHeld(IN_DUCK)",
-    "in_sprint": "obs MOVE-TRACE b= IN_SPEED bit (1<<17) of the step's last usercmd",
+    "in_sprint": "obs MOVE-TRACE b= sprint bit (1<<15 in this build; see schema.BUTTON_BITS) of the step's last usercmd",
     "buttons": "obs MOVE-TRACE b=",
     "cmd_fwd": "obs MOVE-TRACE fwd=",
     "cmd_side": "obs MOVE-TRACE sd=",

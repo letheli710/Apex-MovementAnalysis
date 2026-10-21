@@ -23,7 +23,7 @@ REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(HERE))))
 sys.path.insert(0, os.path.join(REPO, "research", "phase2-prep", "tools"))
 from hsdtel import derive, parse  # noqa: E402
 
-IN_JUMP, IN_DUCK, IN_SPEED = 0x2, 0x4, 1 << 17
+IN_JUMP, IN_DUCK, IN_SPEED = 0x2, 0x4, 1 << 15  # sprint is bit 15 in this build (see hsdtel schema.BUTTON_BITS)
 SCHEDS = ("e5_slide", "e5_slidejump02", "e5_slidejump06", "e1_sprint")
 XCHECK = ("e4_stand",)
 CENSUS = {  # E0 census (T0 smoke report/census.csv), cl classvar == cl setting == sv setting

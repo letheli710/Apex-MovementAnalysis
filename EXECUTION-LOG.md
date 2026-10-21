@@ -64,6 +64,14 @@ Newest entries at the bottom. Problems are tagged **[ISSUE]** and also listed in
   - The runner now pins the legend (`--legend`, default gibraltar, via `Agent_SetLegend`); not yet verified live.
   - SESSION-BASELINE corrected.
 - Wrote `m2/PARAMETER-TABLE.md`: value, unit, source and spread for every parameter. M2 R5-side acceptance passes (terminal speed spread 0 %, worst accel/decel spread 1.06 %). Started the Unity motor v2 subagent (the only Unity process).
+- The Unity motor v2 subagent built `R5MotorV2` (48/48 EditMode tests) and replayed 37 real trials.
+  - E1 position RMS is 0.03–0.66 u; terminal speed error 0.000 %. M1 trial: 32.2 → 1.38 u RMS.
+  - Worst case is e2_strafe (81 u RMS) from the unmodelled lurch, which belongs to M3.
+- **[ISSUE→fixed]** The Unity agent found that sprint is button **bit 15** (0x8000), not IN_SPEED 1<<17 from the SDK header. Data: 2160/2160 sprinting cmds carry bit 15 and none carry bit 17.
+  - Fixed the hsdtel schema and re-exported the 34 trials (`in_sprint` was always 0 before).
+  - The ground analysis re-run changed only a diagnostic field.
+  - The lead's Unity re-run produced identical tables.
+- **M2 accepted** (A1–A5): `m2/M2-REPORT.md`, `m2/PARAMETER-TABLE.md`.
 
 ## Open issues
 
