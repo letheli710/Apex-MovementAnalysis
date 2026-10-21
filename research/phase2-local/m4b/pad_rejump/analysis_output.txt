@@ -1,0 +1,86 @@
+=== M4b pad re-jump (Octane jump pad at reset origin + (300,0,0), lane C, 120 fps) ===
+session 20261021_022102_M4b_octane: 4 scored pad trials (ok, not warm-up), parse errors 0
+  census: sprintspeed 260, speed 173.5, jumpHeight 56, antiMultiJumpHeightFrac 0.3, landSlowdownDuration 1, deceleration 1250
+session 20261021_023310_M4b_octane2: 8 scored pad trials (ok, not warm-up), parse errors 0
+  census: sprintspeed 260, speed 173.5, jumpHeight 56, antiMultiJumpHeightFrac 0.3, landSlowdownDuration 1, deceleration 1250
+
+--- 1. Per trial (client commands; t from the start of the pad landing command) ---
+  run schedule             fps launch_h  vz_land  f0 obs  f0 mdl  h_land gnd  h_preJ h_postJ  260msc     err   frac carry% msc_hop sv_dmax
+ 2417 m4b_pad_rejump    117.93  514.309 -1024.74 0.24131 0.24133 124.262   3  93.108  72.402  72.403  -0.001 0.3000  14.08    1.15   0.000
+ 2423 m4b_pad_rejump_w  118.16  514.309 -1024.08 0.24518 0.24360 126.841   3 101.438  73.487  73.474   0.013 0.3000  14.29  1.1347   0.000
+ 2424 m4b_pad_rejump_w  118.89  514.309 -1026.84 0.23411 0.23413 121.118   3  89.860  70.268  70.254   0.014 0.3000  13.66    1.15   0.000
+ 2425 m4b_pad_rejump_w  119.89  514.309 -1026.86 0.23387 0.23409 120.991   3  89.001  70.207  70.193   0.014 0.3000  13.65   1.146   0.000
+ 2441 m4b_pad_rejump    119.92  514.309 -1024.32 0.24272 0.24277 124.990   3  93.734  72.827  72.827   0.000 0.3000  14.16    1.15   0.000
+ 2442 m4b_pad_rejump    119.94  514.309 -1024.54 0.24197 0.24201 124.599   3  93.345  72.601  72.601   0.000 0.3000  14.12    1.15   0.000
+ 2443 m4b_pad_rejump    119.94  514.309 -1024.54 0.24197 0.24202 124.601   3  93.347  72.602  72.602  -0.000 0.3000  14.12    1.15   0.000
+ 2444 m4b_pad_rejump    119.96  514.309 -1024.48 0.24220 0.24225 124.720   3  93.466  72.671  72.671  -0.000 0.3000  14.13    1.15   0.000
+ 2445 m4b_pad_rejump    119.96  514.309 -1024.53 0.24201 0.24206 124.623   3  93.354  72.613  72.613   0.000 0.3000  14.12    1.15   0.000
+ 2446 m4b_pad_rejump_w  119.86  514.309 -1024.10 0.24317 0.24355 125.804   3  93.242  72.995  72.981   0.014 0.3000  14.19    1.15   0.000
+ 2447 m4b_pad_rejump_w  119.95  514.309 -1024.21 0.24315 0.24314 125.794   3  94.602  72.965  72.951   0.014 0.3000  14.19    1.15   0.000
+ 2448 m4b_pad_rejump_w  119.96  514.309 -1024.71 0.24142 0.24145 124.898   3  93.631  72.450  72.437   0.013 0.3000  14.09    1.15   0.000
+
+--- 2. Group statistics ---
+
+[m4b_pad_rejump] n=6
+  pad launch |h| (u/s):                  514.309 (sd 0.000, 514.309..514.309, n=6)
+  impact vz on the landing cmd (u/s):    -1024.53 (sd 0.14, -1024.74..-1024.32, n=6)
+  landing f0 observed (post/pre |h|):    0.24203 (sd 0.00046, 0.24131..0.24272, n=6)  model clamp(a+b vz^2): 0.24207 (sd 0.00047, 0.24133..0.24277, n=6)
+  |h| after the landing cmd (u/s):       124.633 (sd 0.234, 124.262..124.990, n=6)
+  ground cmds before the jump cmd:       3 (sd 0, 3..3, n=6)  W on them: [0.0]  decel (u/s^2): 1250.0 (sd 0.6, 1249.3..1250.7, n=18)
+  landing -> jump cmd (s):               0.0333 (sd 0.0000, 0.0332..0.0333, n=6)
+  msc model (OCTANE recovery) max |err| from landing to the hop landing: 0.00090
+  jump cmd: |h| pre                      93.392 (sd 0.204, 93.108..93.734, n=6)
+  jump cmd: |h| post                     72.619 (sd 0.137, 72.402..72.827, n=6)
+  jump cmd msc (maxspeed/173.5):         0.27931 (sd 0.00053, 0.27847..0.28010, n=6)
+  cap tests, post - min(pre, cap):  sprintspeed*msc -0.0001 (sd 0.0004, -0.0009..0.0003, n=6) | walk*msc 24.160 (sd 0.046, 24.087..24.229, n=6) | 299 -20.773 (sd 0.072, -20.907..-20.706, n=6)
+  jump V (pvz + 1.5 g dt):               158.742 (sd 0.004, 158.740..158.750, n=6)  frac obs 0.29999 (sd 0.00001, 0.29998..0.30002, n=6)  M2 model 0.300 (sd 0.000, 0.300..0.300, n=6)
+  carry-over |h| after jump / pad launch |h|: 0.1412 (sd 0.0003, 0.1408..0.1416, n=6)
+  counterfactual without landing slowdown (friction, then 299 cap): 299.00 (sd 0.00, 299.00..299.00, n=6)
+  air after the jump, d|h|/dt (u/s^2):   0.000 (sd 0.000, 0.000..0.000, n=6)
+  hop air time (s): 0.4000 (sd 0.0002, 0.3999..0.4003, n=6)  hop landing vz: -144.45 (sd 0.11, -144.66..-144.38, n=6)
+  msc on the hop landing cmd -> next cmd: 0.4425 (sd 0.0006, 0.4420..0.4435, n=6) -> 1.1500 (sd 0.0000, 1.1500..1.1500, n=6)
+  no input: hop landing -> stop (s):     0.058 (sd 0.000, 0.058..0.058, n=6)
+  client vs dedi, max |state diff| (u, u/s): 0.0000 (sd 0.0000, 0.0000..0.0000, n=6)  max |msc diff|: 0.0000 (sd 0.0000, 0.0000..0.0000, n=6)
+
+[m4b_pad_rejump_w] n=6
+  pad launch |h| (u/s):                  514.309 (sd 0.000, 514.309..514.309, n=6)
+  impact vz on the landing cmd (u/s):    -1025.13 (sd 1.35, -1026.86..-1024.08, n=6)
+  landing f0 observed (post/pre |h|):    0.24015 (sd 0.00492, 0.23387..0.24518, n=6)  model clamp(a+b vz^2): 0.23999 (sd 0.00462, 0.23409..0.24360, n=6)
+  |h| after the landing cmd (u/s):       124.241 (sd 2.544, 120.991..126.841, n=6)
+  ground cmds before the jump cmd:       3 (sd 0, 3..3, n=6)  W on them: [1.0]  decel (u/s^2): 1249.9 (sd 0.5, 1249.3..1250.7, n=18)
+  landing -> jump cmd (s):               0.0327 (sd 0.0028, 0.0271..0.0347, n=6)
+  msc model (OCTANE recovery) max |err| from landing to the hop landing: 0.00074
+  jump cmd: |h| pre                      93.629 (sd 4.420, 89.001..101.438, n=6)
+  jump cmd: |h| post                     72.062 (sd 1.451, 70.207..73.487, n=6)
+  jump cmd msc (maxspeed/173.5):         0.27711 (sd 0.00558, 0.26997..0.28259, n=6)
+  cap tests, post - min(pre, cap):  sprintspeed*msc 0.0135 (sd 0.0007, 0.0126..0.0145, n=6) | walk*msc 23.984 (sd 0.482, 23.367..24.457, n=6) | 299 -21.567 (sd 3.294, -27.951..-18.794, n=6)
+  jump V (pvz + 1.5 g dt):               158.738 (sd 0.004, 158.733..158.743, n=6)  frac obs 0.29997 (sd 0.00002, 0.29996..0.29999, n=6)  M2 model 0.300 (sd 0.000, 0.300..0.300, n=6)
+  carry-over |h| after jump / pad launch |h|: 0.1401 (sd 0.0028, 0.1365..0.1429, n=6)
+  counterfactual without landing slowdown (friction, then 299 cap): 299.00 (sd 0.00, 299.00..299.00, n=6)
+  air after the jump, d|h|/dt (u/s^2):   0.904 (sd 0.016, 0.882..0.924, n=6)
+  hop air time (s): 0.3986 (sd 0.0022, 0.3949..0.4004, n=6)  hop landing vz: -143.40 (sd 1.58, -144.60..-140.60, n=6)
+  msc on the hop landing cmd -> next cmd: 0.4392 (sd 0.0046, 0.4332..0.4438, n=6) -> 1.1468 (sd 0.0061, 1.1347..1.1500, n=6)
+  W: hop landing -> |h| 299 (s):         1.003 (sd 0.016, 0.988..1.030, n=6)
+  client vs dedi, max |state diff| (u, u/s): 0.0000 (sd 0.0000, 0.0000..0.0000, n=6)  max |msc diff|: 0.0000 (sd 0.0000, 0.0000..0.0000, n=6)
+
+--- 3. Hop landing (the soft landing after the re-jump): msc and sprint state ---
+  r2417 m4b_pad_rejump    hop landing vz  -144.44  |h|  72.402 ->  72.402  msc 0.4421 -> 1.1500  sprint after 0  fps 117.93
+  r2423 m4b_pad_rejump_w  hop landing vz  -140.60  |h|  73.828 ->  72.859  msc 0.4369 -> 1.1347  sprint after 1  fps 118.16
+  r2424 m4b_pad_rejump_w  hop landing vz  -144.53  |h|  70.630 ->  70.643  msc 0.4356 -> 1.1500  sprint after 1  fps 118.89
+  r2425 m4b_pad_rejump_w  hop landing vz  -142.49  |h|  70.564 ->  70.331  msc 0.4332 -> 1.1460  sprint after 1  fps 119.89
+  r2441 m4b_pad_rejump    hop landing vz  -144.42  |h|  72.827 ->  72.827  msc 0.4435 -> 1.1500  sprint after 0  fps 119.92
+  r2442 m4b_pad_rejump    hop landing vz  -144.66  |h|  72.601 ->  72.601  msc 0.4427 -> 1.1500  sprint after 0  fps 119.94
+  r2443 m4b_pad_rejump    hop landing vz  -144.38  |h|  72.602 ->  72.602  msc 0.4421 -> 1.1500  sprint after 0  fps 119.94
+  r2444 m4b_pad_rejump    hop landing vz  -144.43  |h|  72.671 ->  72.671  msc 0.4429 -> 1.1500  sprint after 0  fps 119.96
+  r2445 m4b_pad_rejump    hop landing vz  -144.38  |h|  72.613 ->  72.613  msc 0.4420 -> 1.1500  sprint after 0  fps 119.96
+  r2446 m4b_pad_rejump_w  hop landing vz  -143.81  |h|  73.344 ->  73.357  msc 0.4438 -> 1.1500  sprint after 1  fps 119.86
+  r2447 m4b_pad_rejump_w  hop landing vz  -144.40  |h|  73.316 ->  73.329  msc 0.4435 -> 1.1500  sprint after 1  fps 119.95
+  r2448 m4b_pad_rejump_w  hop landing vz  -144.60  |h|  72.804 ->  72.817  msc 0.4424 -> 1.1500  sprint after 1  fps 119.96
+
+--- 4. W-held drift in the air after the re-jump (rejump_w) ---
+  r2423: d|h|/dt 0.882 (sd 0.537, 0.000..1.681, n=46); wish cap 60*msc ~ 17.0 < |h| 73.5 -> AirAccelerate adds nothing
+  r2424: d|h|/dt 0.924 (sd 0.550, 0.000..1.681, n=47); wish cap 60*msc ~ 16.2 < |h| 70.3 -> AirAccelerate adds nothing
+  r2425: d|h|/dt 0.922 (sd 0.546, 0.000..1.641, n=47); wish cap 60*msc ~ 16.2 < |h| 70.2 -> AirAccelerate adds nothing
+  r2446: d|h|/dt 0.899 (sd 0.542, 0.000..1.613, n=47); wish cap 60*msc ~ 16.8 < |h| 73.0 -> AirAccelerate adds nothing
+  r2447: d|h|/dt 0.896 (sd 0.539, 0.000..1.563, n=47); wish cap 60*msc ~ 16.8 < |h| 73.0 -> AirAccelerate adds nothing
+  r2448: d|h|/dt 0.903 (sd 0.544, 0.000..1.679, n=47); wish cap 60*msc ~ 16.7 < |h| 72.5 -> AirAccelerate adds nothing

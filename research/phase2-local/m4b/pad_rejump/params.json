@@ -1,0 +1,159 @@
+{
+ "_scope": "Octane, R5Flowstate S21 client / S3 dedi, 120 fps, lane C; sessions M4b_octane (m4b_pad_* only) + M4b_octane2; values computed by pad_rejump_analysis.py",
+ "noinput.landing_f0": {
+  "value": 0.24203,
+  "unit": "-",
+  "source": "observed post/pre |h| on the landing cmd; OCTANE model clamp(1.996467 - 1.6714e-6 vz^2, 0, 1) = 0.24207",
+  "n": 6,
+  "spread": {
+   "sd": 0.000456,
+   "min": 0.24131,
+   "max": 0.242724
+  }
+ },
+ "noinput.ground_decel_before_jump": {
+  "value": 1250.02,
+  "unit": "u/s^2",
+  "source": "observed on the 3 ground cmds (not x msc)",
+  "n": 18,
+  "spread": {
+   "sd": 0.555736,
+   "min": 1249.280576,
+   "max": 1250.660264
+  }
+ },
+ "noinput.jump_cap_rule": {
+  "value": "min(|h|, sprintspeed 260 * msc)",
+  "unit": "u/s",
+  "source": "observed post - prediction on the jump cmd",
+  "n": 6,
+  "spread": {
+   "sd": 0.000442,
+   "min": -0.000882,
+   "max": 0.00032
+  },
+  "note": "walk*msc and 299 rejected (see results.json)"
+ },
+ "noinput.h_after_rejump": {
+  "value": 72.619,
+  "unit": "u/s",
+  "source": "observed",
+  "n": 6,
+  "spread": {
+   "sd": 0.136898,
+   "min": 72.402,
+   "max": 72.827
+  }
+ },
+ "noinput.carry_over_fraction": {
+  "value": 0.1412,
+  "unit": "-",
+  "source": "|h| after the re-jump / pad launch |h|",
+  "n": 6,
+  "spread": {
+   "sd": 0.000266,
+   "min": 0.140775,
+   "max": 0.141602
+  }
+ },
+ "noinput.rejump_height_frac": {
+  "value": 0.29999,
+  "unit": "-",
+  "source": "observed V^2/(2 g 56); M2 multi-jump rule gives 0.3",
+  "n": 6,
+  "spread": {
+   "sd": 1.5e-05,
+   "min": 0.299982,
+   "max": 0.300018
+  }
+ },
+ "noinput.msc_after_hop_landing": {
+  "value": 1.15,
+  "unit": "-",
+  "source": "observed: the soft hop landing replaces the slowdown (f0 = 1)",
+  "n": 6,
+  "spread": {
+   "sd": 0.0,
+   "min": 1.15,
+   "max": 1.15
+  }
+ },
+ "w.landing_f0": {
+  "value": 0.240152,
+  "unit": "-",
+  "source": "observed post/pre |h| on the landing cmd; OCTANE model clamp(1.996467 - 1.6714e-6 vz^2, 0, 1) = 0.23999",
+  "n": 6,
+  "spread": {
+   "sd": 0.004919,
+   "min": 0.233868,
+   "max": 0.245179
+  }
+ },
+ "w.ground_decel_before_jump": {
+  "value": 1249.9,
+  "unit": "u/s^2",
+  "source": "observed on the 3 ground cmds (not x msc)",
+  "n": 18,
+  "spread": {
+   "sd": 0.48129,
+   "min": 1249.262537,
+   "max": 1250.664697
+  }
+ },
+ "w.jump_cap_rule": {
+  "value": "min(|h|, sprintspeed 260 * msc)",
+  "unit": "u/s",
+  "source": "observed post - prediction on the jump cmd",
+  "n": 6,
+  "spread": {
+   "sd": 0.000746,
+   "min": 0.012648,
+   "max": 0.014493
+  },
+  "note": "walk*msc and 299 rejected (see results.json)"
+ },
+ "w.h_after_rejump": {
+  "value": 72.062,
+  "unit": "u/s",
+  "source": "observed",
+  "n": 6,
+  "spread": {
+   "sd": 1.450967,
+   "min": 70.207,
+   "max": 73.487
+  }
+ },
+ "w.carry_over_fraction": {
+  "value": 0.14011,
+  "unit": "-",
+  "source": "|h| after the re-jump / pad launch |h|",
+  "n": 6,
+  "spread": {
+   "sd": 0.002821,
+   "min": 0.136507,
+   "max": 0.142885
+  }
+ },
+ "w.rejump_height_frac": {
+  "value": 0.29997,
+  "unit": "-",
+  "source": "observed V^2/(2 g 56); M2 multi-jump rule gives 0.3",
+  "n": 6,
+  "spread": {
+   "sd": 1.6e-05,
+   "min": 0.299955,
+   "max": 0.299994
+  }
+ },
+ "w.msc_after_hop_landing": {
+  "value": 1.1468,
+  "unit": "-",
+  "source": "observed: the soft hop landing replaces the slowdown (f0 = 1)",
+  "n": 6,
+  "spread": {
+   "sd": 0.006132,
+   "min": 1.1347,
+   "max": 1.15
+  }
+ }
+}

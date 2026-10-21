@@ -154,6 +154,20 @@ Newest entries at the bottom. Problems are tagged **[ISSUE]** and also listed in
   - Runs wait until the Unity M4 subagent finishes: one heavy process at a time.
   - Unity combination checks (grapple → slide, pad → lurch) are folded into the M5 skill-slot rules.
   - Report wording to soften: tap strafe models a single-press lurch only; superglide variants are untested; Unity wall/mantle is checked by formula and unit tests only; all findings apply to R5Flowstate S21, not official S21.
+- **Unity M4 verified by the lead** (HSD-Unity `m4/ability-primitives` 4410b36):
+  - 99/99 EditMode tests pass.
+  - The 38 M4 replays are byte-identical on rerun (114 files).
+  - The plain motor matches main: M2/M1 111/111, M3 90/90, M1 first guess 111/111.
+  - **[NOTE]** BatchReplay resolves relative paths against the Unity project folder, so absolute paths must be passed.
+- **M4b sessions** (120 fps): M4b_octane 19/25 valid (fps dips during pad flights), M4b_viewprobe, M4b_swing 22/25, M4b_octane2 18/18, M4b_swing2 4/5. Every condition has at least 5 valid trials.
+  - **[ISSUE→fixed]** `player.ClientCommand("cl_yawspeed 90")` is forwarded to the server and ignored, so session 1 turned at the default 210 °/s. The runner now sets the cvar on the client console.
+  - **[ISSUE→fixed]** A pad left over from the pad trials stayed on lane C, and the octane2 view_run trials ran into it. View schedules now clear test props.
+  - **View acceptance PASS for yaw:**
+    - 178/180 commands at 90 ± 1 % (edge commands at half rate); net error ≤ 0.05°.
+    - The dedi velocity heading equals the client yaw to 0.001°.
+    - With +speed held, the turn rate is ×0.67.
+  - **[LIMIT]** `+lookup`/`+lookdown` do not move pitch in R5, so pitch stays fixed per trial.
+  - Swing and pad re-jump analysis subagent dispatched (writes to `m4b/swing`, `m4b/pad_rejump`).
 
 ## Open issues
 
