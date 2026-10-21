@@ -205,6 +205,15 @@ Newest entries at the bottom. Problems are tagged **[ISSUE]** and also listed in
     - Impact: none found. All hooks were ≤ 705 u, and a mod-removed control gives the same pull.
     - Fix: `m55_nomod` schedules remove the mod after the refill.
 - M5.5 part A (camera, slide feedback, HUD modes) dispatched to a Unity subagent.
+- **M5.5 part A** (HSD-Unity `m55/feedback` ebe3062; lead-verified):
+  - Tests: EditMode 204/204, PlayMode 1/1.
+  - Regression: replay byte-identical (M2/M1 111/111, M3 90/90); M4 replays 114/114.
+  - Smoke line identical to M5's.
+  - Camera: two cascaded first-order lags, no overshoot, frame-rate independent.
+  - The `AimPivot` carries only the raw aim. A bit-identical simulation test compares feedback at max against off.
+  - HUD normal / diagnostic (F3).
+  - **[NOTE]** The pitch kick moves the on-screen crosshair a few pixels on hard landings; the crosshair still marks the true aim.
+- M5.5 part B dispatched: grapple states, ability entities, Movement Demo, build, guide and acceptance note.
 
 ## Open issues
 
