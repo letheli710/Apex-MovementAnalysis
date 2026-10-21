@@ -1,0 +1,537 @@
+{
+ "_scope": "Pathfinder grapple, R5Flowstate S21 client / S3 dedi, 120 fps; M4b swing sessions + M4 pathfinder sessions; values computed by swing_analysis.py. Anchor = aim-ray hit from origin + 60 (eye assumed).",
+ "pull.horizontal_direction": {
+  "value": "toward the aim-ray hit point (world-fixed anchor)",
+  "unit": "-",
+  "source": "horizontal accel azimuth - rope azimuth, M4b side+jump (deg)",
+  "n": 10,
+  "spread": {
+   "sd": 0.08453,
+   "min": -0.12313,
+   "max": 0.11492
+  }
+ },
+ "pull.anchor_y_from_accel_lines_minus_aim": {
+  "value": 0.033,
+  "unit": "u",
+  "source": "intersection of horizontal accel lines with the face",
+  "n": 10,
+  "spread": {
+   "sd": 0.45171,
+   "min": -0.65753,
+   "max": 0.61286
+  }
+ },
+ "pull.path_lateral_max": {
+  "value": 0.329,
+  "unit": "u",
+  "source": "max deviation from the start->anchor line",
+  "n": 10,
+  "spread": {
+   "sd": 0.16363,
+   "min": 0.08571,
+   "max": 0.55612
+  }
+ },
+ "pull.tangential_speed_after_burst_max": {
+  "value": 74.47,
+  "unit": "u/s",
+  "source": "relative to the aim-ray anchor (eye 60 assumed)",
+  "n": 10,
+  "spread": {
+   "sd": 13.74813,
+   "min": 57.91072,
+   "max": 99.92248
+  }
+ },
+ "pull.anchor_distance_max_increase": {
+  "value": -0.2025,
+  "unit": "u per cmd",
+  "source": "negative = distance strictly decreasing",
+  "n": 10,
+  "spread": {
+   "sd": 0.00671,
+   "min": -0.2082,
+   "max": -0.19463
+  }
+ },
+ "pull.speed_ramp": {
+  "value": 501.78,
+  "unit": "u/s^2",
+  "source": "d|v|/dt > 150 u from the anchor, M4b side+jump",
+  "n": 10,
+  "spread": {
+   "sd": 0.38552,
+   "min": 501.13665,
+   "max": 502.24501
+  }
+ },
+ "steer.view_turn_no_W.heading_change_at_release": {
+  "value": 0.998,
+  "unit": "deg",
+  "source": "turn(+turn_jump) minus side(+jump); view turned ~54 deg right",
+  "n": 10,
+  "spread": {
+   "sd": 0.04892,
+   "min": 20.91978,
+   "max": 21.07787
+  }
+ },
+ "steer.view_turn_no_W.a_lat_turning": {
+  "value": -13.31,
+  "unit": "u/s^2",
+  "source": "horizontal accel perpendicular to the rope while turning",
+  "n": 623,
+  "spread": {
+   "sd": 3.41093,
+   "min": -28.92388,
+   "max": -1.45695
+  }
+ },
+ "steer.view_turn_no_W.a_lat_after": {
+  "value": 24.42,
+  "unit": "u/s^2",
+  "source": "after the turn, 50 < d_h < 250",
+  "n": 480,
+  "spread": {
+   "sd": 11.07886,
+   "min": 12.85826,
+   "max": 62.63504
+  }
+ },
+ "steer.W.a_along_view": {
+  "value": 584.0,
+  "unit": "u/s^2",
+  "source": "turn_w, accel along the flat view forward",
+  "n": 273,
+  "spread": {
+   "sd": 3.46621,
+   "min": 576.08263,
+   "max": 588.54489
+  }
+ },
+ "steer.W.speed_ramp": {
+  "value": 633.2,
+  "unit": "u/s^2",
+  "source": "turn_w d|v|/dt",
+  "n": 6,
+  "spread": {
+   "sd": 0.98068,
+   "min": 631.73815,
+   "max": 634.37165
+  }
+ },
+ "steer.W.vh_max": {
+  "value": 608.6,
+  "unit": "u/s",
+  "source": "turn_w: v_h exceeds 483 (M4 cap not general)",
+  "n": 6,
+  "spread": {
+   "sd": 1.90212,
+   "min": 605.90116,
+   "max": 610.60304
+  }
+ },
+ "steer.W.heading_at_contact": {
+  "value": 6.15,
+  "unit": "deg",
+  "source": "turn_w; no W: 20.99",
+  "n": 6,
+  "spread": {
+   "sd": 0.32447,
+   "min": 5.64556,
+   "max": 6.50067
+  }
+ },
+ "steer.W.m4_fwd_a_along_view_precap": {
+  "value": 576.2,
+  "unit": "u/s^2",
+  "source": "M4 fwd",
+  "n": 132,
+  "spread": {
+   "sd": 0.23079,
+   "min": 575.84204,
+   "max": 576.59064
+  }
+ },
+ "steer.W.m4_fwd_vh_cap": {
+  "value": 483.0,
+  "unit": "u/s",
+  "source": "M4 fwd (= 420*msc)",
+  "n": 158,
+  "spread": {
+   "sd": 0.00012,
+   "min": 483.00012,
+   "max": 483.00045
+  }
+ },
+ "detach.rule": {
+  "value": "unidentified",
+  "unit": "-",
+  "source": "no single-feature threshold (gap, 3D/2D anchor distance, time-to-face/anchor, fraction of rope length, pull time, speed, angle) separates released and pulled cmds over all trials",
+  "note": "best: d3 (T 36.793) mispredicts 29/79 trials"
+ },
+ "detach.gap_envelope_noW": {
+  "value": 34.68,
+  "unit": "u",
+  "source": "origin gap to the face, first released cmd",
+  "n": 58,
+  "spread": {
+   "sd": 4.20056,
+   "min": 21.836,
+   "max": 47.287
+  }
+ },
+ "detach.gap_at_contact_W_turn": {
+  "value": 18.15,
+  "unit": "u",
+  "source": "turn_w: never released, still pulled on the impact cmd",
+  "n": 10,
+  "spread": {
+   "sd": 1.23171,
+   "min": 15.548,
+   "max": 20.202
+  }
+ },
+ "release.boost": {
+  "value": 0.0,
+  "unit": "u/s",
+  "source": "first released cmd is ballistic; velocity continuous",
+  "n": 69,
+  "spread": {
+   "sd": 0.00191,
+   "min": 0.0,
+   "max": 0.0095
+  }
+ },
+ "release.jump_effect": {
+  "value": 2.437,
+  "unit": "u/s",
+  "source": "max |dv| jump vs side after the press (baseline side vs side 1.581)",
+  "n": 5,
+  "spread": {
+   "sd": 2.05873,
+   "min": 0.92496,
+   "max": 5.12657
+  },
+  "note": "jump does not release the grapple during the pull"
+ },
+ "envelope.speed_law_noinput": {
+  "value": {
+   "v0": 63.1,
+   "A": 495.3
+  },
+  "unit": "u/s, u/s^2",
+  "source": "|v| = v0 + A t since pull start, pooled no-input pulled cmds (t >= 0.1 s), rms 24.35 u/s, n 7723"
+ },
+ "envelope.speed_law.m4b_swing_side": {
+  "value": {
+   "v0": 50.3,
+   "A": 501.9
+  },
+  "unit": "u/s, u/s^2",
+  "source": "rms 0.36, max |res| 1.5 u/s, n 636"
+ },
+ "envelope.speed_law.m4b_swing_turn": {
+  "value": {
+   "v0": 50.7,
+   "A": 500.7
+  },
+  "unit": "u/s, u/s^2",
+  "source": "rms 0.43, max |res| 1.1 u/s, n 630"
+ },
+ "envelope.speed_law.m4b_swing_turn_w": {
+  "value": {
+   "v0": 217.2,
+   "A": 593.1
+  },
+  "unit": "u/s, u/s^2",
+  "source": "rms 7.25, max |res| 25.1 u/s, n 465"
+ },
+ "envelope.speed_law.m4b_swing_jump": {
+  "value": {
+   "v0": 50.5,
+   "A": 501.8
+  },
+  "unit": "u/s, u/s^2",
+  "source": "rms 0.42, max |res| 1.7 u/s, n 635"
+ },
+ "envelope.speed_law.m4b_swing_turn_jump": {
+  "value": {
+   "v0": 50.6,
+   "A": 500.9
+  },
+  "unit": "u/s, u/s^2",
+  "source": "rms 0.35, max |res| 1.1 u/s, n 638"
+ },
+ "envelope.speed_law.m4_grapple_hold": {
+  "value": {
+   "v0": 50.4,
+   "A": 502.2
+  },
+  "unit": "u/s, u/s^2",
+  "source": "rms 0.40, max |res| 1.3 u/s, n 611"
+ },
+ "envelope.speed_law.m4_grapple_jump": {
+  "value": {
+   "v0": 50.2,
+   "A": 502.1
+  },
+  "unit": "u/s, u/s^2",
+  "source": "rms 0.36, max |res| 1.4 u/s, n 611"
+ },
+ "envelope.speed_law.m4_grapple_fwd": {
+  "value": {
+   "v0": 266.7,
+   "A": 403.8
+  },
+  "unit": "u/s, u/s^2",
+  "source": "rms 24.29, max |res| 48.7 u/s, n 382"
+ },
+ "envelope.speed_law.m4_grapple_near": {
+  "value": {
+   "v0": 50.1,
+   "A": 502.6
+  },
+  "unit": "u/s, u/s^2",
+  "source": "rms 0.30, max |res| 0.7 u/s, n 447"
+ },
+ "envelope.speed_law.m4_grapple_far": {
+  "value": {
+   "v0": 51.6,
+   "A": 500.2
+  },
+  "unit": "u/s, u/s^2",
+  "source": "rms 1.96, max |res| 18.2 u/s, n 866"
+ },
+ "envelope.speed_law.m4_grapple_p0": {
+  "value": {
+   "v0": 13.3,
+   "A": 611.6
+  },
+  "unit": "u/s, u/s^2",
+  "source": "rms 21.07, max |res| 69.3 u/s, n 579"
+ },
+ "envelope.speed_law.m4_grapple_p20": {
+  "value": {
+   "v0": 50.0,
+   "A": 500.7
+  },
+  "unit": "u/s, u/s^2",
+  "source": "rms 0.25, max |res| 0.6 u/s, n 642"
+ },
+ "envelope.speed_law.m4b_swing_cross": {
+  "value": {
+   "v0": 153.1,
+   "A": 430.2
+  },
+  "unit": "u/s, u/s^2",
+  "source": "rms 31.63, max |res| 87.3 u/s, n 716"
+ },
+ "envelope.speed_law.m4b_swing_cross_w": {
+  "value": {
+   "v0": 343.6,
+   "A": 302.3
+  },
+  "unit": "u/s, u/s^2",
+  "source": "rms 19.79, max |res| 39.0 u/s, n 420"
+ },
+ "envelope.speed_law.m4b_swing_cross_walk": {
+  "value": {
+   "v0": 92.2,
+   "A": 452.8
+  },
+  "unit": "u/s, u/s^2",
+  "source": "rms 13.02, max |res| 50.7 u/s, n 712"
+ },
+ "timeline.m4b_pull_duration_noinput": {
+  "value": 1.1672,
+  "unit": "s",
+  "source": "m4b_swing_side",
+  "n": 5,
+  "spread": {
+   "sd": 0.0015,
+   "min": 1.16652,
+   "max": 1.16993
+  }
+ },
+ "r2.model.F1": {
+  "value": {
+   "A": 670.8203,
+   "s": 0.1784,
+   "H": -26.3867
+  },
+  "unit": "-",
+  "source": "fit on cross+cross_walk; open-loop rms 80.17 u (horizontal 79.78), one-step 3.58 u/s",
+  "note": "m4b_swing_cross: 83.8/167.4 u (h 83.6/167.4); m4b_swing_cross_walk: 76.3/135.2 u (h 75.8/132.8)"
+ },
+ "r2.model.RC": {
+  "value": {
+   "A": 622.4219,
+   "s": 0.3379,
+   "H": 33.2422
+  },
+  "unit": "-",
+  "source": "fit on cross+cross_walk; open-loop rms 80.06 u (horizontal 79.79), one-step 3.20 u/s",
+  "note": "m4b_swing_cross: 83.7/167.4 u (h 83.6/167.4); m4b_swing_cross_walk: 76.2/134.5 u (h 75.8/133.1)"
+ },
+ "r2.model.R1": {
+  "value": {
+   "A": 580.5615,
+   "s": 0.3317,
+   "H": -0.8862,
+   "D": 2.3513
+  },
+  "unit": "-",
+  "source": "fit on cross+cross_walk; open-loop rms 15.88 u (horizontal 14.79), one-step 2.97 u/s",
+  "note": "m4b_swing_cross: 14.0/28.9 u (h 12.6/24.2); m4b_swing_cross_walk: 17.5/31.0 u (h 16.7/30.8)"
+ },
+ "r2.model.RF": {
+  "value": {
+   "A": 575.7031,
+   "s": 0.5118,
+   "H": 19.502,
+   "C": 420.3613
+  },
+  "unit": "-",
+  "source": "fit on cross+cross_walk; open-loop rms 11.49 u (horizontal 9.91), one-step 2.16 u/s",
+  "note": "m4b_swing_cross: 11.1/29.5 u (h 9.0/28.6); m4b_swing_cross_walk: 11.9/31.8 u (h 10.7/26.9)"
+ },
+ "r2.best_model": {
+  "value": "RF",
+  "unit": "-",
+  "source": "lowest open-loop rms on the cross trials"
+ },
+ "r2.anchor_dY": {
+  "value": -20.0,
+  "unit": "u",
+  "source": "best model with a free lateral anchor shift",
+  "note": "player moved 53.8 u between fire and attach"
+ },
+ "r2.transfer.F1": {
+  "value": 38.15,
+  "unit": "u",
+  "source": "cross-fitted params on round-1/M4 no-input trials, open-loop rms",
+  "note": "m4b_swing_side: 36.6; m4b_swing_turn: 38.5; m4b_swing_jump: 36.7; m4b_swing_turn_jump: 38.3; m4_grapple_hold: 33.7; m4_grapple_jump: 34.0; m4_grapple_near: 18.9; m4_grapple_far: 66.8; m4_grapple_p0: 18.6; m4_grapple_p20: 38.3"
+ },
+ "r2.transfer.RF": {
+  "value": 18.39,
+  "unit": "u",
+  "source": "cross-fitted params on round-1/M4 no-input trials, open-loop rms",
+  "note": "m4b_swing_side: 16.0; m4b_swing_turn: 14.8; m4b_swing_jump: 16.0; m4b_swing_turn_jump: 14.5; m4_grapple_hold: 14.9; m4_grapple_jump: 14.8; m4_grapple_near: 9.9; m4_grapple_far: 27.9; m4_grapple_p0: 29.1; m4_grapple_p20: 16.8"
+ },
+ "r2.joint.F1": {
+  "value": {
+   "A": 582.4585,
+   "s": 0.1399,
+   "H": -0.5896
+  },
+  "unit": "-",
+  "source": "one parameter set, all no-input trials; open-loop rms 38.98 u (horizontal 37.23), one-step 2.28 u/s",
+  "note": "m4b_swing_side: 10.5/31.2 u (h 6.8); m4b_swing_turn: 12.0/36.1 u (h 7.6); m4b_swing_jump: 10.6/31.8 u (h 6.7); m4b_swing_turn_jump: 12.0/36.3 u (h 7.5); m4_grapple_hold: 9.5/29.5 u (h 6.0); m4_grapple_jump: 9.6/30.2 u (h 6.1); m4_grapple_near: 5.6/10.3 u (h 3.5); m4_grapple_far: 22.3/66.6 u (h 16.5); m4_grapple_p0: 18.8/32.7 u (h 5.1); m4_grapple_p20: 12.1/34.2 u (h 8.5); m4b_swing_cross: 91.6/188.5 u (h 89.7); m4b_swing_cross_walk: 76.6/132.2 u (h 75.7)"
+ },
+ "r2.joint.RF": {
+  "value": {
+   "A": 541.0156,
+   "s": 0.6778,
+   "H": 31.8848,
+   "C": 422.998
+  },
+  "unit": "-",
+  "source": "one parameter set, all no-input trials; open-loop rms 11.78 u (horizontal 6.76), one-step 1.88 u/s",
+  "note": "m4b_swing_side: 4.9/7.7 u (h 3.4); m4b_swing_turn: 4.5/10.4 u (h 4.1); m4b_swing_jump: 5.1/7.8 u (h 3.6); m4b_swing_turn_jump: 4.5/9.2 u (h 4.0); m4_grapple_hold: 5.1/7.1 u (h 3.2); m4_grapple_jump: 5.0/7.3 u (h 3.2); m4_grapple_near: 8.0/14.7 u (h 3.1); m4_grapple_far: 10.1/31.0 u (h 8.2); m4_grapple_p0: 20.2/48.1 u (h 9.7); m4_grapple_p20: 7.6/18.5 u (h 3.9); m4b_swing_cross: 21.7/48.3 u (h 11.7); m4b_swing_cross_walk: 17.8/37.4 u (h 10.8)"
+ },
+ "r2.m4b_swing_cross.vr_ramp": {
+  "value": 494.5,
+  "unit": "u/s^2",
+  "source": "d v_r/dt, 0.1-0.6 s",
+  "n": 6,
+  "spread": {
+   "sd": 3.60907,
+   "min": 489.82842,
+   "max": 500.14039
+  }
+ },
+ "r2.m4b_swing_cross.speed_dip": {
+  "value": {
+   "start": 301.1,
+   "min": 269.4,
+   "t_min": 0.192
+  },
+  "unit": "u/s, s",
+  "source": "observed |v| dip"
+ },
+ "r2.m4b_swing_cross_walk.vr_ramp": {
+  "value": 494.5,
+  "unit": "u/s^2",
+  "source": "d v_r/dt, 0.1-0.6 s",
+  "n": 6,
+  "spread": {
+   "sd": 5.10928,
+   "min": 489.27898,
+   "max": 501.20965
+  }
+ },
+ "r2.m4b_swing_cross_walk.speed_dip": {
+  "value": {
+   "start": 205.4,
+   "min": 185.5,
+   "t_min": 0.134
+  },
+  "unit": "u/s, s",
+  "source": "observed |v| dip"
+ },
+ "r2.m4b_swing_cross_w.vr_ramp": {
+  "value": 99.9,
+  "unit": "u/s^2",
+  "source": "d v_r/dt, 0.1-0.6 s",
+  "n": 6,
+  "spread": {
+   "sd": 12.873,
+   "min": 84.98951,
+   "max": 115.68551
+  }
+ },
+ "r2.m4b_swing_cross_w.speed_dip": {
+  "value": {
+   "start": 289.4,
+   "min": 289.4,
+   "t_min": 0.0
+  },
+  "unit": "u/s, s",
+  "source": "observed |v| dip"
+ },
+ "r2.W.a_along_view": {
+  "value": 645.2,
+  "unit": "u/s^2",
+  "source": "cross_w before the clamp",
+  "n": 233,
+  "spread": {
+   "sd": 1.88937,
+   "min": 640.62991,
+   "max": 648.26283
+  }
+ },
+ "r2.W.a_side_view": {
+  "value": -424.0,
+  "unit": "u/s^2",
+  "source": "cross_w before the clamp",
+  "n": 233,
+  "spread": {
+   "sd": 0.79476,
+   "min": -425.09281,
+   "max": -421.52164
+  }
+ },
+ "r2.W.v_w_clamp": {
+  "value": 483.0,
+  "unit": "u/s",
+  "source": "cross_w: v.w held at 420*msc",
+  "n": 126,
+  "spread": {
+   "sd": 0.00042,
+   "min": 482.99883,
+   "max": 483.00063
+  }
+ }
+}

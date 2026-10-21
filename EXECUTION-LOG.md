@@ -168,6 +168,16 @@ Newest entries at the bottom. Problems are tagged **[ISSUE]** and also listed in
     - With +speed held, the turn rate is ×0.67.
   - **[LIMIT]** `+lookup`/`+lookdown` do not move pitch in R5, so pitch stays fixed per trial.
   - Swing and pad re-jump analysis subagent dispatched (writes to `m4b/swing`, `m4b/pad_rejump`).
+- **Swing analysis** (lead-verified identical; rounds 1 and 2):
+  - The pull law is RF: an along-rope ramp of about 495–541 u/s² plus a constant brake across the rope of about 420 u/s². One parameter set fits 62 trials at 11.8 u rms. Pure acceleration toward the anchor gives 39 u and a pendulum model 80 u, so it is not a pendulum.
+  - W clamps velocity along the view at 483 = 420·msc. Jump does not release the grapple. Release is continuous, then ballistic.
+  - **[OPEN]** The detach rule is still unidentified after 3 rounds (stop-loss); Unity uses the envelope instead.
+- **Pad re-jump** (lead-verified): the landing slowdown applies fully; the ground jump caps v_h at 260·msc; carry-over is 14 %.
+- **P3 transitions:**
+  - Wraith tactical: msc 0.8 for 1.17 s, then ×1.388 for 2.77 s, then a 0.79 s fade (n = 7).
+  - Loba: velocity zeroed at the teleport (6/6). Portal and Breach taken from source. Vantage and Ash dash skipped, with reasons in M4-REPORT §3.5.
+  - **[ISSUE]** A game session was run while the swing subagent analysed, which caused fps rejects. Topped up with the machine idle.
+- **M4 done:** M4-REPORT.md written.
 
 ## Open issues
 

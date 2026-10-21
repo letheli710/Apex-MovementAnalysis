@@ -190,6 +190,12 @@ SCHEDULES = {
     "m4b_swing_cross": "wait 72; set cl_yawspeed 700; down speed; down forward; wait 1.0s; tap jump; up forward; up speed; down right; waitf 12; up right; tap offhand1; wait 3.0s; wait 2.0s",
     "m4b_swing_cross_w": "wait 72; set cl_yawspeed 700; down speed; down forward; wait 1.0s; tap jump; up forward; up speed; down right; waitf 12; up right; tap offhand1; down forward; wait 3.0s; up forward; wait 2.0s",
     "m4b_swing_cross_walk": "wait 72; set cl_yawspeed 700; down forward; wait 1.0s; tap jump; up forward; down right; waitf 12; up right; tap offhand1; wait 3.0s; wait 2.0s",
+    # M4 P3 (transitions only): Wraith Into the Void (4 s speed boost) with its control, Loba translocation (thrown
+    # bracelet, teleport where it lands; velocity before/after and any control lock)
+    "m4_wraith_void": "wait 72; down speed; down forward; wait 0.5s; tap offhand1; wait 4.2s; up forward; up speed; wait 1.0s",
+    "m4_wraith_ctrl": "wait 72; down speed; down forward; wait 0.5s; wait 4.2s; up forward; up speed; wait 1.0s",
+    "m4_loba_tele": "wait 72; down speed; down forward; wait 1.0s; tap offhand1; wait 3.0s; up forward; up speed; wait 1.0s",
+    "m4_loba_tele_still": "wait 72; tap offhand1; wait 3.0s; wait 1.0s",
     # M4b re-jump after a jump-pad landing (3 frames after touchdown), without and with forward held
     "m4b_pad_rejump": "wait 72; down speed; down forward; wait 1.5s; up forward; up speed; waitair; waitland; waitf 3; tap jump; wait 3.0s",
     "m4b_pad_rejump_w": "wait 72; down speed; down forward; wait 1.5s; up speed; waitair; waitland; waitf 3; tap jump; wait 1.5s; up forward; wait 1.5s",
@@ -230,7 +236,7 @@ SCHEDULE_PITCH = {"m4_grapple_hold": -10.0, "m4_grapple_jump": -10.0, "m4_grappl
                   "m4_grapple_near": -10.0, "m4_grapple_far": -10.0, "m4_grapple_p0": 0.0, "m4_grapple_p20": -20.0,
                   "m4b_swing_side": -10.0, "m4b_swing_turn": -10.0, "m4b_swing_turn_w": -10.0, "m4b_swing_jump": -10.0,
                   "m4b_swing_turn_jump": -10.0, "m4b_swing_cross": -10.0, "m4b_swing_cross_w": -10.0,
-                  "m4b_swing_cross_walk": -10.0}
+                  "m4b_swing_cross_walk": -10.0, "m4_loba_tele": -15.0, "m4_loba_tele_still": -15.0}
 
 # Server snippets run inside the reset (after the teleport, inside try/catch) for prop-based abilities.
 # Every spawned prop gets the script name hsd_test_geo; the previous one is removed first.
@@ -265,6 +271,9 @@ SCHEDULE_ORIGIN = {"m4_grapple_near": (-13950.0, 6500.0, 294.92), "m4_grapple_fa
 # M4b swing: lane A shifted 150 u to -Y (the wall spans y 6279..6719, so a 20 deg aim hits it near y 6493)
 SCHEDULE_ORIGIN.update({n: (-14100.0, 6350.0, 294.92) for n in ("m4b_swing_side", "m4b_swing_turn", "m4b_swing_turn_w",
                                                                   "m4b_swing_jump", "m4b_swing_turn_jump")})
+# P3: the longest clear lane of the field scan (y 6650, x -14925..-12550, m3/map/field_fine.json)
+SCHEDULE_ORIGIN.update({n: (-14900.0, 6650.0, 294.92) for n in ("m4_wraith_void", "m4_wraith_ctrl", "m4_loba_tele",
+                                                                  "m4_loba_tele_still")})
 # round 2 starts 450 u to -Y of the wall centre, running along +Y
 SCHEDULE_ORIGIN.update({n: (-14100.0, 6050.0, 294.92) for n in ("m4b_swing_cross", "m4b_swing_cross_w", "m4b_swing_cross_walk")})
 
