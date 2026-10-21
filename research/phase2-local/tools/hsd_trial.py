@@ -284,6 +284,20 @@ SCHEDULES.update({
                      "tap moveright; wait 2.5s",
 })
 
+# M6-A2 climb / ledge / mantle on the lane-A rock at a chosen ledge height (geometry h<H>; m6/SOURCE-AUDIT.md E-C).
+# a2_climb = the M3 e6_climb (sprint jump ~100 u before the face); a2_walk = run into it without a jump; a2_hang = W
+# released 0.9 s after the jump (before the ledge) so the climb can settle into the hang; then cancel (back), hop
+# (jump) and back-hop from the hang.
+_A2_RUN = "wait 72; down speed; down forward; wait 1.2s; tap jump; "
+SCHEDULES.update({
+    "a2_climb": _A2_RUN + "wait 2.5s; up forward; up speed; wait 2.5s",
+    "a2_walk": "wait 72; down forward; wait 3.0s; up forward; wait 1.5s",
+    "a2_hang": _A2_RUN + "wait 0.9s; up forward; up speed; wait 2.0s",
+    "a2_cancel": _A2_RUN + "wait 0.9s; up forward; up speed; wait 1.5s; down backward; wait 0.5s; up backward; wait 1.0s",
+    "a2_hop": _A2_RUN + "wait 0.9s; up forward; up speed; wait 1.5s; tap jump; wait 2.0s",
+    "a2_hop_back": _A2_RUN + "wait 0.9s; up forward; up speed; wait 1.5s; down backward; tap jump; wait 1.0s; up backward; wait 1.0s",
+})
+
 # M6-A3 ziplines (geometry m6zip; m6/SOURCE-AUDIT.md E-Z). The player starts under the flat rope Z1 (100 u above the
 # floor) facing along it, mounts with +use, then rides / jumps off / crouches off. z5 = Super Jump: a second jump K
 # frames after the jump-off.
@@ -368,7 +382,7 @@ LANE_B = (-14200.0, 5900.0, 294.92)
 # Lane C: y 6800 is flat from x -14825 to -12475 (m3/map/field_fine.json) and 81 u clear of the wall's bounds.
 LANE_C = (-14800.0, 6800.0, 294.92)
 SPAWN_PAD = (-11699.0, 512.0, 1577.046)  # visible firing-range floor (M0/M1)
-SCHEDULE_ORIGIN_PREFIX = {"z": (-14550.0, 6800.0, 294.92), "a1_wb": LANE_A, "a1_": LANE_B, "m4b_view": LANE_C, "m4b_pad": LANE_C, "m4_valk": LANE_C, "m4_pounce": LANE_C, "m4_stim": LANE_C, "m4_ctrl": LANE_C, "m4_pad": LANE_C, "m4_lift": LANE_C,
+SCHEDULE_ORIGIN_PREFIX = {"a2_": LANE_A, "z": (-14550.0, 6800.0, 294.92), "a1_wb": LANE_A, "a1_": LANE_B, "m4b_view": LANE_C, "m4b_pad": LANE_C, "m4_valk": LANE_C, "m4_pounce": LANE_C, "m4_stim": LANE_C, "m4_ctrl": LANE_C, "m4_pad": LANE_C, "m4_lift": LANE_C,
                           "m4_grapple": LANE_A, "x_pad_": SPAWN_PAD, "e8_hop350": LANE_C, "e3_": LANE_B, "e8_fast": LANE_C, "e8_slide": LANE_C, "e6_": LANE_A, "e7_": LANE_A,
                           "e8_drop": LANE_A}
 
@@ -530,10 +544,16 @@ def get_schedule(name):
     N is in exact frames at the session's frame rate."""
     if name in SCHEDULES:
         return SCHEDULES[name]
-    m = re.fullmatch(r"e7_(mb|sg)_f(\d+)", name)
+    # M6-A2 variants: sc = crouch on the same frame as the jump, cf = crouch one frame before the jump (jump still at N),
+    # mbl = jump at N then a moveright press 30 frames later (lurch after a mantle boost)
+    m = re.fullmatch(r"e7_(mb|sg|sc|cf|mbl)_f(\d+)", name)
     if m:
         k = int(m.group(2))
-        tail = "tap jump; tap duck" if m.group(1) == "sg" else "tap jump"
+        if m.group(1) == "cf":
+            return ("wait 72; down speed; down forward; wait 1.2s; tap jump; waitf %d; tap duck; tap jump; wait 1.5s; up forward; "
+                    "up speed; wait 1.0s" % (k - 2))
+        tail = {"sg": "tap jump; tap duck", "mb": "tap jump", "sc": "down duck; tap jump; up duck",
+                "mbl": "tap jump; waitf 29; tap moveright"}[m.group(1)]
         return ("wait 72; down speed; down forward; wait 1.2s; tap jump; waitf %d; %s; wait 1.5s; up forward; up speed; wait 1.0s"
                 % (k - 1, tail))
     m = re.fullmatch(r"e3_right_k(\d+)", name)
@@ -545,9 +565,9 @@ def get_schedule(name):
 
 
 # M6 client state logger: traversal / hang / zipline / grapple / phase / glide meter per frame while the trial label is set.
-# Each getter is probed once; a missing one prints -1 (the getter list comes from m6/SOURCE-AUDIT.md section A2).
+# All eight getters exist on the client VM (probed live, M6); bools print true/false (list from m6/SOURCE-AUDIT.md A2).
 STATE_CLIENT = string.Template(r'''
-void function f()
+void function hsd_state_f()
 {
 	entity p = GetLocalClientPlayer()
 	int w = 0
@@ -556,39 +576,16 @@ void function f()
 		WaitFrame()
 		w++
 	}
-	array<string> names = [ "trav", "mant", "hang", "wr", "zip", "gr", "ph", "glide" ]
-	array<bool> ok = [ true, true, true, true, true, true, true, true ]
 	while ( IsValid( p ) && GetConVarInt( "hsd_md_run" ) == $run )
 	{
-		string line = "[HSD-STATE] run=$run fc=" + FrameCount() + " t=" + Time()
-		for ( int i = 0; i < names.len(); i++ )
-		{
-			string v = "-1"
-			if ( ok[i] )
-			{
-				try
-				{
-					if ( i == 0 ) v = p.IsTraversing() ? "1" : "0"
-					else if ( i == 1 ) v = p.IsMantling() ? "1" : "0"
-					else if ( i == 2 ) v = p.IsWallHanging() ? "1" : "0"
-					else if ( i == 3 ) v = p.IsWallRunning() ? "1" : "0"
-					else if ( i == 4 ) v = p.IsZiplining() ? "1" : "0"
-					else if ( i == 5 ) v = p.IsGrappleActive() ? "1" : "0"
-					else if ( i == 6 ) v = p.IsPhaseShifted() ? "1" : "0"
-					else v = string( p.GetGlideMeter() )
-				}
-				catch ( e )
-				{
-					ok[i] = false
-				}
-			}
-			line += " " + names[i] + "=" + v
-		}
-		printt( line )
+		string sl = "[HSD-STATE] run=$run fc=" + FrameCount() + " t=" + Time() + " trav=" + p.IsTraversing() + " mant=" + p.IsMantling()
+		sl = sl + " hang=" + p.IsWallHanging() + " wr=" + p.IsWallRunning() + " zip=" + p.IsZiplining() + " gr=" + p.IsGrappleActive()
+		sl = sl + " ph=" + p.IsPhaseShifted() + " glide=" + p.GetGlideMeter()
+		printt( sl )
 		WaitFrame()
 	}
 }
-thread f()
+thread hsd_state_f()
 AgentLink_Reply( "state logger run=$run" )
 ''')
 
