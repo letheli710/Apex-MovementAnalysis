@@ -222,6 +222,49 @@ Newest entries at the bottom. Problems are tagged **[ISSUE]** and also listed in
   - F6 Movement Demo goes through the normal input path; its trajectory equals the recorded inputs fed to `SkillBody.Step`, 12/12 bit-identical.
   - The acceptance note's requirement table was rewritten by the lead to match the user's six M5.5 requirements.
 - **M5.5 done.**
+- **Mainline:** M5.5 confirmed as the mainline. The research repo now has `main` (from 798734a, set as the GitHub default); HSD-Unity `main` = dc649e9.
+- **M6 started** (user plan: `research/phase2-local/m6/M6-PLAN.md`), branch `phase2-local/m6-movement`.
+  - Difference audit `m6/M6-AUDIT.md`.
+  - **[ISSUE]** `research/S21-2026-10-21/` (candidate matrix, support survey, grapple target experiment) is not on this machine or in any branch. Asked the M5.5 fork session; M6 does not cite it until found.
+  - Source research subagent dispatched (→ `m6/SOURCE-AUDIT.md`).
+  - A1 schedules added (`a1_*`): repeated presses 6/12/24 frames apart, three presses, opposite, sequence, diagonals; tap strafe (W edges every 2 frames while turning at 360/180 °/s) with controls (no turn, turn only, turn with W held); slide-jump tap strafe; lurch after a wall bounce.
+  - Session `M6_A1_lurch` running (80 trials + 5 bounce controls).
+- **M6-A research** (each analysis by a subagent, re-run by the lead with identical outputs):
+  - **A1 lurch** (`m6/a1_lurch`, 87 trials, 395 presses): the M3 model holds with no changes.
+    - Every airborne press edge lurches, W included, with no budget or cooldown and the clamp applied per press.
+    - The latest jump re-anchors the window, including a wall bounce.
+    - Tap strafe at 360 °/s turns the velocity −81° in 0.25 s.
+  - **A3 zipline** (`m6/a3_zip`, 125 + 75 trials):
+    - Mount with +use within 130 u, inside the view cone.
+    - Ride: 600 u/s², then 400 u/s², up to 600 u/s.
+    - Jump-off = rope·min(v, 400) + 289.8 up; residual 0 on 125 exits.
+    - **Super Jump exists** (20/20: mount from the ground, a second jump with jump released in between).
+    - Air mount: client/dedi diverge.
+    - **Grapple → zipline handoff is automatic** (10/10); a second tactical press releases the grapple (latency 0).
+  - **A2 climb/mantle** (`m6/a2_climb`, 238 + 80 trials, 8 ledge heights):
+    - Outcome by height. The climb end is not ledge-relative (floor/takeoff + 147).
+    - **No ledge hang** in this build: releasing W on the wall gives an attached slide-down, then detach.
+    - Early W release cancels a mantle.
+    - **Native superglide (SDK FSM off): jump+crouch exits at 460 u/s**; the FSM gives 388.7/367.4. Lurch is suppressed after an FSM boost.
+  - **[ISSUE→fixed]** The client state logger failed to compile twice: an EVAL cannot declare `void function` at top level. Bisected live; it now uses a functionref lambda.
+  - **[ISSUE]** `find` cvar census: the client forwards it to the dedi, which has no `find`, so `jump_grace` stays unread.
+  - **[NOTE]** MOVE-TRACE has a gap during zipline rides (the native hook is not reached); ride analysis uses the HSD frames and SDK diag lines.
+  - **[FIX]** Kit refill now strips the grapple range-doubling dev mod for all grapple experiments.
+- **A4 Unity world** (HSD-Unity d5da139; lead-verified):
+  - Tests 314/314 EditMode + 1/1 PlayMode.
+  - Default motor identical; M4 replays 114/114.
+  - M5.5 smoke identical.
+- **Unity A1/A2/A3 implementation** dispatched (practice-map M6 area, chain demos, build, Chinese guide). The A2 round-2 analysis is running.
+- **[ISSUE→fixed]** A2 round 2 (`M6_A2r_h232`, `M6_A2r_h180`, 50 trials) is invalid. The `a2r_*` names did not match the `a2_` origin prefix, so the trials started at the default origin and never reached the wall. The subagent's validity check caught it (0/50 at the face).
+  - The sessions stay on disk, marked invalid in `m6/a2_climb/A2-CLIMB.md` §8.
+  - Fix: `a2r_` is mapped to lane A, and the runner now refuses any non-legacy schedule without an explicit start position.
+  - Re-run as `M6_A2r2_*`.
+- **M6-A done** (HSD-Unity `27898da`, `3bd822e`; lead-verified):
+  - Tests: EditMode 424/424, PlayMode 1/1.
+  - Default motor identical; M4 replays 114/114.
+  - Smoke: M5.5 route identical; demos 20/20 as expected (M5.5 12/12, M6 8/8).
+  - 4 real-input chains with failure variants; M6 practice area F–I.
+  - Build `HSD-Build\M6`; guide `m6/PLAYTEST-GUIDE-M6.md`; report `m6/M6-A-REPORT.md`.
 
 ## Open issues
 

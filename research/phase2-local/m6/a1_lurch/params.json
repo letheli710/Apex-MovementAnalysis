@@ -1,0 +1,79 @@
+{
+ "model": "per usercmd, after M2 AirAccelerate, on any command with a new bit in buttons & 0x618 (FORWARD|BACK|MOVELEFT|MOVERIGHT): lam = 0.7*clamp01((0.5 - t)/0.3), t from the start of the latest jump command (ground, slide or wall-bounce jump); d = normalize((1-lam)*vhat + lam*wishdir); D = |v| d - v; |D| <= 209.3 per press; v += D",
+ "lam_max": {
+  "value": 0.7,
+  "source": "M3 fit; A1 re-check",
+  "A1_lam_full": {
+   "n": 220,
+   "mean": 0.7000117068247549,
+   "sd": 3.070297186419082e-05,
+   "min": 0.6999250930580008,
+   "max": 0.7001181103351193
+  }
+ },
+ "t_full_s": {
+  "value": 0.2,
+  "source": "M3 fit (+-1 ms)"
+ },
+ "t_zero_s": {
+  "value": 0.5,
+  "source": "M3 fit (+-1 ms)",
+  "A1_fade_offset_ms": {
+   "n": 70,
+   "mean": 0.4750271047832603,
+   "sd": 0.13407218981352914,
+   "min": -0.14983444026814285,
+   "max": 0.7068037324218235
+  },
+  "note": "A1 fade presses imply the window edges are about 0.5 ms later than the start-to-start sum of dt; inside the M3 +-1 ms, model not changed"
+ },
+ "clamp_ups": {
+  "value": 209.3,
+  "source": "M3 fit; per press (A1 sec 4)",
+  "A1_clamped": {
+   "n": 63,
+   "mean": 209.30013291759028,
+   "sd": 0.001390613995677961,
+   "min": 209.29757190421492,
+   "max": 209.3026507930561
+  },
+  "note": "0.7 x sprint cap 299 (movescale 1.15); M4 showed it scales with the sprint cap"
+ },
+ "press_gate": {
+  "value": "0x618 new bits (buttons & ~prev_buttons)",
+  "source": "A1 obs; SDK TS_LURCH_PRESS_MASK"
+ },
+ "wishdir": {
+  "value": "normalize(fwd*forward + side*right) from the command's own view yaw",
+  "source": "A1 diagonals + tap strafe (sec 5, 6)"
+ },
+ "anchor": {
+  "value": "latest jump command incl. wall bounce",
+  "source": "A1 sec 7"
+ },
+ "order": {
+  "value": "AirAccelerate then lurch",
+  "source": "M3; A1 lurch_before_aa column"
+ },
+ "air_accel": {
+  "value": "500*dt, wish cap 60*movescale",
+  "source": "M2"
+ },
+ "budget_cooldown": {
+  "value": "none observed (presses 2 commands apart all lurch fully)",
+  "source": "A1 sec 4/5"
+ },
+ "unmodelled": {
+  "unclamped_speed_gain_per_press": {
+   "n": 257,
+   "mean": 0.0037891526544244045,
+   "sd": 0.0018954814264887138,
+   "min": 9.852777395735757e-05,
+   "max": 0.008018011997364738
+  }
+ },
+ "data": [
+  "20261021_143512_M6_A1_lurch",
+  "20261021_143728_M6_A1_topup"
+ ]
+}

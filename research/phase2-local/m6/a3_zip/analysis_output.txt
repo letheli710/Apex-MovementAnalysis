@@ -1,0 +1,537 @@
+M6-A3 zipline analysis  (a3_zip_analysis.py)
+====================================================================================================
+session 20261021_150043_M6_A3_zip  label=M6_A3_zip  client_fps=120.0  legend=gibraltar  geometry_zip=zip_ents=6
+  trials used 125, skipped 1: r90 z0_off0 (warmup)
+
+[census] client player settings (CLASSVAR):
+  ziplineSpeed                     600
+  ziplineDetachSpeed               600
+  ziplineMaxVerticalDetachSpeed    1500
+  ziplineViewOffset                -16 -6 0
+  ziprailAcceleration              150
+  ziprailDetachSpeed               450
+  pathGravityAcceleration          400
+  maxSpeedMultiplier               1.2
+  minSpeedFraction                 0.57
+  maxJumpOffSpeed                  550
+  minJumpOffSpeed                  100
+  viewInfluenceOnJumpDirection     0.5
+  detachDirMaxDownAngle            10
+  detachDirMaxUpAngle              26
+  jumpHeight                       56
+  gravityScale                     1
+  airSpeed                         60
+  superjumpLimit                   1
+  antiMultiJumpHeightFrac          0.3
+  unknown CLASSVAR keys (client warning log): ziplinePreventManualDetach, ziprailMountReverseDistance
+  'find' cvar census lines: 8
+    [client] Cbuf_AddText tgt=0 src=0: find jump_grace
+    [client] Cbuf_AddText tgt=0 src=0: find zipline
+    [client] Cbuf_AddText tgt=0 src=0: find mantle_boost
+    [client] Cbuf_AddText tgt=0 src=0: find lurch
+    [server] Native(S):Command 'find' doesn't exist; request 'find jump_grace' ignored
+    [server] Native(S):Command 'find' doesn't exist; request 'find zipline' ignored
+    [server] Native(S):Command 'find' doesn't exist; request 'find mantle_boost' ignored
+    [server] Native(S):Command 'find' doesn't exist; request 'find lurch' ignored
+  -> the 'find jump_grace / zipline / mantle_boost / lurch' census produced no cvar values: the client forwards
+     'find' to the dedi, which has no 'find' command. jump_graceperiod etc. stay [unknown].
+
+[gravity] free-flight dvz/dt over 8196 frame pairs: median 750.12  (mean 750.07, sd 0.33) u/s^2
+  edge->frame mapping mismatches (all trials): 0
+
+====================================================================================================
+Q1 MOUNT
+====================================================================================================
+schedule         n  mounted   diag_cl   diag_sv   lat_fr   cmd=gap  P->rope   use_dist  use_ang   minAng130 use_x     
+z0_nouse         5  0/5       0/5       0/5       -        -        None      None      None      None      -         
+z0_off0          5  5/5       5/5       5/5       0        True     28.533    130.0     12.679    12.682    -14423.17 
+z0_off120        5  0/5       0/5       0/5       -        -        123.223   None      None      71.513    -         
+z0_off160        5  0/5       0/5       0/5       -        -        162.432   None      None      None      -         
+z0_off40         5  5/5       5/5       5/5       0        True     48.826    129.924   22.074    22.074    -14429.60 
+z0_off80         5  0/5       0/5       0/5       -        -        84.758    None      None      40.741    -         
+z1_ride          5  5/5       5/5       5/5       0        True     28.533    130.0     12.679    12.682    -14423.17 
+z2_jump_back     5  5/5       5/5       5/5       0        True     28.533    130.0     12.679    12.682    -14423.17 
+z2_jump_fwd      5  5/5       5/5       5/5       0        True     28.533    130.0     12.679    12.682    -14423.17 
+z2_jump_none     5  5/5       5/5       5/5       0        True     28.533    130.0     12.679    12.682    -14423.17 
+z2_jump_pd30     5  0/5       0/5       0/5       -        -        28.533    None      None      42.68     -         
+z2_jump_pu30     5  5/5       5/5       5/5       0        True     28.533    57.048    0.012     0.088     -14500.60 
+z2_jump_right    5  5/5       5/5       5/5       0        True     28.533    130.0     12.679    12.682    -14423.17 
+z3_crouch        5  5/5       5/5       5/5       0        True     28.533    130.0     12.679    12.682    -14423.17 
+z5_sj_k1         5  5/5       5/5       5/5       0        True     28.533    130.0     12.679    12.682    -14423.17 
+z5_sj_k12        5  5/5       5/5       5/5       0        True     28.533    130.0     12.679    12.682    -14423.17 
+z5_sj_k2         5  5/5       5/5       5/5       0        True     28.533    130.0     12.679    12.682    -14423.17 
+z5_sj_k3         5  5/5       5/5       5/5       0        True     28.533    130.0     12.679    12.682    -14423.17 
+z5_sj_k4         5  5/5       5/5       5/5       0        True     28.533    130.0     12.679    12.682    -14423.17 
+z5_sj_k40        5  5/5       5/5       5/5       0        True     28.533    130.0     12.679    12.682    -14423.17 
+z5_sj_k6         5  5/5       5/5       5/5       0        True     28.533    130.0     12.679    12.682    -14423.17 
+z5_sj_k8         5  5/5       5/5       5/5       0        True     28.533    130.0     12.679    12.682    -14423.17 
+z6_up            5  5/5       5/5       5/5       0        True     36.735    129.965   27.038    27.059    -14334.24 
+z6_vert          5  5/5       5/5       5/5       0        True     40.0      40.812    11.448    0.0       -14700.00 
+z7_air           5  0/5       0/5       0/5       -        -        187.8704  None      None      None      -         
+
+Find model check: Q = server Find point ([ZIPRAIL-USE] use=), P = pre-use origin + (0,0,72), eye from the pre-use view.
+  successful mounts: |Q-P| {'n': 95, 'mean': 121.4605, 'sd': 25.0168, 'min': 40.812, 'max': 130.0} ; angle(eye, Q-P) {'n': 95, 'mean': 13.1977, 'sd': 4.8737, 'min': 0.012, 'max': 27.038}
+  failed mounts (any use press, not mounted): 25 trials; smallest achievable angle to a rope point within 130 u: {'n': 15, 'mean': 51.6447, 'sd': 14.0713, 'min': 40.741, 'max': 71.513}
+  failed with no rope point within 130 u: 10
+  -> cone half-angle bracket [fit]: 27.04 deg < theta_max < 40.74 deg  (radius 130 from |Q-P|)
+  per-trial failed: z0_off80 r2911 P->rope 84.8 minAng 40.741; z0_off80 r2912 P->rope 84.8 minAng 40.741; z0_off80 r2913 P->rope 84.8 minAng 40.741; z0_off80 r2914 P->rope 84.8 minAng 40.741; z0_off80 r2915 P->rope 84.8 minAng 40.741; z0_off120 r2916 P->rope 123.2 minAng 71.513; z0_off120 r2917 P->rope 123.2 minAng 71.513; z0_off120 r2918 P->rope 123.2 minAng 71.513; z0_off120 r2919 P->rope 123.2 minAng 71.513; z0_off120 r2920 P->rope 123.2 minAng 71.513; z0_off160 r2921 P->rope 162.4 minAng None; z0_off160 r2922 P->rope 162.4 minAng None; z0_off160 r2923 P->rope 162.4 minAng None; z0_off160 r2924 P->rope 162.4 minAng None; z0_off160 r2925 P->rope 162.4 minAng None; z2_jump_pd30 r2961 P->rope 28.5 minAng 42.68; z2_jump_pd30 r2962 P->rope 28.5 minAng 42.68; z2_jump_pd30 r2963 P->rope 28.5 minAng 42.68; z2_jump_pd30 r2964 P->rope 28.5 minAng 42.68; z2_jump_pd30 r2965 P->rope 28.5 minAng 42.68; z7_air r3021 P->rope 187.8 minAng None; z7_air r3022 P->rope 187.8 minAng None; z7_air r3023 P->rope 187.8 minAng None; z7_air r3024 P->rope 187.8 minAng None; z7_air r3025 P->rope 188.0 minAng None
+  IN_USE (0x20) presses seen in MOVE-TRACE: failed trials 25/25 show one; mounted trials show none (the mount cmd is the first missing MT cmd)
+  control z0_nouse: air frames [0, 0, 0, 0, 0], MT gaps [None, None, None, None, None], diag use events [None, None, None, None, None]
+
+Snap at the mount command (client HSD post-state of the use cmd):
+  dz {'n': 95, 'mean': 22.0, 'sd': 0.0, 'min': 22.0, 'max': 22.0} ; horizontal move {'n': 95, 'mean': 0.0, 'sd': 0.0, 'min': 0.0, 'max': 0.0}
+  steady ride hang below the rope (client) {'n': 90, 'mean': 80.1721, 'sd': 0.0086, 'min': 80.17, 'max': 80.208} ; lateral offset (client, y - rope y) {'n': 90, 'mean': -0.23, 'sd': 0.0, 'min': -0.23, 'max': -0.23}
+  vertical rope Z3: x - rope x {'n': 5, 'mean': 0.2, 'sd': 0.0, 'min': 0.2, 'max': 0.2}, y - rope y {'n': 5, 'mean': -0.23, 'sd': 0.0, 'min': -0.23, 'max': -0.23}
+  Find point ahead of the player along the view yaw: z0_off0 126.83; z0_off40 120.4; z1_ride 126.83; z2_jump_back 126.83; z2_jump_fwd 126.83; z2_jump_none 126.83; z2_jump_pu30 49.4; z2_jump_right 126.83; z3_crouch 126.83; z5_sj_k1 126.83; z5_sj_k12 126.83; z5_sj_k2 126.83; z5_sj_k3 126.83; z5_sj_k4 126.83; z5_sj_k40 126.83; z5_sj_k6 126.83; z5_sj_k8 126.83; z6_up 115.76; z6_vert 40.0
+
+Mount blend (flat/uphill ropes): position = p0 + b(k) * (rope reference - p0), rope reference = Find point
+  advanced by the logged rope speed; k = frames after the mount command. Mean b(k) over 4140 rows:
+  0:0.000 1:0.017 2:0.050 3:0.097 4:0.157 5:0.227 6:0.303 7:0.384 8:0.465 9:0.543 10:0.618 11:0.686 12:0.746 13:0.798 14:0.842 15:0.878 16:0.907 17:0.930 18:0.947 19:0.959 20:0.969 21:0.975 22:0.980 23:0.983 24:0.985 25:0.987 26:0.988 27:0.989 28:0.989 29:0.990 30:0.990 31:0.991 32:0.991 33:0.992 34:0.992 35:0.993 36:0.993 37:0.993 38:0.994 39:0.994 40:0.995
+  per-k spread (max-min) up to k=30: max 0.0817
+  fit smoothstep_T_s     param 0.148    position RMS 3.568 u
+  fit critdamp_w_per_s   param 25.9     position RMS 4.097 u
+  fit exp_w_per_s        param 12.8     position RMS 10.702 u
+  per-k mean table as the model: position RMS 0.505 u
+  reference tail error k=40..60 (mean |pos - ref|): previous-cmd speed integration {'n': 90, 'mean': 1.694, 'sd': 0.0565, 'min': 1.636, 'max': 1.889} ; same-cmd speed {'n': 90, 'mean': 0.4256, 'sd': 0.044, 'min': 0.271, 'max': 0.465}
+
+Vertical rope Z3 Find point: Q.z - pre-use origin.z {'n': 5, 'mean': 80.1, 'sd': 0.0, 'min': 80.1, 'max': 80.1} ; angle to eye {'n': 5, 'mean': 11.448, 'sd': 0.0, 'min': 11.448, 'max': 11.448} (the min-angle rule would give the eye-height point, angle 0) -> vertical ropes pick the point at hang height (origin + hull 80), not the min-angle point
+
+View pitch on mount (client view is driven to the rope pitch):
+  z2_jump_pu30 r2956 pitch before -30.00 -> after 40 frames 0.000 (rope pitch -0.000); 90% reached after 22 frames
+  z2_jump_pu30 r2957 pitch before -30.00 -> after 40 frames 0.000 (rope pitch -0.000); 90% reached after 22 frames
+  z2_jump_pu30 r2958 pitch before -30.00 -> after 40 frames 0.000 (rope pitch -0.000); 90% reached after 22 frames
+  z2_jump_pu30 r2959 pitch before -30.00 -> after 40 frames 0.000 (rope pitch -0.000); 90% reached after 22 frames
+  z2_jump_pu30 r2960 pitch before -30.00 -> after 40 frames 0.000 (rope pitch -0.000); 90% reached after 22 frames
+  z6_up r3011 pitch before 0.00 -> after 40 frames -10.620 (rope pitch -10.620); 90% reached after 22 frames
+  z6_up r3012 pitch before 0.00 -> after 40 frames -10.620 (rope pitch -10.620); 90% reached after 22 frames
+  z6_up r3013 pitch before 0.00 -> after 40 frames -10.620 (rope pitch -10.620); 90% reached after 22 frames
+  z6_up r3014 pitch before 0.00 -> after 40 frames -10.620 (rope pitch -10.620); 90% reached after 22 frames
+  z6_up r3015 pitch before 0.00 -> after 40 frames -10.620 (rope pitch -10.620); 90% reached after 22 frames
+
+====================================================================================================
+Q2 RIDE
+====================================================================================================
+schedule         n v_first  v_cap    a1 (k 2..55) mean/sd   a2 (k>=64,<cap) mean/sd switch k / t / v_before  t_cap    dir.dot   
+z0_off0          5 8.3238   600.0    600.0601 / 14.3008     400.0478 / 0.1648      61 / 0.508 / 303.037     1.2435   1.0       
+z0_off40         5 8.3328   600.0    600.0874 / 3.8067      400.048 / 0.1806       61 / 0.5083 / 303.3338   1.243    1.0       
+z1_ride          5 8.3282   600.0    599.8578 / 6.7876      399.9685 / 0.1912      61 / 0.5085 / 303.2556   1.2483   1.0       
+z2_jump_back     5 8.3336   423.384  599.9636 / 3.6446      399.9611 / 0.2034      61 / 0.5085 / 303.3298   0.8002   1.0       
+z2_jump_fwd      5 8.3334   423.416  599.9233 / 2.9075      399.9557 / 0.1978      61 / 0.5087 / 303.3302   0.8004   1.0       
+z2_jump_none     5 8.3358   423.405  599.9451 / 2.2843      399.938 / 0.1931       61 / 0.5086 / 303.3348   0.8004   1.0       
+z2_jump_pu30     5 8.3634   424.131  600.0018 / 10.8824     400.0233 / 0.1965      60.8 / 0.5073 / 302.5952 0.8011   1.0       
+z2_jump_right    5 8.3336   423.492  599.9931 / 1.7382      400.0052 / 0.1813      61 / 0.5087 / 303.336    0.8006   1.0       
+z3_crouch        5 8.3444   424.545  599.9804 / 2.8091      399.9979 / 0.1931      61 / 0.5087 / 303.327    0.8011   1.0       
+z5_sj_k1         5 8.335    303.365  600.0351 / 2.5465      None / None            -                        0.5016   1.0       
+z5_sj_k12        5 8.3222   303.334  600.0832 / 9.2802      None / None            -                        0.4996   1.0       
+z5_sj_k2         5 8.3344   303.338  599.9719 / 4.0036      None / None            -                        0.5003   1.0       
+z5_sj_k3         5 8.3394   303.338  600.0427 / 6.8718      None / None            -                        0.5004   1.0       
+z5_sj_k4         5 8.3432   303.392  600.0722 / 2.385       None / None            -                        0.503    1.0       
+z5_sj_k40        5 8.3396   303.422  599.7961 / 33.5859     None / None            -                        0.5      1.0       
+z5_sj_k6         5 8.3384   303.338  599.9899 / 4.5254      None / None            -                        0.5004   1.0       
+z5_sj_k8         5 8.324    303.467  600.0576 / 4.2995      None / None            -                        0.5003   1.0       
+z6_up            5 8.3308   600.0    600.1487 / 1.6718      400.0802 / 0.1996      61 / 0.5078 / 303.1078   1.257    1.0       
+z6_vert          5 8.3228   600.0    600.1024 / 2.2492      400.088 / 0.1919       61 / 0.5079 / 303.1086   1.2555   1.0       
+  |d origin|/ft minus logged speed of the same cmd (k>=60, per-trial means): {'n': 95, 'mean': 1.857, 'sd': 4.2282, 'min': -5.0226, 'max': 10.3159}
+  |d origin|/ft minus logged speed of the previous cmd (k>=60): {'n': 95, 'mean': 5.2074, 'sd': 4.981, 'min': -4.4136, 'max': 15.1639}
+  (origins are 6-digit rounded in rows.csv: 0.1 u in x -> +-6 u/s per-frame noise; means are what count)
+  dedi state at the jump command (z5, 61 cmds after the mount): [('z2_jum', '3'), ('z3_cro', '3'), ('z5_sj_', '2'), ('z5_sj_', '3')]
+
+Auto-detach (rope end) vs the SDK rule v_out = d_end * clamp(v.d_end, ziplineSpeed, ziplineDetachSpeed):
+schedule       run    exit v cl                  exit v sv                  pred                       resid     h_extra   dist_end   dist_end_sv
+z0_off0        r2901  [600.0, 0.0, 0.0]          [600.0, 0.0, 0.0]          [600.0, 0.0, 0.0]          0.0       0.0       94.3       94.3      
+z0_off0        r2902  [600.0, 0.0, 0.0]          [600.0, 0.0, 0.0]          [600.0, 0.0, 0.0]          0.0       0.0       90.7       90.7      
+z0_off0        r2903  [600.0, 0.0, 0.0]          [600.0, 0.0, 0.0]          [600.0, 0.0, 0.0]          0.0       0.0       93.9       93.9      
+z0_off0        r2904  [600.0, 0.0, 0.0]          [600.0, 0.0, 0.0]          [600.0, 0.0, 0.0]          0.0       0.0       93.8       93.9      
+z0_off0        r2905  [600.0, 0.0, 0.0]          [600.0, 0.0, 0.0]          [600.0, 0.0, 0.0]          0.0       0.0       93.8       93.9      
+z0_off40       r2906  [600.0, 0.0, 0.0]          [600.0, 0.0, 0.0]          [600.0, 0.0, 0.0]          0.0       0.0       90.5       90.5      
+z0_off40       r2907  [600.0, 0.0, 0.0]          [600.0, 0.0, 0.0]          [600.0, 0.0, 0.0]          0.0       0.0       90.1       90.3      
+z0_off40       r2908  [600.0, 0.0, 0.0]          [600.0, 0.0, 0.0]          [600.0, 0.0, 0.0]          0.0       0.0       90.1       90.3      
+z0_off40       r2909  [600.0, 0.0, 0.0]          [600.0, 0.0, 0.0]          [600.0, 0.0, 0.0]          0.0       0.0       90.2       90.4      
+z0_off40       r2910  [600.0, 0.0, 0.0]          [600.0, 0.0, 0.0]          [600.0, 0.0, 0.0]          0.0       0.0       90.3       90.5      
+z1_ride        r2931  [600.0, 0.0, 0.0]          [600.0, 0.0, 0.0]          [600.0, 0.0, 0.0]          0.0       0.0       93.7       93.7      
+z1_ride        r2932  [600.0, 0.0, 0.0]          [600.0, 0.0, 0.0]          [600.0, 0.0, 0.0]          0.0       0.0       90.9       90.9      
+z1_ride        r2933  [600.0, 0.0, 0.0]          [600.0, 0.0, 0.0]          [600.0, 0.0, 0.0]          0.0       0.0       91.2       91.1      
+z1_ride        r2934  [600.0, 0.0, 0.0]          [600.0, 0.0, 0.0]          [600.0, 0.0, 0.0]          0.0       0.0       91.7       91.7      
+z1_ride        r2935  [600.0, 0.0, 0.0]          [600.0, 0.0, 0.0]          [600.0, 0.0, 0.0]          0.0       0.0       93.8       93.8      
+z6_up          r3011  [589.723, 0.0, 110.573]    [589.723, 0.0, 110.573]    [589.723, 0.0, 110.573]    0.0003    0.0003    93.744     93.806    
+z6_up          r3012  [589.723, 0.0, 110.573]    [589.723, 0.0, 110.573]    [589.723, 0.0, 110.573]    0.0003    0.0003    93.845     93.907    
+z6_up          r3013  [589.723, 0.0, 110.573]    [589.723, 0.0, 110.573]    [589.723, 0.0, 110.573]    0.0003    0.0003    93.742     93.807    
+z6_up          r3014  [589.723, 0.0, 110.573]    [589.723, 0.0, 110.573]    [589.723, 0.0, 110.573]    0.0003    0.0003    94.048     94.111    
+z6_up          r3015  [589.723, 0.0, 110.573]    [589.723, 0.0, 110.573]    [589.723, 0.0, 110.573]    0.0003    0.0003    94.76      94.926    
+z6_vert        r3016  [400.0, 0.0, 600.0]        [400.0, 0.0, 600.0]        [0.0, 0.0, 600.0]          400.0     400.0     0.16       0.0       
+z6_vert        r3017  [400.0, 0.0, 600.0]        [400.0, 0.0, 600.0]        [0.0, 0.0, 600.0]          400.0     400.0     0.16       0.0       
+z6_vert        r3018  [400.0, 0.0, 600.0]        [400.0, 0.0, 600.0]        [0.0, 0.0, 600.0]          400.0     400.0     0.16       0.0       
+z6_vert        r3019  [400.0, 0.0, 600.0]        [400.0, 0.0, 600.0]        [0.0, 0.0, 600.0]          400.0     400.0     0.16       0.0       
+z6_vert        r3020  [400.0, 0.0, 600.0]        [400.0, 0.0, 600.0]        [0.0, 0.0, 600.0]          400.0     400.0     0.16       0.0       
+  dedi [ZIP-EXIT] lines (first 4 only, rate-limited): []
+  detach command: client exit cmd vs dedi [ZIP-MOVESTOP] cmd equal in 95/95 trials with a dedi line
+
+Client/dedi parity over the first 30 MT commands after the detach (sv - cl):
+  z0_off0        dz {'n': 5, 'mean': 0.1587, 'sd': 0.0, 'min': 0.1587, 'max': 0.1587} | dy {'n': 5, 'mean': 0.23, 'sd': 0.0, 'min': 0.23, 'max': 0.23} | |dv| max 0.0000 | landing cmd sv-cl [0]
+  z0_off40       dz {'n': 5, 'mean': 0.127, 'sd': 0.0635, 'min': 0.0, 'max': 0.1587} | dy {'n': 5, 'mean': 0.184, 'sd': 0.092, 'min': 0.0, 'max': 0.23} | |dv| max 0.0000 | landing cmd sv-cl [0]
+  z1_ride        dz {'n': 5, 'mean': 0.1625, 'sd': 0.0108, 'min': 0.153, 'max': 0.1836} | dy {'n': 5, 'mean': 0.2285, 'sd': 0.0031, 'min': 0.2223, 'max': 0.23} | |dv| max 163.6830 | landing cmd sv-cl [0, 1]
+  z2_jump_back   dz {'n': 5, 'mean': 0.17, 'sd': 0.0, 'min': 0.17, 'max': 0.17} | dy {'n': 5, 'mean': 0.23, 'sd': 0.0, 'min': 0.23, 'max': 0.23} | |dv| max 0.0000 | landing cmd sv-cl [0]
+  z2_jump_fwd    dz {'n': 5, 'mean': 0.17, 'sd': 0.0, 'min': 0.17, 'max': 0.17} | dy {'n': 5, 'mean': 0.23, 'sd': 0.0, 'min': 0.23, 'max': 0.23} | |dv| max 0.0000 | landing cmd sv-cl [0]
+  z2_jump_none   dz {'n': 5, 'mean': 0.17, 'sd': 0.0, 'min': 0.17, 'max': 0.17} | dy {'n': 5, 'mean': 0.23, 'sd': 0.0, 'min': 0.23, 'max': 0.23} | |dv| max 0.0000 | landing cmd sv-cl [0]
+  z2_jump_pu30   dz {'n': 5, 'mean': 0.17, 'sd': 0.0, 'min': 0.17, 'max': 0.1701} | dy {'n': 5, 'mean': 0.23, 'sd': 0.0, 'min': 0.23, 'max': 0.23} | |dv| max 0.0000 | landing cmd sv-cl [0]
+  z2_jump_right  dz {'n': 5, 'mean': 0.17, 'sd': 0.0, 'min': 0.17, 'max': 0.17} | dy {'n': 5, 'mean': 0.2272, 'sd': 0.0006, 'min': 0.2263, 'max': 0.228} | |dv| max 0.0000 | landing cmd sv-cl [0]
+  z3_crouch      dz {'n': 5, 'mean': 0.1575, 'sd': 0.0025, 'min': 0.1525, 'max': 0.1587} | dy {'n': 5, 'mean': 0.23, 'sd': 0.0, 'min': 0.23, 'max': 0.23} | |dv| max 0.0000 | landing cmd sv-cl [0]
+  z5_sj_k1       dz {'n': 5, 'mean': 0.17, 'sd': 0.0, 'min': 0.17, 'max': 0.17} | dy {'n': 5, 'mean': 0.23, 'sd': 0.0, 'min': 0.23, 'max': 0.23} | |dv| max 0.0000 | landing cmd sv-cl [0]
+  z5_sj_k12      dz {'n': 5, 'mean': 0.068, 'sd': 0.0833, 'min': 0.0, 'max': 0.17} | dy {'n': 5, 'mean': 0.092, 'sd': 0.1127, 'min': 0.0, 'max': 0.23} | |dv| max 0.0000 | landing cmd sv-cl [0]
+  z5_sj_k2       dz {'n': 5, 'mean': 0.17, 'sd': 0.0, 'min': 0.17, 'max': 0.1701} | dy {'n': 5, 'mean': 0.23, 'sd': 0.0, 'min': 0.23, 'max': 0.23} | |dv| max 0.0000 | landing cmd sv-cl [0]
+  z5_sj_k3       dz {'n': 5, 'mean': 0.17, 'sd': 0.0, 'min': 0.17, 'max': 0.1701} | dy {'n': 5, 'mean': 0.23, 'sd': 0.0, 'min': 0.23, 'max': 0.23} | |dv| max 0.0000 | landing cmd sv-cl [0]
+  z5_sj_k4       dz {'n': 5, 'mean': 0.17, 'sd': 0.0, 'min': 0.17, 'max': 0.1701} | dy {'n': 5, 'mean': 0.23, 'sd': 0.0, 'min': 0.23, 'max': 0.23} | |dv| max 0.0000 | landing cmd sv-cl [0, 1]
+  z5_sj_k40      dz {'n': 5, 'mean': 0.17, 'sd': 0.0, 'min': 0.17, 'max': 0.17} | dy {'n': 5, 'mean': 0.23, 'sd': 0.0, 'min': 0.23, 'max': 0.23} | |dv| max 0.0000 | landing cmd sv-cl [0]
+  z5_sj_k6       dz {'n': 5, 'mean': 0.17, 'sd': 0.0, 'min': 0.17, 'max': 0.1701} | dy {'n': 5, 'mean': 0.23, 'sd': 0.0, 'min': 0.23, 'max': 0.23} | |dv| max 0.0000 | landing cmd sv-cl [0]
+  z5_sj_k8       dz {'n': 5, 'mean': 0.17, 'sd': 0.0, 'min': 0.17, 'max': 0.17} | dy {'n': 5, 'mean': 0.23, 'sd': 0.0, 'min': 0.23, 'max': 0.23} | |dv| max 0.0000 | landing cmd sv-cl [0]
+  z6_up          dz {'n': 5, 'mean': 0.1865, 'sd': 0.011, 'min': 0.1709, 'max': 0.2007} | dy {'n': 5, 'mean': 0.23, 'sd': 0.0, 'min': 0.23, 'max': 0.23} | |dv| max 0.0010 | landing cmd sv-cl [0]
+  z6_vert        dz {'n': 5, 'mean': 0.1627, 'sd': 0.0007, 'min': 0.162, 'max': 0.1637} | dy {'n': 5, 'mean': 0.23, 'sd': 0.0, 'min': 0.23, 'max': 0.23} | |dv| max 0.0010 | landing cmd sv-cl [0]
+  at the detach (post-state of the detach cmd, sv - cl): dz {'n': 95, 'mean': 0.1632, 'sd': 0.0346, 'min': 0.0, 'max': 0.201} ; dy {'n': 95, 'mean': 0.2203, 'sd': 0.0462, 'min': 0.0, 'max': 0.23} ; exits with no offset at all: 4/95
+  -> the dedi hangs at rope - 80.00 (y on the rope), the client at rope - 80.17, y - 0.23; this offset (not a half-duck step, which would be (80 - duck hull)/2 = many u) is carried into every exit kind incl. crouch-off
+
+====================================================================================================
+Q3 JUMP-OFF / CROUCH-OFF
+====================================================================================================
+schedule       run    kind   ride_v    exit v cl (MT)             diag cl vel                diag sv vel                resid     k=h/v   dv/cmd xy after      shift   
+z2_jump_none   r2936  jump   423.382   [400.0, 0.0, 289.828]      (400.0, 0.0, 289.8)        (400.0, 0.0, 289.8)        0.0       0.94477 [0.0, 0.0]           0.0     
+z2_jump_none   r2937  jump   423.38    [400.0, 0.0, 289.828]      (400.0, 0.0, 289.8)        (400.0, 0.0, 289.8)        0.0       0.94478 [0.0, 0.0]           0.0     
+z2_jump_none   r2938  jump   423.405   [400.0, 0.0, 289.828]      (400.0, 0.0, 289.8)        (400.0, 0.0, 289.8)        0.0       0.94472 [0.0, 0.0]           0.0     
+z2_jump_none   r2939  jump   423.398   [400.0, 0.0, 289.828]      (400.0, 0.0, 289.8)        (400.0, 0.0, 289.8)        0.0       0.94474 [0.0, 0.0]           0.0     
+z2_jump_none   r2940  jump   423.367   [400.0, 0.0, 289.828]      (400.0, 0.0, 289.8)        (400.0, 0.0, 289.8)        0.0       0.94481 [0.0, 0.0]           0.0     
+z2_jump_fwd    r2941  jump   423.368   [400.0, 0.0, 289.828]      (400.0, 0.0, 289.8)        (400.0, 0.0, 289.8)        0.0       0.9448  [0.0041, 0.0]        0.0     
+z2_jump_fwd    r2942  jump   423.219   [400.0, 0.0, 289.828]      (400.0, 0.0, 289.8)        (400.0, 0.0, 289.8)        0.0       0.94514 [0.0041, 0.0]        0.0     
+z2_jump_fwd    r2943  jump   423.383   [400.0, 0.0, 289.828]      (400.0, 0.0, 289.8)        (400.0, 0.0, 289.8)        0.0       0.94477 [0.0041, 0.0]        0.0     
+z2_jump_fwd    r2944  jump   423.403   [400.0, 0.0, 289.828]      (400.0, 0.0, 289.8)        (400.0, 0.0, 289.8)        0.0       0.94473 [0.0041, 0.0]        0.0     
+z2_jump_fwd    r2945  jump   423.416   [400.0, 0.0, 289.828]      (400.0, 0.0, 289.8)        (400.0, 0.0, 289.8)        0.0       0.9447  [0.0041, 0.0]        0.0     
+z2_jump_back   r2946  jump   423.267   [400.0, 0.0, 289.828]      (400.0, 0.0, 289.8)        (400.0, 0.0, 289.8)        0.0       0.94503 [-4.1674, 0.0]       0.0     
+z2_jump_back   r2947  jump   423.296   [400.0, 0.0, 289.828]      (400.0, 0.0, 289.8)        (400.0, 0.0, 289.8)        0.0       0.94497 [-4.1686, 0.0]       0.0     
+z2_jump_back   r2948  jump   420.057   [400.0, 0.0, 289.828]      (400.0, 0.0, 289.8)        (400.0, 0.0, 289.8)        0.0       0.95225 [-4.1747, 0.0]       0.0     
+z2_jump_back   r2949  jump   423.363   [400.0, 0.0, 289.828]      (400.0, 0.0, 289.8)        (400.0, 0.0, 289.8)        0.0       0.94482 [-4.169, 0.0]        0.0     
+z2_jump_back   r2950  jump   423.384   [400.0, 0.0, 289.828]      (400.0, 0.0, 289.8)        (400.0, 0.0, 289.8)        0.0       0.94477 [-4.1695, 0.0]       0.0     
+z2_jump_right  r2951  jump   423.453   [400.0, 0.0, 289.828]      (400.0, 0.0, 289.8)        (400.0, 0.0, 289.8)        0.0       0.94461 [-0.0004, -3.4525]   0.0     
+z2_jump_right  r2952  jump   423.403   [400.0, 0.0, 289.828]      (400.0, 0.0, 289.8)        (400.0, 0.0, 289.8)        0.0       0.94473 [-0.0004, -3.4525]   0.0     
+z2_jump_right  r2953  jump   423.492   [400.0, 0.0, 289.828]      (400.0, 0.0, 289.8)        (400.0, 0.0, 289.8)        0.0       0.94453 [-0.0004, -3.4525]   0.0     
+z2_jump_right  r2954  jump   423.317   [400.0, 0.0, 289.828]      (400.0, 0.0, 289.8)        (400.0, 0.0, 289.8)        0.0       0.94492 [-0.0004, -3.4525]   0.0     
+z2_jump_right  r2955  jump   423.49    [400.0, 0.0, 289.828]      (400.0, 0.0, 289.8)        (400.0, 0.0, 289.8)        0.0       0.94453 [-0.0004, -3.4525]   0.0     
+z2_jump_pu30   r2956  jump   423.304   [400.0, 0.0, 289.828]      (400.0, 0.0, 289.8)        (400.0, 0.0, 289.8)        0.0       0.94495 [0.0, 0.0]           0.0     
+z2_jump_pu30   r2957  jump   420.063   [400.0, 0.0, 289.828]      (400.0, 0.0, 289.8)        (400.0, 0.0, 289.8)        0.0       0.95224 [0.0, 0.0]           0.0     
+z2_jump_pu30   r2958  jump   424.131   [400.0, 0.0, 289.828]      (400.0, 0.0, 289.8)        (400.0, 0.0, 289.8)        0.0       0.9431  [0.0, 0.0]           0.0     
+z2_jump_pu30   r2959  jump   423.488   [400.0, 0.0, 289.828]      (400.0, 0.0, 289.8)        (400.0, 0.0, 289.8)        0.0       0.94454 [0.0, 0.0]           0.0     
+z2_jump_pu30   r2960  jump   423.459   [400.0, 0.0, 289.828]      (400.0, 0.0, 289.8)        (400.0, 0.0, 289.8)        0.0       0.9446  [0.0, 0.0]           0.0     
+z3_crouch      r2966  crouch 423.366   [400.0, 0.0, 0.0]          (400.0, 0.0, 0.0)          (400.0, 0.0, 0.0)          0.0       0.94481 [0.0, 0.0]           0.0     
+z3_crouch      r2967  crouch 424.545   [400.0, 0.0, 0.0]          (400.0, 0.0, 0.0)          (400.0, 0.0, 0.0)          0.0       0.94219 [0.0, 0.0]           0.0     
+z3_crouch      r2968  crouch 423.492   [400.0, 0.0, 0.0]          (400.0, 0.0, 0.0)          (400.0, 0.0, 0.0)          0.0       0.94453 [0.0, 0.0]           0.0     
+z3_crouch      r2969  crouch 423.459   [400.0, 0.0, 0.0]          (400.0, 0.0, 0.0)          (400.0, 0.0, 0.0)          0.0       0.9446  [0.0, 0.0]           0.0     
+z3_crouch      r2970  crouch 420.125   [400.0, 0.0, 0.0]          (400.0, 0.0, 0.0)          (400.0, 0.0, 0.0)          0.0       0.9521  [0.0, 0.0]           0.0     
+z5_sj_k1       r2971  jump   303.335   [303.335, 0.0, 289.828]    (303.3, 0.0, 289.8)        (303.3, 0.0, 289.8)        0.0       1.0     [0.0, 0.0]           0.0     
+z5_sj_k1       r2972  jump   303.338   [303.338, 0.0, 289.828]    (303.3, 0.0, 289.8)        (303.3, 0.0, 289.8)        0.0       1.0     [0.0, 0.0]           0.0     
+z5_sj_k1       r2973  jump   303.328   [303.328, 0.0, 289.828]    (303.3, 0.0, 289.8)        (303.3, 0.0, 289.8)        0.0       1.0     [0.0, 0.0]           0.0     
+z5_sj_k1       r2974  jump   303.365   [303.365, 0.0, 289.828]    (303.4, 0.0, 289.8)        (303.4, 0.0, 289.8)        0.0       1.0     [0.0, 0.0]           0.0     
+z5_sj_k1       r2975  jump   303.332   [303.332, 0.0, 289.828]    (303.3, 0.0, 289.8)        (303.3, 0.0, 289.8)        0.0       1.0     [0.0, 0.0]           0.0     
+z5_sj_k2       r2976  jump   303.336   [303.336, 0.0, 289.828]    (303.3, 0.0, 289.8)        (303.3, 0.0, 289.8)        0.0       1.0     [0.0, 0.0]           0.0     
+z5_sj_k2       r2977  jump   303.336   [303.336, 0.0, 289.828]    (303.3, 0.0, 289.8)        (303.3, 0.0, 289.8)        0.0       1.0     [0.0, 0.0]           0.0     
+z5_sj_k2       r2978  jump   303.335   [303.335, 0.0, 289.828]    (303.3, 0.0, 289.8)        (303.3, 0.0, 289.8)        0.0       1.0     [0.0, 0.0]           0.0     
+z5_sj_k2       r2979  jump   303.334   [303.334, 0.0, 289.828]    (303.3, 0.0, 289.8)        (303.3, 0.0, 289.8)        0.0       1.0     [0.0, 0.0]           0.0     
+z5_sj_k2       r2980  jump   303.338   [303.338, 0.0, 289.828]    (303.3, 0.0, 289.8)        (303.3, 0.0, 289.8)        0.0       1.0     [0.0, 0.0]           0.0     
+z5_sj_k3       r2981  jump   303.335   [303.335, 0.0, 289.828]    (303.3, 0.0, 289.8)        (303.3, 0.0, 289.8)        0.0       1.0     [0.0, 0.0]           0.0     
+z5_sj_k3       r2982  jump   303.338   [303.338, 0.0, 289.828]    (303.3, 0.0, 289.8)        (303.3, 0.0, 289.8)        0.0       1.0     [0.0, 0.0]           0.0     
+z5_sj_k3       r2983  jump   303.328   [303.328, 0.0, 289.828]    (303.3, 0.0, 289.8)        (303.3, 0.0, 289.8)        0.0       1.0     [0.0, 0.0]           0.0     
+z5_sj_k3       r2984  jump   303.335   [303.335, 0.0, 289.828]    (303.3, 0.0, 289.8)        (303.3, 0.0, 289.8)        0.0       1.0     [0.0, 0.0]           0.0     
+z5_sj_k3       r2985  jump   303.335   [303.335, 0.0, 289.828]    (303.3, 0.0, 289.8)        (303.3, 0.0, 289.8)        0.0       1.0     [0.0, 0.0]           0.0     
+z5_sj_k4       r2986  jump   303.352   [303.352, 0.0, 289.828]    (303.4, 0.0, 289.8)        (303.4, 0.0, 289.8)        0.0       1.0     [0.0, 0.0]           0.0     
+z5_sj_k4       r2987  jump   303.338   [303.338, 0.0, 289.828]    (303.3, 0.0, 289.8)        (303.3, 0.0, 289.8)        0.0       1.0     [0.0, 0.0]           0.0     
+z5_sj_k4       r2988  jump   303.338   [303.338, 0.0, 289.828]    (303.3, 0.0, 289.8)        (303.3, 0.0, 289.8)        0.0       1.0     [0.0, 0.0]           0.0     
+z5_sj_k4       r2989  jump   303.392   [303.392, 0.0, 289.828]    (303.4, 0.0, 289.8)        (303.4, 0.0, 289.8)        0.0       1.0     [0.0, 0.0]           0.0     
+z5_sj_k4       r2990  jump   303.34    [303.34, 0.0, 289.828]     (303.3, 0.0, 289.8)        (303.3, 0.0, 289.8)        0.0       1.0     [0.0, 0.0]           0.0     
+z5_sj_k6       r2991  jump   303.32    [303.32, 0.0, 289.828]     (303.3, 0.0, 289.8)        (303.3, 0.0, 289.8)        0.0       1.0     [0.0, 0.0]           0.0     
+z5_sj_k6       r2992  jump   303.337   [303.337, 0.0, 289.828]    (303.3, 0.0, 289.8)        (303.3, 0.0, 289.8)        0.0       1.0     [0.0, 0.0]           0.0     
+z5_sj_k6       r2993  jump   303.315   [303.315, 0.0, 289.828]    (303.3, 0.0, 289.8)        (303.3, 0.0, 289.8)        0.0       1.0     [0.0, 0.0]           0.0     
+z5_sj_k6       r2994  jump   303.333   [303.333, 0.0, 289.828]    (303.3, 0.0, 289.8)        (303.3, 0.0, 289.8)        0.0       1.0     [0.0, 0.0]           0.0     
+z5_sj_k6       r2995  jump   303.338   [303.338, 0.0, 289.828]    (303.3, 0.0, 289.8)        (303.3, 0.0, 289.8)        0.0       1.0     [0.0, 0.0]           0.0     
+z5_sj_k8       r2996  jump   303.335   [303.335, 0.0, 289.828]    (303.3, 0.0, 289.8)        (303.3, 0.0, 289.8)        0.0       1.0     [0.0, 0.0]           0.0     
+z5_sj_k8       r2997  jump   303.467   [303.467, 0.0, 289.828]    (303.5, 0.0, 289.8)        (303.5, 0.0, 289.8)        0.0       1.0     [0.0, 0.0]           0.0     
+z5_sj_k8       r2998  jump   303.294   [303.294, 0.0, 289.828]    (303.3, 0.0, 289.8)        (303.3, 0.0, 289.8)        0.0       1.0     [0.0, 0.0]           0.0     
+z5_sj_k8       r2999  jump   303.332   [303.332, 0.0, 289.828]    (303.3, 0.0, 289.8)        (303.3, 0.0, 289.8)        0.0       1.0     [0.0, 0.0]           0.0     
+z5_sj_k8       r3000  jump   303.059   [303.059, 0.0, 289.828]    (303.1, 0.0, 289.8)        (303.1, 0.0, 289.8)        0.0       1.0     [0.0, 0.0]           0.0     
+z5_sj_k12      r3001  jump   303.099   [303.099, 0.0, 289.828]    (303.1, 0.0, 289.8)        (303.1, 0.0, 289.8)        0.0       1.0     [0.0, 0.0]           0.0     
+z5_sj_k12      r3002  jump   302.968   [302.968, 0.0, 289.828]    (303.0, 0.0, 289.8)        (303.0, 0.0, 289.8)        0.0       1.0     [0.0, 0.0]           0.0     
+z5_sj_k12      r3003  jump   303.334   [303.334, 0.0, 289.828]    (303.3, 0.0, 289.8)        (303.3, 0.0, 289.8)        0.0       1.0     [0.0, 0.0]           0.0     
+z5_sj_k12      r3004  jump   303.076   [303.076, 0.0, 289.828]    (303.1, 0.0, 289.8)        (303.1, 0.0, 289.8)        0.0       1.0     [0.0, 0.0]           0.0     
+z5_sj_k12      r3005  jump   302.97    [302.97, 0.0, 289.828]     (303.0, 0.0, 289.8)        (303.0, 0.0, 289.8)        0.0       1.0     [0.0, 0.0]           0.0     
+z5_sj_k40      r3006  jump   303.111   [303.111, 0.0, 289.828]    (303.1, 0.0, 289.8)        (303.1, 0.0, 289.8)        0.0       1.0     [0.0, 0.0]           0.0     
+z5_sj_k40      r3007  jump   302.164   [302.164, 0.0, 289.828]    (302.2, 0.0, 289.8)        (302.2, 0.0, 289.8)        0.0       1.0     [0.0, 0.0]           0.0     
+z5_sj_k40      r3008  jump   303.422   [303.422, 0.0, 289.828]    (303.4, 0.0, 289.8)        (303.4, 0.0, 289.8)        0.0       1.0     [0.0, 0.0]           0.0     
+z5_sj_k40      r3009  jump   303.009   [303.009, 0.0, 289.828]    (303.0, 0.0, 289.8)        (303.0, 0.0, 289.8)        0.0       1.0     [0.0, 0.0]           0.0     
+z5_sj_k40      r3010  jump   303.333   [303.333, 0.0, 289.828]    (303.3, 0.0, 289.8)        (303.3, 0.0, 289.8)        0.0       1.0     [0.0, 0.0]           0.0     
+
+Model v_out = h_rope * min(v_ride, 400) + z * (289.828 jump | 0 crouch):
+  residual |v_cl - pred| over 70 exits: {'n': 70, 'mean': 0.0, 'sd': 0.0, 'min': 0.0, 'max': 0.0}
+  ride speeds covered: [302, 303, 420, 423, 424, 425]
+  alternative k = v_h/v_ride: ride~300: 1.0; ride~420: 0.9454
+  jump-off flags (diag, = held buttons): [('z2_jump_back', '0x30000012'), ('z2_jump_fwd', '0x3000000a'), ('z2_jump_none', '0x30000002'), ('z2_jump_pu30', '0x30000002'), ('z2_jump_right', '0x30000402'), ('z3_crouch', '0x4'), ('z5_sj_k1', '0x30000002'), ('z5_sj_k12', '0x30000002'), ('z5_sj_k2', '0x30000002'), ('z5_sj_k3', '0x30000002'), ('z5_sj_k4', '0x30000002'), ('z5_sj_k40', '0x30000002'), ('z5_sj_k6', '0x30000002'), ('z5_sj_k8', '0x30000002')]
+  diag cl == diag sv jump-off velocity: 70/70
+  view pitch: z2_jump_pu30 mounted but the mount drives the view to the rope pitch (0) before the jump -> pitch law untestable here; z2_jump_pd30 did not mount (0/5) -> its jump is a ground jump: post v ['[0.0, 0.0, 280.441]', '[0.0, 0.0, 280.443]', '[0.0, 0.0, 280.444]', '[0.0, 0.0, 280.45]', '[0.0, 0.0, 280.463]']
+  ground-jump vz reference = sqrt(2 * g * jumpHeight) = 289.851 (g 750.1, jumpHeight 56)
+  crouch-off duck state after the exit (MT duck/crouch fields): [('0', '')]
+
+====================================================================================================
+Q4 SUPER JUMP (second jump K frames after the jump-off)
+====================================================================================================
+schedule     run    K+1    t_since ground   in_jump  dvz-grav    dvxy      h_floor   mt_gnd   mt_dvz   relan   
+z5_sj_k1     r2971  2      0.016   0        1        0.003       0.0       22.22     0        -6.253   False   
+z5_sj_k1     r2972  2      0.017   0        1        -0.003      0.0       22.22     0        -6.259   False   
+z5_sj_k1     r2973  2      0.016   0        1        0.001       0.0       22.21     0        -6.24    False   
+z5_sj_k1     r2974  2      0.017   0        1        0.001       0.0       22.24     0        -6.308   False   
+z5_sj_k1     r2975  2      0.016   0        1        0.001       0.0       22.22     0        -6.248   False   
+z5_sj_k12    r3001  13     0.108   0        1        0.004       0.0       45.03     0        -6.252   False   
+z5_sj_k12    r3002  13     0.109   0        1        -0.001      0.0       45.21     0        -6.25    False   
+z5_sj_k12    r3003  13     0.108   0        1        -0.001      0.0       45.04     0        -6.25    False   
+z5_sj_k12    r3004  13     0.109   0        1        0.004       0.0       45.23     0        -6.252   False   
+z5_sj_k12    r3005  13     0.108   0        1        0.003       0.0       45.03     0        -6.253   False   
+z5_sj_k2     r2976  3      0.025   0        1        0.004       0.0       24.56     0        -6.252   False   
+z5_sj_k2     r2977  3      0.025   0        1        0.001       0.0       24.56     0        -6.255   False   
+z5_sj_k2     r2978  3      0.025   0        1        0.002       0.0       24.56     0        -6.254   False   
+z5_sj_k2     r2979  3      0.025   0        1        0.004       0.0       24.56     0        -6.252   False   
+z5_sj_k2     r2980  3      0.025   0        1        0.001       0.0       24.55     0        -6.248   False   
+z5_sj_k3     r2981  4      0.033   0        1        -0.002      0.0       26.84     0        -6.251   False   
+z5_sj_k3     r2982  4      0.034   0        1        -0.002      0.0       26.85     0        -6.258   False   
+z5_sj_k3     r2983  4      0.033   0        1        0.002       0.0       26.83     0        -6.239   False   
+z5_sj_k3     r2984  4      0.033   0        1        0.003       0.0       26.84     0        -6.253   False   
+z5_sj_k3     r2985  4      0.033   0        1        0.002       0.0       26.84     0        -6.254   False   
+z5_sj_k4     r2986  5      0.042   0        1        -0.001      0.0       29.12     0        -6.272   False   
+z5_sj_k4     r2987  5      0.042   0        1        0.004       0.0       29.09     0        -6.26    False   
+z5_sj_k4     r2988  5      0.042   0        1        -0.002      0.0       29.09     0        -6.258   False   
+z5_sj_k4     r2989  5      0.038   0        1        -0.001      0.0       28.02     0        -6.25    False   
+z5_sj_k4     r2990  5      0.041   0        1        -0.001      0.0       29.08     0        -6.257   False   
+z5_sj_k40    r3006  41     0.341   0        1        -0.001      0.0       74.76     0        -6.242   False   
+z5_sj_k40    r3007  41     0.337   0        1        -0.001      0.0       74.6      0        -6.25    False   
+z5_sj_k40    r3008  41     0.346   0        1        0.005       0.0       74.93     0        -6.274   False   
+z5_sj_k40    r3009  41     0.341   0        1        -0.003      0.0       74.77     0        -6.229   False   
+z5_sj_k40    r3010  41     0.342   0        1        -0.002      0.0       74.77     0        -6.235   False   
+z5_sj_k6     r2991  7      0.058   0        1        0.001       0.0       33.35     0        -6.248   False   
+z5_sj_k6     r2992  7      0.059   0        1        0.001       0.0       33.56     0        -6.255   False   
+z5_sj_k6     r2993  7      0.058   0        1        -0.002      0.0       33.33     0        -6.243   False   
+z5_sj_k6     r2994  7      0.059   0        1        -0.001      0.0       33.39     0        -6.25    False   
+z5_sj_k6     r2995  7      0.059   0        1        -0.003      0.0       33.4      0        -6.259   False   
+z5_sj_k8     r2996  9      0.075   0        1        0.003       0.0       37.49     0        -6.253   False   
+z5_sj_k8     r2997  9      0.078   0        1        0.004       0.0       38.05     0        -6.44    False   
+z5_sj_k8     r2998  9      0.075   0        1        -0.002      0.0       37.49     0        -6.251   False   
+z5_sj_k8     r2999  9      0.075   0        1        -0.0        0.0       37.49     0        -6.249   False   
+z5_sj_k8     r3000  9      0.075   0        1        -0.003      0.0       37.47     0        -6.236   False   
+  second press applied (|dvz - gravity| > 5): 0/40 ; second press on the ground: 0 ; takeoff after landing: 0
+  jump-off -> landing: {'n': 40, 'mean': 100, 'sd': 0.3162, 'min': 99, 'max': 101} frames
+
+====================================================================================================
+Q5 AIR GRAB (z7_air)
+====================================================================================================
+  r3021 mounted False diag_cl None; at the use press {'o': [-14550.0, 6613.37, 343.97], 'v': [-0.0, 69.18, 92.72], 'ground': 0, 'height_above_floor': 49.05, 'dist_to_rope_line_from_P': 187.813}; P->rope 187.8 u; min P->rope in trial 153.05 u; use presses in MT [74275]
+  r3022 mounted False diag_cl None; at the use press {'o': [-14550.0, 6613.34, 343.93], 'v': [-0.0, 69.18, 93.06], 'ground': 0, 'height_above_floor': 49.01, 'dist_to_rope_line_from_P': 187.839}; P->rope 187.8 u; min P->rope in trial 153.03 u; use presses in MT [74803]
+  r3023 mounted False diag_cl None; at the use press {'o': [-14550.0, 6613.35, 343.94], 'v': [-0.0, 69.18, 92.93], 'ground': 0, 'height_above_floor': 49.02, 'dist_to_rope_line_from_P': 187.83}; P->rope 187.8 u; min P->rope in trial 152.99 u; use presses in MT [75331]
+  r3024 mounted False diag_cl None; at the use press {'o': [-14550.0, 6613.34, 343.93], 'v': [-0.0, 69.18, 93.06], 'ground': 0, 'height_above_floor': 49.01, 'dist_to_rope_line_from_P': 187.839}; P->rope 187.8 u; min P->rope in trial 153.0 u; use presses in MT [75859]
+  r3025 mounted False diag_cl None; at the use press {'o': [-14550.0, 6613.11, 343.6], 'v': [-0.0, 69.17, 95.51], 'ground': 0, 'height_above_floor': 48.68, 'dist_to_rope_line_from_P': 188.031}; P->rope 188.0 u; min P->rope in trial 152.97 u; use presses in MT [76386]
+  -> no air mount; the standing jump reached only ~15 u of the 200 u lateral gap, so the press was ~185 u from the rope:
+     outside the measured ground range (40 ok / 80 fail). Air mount itself remains untested [unknown].
+
+[re-mount budget] [ZIP-DISC] lines (rate-limited, first trials only): [('cl', 'Use', None), ('cl', 'consume', '2'), ('cl', 'reset', '3'), ('sv', 'consume', '2'), ('sv', 'reset', '3')]
+
+====================================================================================================
+ROUND 2 (M6-A3 zip2)
+====================================================================================================
+session 20261021_162442_M6_A3_zip2  label=M6_A3_zip2  legend=gibraltar  trials used 75, skipped ['r90 z5b_m1_k1 (warmup)'] ; HSD-STATE matched to 28455/28455 frames
+
+[R2-1] Jump-off law v_out = h_rope * min(v_ride, 400) + z * 289.828 over new ride speeds
+schedule       run    state  ride_v    exit v cl (MT)             exit v sv                  resid     zip_fr  mountlat
+z5b_m1_k1      r3701  2      0.0       [0.0, 0.0, 289.828]        [0.0, 0.0, 289.828]        0.0       1       0       
+z5b_m1_k1      r3702  2      0.0       [0.0, 0.0, 289.828]        [0.0, 0.0, 289.828]        0.0       1       0       
+z5b_m1_k1      r3703  2      0.0       [0.0, 0.0, 289.828]        [0.0, 0.0, 289.828]        0.0       1       0       
+z5b_m1_k1      r3704  2      0.0       [0.0, 0.0, 289.828]        [0.0, 0.0, 289.828]        0.0       1       0       
+z5b_m1_k1      r3705  2      0.0       [0.0, 0.0, 289.828]        [0.0, 0.0, 289.828]        0.0       1       0       
+z5b_m1_k2      r3706  2      0.0       [0.0, 0.0, 289.828]        [0.0, 0.0, 289.828]        0.0       1       0       
+z5b_m1_k2      r3707  2      0.0       [0.0, 0.0, 289.828]        [0.0, 0.0, 289.828]        0.0       1       0       
+z5b_m1_k2      r3708  2      0.0       [0.0, 0.0, 289.828]        [0.0, 0.0, 289.828]        0.0       1       0       
+z5b_m1_k2      r3709  2      0.0       [0.0, 0.0, 289.828]        [0.0, 0.0, 289.828]        0.0       1       0       
+z5b_m1_k2      r3710  2      0.0       [0.0, 0.0, 289.828]        [0.0, 0.0, 289.828]        0.0       1       0       
+z5b_m1_k4      r3711  2      0.0       [0.0, 0.0, 289.828]        [0.0, 0.0, 289.828]        0.0       1       0       
+z5b_m1_k4      r3712  2      0.0       [0.0, 0.0, 289.828]        [0.0, 0.0, 289.828]        0.0       1       0       
+z5b_m1_k4      r3713  2      0.0       [0.0, 0.0, 289.828]        [0.0, 0.0, 289.828]        0.0       1       0       
+z5b_m1_k4      r3714  2      0.0       [0.0, 0.0, 289.828]        [0.0, 0.0, 289.828]        0.0       1       0       
+z5b_m1_k4      r3715  2      0.0       [0.0, 0.0, 289.828]        [0.0, 0.0, 289.828]        0.0       1       0       
+z5b_m3_k2      r3716  2      13.352    [13.352, 0.0, 289.828]     [13.352, 0.0, 289.828]     0.0       3       0       
+z5b_m3_k2      r3717  2      13.275    [13.275, 0.0, 289.828]     [13.275, 0.0, 289.828]     0.0       3       0       
+z5b_m3_k2      r3718  2      13.336    [13.336, 0.0, 289.828]     [13.336, 0.0, 289.828]     0.0       3       0       
+z5b_m3_k2      r3719  2      13.335    [13.335, 0.0, 289.828]     [13.335, 0.0, 289.828]     0.0       3       0       
+z5b_m3_k2      r3720  2      13.339    [13.339, 0.0, 289.828]     [13.339, 0.0, 289.828]     0.0       3       0       
+z5b_m6_k2      r3721  2      28.262    [28.262, 0.0, 289.828]     [28.262, 0.0, 289.828]     0.0       6       0       
+z5b_m6_k2      r3722  2      28.349    [28.349, 0.0, 289.828]     [28.349, 0.0, 289.828]     0.0       6       0       
+z5b_m6_k2      r3723  2      28.343    [28.343, 0.0, 289.828]     [28.343, 0.0, 289.828]     0.0       6       0       
+z5b_m6_k2      r3724  2      28.338    [28.338, 0.0, 289.828]     [28.338, 0.0, 289.828]     0.0       6       0       
+z5b_m6_k2      r3725  2      28.348    [28.348, 0.0, 289.828]     [28.348, 0.0, 289.828]     0.0       6       0       
+z8_jump_t02    r3726  2      123.39    [123.39, 0.0, 289.828]     [123.39, 0.0, 289.828]     0.0       25      0       
+z8_jump_t02    r3727  2      123.87    [123.87, 0.0, 289.828]     [123.87, 0.0, 289.828]     0.0       25      0       
+z8_jump_t02    r3728  2      123.363   [123.363, 0.0, 289.828]    [123.363, 0.0, 289.828]    0.0       25      0       
+z8_jump_t02    r3729  2      123.367   [123.367, 0.0, 289.828]    [123.367, 0.0, 289.828]    0.0       25      0       
+z8_jump_t02    r3730  2      123.378   [123.378, 0.0, 289.828]    [123.378, 0.0, 289.828]    0.0       25      0       
+z8_jump_t04    r3731  2      243.473   [243.473, 0.0, 289.828]    [243.473, 0.0, 289.828]    0.0       49      0       
+z8_jump_t04    r3732  2      243.392   [243.392, 0.0, 289.828]    [243.392, 0.0, 289.828]    0.0       49      0       
+z8_jump_t04    r3733  2      243.399   [243.399, 0.0, 289.828]    [243.399, 0.0, 289.828]    0.0       49      0       
+z8_jump_t04    r3734  2      243.352   [243.352, 0.0, 289.828]    [243.352, 0.0, 289.828]    0.0       49      0       
+z8_jump_t04    r3735  2      243.448   [243.448, 0.0, 289.828]    [243.448, 0.0, 289.828]    0.0       49      0       
+z8_jump_t10    r3736  3      503.464   [400.0, 0.0, 289.828]      [400.0, 0.0, 289.828]      0.0       121     0       
+z8_jump_t10    r3737  3      503.471   [400.0, 0.0, 289.828]      [400.0, 0.0, 289.828]      0.0       121     0       
+z8_jump_t10    r3738  3      503.423   [400.0, 0.0, 289.828]      [400.0, 0.0, 289.828]      0.0       121     0       
+z8_jump_t10    r3739  3      503.444   [400.0, 0.0, 289.828]      [400.0, 0.0, 289.828]      0.0       121     0       
+z8_jump_t10    r3740  3      503.438   [400.0, 0.0, 289.828]      [400.0, 0.0, 289.828]      0.0       121     0       
+z8_jump_t16    r3741  3      600.0     [400.0, 0.0, 289.828]      [400.0, 0.0, 289.828]      0.0       193     0       
+z8_jump_t16    r3742  3      600.0     [400.0, 0.0, 289.828]      [400.0, 0.0, 289.828]      0.0       193     0       
+z8_jump_t16    r3743  3      600.0     [400.0, 0.0, 289.828]      [400.0, 0.0, 289.828]      0.0       193     0       
+z8_jump_t16    r3744  3      600.0     [400.0, 0.0, 289.828]      [400.0, 0.0, 289.828]      0.0       193     0       
+z8_jump_t16    r3745  3      600.0     [400.0, 0.0, 289.828]      [400.0, 0.0, 289.828]      0.0       193     0       
+z9_yaw45       r3746  3      585.093   [400.0, 0.0, 289.828]      [400.0, 0.0, 289.828]      0.0       145     0       
+z9_yaw45       r3747  3      583.712   [400.0, 0.0, 289.828]      [400.0, 0.0, 289.828]      0.0       145     0       
+z9_yaw45       r3748  3      583.429   [400.0, 0.0, 289.828]      [400.0, 0.0, 289.828]      0.0       145     0       
+z9_yaw45       r3749  3      583.485   [400.0, 0.0, 289.828]      [400.0, 0.0, 289.828]      0.0       145     0       
+z9_yaw45       r3750  3      583.62    [400.0, 0.0, 289.828]      [400.0, 0.0, 289.828]      0.0       145     0       
+z9_yaw90       r3751  3      583.433   [400.0, 0.0, 289.828]      [400.0, 0.0, 289.828]      0.0       145     0       
+z9_yaw90       r3752  3      583.679   [400.0, 0.0, 289.828]      [400.0, 0.0, 289.828]      0.0       145     0       
+z9_yaw90       r3753  3      583.595   [400.0, 0.0, 289.828]      [400.0, 0.0, 289.828]      0.0       145     0       
+z9_yaw90       r3754  3      583.745   [400.0, 0.0, 289.828]      [400.0, 0.0, 289.828]      0.0       145     0       
+z9_yaw90       r3755  3      583.7     [400.0, 0.0, 289.828]      [400.0, 0.0, 289.828]      0.0       145     0       
+  residual |v_cl - pred| over 55 round-2 exits: {'n': 55, 'mean': 0.0, 'sd': 0.0, 'min': 0.0, 'max': 0.0} ; dedi: {'n': 55, 'mean': 0.0, 'sd': 0.0, 'min': 0.0, 'max': 0.0}
+  ride speeds covered (round 2): [0.0, 13.3, 13.4, 28.3, 123.4, 123.9, 243.4, 243.5, 503.4, 503.5, 583.4, 583.5, 583.6, 583.7, 585.1, 600.0]
+
+[R2-2] Super Jump: jump-off M cmds after the mount (still near the ground), second jump K cmds after it
+schedule    run    M    K    released  dk_air  vz_pre    vz_post   dvz-grav   resid    dvxy    apex+   
+z5b_m1_k1   r3701  1    1    False     2       289.828   283.576   0.004      None     0.0     56.0    
+z5b_m1_k1   r3702  1    1    False     2       289.828   283.577   -0.002     None     0.0     56.0    
+z5b_m1_k1   r3703  1    1    False     2       289.828   283.595   0.0        None     0.0     56.0    
+z5b_m1_k1   r3704  1    1    False     2       289.828   283.577   -0.002     None     0.0     56.0    
+z5b_m1_k1   r3705  1    1    False     2       289.828   283.585   -0.002     None     0.0     56.0    
+z5b_m1_k2   r3706  1    2    True      3       283.577   564.027   286.706    0.006    0.0     219.2   
+z5b_m1_k2   r3707  1    2    True      3       283.576   564.028   286.701    -0.003   0.0     219.2   
+z5b_m1_k2   r3708  1    2    True      3       283.577   564.028   286.707    0.007    0.0     219.2   
+z5b_m1_k2   r3709  1    2    True      3       283.578   564.03    286.701    -0.003   0.0     219.2   
+z5b_m1_k2   r3710  1    2    True      3       283.577   564.028   286.707    0.007    0.0     219.2   
+z5b_m1_k4   r3711  1    4    True      5       271.08    551.534   286.703    -0.001   0.0     214.42  
+z5b_m1_k4   r3712  1    4    True      5       271.076   551.528   286.701    -0.003   0.0     214.42  
+z5b_m1_k4   r3713  1    4    True      5       271.076   551.526   286.706    0.006    0.0     214.42  
+z5b_m1_k4   r3714  1    4    True      5       271.078   551.531   286.702    -0.002   0.0     214.42  
+z5b_m1_k4   r3715  1    4    True      5       271.075   551.527   286.701    -0.003   0.0     214.42  
+z5b_m3_k2   r3716  3    2    True      5       283.569   564.01    286.697    -0.003   0.0     219.19  
+z5b_m3_k2   r3717  3    2    True      5       283.605   564.1     286.721    0.006    0.0     219.22  
+z5b_m3_k2   r3718  3    2    True      5       283.577   564.027   286.706    0.006    0.0     219.2   
+z5b_m3_k2   r3719  3    2    True      5       283.578   564.032   286.703    -0.001   0.0     219.2   
+z5b_m3_k2   r3720  3    2    True      5       283.574   564.022   286.704    0.004    0.0     219.2   
+z5b_m6_k2   r3721  6    2    True      8       283.58    564.034   286.703    -0.001   0.0     219.24  
+z5b_m6_k2   r3722  6    2    True      8       283.574   564.022   286.704    0.004    0.0     219.24  
+z5b_m6_k2   r3723  6    2    True      8       283.576   564.026   286.706    0.006    0.0     219.2   
+z5b_m6_k2   r3724  6    2    True      8       283.577   564.028   286.707    0.007    0.0     219.2   
+z5b_m6_k2   r3725  6    2    True      8       283.574   564.021   286.703    0.003    0.0     219.24  
+  applied 20/25 ; not applied (schedule, button released between presses): [('z5b_m1_k1', False)]
+  applied: dvz - gravity step {'n': 20, 'mean': 286.7045, 'sd': 0.0046, 'min': 286.697, 'max': 286.721} ; model vz_post = vz_pre + 289.828 - 1.5 g dt residual {'n': 20, 'mean': 0.0021, 'sd': 0.0041, 'min': -0.003, 'max': 0.007}
+  cmds since the mount lifted the player off the ground, at the second press: applied [3, 5, 8] ; round 1 (never applied) had >= 63
+  jump-off height above the floor {'n': 25, 'mean': 21.378, 'sd': 0.1473, 'min': 21.09, 'max': 21.47} ; apex gain above the jump-off point: applied {'n': 20, 'mean': 218.0115, 'sd': 2.0736, 'min': 214.42, 'max': 219.24} vs not applied {'n': 5, 'mean': 56.0, 'sd': 0.0, 'min': 56.0, 'max': 56.0}
+
+[R2-3] View yaw during the ride and the exit direction
+  z9_yaw45      r3746 right@k37 free turn from k61 (max |yaw| before 0.331) rate 89.99 deg/s yaw -27.315 ; exit v [400.0, 0.0, 289.828] |h| 400.0 heading 0.0 yaw_exit -27.315 (heading-yaw 27.315, heading-rope 0.0)
+  z9_yaw45      r3747 right@k37 free turn from k61 (max |yaw| before 0.316) rate 90.05 deg/s yaw -27.035 ; exit v [400.0, 0.0, 289.828] |h| 400.0 heading 0.0 yaw_exit -27.035 (heading-yaw 27.035, heading-rope 0.0)
+  z9_yaw45      r3748 right@k37 free turn from k61 (max |yaw| before 0.316) rate 90.04 deg/s yaw -27.013 ; exit v [400.0, 0.0, 289.828] |h| 400.0 heading 0.0 yaw_exit -27.013 (heading-yaw 27.013, heading-rope 0.0)
+  z9_yaw45      r3749 right@k37 free turn from k61 (max |yaw| before 0.316) rate 90.01 deg/s yaw -27.016 ; exit v [400.0, 0.0, 289.828] |h| 400.0 heading 0.0 yaw_exit -27.016 (heading-yaw 27.016, heading-rope 0.0)
+  z9_yaw45      r3750 right@k37 free turn from k61 (max |yaw| before 0.316) rate 90.05 deg/s yaw -27.037 ; exit v [400.0, 0.0, 289.828] |h| 400.0 heading 0.0 yaw_exit -27.037 (heading-yaw 27.037, heading-rope 0.0)
+  z9_yaw90      r3751 right@k25 free turn from k61 (max |yaw| before 0.908) rate 90.04 deg/s yaw -63.023 ; exit v [400.0, 0.0, 289.828] |h| 400.0 heading 0.0 yaw_exit -63.023 (heading-yaw 63.023, heading-rope 0.0)
+  z9_yaw90      r3752 right@k25 free turn from k61 (max |yaw| before 0.908) rate 90.05 deg/s yaw -63.078 ; exit v [400.0, 0.0, 289.828] |h| 400.0 heading 0.0 yaw_exit -63.078 (heading-yaw 63.078, heading-rope 0.0)
+  z9_yaw90      r3753 right@k25 free turn from k61 (max |yaw| before 0.908) rate 89.93 deg/s yaw -63.058 ; exit v [400.0, 0.0, 289.828] |h| 400.0 heading 0.0 yaw_exit -63.058 (heading-yaw 63.058, heading-rope 0.0)
+  z9_yaw90      r3754 right@k25 free turn from k61 (max |yaw| before 0.907) rate 90.05 deg/s yaw -63.092 ; exit v [400.0, 0.0, 289.828] |h| 400.0 heading 0.0 yaw_exit -63.092 (heading-yaw 63.092, heading-rope 0.0)
+  z9_yaw90      r3755 right@k25 free turn from k61 (max |yaw| before 0.908) rate 90.05 deg/s yaw -63.082 ; exit v [400.0, 0.0, 289.828] |h| 400.0 heading 0.0 yaw_exit -63.082 (heading-yaw 63.082, heading-rope 0.0)
+  z6_vert_turn  r3771 right@k37 free turn from k37 (max |yaw| before None) rate 179.98 deg/s yaw -89.393 ; exit v [4.234, -399.978, 600.0] |h| 400.0 heading -89.394 yaw_exit -89.393 (heading-yaw -0.001, heading-rope -89.394)
+  z6_vert_turn  r3772 right@k37 free turn from k37 (max |yaw| before None) rate 180.1 deg/s yaw -89.401 ; exit v [4.181, -399.978, 600.0] |h| 400.0 heading -89.401 yaw_exit -89.401 (heading-yaw -0.0, heading-rope -89.401)
+  z6_vert_turn  r3773 right@k37 free turn from k37 (max |yaw| before None) rate 179.98 deg/s yaw -89.296 ; exit v [4.914, -399.97, 600.0] |h| 400.0 heading -89.296 yaw_exit -89.296 (heading-yaw -0.0, heading-rope -89.296)
+  z6_vert_turn  r3774 right@k37 free turn from k37 (max |yaw| before None) rate 180.02 deg/s yaw -90.166 ; exit v [-1.157, -399.998, 600.0] |h| 400.0 heading -90.166 yaw_exit -90.166 (heading-yaw 0.0, heading-rope -90.166)
+  z6_vert_turn  r3775 right@k37 free turn from k37 (max |yaw| before None) rate 179.98 deg/s yaw -89.327 ; exit v [4.696, -399.972, 600.0] |h| 400.0 heading -89.327 yaw_exit -89.327 (heading-yaw -0.0, heading-rope -89.327)
+
+[R2-4] Air grab (start 120 u from Z1 at y 6680, facing +Y, pitch -15)
+  z7b_air       r3756 press k+19 after the jump: o [-14550.0, 6680.0, 331.55] v [0.0, 0.0, 165.11] P->rope 120.31 rope-P z -8.62 minAng 19.11 | client use [] | dedi use events 0, dedi cmds with IN_USE 1 | zip-state runs [], position jump after each [], MT cl gap None
+  z7b_air       r3757 press k+19 after the jump: o [-14550.0, 6680.0, 330.91] v [0.0, 0.0, 167.97] P->rope 120.27 rope-P z -7.99 minAng 18.81 | client use [] | dedi use events 0, dedi cmds with IN_USE 1 | zip-state runs [], position jump after each [], MT cl gap None
+  z7b_air       r3758 press k+19 after the jump: o [-14550.0, 6680.0, 330.93] v [0.0, 0.0, 167.88] P->rope 120.27 rope-P z -8.01 minAng 18.81 | client use [] | dedi use events 0, dedi cmds with IN_USE 1 | zip-state runs [], position jump after each [], MT cl gap None
+  z7b_air       r3759 press k+20 after the jump: o [-14550.0, 6680.0, 330.94] v [0.0, 0.0, 167.81] P->rope 120.27 rope-P z -8.02 minAng 18.82 | client use [] | dedi use events 0, dedi cmds with IN_USE 1 | zip-state runs [], position jump after each [], MT cl gap None
+  z7b_air       r3760 press k+19 after the jump: o [-14550.0, 6680.0, 330.95] v [0.0, 0.0, 167.81] P->rope 120.27 rope-P z -8.03 minAng 18.82 | client use [] | dedi use events 0, dedi cmds with IN_USE 1 | zip-state runs [], position jump after each [], MT cl gap None
+  z7c_air_hold  r3761 press k+13 after the jump: o [-14550.0, 6680.0, 321.59] v [0.0, 0.0, 205.4] P->rope 120.01 rope-P z 1.33 minAng 14.36 | client use [(36359, '1', '0.100'), (36420, '1', '0.200'), (36424, '1', '1.000')] | dedi use events 0, dedi cmds with IN_USE 72 | zip-state runs [(73, 83), (134, 149)], position jump after each [75.73, 92.32], MT cl gap [36358, 36365]
+  z7c_air_hold  r3762 press k+13 after the jump: o [-14550.0, 6680.0, 321.16] v [0.0, 0.0, 206.85] P->rope 120.01 rope-P z 1.76 minAng 14.16 | client use [(36856, '1', '0.100'), (36917, '1', '0.200'), (36922, '1', '1.000')] | dedi use events 0, dedi cmds with IN_USE 72 | zip-state runs [(73, 83), (134, 149)], position jump after each [75.69, 84.55], MT cl gap [36855, 36862]
+  z7c_air_hold  r3763 press k+13 after the jump: o [-14550.0, 6680.0, 321.58] v [0.0, 0.0, 205.43] P->rope 120.01 rope-P z 1.34 minAng 14.36 | client use [(37354, '1', '0.100'), (37415, '1', '0.200'), (37420, '1', '1.000')] | dedi use events 0, dedi cmds with IN_USE 72 | zip-state runs [(73, 83), (134, 149)], position jump after each [75.72, 84.99], MT cl gap [37353, 37360]
+  z7c_air_hold  r3764 press k+13 after the jump: o [-14550.0, 6680.0, 321.56] v [0.0, 0.0, 205.51] P->rope 120.01 rope-P z 1.36 minAng 14.35 | client use [(37852, '1', '0.100'), (37913, '1', '0.200'), (37918, '1', '1.000')] | dedi use events 0, dedi cmds with IN_USE 72 | zip-state runs [(73, 83), (134, 149)], position jump after each [75.68, 84.69], MT cl gap [37851, 37858]
+  z7c_air_hold  r3765 press k+13 after the jump: o [-14550.0, 6680.0, 321.6] v [0.0, 0.0, 205.36] P->rope 120.01 rope-P z 1.32 minAng 14.37 | client use [(38350, '1', '0.100'), (38411, '1', '0.200'), (38416, '1', '1.000')] | dedi use events 0, dedi cmds with IN_USE 72 | zip-state runs [(73, 83), (134, 149)], position jump after each [76.03, 84.72], MT cl gap [38349, 38356]
+
+[R2-5] Crouch-off with duck held 1 s (half-duck parity)
+  r3766 exit v [400.0, 0.0, 0.0] (ride 423.502, resid 0.0) | dz sv-cl air 0.17 ground [-0.016, 0.17] | z steps >2u {'cl': 0, 'sv': 0} | MT duck (cl,sv) [(0, ('1', '1')), (50, ('2', '2')), (119, ('3', '3')), (144, ('0', '0'))] | landing cmd cl/sv [38960, 38960] | HSD crouch ['0', '1']
+  r3767 exit v [400.0, 0.0, 0.0] (ride 423.358, resid 0.0) | dz sv-cl air 0.17 ground [0.0, 0.17] | z steps >2u {'cl': 0, 'sv': 0} | MT duck (cl,sv) [(0, ('1', '1')), (50, ('2', '2')), (119, ('3', '3')), (144, ('0', '0'))] | landing cmd cl/sv [39547, 39547] | HSD crouch ['0', '1']
+  r3768 exit v [400.0, 0.0, 0.0] (ride 423.462, resid 0.0) | dz sv-cl air 0.17 ground [-0.016, 0.17] | z steps >2u {'cl': 0, 'sv': 0} | MT duck (cl,sv) [(0, ('1', '1')), (50, ('2', '2')), (119, ('3', '3')), (144, ('0', '0'))] | landing cmd cl/sv [40135, 40135] | HSD crouch ['0', '1']
+  r3769 exit v [400.0, 0.0, 0.0] (ride 423.394, resid 0.0) | dz sv-cl air 0.17 ground [-0.016, 0.17] | z steps >2u {'cl': 0, 'sv': 0} | MT duck (cl,sv) [(0, ('1', '1')), (50, ('2', '2')), (119, ('3', '3')), (144, ('0', '0'))] | landing cmd cl/sv [40722, 40722] | HSD crouch ['0', '1']
+  r3770 exit v [400.0, 0.0, 0.0] (ride 423.497, resid 0.0) | dz sv-cl air 0.17 ground [-0.016, 0.17] | z steps >2u {'cl': 0, 'sv': 0} | MT duck (cl,sv) [(0, ('1', '1')), (50, ('2', '2')), (119, ('3', '3')), (144, ('0', '0'))] | landing cmd cl/sv [41310, 41310] | HSD crouch ['0', '1']
+
+====================================================================================================
+GRAPPLE (M6-G: release, momentum, grapple -> zipline handoff)
+====================================================================================================
+session 20261021_162814_M6_G_grapple  label=M6_G_grapple  legend=pathfinder  trials used 25, skipped ['r90 g1_rel_tac (warmup)'] ; HSD-STATE matched to 10960/10960 frames
+
+[G1] Grapple release (second tactical or attack 72 cmds after the grapple press) vs hold
+  g1_rel_tac    r3801 gr [(0, 86)] (87 fr) lift k24 max|v| 255.572 @k110 pull stop kNone None None | 2nd press k73 release k73 (latency 0) v_rel [145.532, -0.133, 22.821] hold(k-1) [146.618, -0.038, 28.624] d|v_h| -1.086 | post: d|v_h| -0.0 g 750.06 land k111 v [145.532, -0.131, -210.089] | gr flag true 13 cmds after release
+  g1_rel_tac    r3802 gr [(0, 86)] (87 fr) lift k24 max|v| 260.127 @k111 pull stop kNone None None | 2nd press k73 release k73 (latency 0) v_rel [147.547, -0.134, 23.262] hold(k-1) [146.618, -0.038, 28.624] d|v_h| 0.929 | post: d|v_h| -0.0 g 750.3 land k112 v [147.547, -0.133, -214.233] | gr flag true 13 cmds after release
+  g1_rel_tac    r3803 gr [(0, 86)] (87 fr) lift k24 max|v| 260.252 @k111 pull stop kNone None None | 2nd press k73 release k73 (latency 0) v_rel [147.77, -0.135, 23.287] hold(k-1) [146.618, -0.038, 28.624] d|v_h| 1.152 | post: d|v_h| -0.0 g 750.3 land k112 v [147.77, -0.133, -214.232] | gr flag true 13 cmds after release
+  g1_rel_tac    r3804 gr [(0, 86)] (87 fr) lift k24 max|v| 260.177 @k111 pull stop kNone None None | 2nd press k73 release k73 (latency 0) v_rel [147.549, -0.134, 23.254] hold(k-1) [146.618, -0.038, 28.624] d|v_h| 0.931 | post: d|v_h| -0.0 g 750.3 land k112 v [147.549, -0.133, -214.293] | gr flag true 13 cmds after release
+  g1_rel_tac    r3805 gr [(0, 86)] (87 fr) lift k24 max|v| 260.275 @k111 pull stop kNone None None | 2nd press k73 release k73 (latency 0) v_rel [147.797, -0.146, 23.292] hold(k-1) [146.618, -0.038, 28.624] d|v_h| 1.179 | post: d|v_h| -0.0 g 750.3 land k112 v [147.797, -0.138, -214.241] | gr flag true 13 cmds after release
+  g1_rel_attack r3806 gr [(0, 183)] (184 fr) lift k24 max|v| 610.984 @k181 pull stop k186 [-13720.6, 6499.62, 426.2] ([573.613, -0.788, 185.306], [6.488, -1.672, 197.399]) | 2nd press k73 release kNone (latency None) v_rel None hold(k-1) None d|v_h| None | post: d|v_h| None g None land kNone v None | gr flag true None cmds after release
+  g1_rel_attack r3807 gr [(0, 185)] (186 fr) lift k24 max|v| 611.456 @k183 pull stop k188 [-13720.6, 6499.62, 426.39] ([573.35, -0.771, 187.449], [6.557, -1.655, 199.548]) | 2nd press k73 release kNone (latency None) v_rel None hold(k-1) None d|v_h| None | post: d|v_h| None g None land kNone v None | gr flag true None cmds after release
+  g1_rel_attack r3808 gr [(0, 184)] (185 fr) lift k24 max|v| 612.386 @k182 pull stop k187 [-13720.6, 6499.62, 426.62] ([574.656, -0.796, 186.598], [6.531, -1.682, 198.741]) | 2nd press k73 release kNone (latency None) v_rel None hold(k-1) None d|v_h| None | post: d|v_h| None g None land kNone v None | gr flag true None cmds after release
+  g1_rel_attack r3809 gr [(0, 184)] (185 fr) lift k24 max|v| 612.07 @k182 pull stop k187 [-13720.6, 6499.62, 426.4] ([574.441, -0.777, 186.386], [6.524, -1.663, 198.525]) | 2nd press k73 release kNone (latency None) v_rel None hold(k-1) None d|v_h| None | post: d|v_h| None g None land kNone v None | gr flag true None cmds after release
+  g1_rel_attack r3810 gr [(0, 185)] (186 fr) lift k24 max|v| 612.088 @k183 pull stop k188 [-13720.6, 6499.62, 426.41] ([574.062, -0.752, 187.353], [6.554, -1.637, 199.476]) | 2nd press k73 release kNone (latency None) v_rel None hold(k-1) None d|v_h| None | post: d|v_h| None g None land kNone v None | gr flag true None cmds after release
+  g1_hold       r3811 gr [(0, 184)] (185 fr) lift k24 max|v| 610.928 @k182 pull stop k187 [-13720.6, 6499.62, 425.75] ([573.548, -0.769, 185.393], [6.49, -1.653, 197.502]) | 2nd press kNone release kNone (latency None) v_rel None hold(k-1) None d|v_h| None | post: d|v_h| None g None land kNone v None | gr flag true None cmds after release
+  g1_hold       r3812 gr [(0, 184)] (185 fr) lift k24 max|v| 611.828 @k182 pull stop k187 [-13720.6, 6499.77, 425.8] ([574.433, -0.56, 185.583], [6.497, -1.445, 197.72]) | 2nd press kNone release kNone (latency None) v_rel None hold(k-1) None d|v_h| None | post: d|v_h| None g None land kNone v None | gr flag true None cmds after release
+  g1_hold       r3813 gr [(0, 184)] (185 fr) lift k24 max|v| 612.353 @k182 pull stop k187 [-13720.6, 6499.94, 425.43] ([575.111, -0.112, 185.279], [6.487, -0.999, 197.439]) | 2nd press kNone release kNone (latency None) v_rel None hold(k-1) None d|v_h| None | post: d|v_h| None g None land kNone v None | gr flag true None cmds after release
+  g1_hold       r3814 gr [(0, 185)] (186 fr) lift k24 max|v| 612.085 @k183 pull stop k188 [-13720.6, 6500.09, 424.91] ([574.645, -0.084, 185.754], [6.502, -0.97, 197.898]) | 2nd press kNone release kNone (latency None) v_rel None hold(k-1) None d|v_h| None | post: d|v_h| None g None land kNone v None | gr flag true None cmds after release
+  g1_hold       r3815 gr [(0, 183)] (184 fr) lift k24 max|v| 611.334 @k181 pull stop k186 [-13720.6, 6500.09, 424.48] ([574.435, -0.089, 184.068], [6.447, -0.975, 196.194]) | 2nd press kNone release kNone (latency None) v_rel None hold(k-1) None d|v_h| None | post: d|v_h| None g None land kNone v None | gr flag true None cmds after release
+  attack vs hold: max | |v|_attack(k) - mean |v|_hold(k) | over the first 180 cmds = 8.326 u/s
+
+[G3] Grapple aimed at the middle of Z1 from 250 u (yaw 36.87, pitch -9.09), with / without a use press
+  g3_hook      r3816 gr [(0, 113)] zip [(114, 307)] | client attempts: first cmd 13309 (+74 after trial start), 16 fails [('native', '7')], success cmd 13408 (= first missing MT: True); dedi fails 4, success cmd 13408 | Q [-13803.32, 6800.0, 394.92]
+      mount k114 (use press kNone) v_pre [293.366, 220.308, 25.827] |v| 367.786 ; |Q-P| 117.098 angle 13.085 (min-angle rule: angle 12.912, x - Q.x 7.52) ; v_pre angle to Q 24.669 ; rope first within 130 u at k(72, 50.29) ; Find first possible k76 (mount 38 cmds later) ; mount cmd moves 0.0 ; Q.x - aim.x -3.32, |aim - origin| 135.48, |aim - P| 119.73
+      entry |v| 296.701 (dir.rope 1.0) vs v_pre.rope 293.366: diff 3.335 (= 399.88 u/s^2 x dt) ; state-2 model max(entry, rest curve) |resid| {'n': 193, 'mean': 0.1217, 'sd': 0.1314, 'min': 0.0, 'max': 0.302} ; speeds {1: 296.701, 30: 296.701, 58: 296.701, 59: 298.509, 60: 303.335, 61: 306.67, 62: 310.005, 100: 436.763}
+      view (yaw, pitch) k0 -> k40 ([36.865, -9.086], [0.0, 0.0]) (90% at k22) ; distance to the hang line {0: 73.23, 5: 56.57, 10: 27.6, 15: 8.1, 20: 1.35, 30: 0.0, 40: 0.0} ; hang 80.17 lat -0.23 ; exit v cl [600.0, 0.0, 0.0] sv [600.0, 0.0, 0.0] dist_end 93.1 ; zip frames 194
+  g3_hook      r3817 gr [(0, 113)] zip [(114, 307)] | client attempts: first cmd 13996 (+173 after trial start), 0 fails [], success cmd 13996 (= first missing MT: True); dedi fails 0, success cmd 13996 | Q [-13803.39, 6800.0, 394.92]
+      mount k114 (use press kNone) v_pre [293.429, 220.513, 25.576] |v| 367.941 ; |Q-P| 116.978 angle 13.058 (min-angle rule: angle 12.888, x - Q.x 7.39) ; v_pre angle to Q 24.756 ; rope first within 130 u at k(72, 49.9) ; Find first possible k76 (mount 38 cmds later) ; mount cmd moves 0.0 ; Q.x - aim.x -3.39, |aim - origin| 135.45, |aim - P| 119.67
+      entry |v| 296.763 (dir.rope 1.0) vs v_pre.rope 293.429: diff 3.334 (= 399.76 u/s^2 x dt) ; state-2 model max(entry, rest curve) |resid| {'n': 193, 'mean': 0.1185, 'sd': 0.1252, 'min': 0.0, 'max': 0.272} ; speeds {1: 296.763, 30: 296.764, 58: 296.763, 59: 298.516, 60: 303.334, 61: 306.668, 62: 310.002, 100: 436.714}
+      view (yaw, pitch) k0 -> k40 ([36.865, -9.086], [0.0, 0.0]) (90% at k22) ; distance to the hang line {0: 73.12, 5: 56.48, 10: 27.56, 15: 8.1, 20: 1.35, 30: 0.0, 40: 0.0} ; hang 80.17 lat -0.23 ; exit v cl [600.0, 0.0, 0.0] sv [600.0, 0.0, 0.0] dist_end 93.2 ; zip frames 194
+  g3_hook      r3818 gr [(0, 114)] zip [(115, 309)] | client attempts: first cmd 14585 (+174 after trial start), 0 fails [], success cmd 14585 (= first missing MT: True); dedi fails 0, success cmd 14585 | Q [-13803.49, 6800.0, 394.92]
+      mount k115 (use press kNone) v_pre [293.226, 220.467, 25.509] |v| 367.747 ; |Q-P| 116.886 angle 13.054 (min-angle rule: angle 12.882, x - Q.x 7.49) ; v_pre angle to Q 24.79 ; rope first within 130 u at k(73, 49.86) ; Find first possible k77 (mount 38 cmds later) ; mount cmd moves 0.0 ; Q.x - aim.x -3.49, |aim - origin| 135.45, |aim - P| 119.66
+      entry |v| 296.551 (dir.rope 1.0) vs v_pre.rope 293.226: diff 3.325 (= 400.12 u/s^2 x dt) ; state-2 model max(entry, rest curve) |resid| {'n': 194, 'mean': 1.5153, 'sd': 1.6411, 'min': 0.0, 'max': 3.341} ; speeds {1: 296.551, 30: 296.561, 58: 296.561, 59: 298.261, 60: 303.263, 61: 303.334, 62: 306.668, 100: 433.379}
+      view (yaw, pitch) k0 -> k40 ([36.865, -9.086], [0.0, 0.0]) (90% at k22) ; distance to the hang line {0: 73.1, 5: 56.5, 10: 27.61, 15: 8.13, 20: 1.36, 30: 0.0, 40: 0.0} ; hang 80.17 lat -0.23 ; exit v cl [600.0, 0.0, 0.0] sv [600.0, 0.0, 0.0] dist_end 90.9 ; zip frames 195
+  g3_hook      r3819 gr [(0, 113)] zip [(114, 306)] | client attempts: first cmd 15172 (+173 after trial start), 0 fails [], success cmd 15172 (= first missing MT: True); dedi fails 0, success cmd 15172 | Q [-13803.57, 6800.0, 394.92]
+      mount k114 (use press kNone) v_pre [293.052, 220.4, 25.689] |v| 367.581 ; |Q-P| 117.038 angle 13.067 (min-angle rule: angle 12.894, x - Q.x 7.37) ; v_pre angle to Q 24.715 ; rope first within 130 u at k(72, 50.29) ; Find first possible k76 (mount 38 cmds later) ; mount cmd moves 0.0 ; Q.x - aim.x -3.57, |aim - origin| 135.62, |aim - P| 119.87
+      entry |v| 296.388 (dir.rope 1.0) vs v_pre.rope 293.052: diff 3.336 (= 400.0 u/s^2 x dt) ; state-2 model max(entry, rest curve) |resid| {'n': 192, 'mean': 0.1276, 'sd': 0.1364, 'min': 0.0, 'max': 0.294} ; speeds {1: 296.388, 30: 296.387, 58: 296.388, 59: 298.485, 60: 303.335, 61: 306.67, 62: 310.005, 100: 436.739}
+      view (yaw, pitch) k0 -> k40 ([36.865, -9.086], [0.0, 0.0]) (90% at k22) ; distance to the hang line {0: 73.19, 5: 56.55, 10: 27.59, 15: 8.1, 20: 1.35, 30: 0.0, 40: 0.0} ; hang 80.17 lat -0.23 ; exit v cl [600.0, 0.0, 0.0] sv [600.0, 0.0, 0.0] dist_end 94.3 ; zip frames 193
+  g3_hook      r3820 gr [(0, 114)] zip [(115, 308)] | client attempts: first cmd 15761 (+174 after trial start), 0 fails [], success cmd 15761 (= first missing MT: True); dedi fails 0, success cmd 15761 | Q [-13803.67, 6800.0, 394.92]
+      mount k115 (use press kNone) v_pre [292.463, 219.961, 26.251] |v| 366.888 ; |Q-P| 117.205 angle 13.042 (min-angle rule: angle 12.866, x - Q.x 7.47) ; v_pre angle to Q 24.601 ; rope first within 130 u at k(73, 52.25) ; Find first possible k77 (mount 38 cmds later) ; mount cmd moves 0.0 ; Q.x - aim.x -3.67, |aim - origin| 135.86, |aim - P| 120.12
+      entry |v| 295.802 (dir.rope 1.0) vs v_pre.rope 292.463: diff 3.339 (= 399.88 u/s^2 x dt) ; state-2 model max(entry, rest curve) |resid| {'n': 193, 'mean': 0.131, 'sd': 0.1392, 'min': 0.0, 'max': 0.295} ; speeds {1: 295.802, 30: 295.798, 58: 295.798, 59: 298.543, 60: 303.335, 61: 306.67, 62: 310.006, 100: 436.772}
+      view (yaw, pitch) k0 -> k40 ([36.865, -9.086], [0.0, 0.0]) (90% at k22) ; distance to the hang line {0: 73.33, 5: 56.63, 10: 27.59, 15: 8.1, 20: 1.34, 30: 0.0, 40: 0.0} ; hang 80.17 lat -0.23 ; exit v cl [600.0, 0.0, 0.0] sv [600.0, 0.0, 0.0] dist_end 93.6 ; zip frames 194
+  g3_hook_use  r3821 gr [(0, 114)] zip [(115, 308)] | client attempts: first cmd 16378 (+174 after trial start), 0 fails [], success cmd 16378 (= first missing MT: True); dedi fails 0, success cmd 16378 | Q [-13803.7, 6800.0, 394.92]
+      mount k115 (use press k61) v_pre [292.824, 220.229, 29.035] |v| 367.546 ; |Q-P| 116.535 angle 12.734 (min-angle rule: angle 12.569, x - Q.x 7.1) ; v_pre angle to Q 24.559 ; rope first within 130 u at k(73, 48.99) ; Find first possible k77 (mount 38 cmds later) ; mount cmd moves 0.0 ; Q.x - aim.x -3.7, |aim - origin| 135.65, |aim - P| 119.47
+      entry |v| 296.159 (dir.rope 1.0) vs v_pre.rope 292.824: diff 3.335 (= 399.88 u/s^2 x dt) ; state-2 model max(entry, rest curve) |resid| {'n': 193, 'mean': 0.0562, 'sd': 0.0963, 'min': 0.0, 'max': 1.166} ; speeds {1: 296.159, 30: 296.158, 58: 295.961, 59: 298.455, 60: 303.332, 61: 306.665, 62: 309.997, 100: 436.683}
+      view (yaw, pitch) k0 -> k40 ([36.865, -9.086], [0.0, 0.0]) (90% at k22) ; distance to the hang line {0: 72.85, 5: 56.28, 10: 27.46, 15: 8.08, 20: 1.35, 30: 0.0, 40: 0.0} ; hang 80.17 lat -0.23 ; exit v cl [600.0, 0.0, 0.0] sv [600.0, 0.0, 0.0] dist_end 93.1 ; zip frames 194
+  g3_hook_use  r3822 gr [(0, 114)] zip [(115, 308)] | client attempts: first cmd 17055 (+174 after trial start), 0 fails [], success cmd 17055 (= first missing MT: True); dedi fails 0, success cmd 17055 | Q [-13803.51, 6800.0, 394.92]
+      mount k115 (use press k61) v_pre [290.38, 218.314, 27.202] |v| 364.31 ; |Q-P| 119.033 angle 12.5 (min-angle rule: angle 12.357, x - Q.x 6.71) ; v_pre angle to Q 24.405 ; rope first within 130 u at k(73, 50.53) ; Find first possible k77 (mount 38 cmds later) ; mount cmd moves 0.0 ; Q.x - aim.x -3.51, |aim - origin| 137.89, |aim - P| 121.82
+      entry |v| 293.83 (dir.rope 1.0) vs v_pre.rope 290.38: diff 3.45 (= 400.23 u/s^2 x dt) ; state-2 model max(entry, rest curve) |resid| {'n': 193, 'mean': 1.531, 'sd': 1.6061, 'min': 0.0, 'max': 3.289} ; speeds {1: 293.83, 30: 293.742, 58: 296.784, 59: 301.793, 60: 303.34, 61: 306.679, 62: 310.019, 100: 434.82}
+      view (yaw, pitch) k0 -> k40 ([36.865, -9.086], [0.0, 0.0]) (90% at k22) ; distance to the hang line {0: 74.17, 5: 56.8, 10: 27.08, 15: 7.67, 20: 1.22, 30: 0.0, 40: 0.0} ; hang 80.17 lat -0.23 ; exit v cl [600.0, 0.0, 0.0] sv [600.0, 0.0, 0.0] dist_end 93.1 ; zip frames 194
+  g3_hook_use  r3823 gr [(0, 115)] zip [(116, 309)] | client attempts: first cmd 17733 (+175 after trial start), 0 fails [], success cmd 17733 (= first missing MT: True); dedi fails 0, success cmd 17733 | Q [-13803.22, 6800.0, 394.92]
+      mount k116 (use press k61) v_pre [293.45, 220.332, 28.324] |v| 368.051 ; |Q-P| 116.745 angle 12.59 (min-angle rule: angle 12.443, x - Q.x 6.62) ; v_pre angle to Q 24.729 ; rope first within 130 u at k(74, 49.41) ; Find first possible k78 (mount 38 cmds later) ; mount cmd moves 0.0 ; Q.x - aim.x -3.22, |aim - origin| 135.64, |aim - P| 119.3
+      entry |v| 296.785 (dir.rope 1.0) vs v_pre.rope 293.45: diff 3.335 (= 399.88 u/s^2 x dt) ; state-2 model max(entry, rest curve) |resid| {'n': 193, 'mean': 0.038, 'sd': 0.0381, 'min': 0.0, 'max': 0.087} ; speeds {1: 296.785, 30: 296.778, 58: 296.784, 59: 298.443, 60: 303.333, 61: 306.667, 62: 310.001, 100: 436.694}
+      view (yaw, pitch) k0 -> k40 ([36.865, -9.086], [0.0, 0.0]) (90% at k22) ; distance to the hang line {0: 72.8, 5: 56.14, 10: 27.35, 15: 8.03, 20: 1.33, 30: 0.0, 40: 0.0} ; hang 80.17 lat -0.23 ; exit v cl [600.0, 0.0, 0.0] sv [600.0, 0.0, 0.0] dist_end 93.1 ; zip frames 194
+  g3_hook_use  r3824 gr [(0, 114)] zip [(115, 308)] | client attempts: first cmd 18410 (+174 after trial start), 0 fails [], success cmd 18410 (= first missing MT: True); dedi fails 0, success cmd 18410 | Q [-13802.91, 6800.0, 394.92]
+      mount k115 (use press k61) v_pre [293.528, 220.006, 25.634] |v| 367.721 ; |Q-P| 117.389 angle 13.052 (min-angle rule: angle 12.89, x - Q.x 7.31) ; v_pre angle to Q 24.652 ; rope first within 130 u at k(73, 49.9) ; Find first possible k77 (mount 38 cmds later) ; mount cmd moves 0.0 ; Q.x - aim.x -2.91, |aim - origin| 135.47, |aim - P| 119.7
+      entry |v| 296.862 (dir.rope 1.0) vs v_pre.rope 293.528: diff 3.334 (= 399.76 u/s^2 x dt) ; state-2 model max(entry, rest curve) |resid| {'n': 193, 'mean': 0.1189, 'sd': 0.1272, 'min': 0.0, 'max': 0.274} ; speeds {1: 296.862, 30: 296.862, 58: 296.863, 59: 298.545, 60: 303.332, 61: 306.68, 62: 310.012, 100: 436.646}
+      view (yaw, pitch) k0 -> k40 ([36.865, -9.086], [0.0, 0.0]) (90% at k22) ; distance to the hang line {0: 73.3, 5: 56.63, 10: 27.63, 15: 8.12, 20: 1.35, 30: 0.0, 40: 0.0} ; hang 80.17 lat -0.23 ; exit v cl [600.0, 0.0, 0.0] sv [600.0, 0.0, 0.0] dist_end 92.7 ; zip frames 194
+  g3_hook_use  r3825 gr [(0, 114)] zip [(115, 308)] | client attempts: first cmd 19058 (+174 after trial start), 0 fails [], success cmd 19058 (= first missing MT: True); dedi fails 0, success cmd 19058 | Q [-13802.78, 6800.0, 394.92]
+      mount k115 (use press k61) v_pre [293.771, 219.99, 25.882] |v| 367.922 ; |Q-P| 117.405 angle 13.082 (min-angle rule: angle 12.92, x - Q.x 7.18) ; v_pre angle to Q 24.589 ; rope first within 130 u at k(73, 50.33) ; Find first possible k77 (mount 38 cmds later) ; mount cmd moves 0.0 ; Q.x - aim.x -2.78, |aim - origin| 135.36, |aim - P| 119.61
+      entry |v| 297.104 (dir.rope 1.0) vs v_pre.rope 293.771: diff 3.333 (= 400.12 u/s^2 x dt) ; state-2 model max(entry, rest curve) |resid| {'n': 193, 'mean': 0.0839, 'sd': 0.0904, 'min': 0.0, 'max': 0.218} ; speeds {1: 297.104, 30: 297.105, 58: 297.106, 59: 298.445, 60: 303.336, 61: 306.671, 62: 310.007, 100: 436.754}
+      view (yaw, pitch) k0 -> k40 ([36.865, -9.086], [0.0, 0.0]) (90% at k22) ; distance to the hang line {0: 73.29, 5: 56.63, 10: 27.63, 15: 8.12, 20: 1.36, 30: 0.0, 40: 0.0} ; hang 80.17 lat -0.23 ; exit v cl [600.0, 0.0, 0.0] sv [600.0, 0.0, 0.0] dist_end 92.3 ; zip frames 194
+  summary: entry - v_pre.rope {'n': 10, 'mean': 3.3456, 'sd': 0.035, 'min': 3.325, 'max': 3.45} ; state-2 |resid| max 3.341 ; mount k after the grapple press {'n': 10, 'mean': 114.8, 'sd': 0.6, 'min': 114, 'max': 116} ; Q x {'n': 10, 'mean': -13803.356, 'sd': 0.2926, 'min': -13803.7, 'max': -13802.78} ; |Q-P| {'n': 10, 'mean': 117.2312, 'sd': 0.6528, 'min': 116.535, 'max': 119.033}
+  Q.x - designed aim point x {'n': 10, 'mean': -3.356, 'sd': 0.2926, 'min': -3.7, 'max': -2.78} ; |aim - origin| at the mount {'n': 10, 'mean': 135.787, 'sd': 0.7142, 'min': 135.36, 'max': 137.89}
+
+wrote results.json and params.json
