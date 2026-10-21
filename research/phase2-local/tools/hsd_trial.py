@@ -245,6 +245,45 @@ SCHEDULES = {
     "e8_drop_land": "wait 72; down speed; down forward; wait 1.2s; tap jump; wait 4.0s; up forward; up speed; wait 1.5s",
 }
 
+# M6-A1 lurch stacking and tap strafe. All start with a sprint jump; W and sprint are released on the command after the
+# jump so every later key press is a fresh edge (M3 lurch model: one lurch per press edge, window 0.2 s full -> 0.5 s).
+_A1_JUMP = "wait 72; down speed; down forward; wait 1.0s; tap jump; waitf 1; up forward; up speed; "
+
+
+def _a1_taps(key, n, gap):
+    """n press edges of `key`, one every `gap` frames (a tap holds the key for one frame)."""
+    return "; ".join(["tap %s; waitf %d" % (key, gap - 1)] * n)
+
+
+SCHEDULES.update({
+    # several press edges in one window: same direction at 6 / 12 / 24 frames apart, three in a row, opposite, sequence
+    "a1_rr_n6": _A1_JUMP + "waitf 2; tap moveright; waitf 5; tap moveright; wait 1.4s",
+    "a1_rr_n12": _A1_JUMP + "waitf 2; tap moveright; waitf 11; tap moveright; wait 1.4s",
+    "a1_rr_n24": _A1_JUMP + "waitf 2; tap moveright; waitf 23; tap moveright; wait 1.4s",
+    "a1_rrr_n6": _A1_JUMP + "waitf 2; " + _a1_taps("moveright", 3, 6) + "; wait 1.4s",
+    "a1_lr_n12": _A1_JUMP + "waitf 2; tap moveleft; waitf 11; tap moveright; wait 1.4s",
+    "a1_shift": _A1_JUMP + "waitf 2; tap moveright; waitf 7; tap backward; waitf 7; tap moveleft; wait 1.4s",
+    # diagonal presses (two keys on the same command)
+    "a1_diag_fr": _A1_JUMP + "waitf 2; down forward; down moveright; waitf 1; up forward; up moveright; wait 1.4s",
+    "a1_diag_br": _A1_JUMP + "waitf 2; down backward; down moveright; waitf 1; up backward; up moveright; wait 1.4s",
+    # tap strafe: forward press edges every 2 frames (a 60 Hz scroll) while the view turns right at a constant rate;
+    # controls: taps without turning, turning without taps, turning with W held (plain air strafe, no new edges)
+    "a1_ts_360": "set cl_yawspeed 360; " + _A1_JUMP + "waitf 2; down right; " + _a1_taps("forward", 15, 2) + "; up right; wait 1.2s",
+    "a1_ts_180": "set cl_yawspeed 180; " + _A1_JUMP + "waitf 2; down right; " + _a1_taps("forward", 15, 2) + "; up right; wait 1.2s",
+    "a1_ts_noturn": _A1_JUMP + "waitf 2; " + _a1_taps("forward", 15, 2) + "; wait 1.2s",
+    "a1_turn_only": "set cl_yawspeed 360; " + _A1_JUMP + "waitf 2; down right; waitf 30; up right; wait 1.2s",
+    "a1_turn_hold_w": "set cl_yawspeed 360; wait 72; down speed; down forward; wait 1.0s; tap jump; waitf 1; up speed; waitf 2; "
+                      "down right; waitf 30; up right; up forward; wait 1.2s",
+    # slide jump into a tap strafe (higher entry speed)
+    "a1_sj_ts_360": "set cl_yawspeed 360; wait 72; down speed; down forward; wait 2.0s; down duck; wait 86; tap jump; waitf 1; "
+                    "up duck; up forward; up speed; waitf 2; down right; " + _a1_taps("forward", 15, 2) + "; up right; wait 1.2s",
+    # lurch after a wall bounce (M3 e6 bounce at 0.43 s): does the bounce jump reopen the window?
+    "a1_wb_lurch3": "wait 72; down speed; down forward; wait 1.2s; tap jump; wait 0.43s; up forward; up speed; tap jump; waitf 2; "
+                    "tap moveright; wait 2.5s",
+    "a1_wb_lurch30": "wait 72; down speed; down forward; wait 1.2s; tap jump; wait 0.43s; up forward; up speed; tap jump; waitf 29; "
+                     "tap moveright; wait 2.5s",
+})
+
 KEYS = {"forward", "backward", "moveleft", "moveright", "jump", "duck", "speed", "left", "right", "lookup", "lookdown",
         "offhand1", "offhand4"}
 # Client cvars a schedule may change with 'set' (constant-rate view turns, M4b).
@@ -284,7 +323,7 @@ LANE_B = (-14200.0, 5900.0, 294.92)
 # Lane C: y 6800 is flat from x -14825 to -12475 (m3/map/field_fine.json) and 81 u clear of the wall's bounds.
 LANE_C = (-14800.0, 6800.0, 294.92)
 SPAWN_PAD = (-11699.0, 512.0, 1577.046)  # visible firing-range floor (M0/M1)
-SCHEDULE_ORIGIN_PREFIX = {"m4b_view": LANE_C, "m4b_pad": LANE_C, "m4_valk": LANE_C, "m4_pounce": LANE_C, "m4_stim": LANE_C, "m4_ctrl": LANE_C, "m4_pad": LANE_C, "m4_lift": LANE_C,
+SCHEDULE_ORIGIN_PREFIX = {"a1_wb": LANE_A, "a1_": LANE_B, "m4b_view": LANE_C, "m4b_pad": LANE_C, "m4_valk": LANE_C, "m4_pounce": LANE_C, "m4_stim": LANE_C, "m4_ctrl": LANE_C, "m4_pad": LANE_C, "m4_lift": LANE_C,
                           "m4_grapple": LANE_A, "x_pad_": SPAWN_PAD, "e8_hop350": LANE_C, "e3_": LANE_B, "e8_fast": LANE_C, "e8_slide": LANE_C, "e6_": LANE_A, "e7_": LANE_A,
                           "e8_drop": LANE_A}
 

@@ -222,6 +222,13 @@ Newest entries at the bottom. Problems are tagged **[ISSUE]** and also listed in
   - F6 Movement Demo goes through the normal input path; its trajectory equals the recorded inputs fed to `SkillBody.Step`, 12/12 bit-identical.
   - The acceptance note's requirement table was rewritten by the lead to match the user's six M5.5 requirements.
 - **M5.5 done.**
+- **Mainline:** M5.5 confirmed as the mainline. The research repo now has `main` (from 798734a, set as the GitHub default); HSD-Unity `main` = dc649e9.
+- **M6 started** (user plan: `research/phase2-local/m6/M6-PLAN.md`), branch `phase2-local/m6-movement`.
+  - Difference audit `m6/M6-AUDIT.md`.
+  - **[ISSUE]** `research/S21-2026-10-21/` (candidate matrix, support survey, grapple target experiment) is not on this machine or in any branch. Asked the M5.5 fork session; M6 does not cite it until found.
+  - Source research subagent dispatched (→ `m6/SOURCE-AUDIT.md`).
+  - A1 schedules added (`a1_*`): repeated presses 6/12/24 frames apart, three presses, opposite, sequence, diagonals; tap strafe (W edges every 2 frames while turning at 360/180 °/s) with controls (no turn, turn only, turn with W held); slide-jump tap strafe; lurch after a wall bounce.
+  - Session `M6_A1_lurch` running (80 trials + 5 bounce controls).
 
 ## Open issues
 
