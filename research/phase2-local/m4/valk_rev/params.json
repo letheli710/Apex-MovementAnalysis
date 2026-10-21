@@ -1,0 +1,198 @@
+{
+ "_scope": "Valkyrie (character_valkyrie, PAS_VALK jets) and Revenant (S21 Reborn shadow pounce), R5Flowstate S21 client / S3 dedi, 120 fps, lane C flat floor; sessions M4_valkyrie(+rerun), M4_revenant(+rerun)",
+ "valk.jets.activation_delay": {
+  "value": 0,
+  "unit": "commands",
+  "source": "observed: jet acceleration on the command of the airborne +jump press",
+  "n": 10
+ },
+ "valk.jets.thrust": {
+  "value": 1.9,
+  "unit": "x gravity",
+  "source": "fitted (SDK Jetpack_Apply, free fit 1.89983)",
+  "n": 2400,
+  "spread": "rms vz 0.0036 u/s/cmd",
+  "note": "jetpackThrust; vertical accel = g*thrust on top of normal gravity"
+ },
+ "valk.jets.horizontal_move_thrust": {
+  "value": 1.7,
+  "unit": "x gravity",
+  "source": "fitted (free 1.69992)",
+  "n": 1200,
+  "note": "jetpackHorizontalMoveThrust: replaces thrust when move input is held (lerp by |wish|); also multiplies strafe"
+ },
+ "valk.jets.tightness_up": {
+  "value": 0.27,
+  "unit": "s (half-life)",
+  "source": "fitted (free 0.27007)",
+  "n": 2400,
+  "note": "vel_up *= 2^(-dt/0.27) every jet command"
+ },
+ "valk.jets.tightness_above_limit": {
+  "value": 0.4,
+  "unit": "s (half-life)",
+  "source": "SDK constant JP_TIGHTNESS_ABOVE_LIMIT; data: branch B exact",
+  "n": 248
+ },
+ "valk.jets.thrust_scale_on_activation": {
+  "value": 1.8,
+  "unit": "x",
+  "source": "fitted (free 1.80019)",
+  "n": 2400,
+  "note": "jetpackThrustScaleOnActivation, linear ramp to 1"
+ },
+ "valk.jets.thrust_scale_time": {
+  "value": 0.5,
+  "unit": "s",
+  "source": "fitted (free 0.49947)",
+  "n": 2400,
+  "note": "jetpackThrustScaleTimeOnActivation"
+ },
+ "valk.jets.tightness_forwardback": {
+  "value": 0.14,
+  "unit": "s (half-life)",
+  "source": "fitted (free 0.13999)",
+  "n": 1200,
+  "spread": "rms vx 0.0034",
+  "note": "sideways assumed equal (untested)"
+ },
+ "valk.jets.strafe": {
+  "value": 1035,
+  "unit": "u/s^2 per unit thrust",
+  "source": "fitted (free 1035.104; 1034.966 with the other constants rounded)",
+  "n": 1200,
+  "note": "jetpackStrafe; horizontal accel = strafe*horizontalMoveThrust*taper"
+ },
+ "valk.jets.strafe_taper_start": {
+  "value": 300.0,
+  "unit": "u/s",
+  "source": "fitted (free 299.988)",
+  "n": 1200
+ },
+ "valk.jets.strafe_taper_finish": {
+  "value": 600.0,
+  "unit": "u/s",
+  "source": "fitted (free 600.144)",
+  "n": 1200
+ },
+ "valk.jets.vz_terminal_noW": {
+  "value": 260.129,
+  "unit": "u/s",
+  "source": "model; observed 260.398 (sd 0.053, 260.338..260.491, n=45)",
+  "n": 45
+ },
+ "valk.jets.vz_terminal_W": {
+  "value": 202.322,
+  "unit": "u/s",
+  "source": "model; observed 202.273 (sd 0.026, 202.210..202.313, n=45)",
+  "n": 45
+ },
+ "valk.jets.vh_terminal_W": {
+  "value": 335.839,
+  "unit": "u/s",
+  "source": "model; observed 335.970 (sd 0.104, 335.881..336.135, n=45)",
+  "n": 45
+ },
+ "valk.jets.vz_scale_on_deactivation": {
+  "value": 0.4,
+  "unit": "x",
+  "source": "observed dedi 0.40000 (sd 0.00000, 0.40000..0.40000, n=10)",
+  "n": 10,
+  "note": "applied when vz <= terminal(thrust); release stops the jets on the release command (dedi)"
+ },
+ "valk.jets.vz_scale_on_activation": {
+  "value": 1.0,
+  "unit": "x",
+  "source": "observed (vz unchanged on the activation command, vz > 0)",
+  "n": 10
+ },
+ "valk.postfx.gravity_scale": {
+  "value": 0.45,
+  "unit": "x gravity",
+  "source": "observed dedi 0.45005 (sd 0.00006, 0.44993..0.45014, n=10)",
+  "n": 10
+ },
+ "valk.postfx.drag_quadratic": {
+  "value": 0.000125,
+  "unit": "1/u (dv/dt = -c*vh^2)",
+  "source": "fitted dedi, se 1.4e-08",
+  "n": 1115,
+  "spread": "rms 0.00041 u/s/cmd",
+  "note": "horizontal only; vertical unaffected"
+ },
+ "valk.postfx.end_probe": {
+  "value": 50.0,
+  "unit": "u below origin",
+  "source": "SDK JP_POSTEFFECT_PROBE; observed end heights 43.38 (sd 1.45, 41.14..45.33, n=10)",
+  "n": 10
+ },
+ "valk.postfx.min_duration": {
+  "value": 2.133,
+  "unit": "s (lower bound of jetpackPostEffectTime)",
+  "source": "observed (never timed out)",
+  "n": 10
+ },
+ "valk.fuel.initial_meter": {
+  "value": 8.0,
+  "unit": "meter units",
+  "source": "server log SetGlideMeter(glideDuration)",
+  "n": 1,
+  "note": "drain rate not observed"
+ },
+ "valk.fuel.min_hold_observed": {
+  "value": 2.0,
+  "unit": "s",
+  "source": "observed: no fuel cut in a 2.0 s hold",
+  "n": 10
+ },
+ "rev.pounce.pullout_time": {
+  "value": 0.9,
+  "unit": "s",
+  "source": "weapon toss_pullout_time; observed press->launch 0.9120 (sd 0.0040, 0.9081..0.9165, n=10)",
+  "n": 10,
+  "note": "a release before 0.9 s still launches at 0.9 s with charge 0"
+ },
+ "rev.pounce.speed_min": {
+  "value": 700.0,
+  "unit": "u/s",
+  "source": "script; observed 701.616 (sd 1.287, 700.086..702.875, n=10) (charge 0..1 cmd)",
+  "n": 10
+ },
+ "rev.pounce.speed_max": {
+  "value": 1150.0,
+  "unit": "u/s",
+  "source": "script only (full charge needs a 2.2 s hold; not tested)"
+ },
+ "rev.pounce.charge_time": {
+  "value": 1.3,
+  "unit": "s",
+  "source": "script; observed c13 err 0.723 (sd 0.337, 0.219..1.131, n=5) u/s (charge clock = release time)",
+  "n": 5
+ },
+ "rev.pounce.elevation": {
+  "value": 35.0,
+  "unit": "deg above view pitch (view pitch 0)",
+  "source": "observed 34.9999 (sd 0.0001, 34.9999..35.0001, n=15)",
+  "n": 15
+ },
+ "rev.pounce.flight_gravity": {
+  "value": 750.0,
+  "unit": "u/s^2",
+  "source": "observed dedi 750.124 (sd 0.082, 749.969..750.249, n=15)",
+  "n": 15,
+  "note": "no drag, no horizontal change without input"
+ },
+ "rev.pounce.landing_slowdown": {
+  "value": 1.0,
+  "unit": "x",
+  "source": "observed (vh after landing = ground friction only)",
+  "n": 15
+ },
+ "rev.charge.movescale": {
+  "value": 1.0,
+  "unit": "x",
+  "source": "observed (1.15 otherwise)",
+  "n": 15,
+  "note": "the empty-hands toss weapon is active while charging"
+ }
+}

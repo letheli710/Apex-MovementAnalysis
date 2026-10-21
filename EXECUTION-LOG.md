@@ -110,6 +110,74 @@ Newest entries at the bottom. Problems are tagged **[ISSUE]** and also listed in
   - **[ISSUE→fixed]** 8 exported trials had no census: those sessions ran `--no-census` and were exported with `--params logs`. Re-exported with the same-build Gibraltar census from M3_fps120; the lead re-ran the replay: 22 trials identical, 8 updated.
   - **[ISSUE]** Two model gaps left open: the ground redirect after landing with a strafe key held (R5 about 1250 u/s², model instant) and the crouch-height transition in the air (M3 report O6/O7).
 - **M3 accepted** (A1–A4): `m3/M3-REPORT.md`, including design advice.
+- M3 PRs merged (research #4, HSD-Unity #3). **M4 started** on branch `phase2-local/m4-abilities`.
+  - Source research subagent wrote `m4/ABILITY-TRIGGERS.md`:
+    - `Agent_SetLegend` sets only the setfile; the kit must be equipped with `GiveOffhandWeapon` / `GivePassive`.
+    - `+offhand1` = tactical (bit 21), `+offhand4` = ultimate.
+    - Refill with `DevAbilities_RefillPlayer`. Avoid `infinite_abilities`, which doubles grapple range.
+    - Jump pad and gravity lift can be created deterministically from the server (`JumpPad_CreateAtLocation`, `SpaceElevator_PropDeploy`).
+  - Runner: `--kit` (equip and refill), per-schedule pitch, per-schedule server snippets (pad/lift spawn inside try/catch), keys offhand1/offhand4. 15 M4 schedules for stim, pad, lift and grapple, with control runs.
+  - **[ISSUE→fixed]** A pilot crashed on an undefined Python constant (REFILL); fixed and re-run.
+  - Pilot finding: after a jump-pad landing, `msc` dropped to 0.28 and recovered to 1.15 over about 0.95 s. This is the landing slowdown (census landSlowdownDuration 1) that M3 could not trigger.
+  - Running sessions M4_octane (stim, pad, controls), M4_horizon (lift + controls), M4_pathfinder (grapple at the test wall), 5 trials per condition at 120 fps.
+- M4 sessions: Octane 31/45 + rerun 15/15; Horizon 25/25; Pathfinder 15/15.
+  - **[ISSUE]** The game drops frames while analysis subagents run in parallel (Valkyrie 12/15, Revenant 6/15). Failed trials are re-run with the machine idle.
+  - Rule from here: no heavy offline analysis while a game session runs.
+- **Octane model** (subagent, lead-verified identical):
+  - Stim: move scale ×1.298 for 6.0 s, then a cosine fade over 0.5 s. Hidden sprintspeed 282 and sprintAcceleration 120 while stimmed.
+  - Jump pad: launch = 1150·normalize(h + 2.0·up), or 1.0 ducked. Horizontal speed is *replaced*. Flight runs in 0.8× slow-mo.
+  - **Landing slowdown**: speed ×clamp(1.996 − 1.67e-6·vz², 0, 1) on impact (no effect below |vz| ≈ 772), then recovers over landSlowdownDuration 1.0 s. This explains why M3's −585 drop showed nothing.
+  - Lurch clamp = 0.7 × current sprint cap (closes M3 O1 in part).
+- **Lift / grapple / Horizon** (subagent, lead-verified identical with the documented reference):
+  - Lift: vz set to 300; steering 2000 u/s² up to 170; hover at 90 % of 1200 u for 0.5 s; eject 400 along the view + 450 up.
+  - Grapple: 0.2 s hop, pull from 0.402 s, about 557 u/s² toward the target up to 612 u/s; W held clamps horizontal speed to 483.
+  - Horizon passive: airSpeed 80, airAcceleration 800, landSlowdownDuration 0.
+  - **[ISSUE→fixed]** A lift from the previous trial was still alive in 5 trials (10 s lifetime; overlapping lifts). The analysis excluded them; lift schedules are now padded to more than 10 s between deployments and re-run.
+- **Lift/grapple extension** (lift2 + pathfinder2 sessions; subagent, lead-verified identical):
+  - Lift: 0 overlap in the padded trials; hover is 0.502 ± 0.003 s on every clean trial; model residuals unchanged (0.012 u/s per command).
+  - Grapple: the hook flies at about 2035 u/s, then a 0.2 s wind-up. The pull is a constant 499.8 ± 3.6 u/s² along the path with no terminal speed (474/612/804 u/s at release for 244/394/694 u).
+  - The earlier "+70 u above the hit" target was a fit artefact; the target is about the view-ray hit.
+  - **[OPEN]** Grapple detach rule unknown: release happens 34.3 ± 2.5 u from the face, but no single threshold fits. The constant-pull model was kept as the simpler one (stop-loss rule).
+- **Valkyrie / Revenant** (subagent, lead-verified identical):
+  - Jets: thrust and target-vz model with a startup boost, plus a horizontal taper between 300 and 600; fit rms 0.004 u/s per command.
+  - Jet release: vz ×0.4, then 0.45 g plus quadratic drag until about 50 u above the ground.
+  - Pounce: 0.9 s pull-out, then a 1.3 s charge. Velocity is replaced by (700 + 450·charge) along pitch + 35°. Flight is ballistic.
+  - **[OPEN]** Jet fuel drain was not observed.
+  - **[NOTE]** With W held after a jet release, the client mispredicts the slow fall and the dedi corrects it. The model follows the dedi.
+- Unity M4 primitives subagent dispatched (HSD-Unity branch `m4/ability-primitives`).
+- **M4b added** (user-approved via side session: "我觉得可以给加进去"):
+  - Why: an external review of M3 found the runner had no per-command view control. Grapple trials were therefore straight pulls only, with no swing or turning during the pull, so detach and post-release momentum were not measured.
+  - Runner changes:
+    - New keys `lookup`/`lookdown`.
+    - New step `set cl_yawspeed|cl_pitchspeed N`, whitelisted; the session values are restored after each trial.
+    - New schedules: `m4b_view_*` (acceptance), `m4b_swing_*` (anchor offset sideways via start y 6350 and yaw 20°, turn during the pull, jump release), `m4b_pad_rejump[_w]`.
+  - Runs wait until the Unity M4 subagent finishes: one heavy process at a time.
+  - Unity combination checks (grapple → slide, pad → lurch) are folded into the M5 skill-slot rules.
+  - Report wording to soften: tap strafe models a single-press lurch only; superglide variants are untested; Unity wall/mantle is checked by formula and unit tests only; all findings apply to R5Flowstate S21, not official S21.
+- **Unity M4 verified by the lead** (HSD-Unity `m4/ability-primitives` 4410b36):
+  - 99/99 EditMode tests pass.
+  - The 38 M4 replays are byte-identical on rerun (114 files).
+  - The plain motor matches main: M2/M1 111/111, M3 90/90, M1 first guess 111/111.
+  - **[NOTE]** BatchReplay resolves relative paths against the Unity project folder, so absolute paths must be passed.
+- **M4b sessions** (120 fps): M4b_octane 19/25 valid (fps dips during pad flights), M4b_viewprobe, M4b_swing 22/25, M4b_octane2 18/18, M4b_swing2 4/5. Every condition has at least 5 valid trials.
+  - **[ISSUE→fixed]** `player.ClientCommand("cl_yawspeed 90")` is forwarded to the server and ignored, so session 1 turned at the default 210 °/s. The runner now sets the cvar on the client console.
+  - **[ISSUE→fixed]** A pad left over from the pad trials stayed on lane C, and the octane2 view_run trials ran into it. View schedules now clear test props.
+  - **View acceptance PASS for yaw:**
+    - 178/180 commands at 90 ± 1 % (edge commands at half rate); net error ≤ 0.05°.
+    - The dedi velocity heading equals the client yaw to 0.001°.
+    - With +speed held, the turn rate is ×0.67.
+  - **[LIMIT]** `+lookup`/`+lookdown` do not move pitch in R5, so pitch stays fixed per trial.
+  - Swing and pad re-jump analysis subagent dispatched (writes to `m4b/swing`, `m4b/pad_rejump`).
+- **Swing analysis** (lead-verified identical; rounds 1 and 2):
+  - The pull law is RF: an along-rope ramp of about 495–541 u/s² plus a constant brake across the rope of about 420 u/s². One parameter set fits 62 trials at 11.8 u rms. Pure acceleration toward the anchor gives 39 u and a pendulum model 80 u, so it is not a pendulum.
+  - W clamps velocity along the view at 483 = 420·msc. Jump does not release the grapple. Release is continuous, then ballistic.
+  - **[OPEN]** The detach rule is still unidentified after 3 rounds (stop-loss); Unity uses the envelope instead.
+- **Pad re-jump** (lead-verified): the landing slowdown applies fully; the ground jump caps v_h at 260·msc; carry-over is 14 %.
+- **P3 transitions:**
+  - Wraith tactical: msc 0.8 for 1.17 s, then ×1.388 for 2.77 s, then a 0.79 s fade (n = 7).
+  - Loba: velocity zeroed at the teleport (6/6). Portal and Breach taken from source. Vantage and Ash dash skipped, with reasons in M4-REPORT §3.5.
+  - **[ISSUE]** A game session was run while the swing subagent analysed, which caused fps rejects. Topped up with the machine idle.
+- **M4 done:** M4-REPORT.md written.
 
 ## Open issues
 
