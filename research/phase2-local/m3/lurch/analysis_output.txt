@@ -1,0 +1,215 @@
+====================================================================================================
+1. DATA
+  20261020_220752_M3_lurch_chain     fps 144.0  trials  51  parse errors 0  cmds  23458  joined  23407  state mismatches 0
+  20261020_215746_M3_pilot           fps 144.0  trials  20  parse errors 0  cmds   9042  joined   9022  state mismatches 0
+  20261020_223838_M3_fps120          fps 120.0  trials   6  parse errors 0  cmds   2153  joined   2147  state mismatches 0
+  20261020_224455_M3_fps120_rerun    fps 120.0  trials  10  parse errors 0  cmds   3916  joined   3906  state mismatches 0
+  20261020_225255_M3_fps60           fps  60.0  trials  15  parse errors 0  cmds   2868  joined   2853  state mismatches 0
+  press events: 102
+====================================================================================================
+2. IS THE LURCH ONE COMMAND?  max |v1 - AirAccelerate| on the other airborne commands of each jump
+  over 102 jumps (9666 commands): max 0.0334 u/s ; press command |D| range 0.000 .. 209.302
+  vertical: (vz - pvz) - 750*dt on the press command: -0.0045 .. 0.0105 u/s (dt printed to 1e-5 s)
+====================================================================================================
+3. PRESS COMMAND, EARLY PRESSES (t < 0.20 s): D = v1 - (v0 + AirAccelerate), frame (vhat', n toward wish)
+  condition                n   theta      s0       s1    D_par   D_perp      |D|      lam   a_user  b_user    head
+  W re-tap                 6    0.00  297.01   297.01    0.005    0.000    0.005   0.0000   1.0000  0.0000    0.00
+  back                     6  180.00  293.13    83.83 -209.300    0.000  209.300        -        -       -    0.00
+  slide right              4   89.43  350.05   293.58 -114.483  175.212  209.298   0.7000   0.6729  0.5005  -36.64
+  sprint right 120 fps     7   89.19  296.67   253.12 -114.181  175.412  209.300   0.7000   0.6151  0.5913  -43.87
+  sprint right 144 fps    23   89.33  296.76   252.98 -114.356  175.298  209.300   0.7000   0.6147  0.5907  -43.86
+  sprint right 60 fps      6   88.40  299.19   256.14 -113.163  176.071  209.300   0.7000   0.6218  0.5885  -43.42
+  walk right               4   89.00  199.61   195.36 -113.936  175.571  209.301   0.7000   0.4292  0.8796  -63.99
+  lam (early, sideways presses)     = 0.70000 (sd 0.00000, 0.69999..0.70001, n=44)
+  |D| on every clamped press (any t) = 209.3001 (sd 0.0016, 209.2976..209.3023, n=61)
+====================================================================================================
+4. MODEL COMPARISON ON EARLY PRESSES: |v1_pred - v1_obs| (u/s); parameters fitted on 'sprint right 144 fps'
+  model                                                W re-tap           back    slide rightsprint right 12sprint right 14sprint right 60     walk right
+  M0 AirAccelerate only (M2)                              0.006        209.302        209.299        209.302        209.302        209.302        209.302
+  M1 v1 = a*v' + b*|v'|*w  (a=0.6147 b=0.5907)           61.057         77.766         36.504          2.634          2.572          2.866         69.672
+  M2 lerp(lam=0.7000) + clamp |D|<=209.300                0.006          0.002          0.002          0.002          0.002          0.002          0.002
+  M3 slerp(f=0.7415) + clamp |D|<=209.300                 0.006         84.411          0.020          0.027          0.004          0.167          0.061
+  M2b as M2 but lurch BEFORE AirAccelerate                0.006          0.002          3.003          3.579          3.042          7.035          2.915
+  (max error per condition; rms in results.json)
+====================================================================================================
+5. WINDOW: lam vs time since the jump command (sideways presses, sprint)
+   60 fps  run 1101  k-cmds   2  tA 0.0333 s  dt 0.01667  |D| 209.299  clamp 1  s1/s0 0.8561  head -43.43  lam 0.7000
+   60 fps  run 1102  k-cmds   3  tA 0.0500 s  dt 0.01667  |D| 209.299  clamp 1  s1/s0 0.8561  head -43.43  lam 0.7000
+   60 fps  run 1103  k-cmds   4  tA 0.0667 s  dt 0.01667  |D| 209.299  clamp 1  s1/s0 0.8561  head -43.43  lam 0.7000
+   60 fps  run 1104  k-cmds   6  tA 0.1000 s  dt 0.01666  |D| 209.301  clamp 1  s1/s0 0.8561  head -43.42  lam 0.7000
+   60 fps  run 1105  k-cmds   9  tA 0.1500 s  dt 0.01666  |D| 209.302  clamp 1  s1/s0 0.8561  head -43.42  lam 0.7000
+   60 fps  run 1106  k-cmds  11  tA 0.1833 s  dt 0.01666  |D| 209.302  clamp 1  s1/s0 0.8561  head -43.42  lam 0.7000
+   60 fps  run 1107  k-cmds  16  tA 0.2666 s  dt 0.01666  |D| 209.302  clamp 1  s1/s0 0.9526  head -41.89  lam 0.5445
+   60 fps  run 1108  k-cmds  18  tA 0.3000 s  dt 0.01667  |D| 207.188  clamp 0  s1/s0 1.0000  head -40.51  lam 0.4668
+   60 fps  run 1109  k-cmds  20  tA 0.3334 s  dt 0.01667  |D| 165.009  clamp 0  s1/s0 1.0000  head -32.01  lam 0.3889
+   60 fps  run 1110  k-cmds  22  tA 0.3667 s  dt 0.01667  |D| 124.586  clamp 0  s1/s0 1.0000  head -24.03  lam 0.3111
+   60 fps  run 1111  k-cmds  24  tA 0.4000 s  dt 0.01666  |D|  87.370  clamp 0  s1/s0 1.0000  head -16.79  lam 0.2333
+   60 fps  run 1112  k-cmds  26  tA 0.4334 s  dt 0.01667  |D|  54.155  clamp 0  s1/s0 1.0000  head -10.38  lam 0.1556
+   60 fps  run 1113  k-cmds  28  tA 0.4667 s  dt 0.01667  |D|  25.101  clamp 0  s1/s0 1.0000  head  -4.81  lam 0.0778
+   60 fps  run 1114  k-cmds  30  tA 0.5000 s  dt 0.01666  |D|   0.001  clamp 0  s1/s0 1.0000  head  -0.00  lam 0.0000
+   60 fps  run 1115  k-cmds  39  tA 0.6500 s  dt 0.01667  |D|   0.002  clamp 0  s1/s0 1.0000  head   0.00  lam 0.0000
+  120 fps  run 1025  k-cmds   2  tA 0.0166 s  dt 0.00830  |D| 209.298  clamp 1  s1/s0 0.8533  head -43.89  lam 0.7000
+  120 fps  run  959  k-cmds   3  tA 0.0250 s  dt 0.00834  |D| 209.299  clamp 1  s1/s0 0.8535  head -43.97  lam 0.7000
+  120 fps  run  960  k-cmds   5  tA 0.0423 s  dt 0.00847  |D| 209.299  clamp 1  s1/s0 0.8533  head -43.88  lam 0.7000
+  120 fps  run  961  k-cmds   8  tA 0.0666 s  dt 0.00833  |D| 209.302  clamp 1  s1/s0 0.8524  head -43.57  lam 0.7000
+  120 fps  run  962  k-cmds  11  tA 0.0915 s  dt 0.00833  |D| 209.301  clamp 1  s1/s0 0.8535  head -43.96  lam 0.7000
+  120 fps  run  963  k-cmds  16  tA 0.1332 s  dt 0.00833  |D| 209.302  clamp 1  s1/s0 0.8533  head -43.89  lam 0.7000
+  120 fps  run  964  k-cmds  22  tA 0.1832 s  dt 0.00827  |D| 209.302  clamp 1  s1/s0 0.8533  head -43.92  lam 0.7000
+  120 fps  run 1026  k-cmds  30  tA 0.2502 s  dt 0.00834  |D| 209.300  clamp 1  s1/s0 0.9273  head -42.72  lam 0.5816
+  120 fps  run 1027  k-cmds  34  tA 0.2836 s  dt 0.00833  |D| 209.302  clamp 1  s1/s0 0.9785  head -41.74  lam 0.5036
+  120 fps  run 1028  k-cmds  39  tA 0.3250 s  dt 0.00833  |D| 174.684  clamp 0  s1/s0 1.0000  head -34.22  lam 0.4071
+  120 fps  run 1029  k-cmds  43  tA 0.3587 s  dt 0.00834  |D| 132.841  clamp 0  s1/s0 1.0000  head -25.85  lam 0.3279
+  120 fps  run 1030  k-cmds  47  tA 0.3952 s  dt 0.00853  |D|  91.201  clamp 0  s1/s0 1.0000  head -17.67  lam 0.2425
+  120 fps  run 1031  k-cmds  51  tA 0.4255 s  dt 0.00834  |D|  60.597  clamp 0  s1/s0 1.0000  head -11.70  lam 0.1720
+  120 fps  run 1032  k-cmds  55  tA 0.4590 s  dt 0.00835  |D|  30.468  clamp 0  s1/s0 1.0000  head  -5.88  lam 0.0936
+  120 fps  run 1033  k-cmds  59  tA 0.4921 s  dt 0.00834  |D|   4.880  clamp 0  s1/s0 1.0000  head  -0.94  lam 0.0162
+  120 fps  run 1034  k-cmds  76  tA 0.6333 s  dt 0.00831  |D|   0.002  clamp 0  s1/s0 1.0000  head  -0.00  lam 0.0000
+  144 fps  run  601  k-cmds   2  tA 0.0135 s  dt 0.00674  |D| 209.298  clamp 1  s1/s0 0.8522  head -43.80  lam 0.7000
+  144 fps  run  602  k-cmds   2  tA 0.0139 s  dt 0.00695  |D| 209.300  clamp 1  s1/s0 0.8527  head -43.93  lam 0.7000
+  144 fps  run  501  k-cmds   2  tA 0.0141 s  dt 0.00704  |D| 209.301  clamp 1  s1/s0 0.8530  head -44.03  lam 0.7000
+  144 fps  run  502  k-cmds   3  tA 0.0207 s  dt 0.00690  |D| 209.298  clamp 1  s1/s0 0.8528  head -43.98  lam 0.7000
+  144 fps  run  603  k-cmds   3  tA 0.0209 s  dt 0.00695  |D| 209.302  clamp 1  s1/s0 0.8525  head -43.85  lam 0.7000
+  144 fps  run  604  k-cmds   3  tA 0.0209 s  dt 0.00695  |D| 209.298  clamp 1  s1/s0 0.8524  head -43.83  lam 0.7000
+  144 fps  run  605  k-cmds   4  tA 0.0274 s  dt 0.00686  |D| 209.299  clamp 1  s1/s0 0.8523  head -43.81  lam 0.7000
+  144 fps  run  503  k-cmds   4  tA 0.0278 s  dt 0.00695  |D| 209.298  clamp 1  s1/s0 0.8524  head -43.84  lam 0.7000
+  144 fps  run  606  k-cmds   4  tA 0.0280 s  dt 0.00695  |D| 209.299  clamp 1  s1/s0 0.8526  head -43.91  lam 0.7000
+  144 fps  run  607  k-cmds   6  tA 0.0417 s  dt 0.00674  |D| 209.302  clamp 1  s1/s0 0.8523  head -43.83  lam 0.7000
+  144 fps  run  504  k-cmds   6  tA 0.0420 s  dt 0.00690  |D| 209.302  clamp 1  s1/s0 0.8529  head -44.02  lam 0.7000
+  144 fps  run  609  k-cmds   9  tA 0.0619 s  dt 0.00675  |D| 209.300  clamp 1  s1/s0 0.8529  head -44.04  lam 0.7000
+  144 fps  run  505  k-cmds   9  tA 0.0621 s  dt 0.00694  |D| 209.302  clamp 1  s1/s0 0.8523  head -43.81  lam 0.7000
+  144 fps  run  610  k-cmds   9  tA 0.0628 s  dt 0.00719  |D| 209.301  clamp 1  s1/s0 0.8522  head -43.71  lam 0.7000
+  144 fps  run  506  k-cmds  13  tA 0.0903 s  dt 0.00694  |D| 209.302  clamp 1  s1/s0 0.8524  head -43.84  lam 0.7000
+  144 fps  run  612  k-cmds  13  tA 0.0903 s  dt 0.00699  |D| 209.301  clamp 1  s1/s0 0.8525  head -43.84  lam 0.7000
+  144 fps  run  611  k-cmds  13  tA 0.0905 s  dt 0.00702  |D| 209.301  clamp 1  s1/s0 0.8524  head -43.82  lam 0.7000
+  144 fps  run  507  k-cmds  19  tA 0.1309 s  dt 0.00695  |D| 209.298  clamp 1  s1/s0 0.8524  head -43.82  lam 0.7000
+  144 fps  run  613  k-cmds  19  tA 0.1317 s  dt 0.00695  |D| 209.298  clamp 1  s1/s0 0.8522  head -43.77  lam 0.7000
+  144 fps  run  614  k-cmds  19  tA 0.1319 s  dt 0.00694  |D| 209.301  clamp 1  s1/s0 0.8529  head -44.02  lam 0.7000
+  144 fps  run  615  k-cmds  26  tA 0.1792 s  dt 0.00695  |D| 209.298  clamp 1  s1/s0 0.8522  head -43.75  lam 0.7000
+  144 fps  run  508  k-cmds  26  tA 0.1805 s  dt 0.00695  |D| 209.299  clamp 1  s1/s0 0.8522  head -43.75  lam 0.7000
+  144 fps  run  616  k-cmds  26  tA 0.1807 s  dt 0.00695  |D| 209.298  clamp 1  s1/s0 0.8524  head -43.83  lam 0.7000
+  144 fps  run  617  k-cmds  36  tA 0.2488 s  dt 0.00699  |D| 209.301  clamp 1  s1/s0 0.9233  head -42.74  lam 0.5866
+  144 fps  run  618  k-cmds  36  tA 0.2500 s  dt 0.00699  |D| 209.301  clamp 1  s1/s0 0.9251  head -42.67  lam 0.5836
+  144 fps  run  509  k-cmds  36  tA 0.2501 s  dt 0.00695  |D| 209.299  clamp 1  s1/s0 0.9254  head -42.72  lam 0.5835
+  144 fps  run  619  k-cmds  41  tA 0.2834 s  dt 0.00675  |D| 209.301  clamp 1  s1/s0 0.9774  head -41.91  lam 0.5058
+  144 fps  run  620  k-cmds  41  tA 0.2860 s  dt 0.00696  |D| 209.298  clamp 1  s1/s0 0.9811  head -41.81  lam 0.5000
+  144 fps  run  621  k-cmds  46  tA 0.3192 s  dt 0.00695  |D| 182.405  clamp 0  s1/s0 1.0000  head -35.93  lam 0.4223
+  144 fps  run  622  k-cmds  46  tA 0.3209 s  dt 0.00696  |D| 181.464  clamp 0  s1/s0 1.0000  head -35.58  lam 0.4191
+  144 fps  run  623  k-cmds  51  tA 0.3537 s  dt 0.00695  |D| 140.227  clamp 0  s1/s0 1.0000  head -27.38  lam 0.3426
+  144 fps  run  624  k-cmds  51  tA 0.3544 s  dt 0.00699  |D| 139.295  clamp 0  s1/s0 1.0000  head -27.13  lam 0.3402
+  144 fps  run  510  k-cmds  51  tA 0.3546 s  dt 0.00699  |D| 139.366  clamp 0  s1/s0 1.0000  head -27.13  lam 0.3402
+  144 fps  run  625  k-cmds  56  tA 0.3893 s  dt 0.00699  |D|  99.665  clamp 0  s1/s0 1.0000  head -19.25  lam 0.2597
+  144 fps  run  626  k-cmds  56  tA 0.3894 s  dt 0.00688  |D|  99.044  clamp 0  s1/s0 1.0000  head -19.14  lam 0.2585
+  144 fps  run  628  k-cmds  61  tA 0.4235 s  dt 0.00694  |D|  63.229  clamp 0  s1/s0 1.0000  head -12.29  lam 0.1792
+  144 fps  run  627  k-cmds  61  tA 0.4238 s  dt 0.00675  |D|  63.456  clamp 0  s1/s0 1.0000  head -12.25  lam 0.1788
+  144 fps  run  629  k-cmds  66  tA 0.4583 s  dt 0.00699  |D|  31.886  clamp 0  s1/s0 1.0000  head  -6.19  lam 0.0980
+  144 fps  run  630  k-cmds  66  tA 0.4601 s  dt 0.00700  |D|  30.867  clamp 0  s1/s0 1.0000  head  -5.98  lam 0.0949
+  144 fps  run  631  k-cmds  71  tA 0.4932 s  dt 0.00690  |D|   4.967  clamp 0  s1/s0 1.0000  head  -0.96  lam 0.0165
+  144 fps  run  632  k-cmds  71  tA 0.4932 s  dt 0.00676  |D|   5.130  clamp 0  s1/s0 1.0000  head  -0.98  lam 0.0169
+  144 fps  run  511  k-cmds  71  tA 0.4934 s  dt 0.00695  |D|   5.041  clamp 0  s1/s0 1.0000  head  -0.97  lam 0.0167
+  144 fps  run  633  k-cmds  91  tA 0.6320 s  dt 0.00687  |D|   0.000  clamp 0  s1/s0 1.0000  head   0.00  lam 0.0000
+  144 fps  run  634  k-cmds  91  tA 0.6331 s  dt 0.00703  |D|   0.002  clamp 0  s1/s0 1.0000  head  -0.00  lam 0.0000
+  144 fps  run  512  k-cmds  91  tA 0.6333 s  dt 0.00695  |D|   0.001  clamp 0  s1/s0 1.0000  head  -0.00  lam 0.0000
+  fade points: 0.001 < lam < lam_plateau - 5 sd  ->  n = 34
+  convention: tA (start jump cmd -> start press cmd)
+    60.0 n= 7  slope  -2.3329 /s (se 0.0004)  plateau end 0.2000 s (se 0.0000)  zero 0.5001 s (se 0.0000)  rms 0.0001 max 0.0001
+    120.0 n= 8  slope  -2.3378 /s (se 0.0008)  plateau end 0.1996 s (se 0.0001)  zero 0.4990 s (se 0.0001)  rms 0.0002 max 0.0004
+    144.0 n=19  slope  -2.3307 /s (se 0.0010)  plateau end 0.2002 s (se 0.0001)  zero 0.5005 s (se 0.0001)  rms 0.0003 max 0.0008
+    all  n=34  slope  -2.3329 /s (se 0.0024)  plateau end 0.2000 s (se 0.0002)  zero 0.5001 s (se 0.0002)  rms 0.0011 max 0.0024
+  convention: tA + dt (-> end of press cmd)
+    60.0 n= 7  slope  -2.3329 /s (se 0.0004)  plateau end 0.2167 s (se 0.0000)  zero 0.5167 s (se 0.0000)  rms 0.0001 max 0.0001
+    120.0 n= 8  slope  -2.3376 /s (se 0.0007)  plateau end 0.2079 s (se 0.0001)  zero 0.5074 s (se 0.0000)  rms 0.0001 max 0.0003
+    144.0 n=19  slope  -2.3306 /s (se 0.0010)  plateau end 0.2071 s (se 0.0001)  zero 0.5074 s (se 0.0001)  rms 0.0004 max 0.0008
+    all  n=34  slope  -2.3301 /s (se 0.0196)  plateau end 0.2091 s (se 0.0016)  zero 0.5095 s (se 0.0013)  rms 0.0088 max 0.0176
+  convention: tA - dt (end of jump cmd -> start press cmd)
+    60.0 n= 7  slope  -2.3330 /s (se 0.0004)  plateau end 0.1833 s (se 0.0000)  zero 0.4834 s (se 0.0000)  rms 0.0001 max 0.0001
+    120.0 n= 8  slope  -2.3379 /s (se 0.0010)  plateau end 0.1913 s (se 0.0001)  zero 0.4907 s (se 0.0001)  rms 0.0002 max 0.0004
+    144.0 n=19  slope  -2.3308 /s (se 0.0010)  plateau end 0.1932 s (se 0.0001)  zero 0.4935 s (se 0.0001)  rms 0.0003 max 0.0007
+    all  n=34  slope  -2.3250 /s (se 0.0202)  plateau end 0.1901 s (se 0.0016)  zero 0.4912 s (se 0.0013)  rms 0.0091 max 0.0179
+  brackets from samples (tA):
+     60 fps: last full 0.1833 | first partial 0.2666 | last partial 0.4667 | first zero 0.5000
+    120 fps: last full 0.1832 | first partial 0.2502 | last partial 0.4921 | first zero 0.6333
+    144 fps: last full 0.1807 | first partial 0.2488 | last partial 0.4934 | first zero 0.6320
+  same zero crossing expressed in commands (fit 'tA' per fps / mean dt):
+     60 fps: dt 0.01667 s  plateau end 12.0 cmds  zero 30.0 cmds
+    120 fps: dt 0.00835 s  plateau end 23.9 cmds  zero 59.8 cmds
+    144 fps: dt 0.00695 s  plateau end 28.8 cmds  zero 72.0 cmds
+====================================================================================================
+6a. FULL MODEL ON EVERY PRESS, fitted parameters: lam=0.7000 until 0.2000 s, linear to 0 at 0.5001 s, clamp 209.300
+  W re-tap               n= 9  rms 0.004  max 0.006 u/s   (AirAccelerate only: rms 0.004)
+  back                   n= 9  rms 0.002  max 0.002 u/s   (AirAccelerate only: rms 209.301)
+  slide right            n= 4  rms 0.002  max 0.003 u/s   (AirAccelerate only: rms 209.298)
+  sprint right 120 fps   n=16  rms 0.514  max 0.969 u/s   (AirAccelerate only: rms 168.702)
+  sprint right 144 fps   n=45  rms 0.232  max 0.652 u/s   (AirAccelerate only: rms 175.188)
+  sprint right 60 fps    n=15  rms 0.026  max 0.089 u/s   (AirAccelerate only: rms 164.016)
+  walk right             n= 4  rms 0.001  max 0.002 u/s   (AirAccelerate only: rms 209.301)
+====================================================================================================
+6b. FULL MODEL ON EVERY PRESS, rounded parameters: lam=0.7000 until 0.2000 s, linear to 0 at 0.5000 s, clamp 209.300
+  W re-tap               n= 9  rms 0.004  max 0.006 u/s   (AirAccelerate only: rms 0.004)
+  back                   n= 9  rms 0.002  max 0.002 u/s   (AirAccelerate only: rms 209.301)
+  slide right            n= 4  rms 0.002  max 0.002 u/s   (AirAccelerate only: rms 209.298)
+  sprint right 120 fps   n=16  rms 0.494  max 0.934 u/s   (AirAccelerate only: rms 168.702)
+  sprint right 144 fps   n=45  rms 0.248  max 0.686 u/s   (AirAccelerate only: rms 175.188)
+  sprint right 60 fps    n=15  rms 0.035  max 0.108 u/s   (AirAccelerate only: rms 164.016)
+  walk right             n= 4  rms 0.001  max 0.002 u/s   (AirAccelerate only: rms 209.301)
+  time offset implied by each fade sample under the rounded window, (0.5 - lam/(0.7/0.3)) - tA, in ms:
+     60 fps: -0.033 (sd 0.032, -0.080..0.014, n=7)
+    120 fps: 0.738 (sd 0.178, 0.485..0.989, n=8)
+    144 fps: -0.347 (sd 0.180, -0.776..-0.100, n=19)
+  slide trials: speed before the jump (max), jump pre/post speed, press s0:
+    run 650: max 460.00  jump cmd 318.01 -> 350.00  press 350.05
+    run 651: max 460.00  jump cmd 318.25 -> 350.00  press 350.05
+    run 652: max 460.00  jump cmd 317.69 -> 350.00  press 350.05
+    run 520: max 460.00  jump cmd 318.07 -> 350.00  press 350.05
+====================================================================================================
+7. BACK AND W RE-TAP
+  back     run  635 tA 0.0278 theta 180.00  s0 294.10 -> s1 84.81 (pred 84.80)  heading 0.000  |D| 209.298
+  back     run  636 tA 0.0278 theta 180.00  s0 293.11 -> s1 83.81 (pred 83.81)  heading 0.000  |D| 209.298
+  back     run  639 tA 0.0901 theta 180.00  s0 291.92 -> s1 82.62 (pred 82.62)  heading 0.000  |D| 209.302
+  back     run  640 tA 0.0910 theta 180.00  s0 293.73 -> s1 84.43 (pred 84.43)  heading 0.000  |D| 209.299
+  back     run  643 tA 0.2509 theta 180.00  s0 294.38 -> s1 85.08 (pred 85.08)  heading 0.000  |D| 209.302
+  back     run  644 tA 0.2501 theta 180.00  s0 293.55 -> s1 84.25 (pred 84.25)  heading 0.000  |D| 209.302
+  back     run  513 tA 0.0276 theta 180.00  s0 292.45 -> s1 83.15 (pred 83.15)  heading 0.000  |D| 209.301
+  back     run  515 tA 0.0903 theta 180.00  s0 293.45 -> s1 84.15 (pred 84.15)  heading 0.000  |D| 209.302
+  back     run  517 tA 0.2501 theta 180.00  s0 293.94 -> s1 84.64 (pred 84.64)  heading 0.000  |D| 209.302
+  W re-tap run  637 tA 0.0278 theta   0.00  s0 296.81 -> s1 296.82 (pred 296.81)  heading 0.000  |D| 0.006
+  W re-tap run  638 tA 0.0276 theta   0.00  s0 296.94 -> s1 296.95 (pred 296.94)  heading 0.000  |D| 0.006
+  W re-tap run  641 tA 0.0902 theta   0.00  s0 297.34 -> s1 297.34 (pred 297.34)  heading 0.000  |D| 0.004
+  W re-tap run  642 tA 0.0913 theta   0.00  s0 297.00 -> s1 297.01 (pred 297.00)  heading 0.000  |D| 0.004
+  W re-tap run  645 tA 0.2491 theta   0.00  s0 297.16 -> s1 297.17 (pred 297.16)  heading 0.000  |D| 0.002
+  W re-tap run  646 tA 0.2525 theta   0.00  s0 296.70 -> s1 296.70 (pred 296.70)  heading 0.000  |D| 0.001
+  W re-tap run  514 tA 0.0278 theta   0.00  s0 297.07 -> s1 297.07 (pred 297.07)  heading 0.000  |D| 0.006
+  W re-tap run  516 tA 0.0905 theta   0.00  s0 296.88 -> s1 296.89 (pred 296.88)  heading 0.000  |D| 0.005
+  W re-tap run  518 tA 0.2503 theta   0.00  s0 296.87 -> s1 296.87 (pred 296.87)  heading 0.000  |D| 0.002
+====================================================================================================
+8. CLIENT / DEDI PARITY ON THE PRESS COMMAND
+  dedi MT present 102/102; identical within 0.002: 101; different: 1
+    run 1033 e3_right_k58 tA 0.4921: max diff 0.022  client |D| 4.880  dedi |D| 4.858
+  client replays (rp=1) of the press command: 0 events; max diff to first-time -
+  client state discontinuities between jump-2 and landing+1 (cmd index rel. jump): none
+====================================================================================================
+9. REPEATABILITY (same schedule and fps): spread of |D|, lam and tA
+  e3_back_k12@144            n=3  |D| 209.301 (sd 0.002, 209.299..209.302, n=3)  lam sd - (undefined, w = -v)  tA range 0.0009 s
+  e3_back_k3@144             n=3  |D| 209.299 (sd 0.002, 209.298..209.301, n=3)  lam sd - (undefined, w = -v)  tA range 0.0002 s
+  e3_back_k35@144            n=3  |D| 209.302 (sd 0.000, 209.302..209.302, n=3)  lam sd - (undefined, w = -v)  tA range 0.0009 s
+  e3_right_k1@144            n=3  |D| 209.300 (sd 0.002, 209.298..209.301, n=3)  lam sd 0.00000  tA range 0.0006 s
+  e3_right_k12@144           n=3  |D| 209.301 (sd 0.000, 209.301..209.302, n=3)  lam sd 0.00000  tA range 0.0002 s
+  e3_right_k18@144           n=3  |D| 209.299 (sd 0.002, 209.298..209.301, n=3)  lam sd 0.00000  tA range 0.0010 s
+  e3_right_k2@144            n=3  |D| 209.300 (sd 0.002, 209.298..209.302, n=3)  lam sd 0.00000  tA range 0.0002 s
+  e3_right_k25@144           n=3  |D| 209.298 (sd 0.001, 209.298..209.299, n=3)  lam sd 0.00000  tA range 0.0015 s
+  e3_right_k3@144            n=3  |D| 209.299 (sd 0.000, 209.298..209.299, n=3)  lam sd 0.00000  tA range 0.0006 s
+  e3_right_k35@144           n=3  |D| 209.301 (sd 0.001, 209.299..209.301, n=3)  lam sd 0.00178  tA range 0.0013 s
+  e3_right_k40@144           n=2  |D| 209.299 (sd 0.002, 209.298..209.301, n=2)  lam sd 0.00410  tA range 0.0025 s
+  e3_right_k45@144           n=2  |D| 181.934 (sd 0.665, 181.464..182.405, n=2)  lam sd 0.00226  tA range 0.0017 s
+  e3_right_k5@144            n=2  |D| 209.302 (sd 0.000, 209.302..209.302, n=2)  lam sd 0.00000  tA range 0.0002 s
+  e3_right_k50@144           n=3  |D| 139.630 (sd 0.519, 139.295..140.227, n=3)  lam sd 0.00141  tA range 0.0009 s
+  e3_right_k55@144           n=2  |D| 99.355 (sd 0.440, 99.044..99.665, n=2)  lam sd 0.00085  tA range 0.0000 s
+  e3_right_k60@144           n=2  |D| 63.343 (sd 0.161, 63.229..63.456, n=2)  lam sd 0.00030  tA range 0.0003 s
+  e3_right_k65@144           n=2  |D| 31.377 (sd 0.720, 30.867..31.886, n=2)  lam sd 0.00217  tA range 0.0018 s
+  e3_right_k70@144           n=3  |D| 5.046 (sd 0.082, 4.967..5.130, n=3)  lam sd 0.00017  tA range 0.0002 s
+  e3_right_k8@144            n=3  |D| 209.301 (sd 0.001, 209.300..209.302, n=3)  lam sd 0.00000  tA range 0.0008 s
+  e3_right_k90@144           n=3  |D| 0.001 (sd 0.001, 0.000..0.002, n=3)  lam sd 0.00000  tA range 0.0014 s
+  e3_right_slide350_k5@144   n=4  |D| 209.298 (sd 0.001, 209.298..209.299, n=4)  lam sd 0.00000  tA range 0.0009 s
+  e3_right_walk_k5@144       n=4  |D| 209.301 (sd 0.002, 209.299..209.302, n=4)  lam sd 0.00000  tA range 0.0003 s
+  e3_wtap_k12@144            n=3  |D| 0.004 (sd 0.001, 0.004..0.005, n=3)  lam sd 0.00000  tA range 0.0011 s
+  e3_wtap_k3@144             n=3  |D| 0.006 (sd 0.000, 0.006..0.006, n=3)  lam sd 0.00000  tA range 0.0003 s
+  e3_wtap_k35@144            n=3  |D| 0.002 (sd 0.001, 0.001..0.002, n=3)  lam sd 0.00000  tA range 0.0034 s

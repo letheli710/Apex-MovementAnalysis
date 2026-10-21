@@ -92,6 +92,19 @@ Newest entries at the bottom. Problems are tagged **[ISSUE]** and also listed in
   - **Decision:** from M3 on, the client runs at **120 fps** (below the external cap; stable). Frame rate is an experiment variable (60/120, plus the earlier 144 data).
   - The vsync/AA-off launch ConVars stay as the default in `hsd_launch.ps1`.
 
+- M3 sessions at 120 fps (external cap → 120) and 60 fps.
+  - **[ISSUE]** One 120 fps session dropped to about 100 fps for a stretch (TextInputHost CPU keeps growing; system-level, not touched). 34 trials re-run, all passed.
+  - **[ISSUE→fixed]** An export list carried CRLF, which put `\r` into directory names; stripped and re-exported (30 trials, 0 problems).
+- **Lurch model** (subagent, lead-verified identical): applied on the press command, after AirAccelerate.
+  - λ = 0.7 with a time-based window: full to 0.2 s, linear fade to 0.5 s.
+  - |Δv| clamp 209.3. Reproduces 102 trials at 60/120/144 fps to 0.002 u/s.
+  - The S3 dedi lurches natively (resolves Phase 1 X1).
+- **Wall / mantle / landing model** (subagent, lead-verified identical):
+  - Wall bounce: normal·182.78 + input·75.08.
+  - Climb kinematics; mantle 0.588 s.
+  - The first mantle sweep pressed too early, so the runner got state waits (`waitair`/`waitland`) and late sweeps were run. Mantle boost window = **last 133 ms of the mantle at both 60 and 120 fps** (time-based). Exit 388.7 / vz 367.4 matches the SDK FSM; jump+crouch = jump.
+  - Ground re-jump caps at 299; skip_speed_reduce and landSlowdown not observed.
+- Wrote the M3 report draft with design advice. Started the Unity M3 subagent: lurch, landing/slide links, and WallBounce/MantleBoost primitives.
 
 ## Open issues
 

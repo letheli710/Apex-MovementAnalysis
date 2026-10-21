@@ -155,6 +155,13 @@ SCHEDULES = {
     "x_pad_sprint": "wait 72; down speed; down forward; wait 432; up forward; up speed; wait 288",
     "x_pad_stand": "wait 72; tap jump; wait 288",
     "x_pad_slide": "wait 72; down speed; down forward; wait 1.5s; down duck; wait 2.0s; up duck; up forward; up speed; wait 1.0s",
+    # M3 follow-up: hop chains above 299 u/s (slide jump at 350), each re-jump D frames after the landing frame
+    "e8_hop350_d0": "wait 72; down speed; down forward; wait 2.0s; down duck; wait 86; tap jump; up duck; waitair; waitland; tap jump; waitair; waitland; tap jump; waitair; waitland; tap jump; waitair; waitland; wait 0.3s; up forward; up speed; wait 0.5s",
+    "e8_hop350_d1": "wait 72; down speed; down forward; wait 2.0s; down duck; wait 86; tap jump; up duck; waitair; waitland; waitf 1; tap jump; waitair; waitland; waitf 1; tap jump; waitair; waitland; waitf 1; tap jump; waitair; waitland; wait 0.3s; up forward; up speed; wait 0.5s",
+    "e8_hop350_d2": "wait 72; down speed; down forward; wait 2.0s; down duck; wait 86; tap jump; up duck; waitair; waitland; waitf 2; tap jump; waitair; waitland; waitf 2; tap jump; waitair; waitland; waitf 2; tap jump; waitair; waitland; wait 0.3s; up forward; up speed; wait 0.5s",
+    "e8_hop350_d3": "wait 72; down speed; down forward; wait 2.0s; down duck; wait 86; tap jump; up duck; waitair; waitland; waitf 3; tap jump; waitair; waitland; waitf 3; tap jump; waitair; waitland; waitf 3; tap jump; waitair; waitland; wait 0.3s; up forward; up speed; wait 0.5s",
+    "e8_hop350_d5": "wait 72; down speed; down forward; wait 2.0s; down duck; wait 86; tap jump; up duck; waitair; waitland; waitf 5; tap jump; waitair; waitland; waitf 5; tap jump; waitair; waitland; waitf 5; tap jump; waitair; waitland; wait 0.3s; up forward; up speed; wait 0.5s",
+    "e8_hop350_d10": "wait 72; down speed; down forward; wait 2.0s; down duck; wait 86; tap jump; up duck; waitair; waitland; waitf 10; tap jump; waitair; waitland; waitf 10; tap jump; waitair; waitland; waitf 10; tap jump; waitair; waitland; wait 0.3s; up forward; up speed; wait 0.5s",
     "e8_drop_land": "wait 72; down speed; down forward; wait 1.2s; tap jump; wait 4.0s; up forward; up speed; wait 1.5s",
 }
 
@@ -170,7 +177,7 @@ LANE_B = (-14200.0, 5900.0, 294.92)
 # Lane C: y 6800 is flat from x -14825 to -12475 (m3/map/field_fine.json) and 81 u clear of the wall's bounds.
 LANE_C = (-14800.0, 6800.0, 294.92)
 SPAWN_PAD = (-11699.0, 512.0, 1577.046)  # visible firing-range floor (M0/M1)
-SCHEDULE_ORIGIN_PREFIX = {"x_pad_": SPAWN_PAD, "e3_": LANE_B, "e8_fast": LANE_C, "e8_slide": LANE_C, "e6_": LANE_A, "e7_": LANE_A,
+SCHEDULE_ORIGIN_PREFIX = {"x_pad_": SPAWN_PAD, "e8_hop350": LANE_C, "e3_": LANE_B, "e8_fast": LANE_C, "e8_slide": LANE_C, "e6_": LANE_A, "e7_": LANE_A,
                           "e8_drop": LANE_A}
 
 
@@ -240,6 +247,18 @@ void functionref() f = void function() : ( steps ) {
 				WaitFrame()
 			continue
 		}
+		if ( verb == "waitair" || verb == "waitland" )
+		{
+			bool wantGround = verb == "waitland"
+			int g = 0
+			while ( p.IsOnGround() != wantGround && g < 1200 )
+			{
+				WaitFrame()
+				g++
+			}
+			printt( "[HSD-SCHED] ver=1 trial=$trial run=$run edge=" + verb + " frame=" + ( FrameCount() - f0 ) + " fc=" + FrameCount() + " pt=" + PlatformTime() + " t=" + Time() + " waited=" + g )
+			continue
+		}
 		string key = parts[1]
 		if ( verb == "down" || verb == "tap" )
 		{
@@ -305,6 +324,8 @@ def parse_schedule(spec, fps=144.0):
             steps.append(f"wait {n}")
             continue
         steps.append(s)
+        if verb in ("waitair", "waitland"):
+            continue
         if verb in ("down", "up", "tap"):
             if arg not in KEYS:
                 raise ValueError(f"unknown key in {s!r}")
@@ -313,11 +334,16 @@ def parse_schedule(spec, fps=144.0):
     return steps
 
 
+def has_state_waits(steps):
+    return any(s in ("waitair", "waitland") for s in steps)
+
+
 def schedule_frames(steps):
+    """Frames of the fixed part of the schedule (state waits add a variable number)."""
     n = 0
     for s in steps:
         verb, _, arg = s.partition(" ")
-        n += int(arg) if verb == "wait" else (1 if verb == "tap" else 0)
+        n += int(arg) if verb == "wait" else (1 if verb == "tap" else 0) if verb != "waitair" and verb != "waitland" else 0
     return n
 
 
@@ -328,7 +354,7 @@ def _field(line, key):
     return None
 
 
-def check_pacing(lines, frames, fps, tol):
+def check_pacing(lines, frames, fps, tol, variable=False):
     """A frame-indexed schedule only means the planned durations at the planned frame rate.
     Returns (ok, reason, measured fps from PlatformTime between 'start' and 'end')."""
     start = next((l for l in lines if "edge=start" in l), None)
@@ -336,8 +362,8 @@ def check_pacing(lines, frames, fps, tol):
     if not start or not end:
         return False, "no start/end edge (settle timeout?)", None
     n = int(_field(end, "frame")) - int(_field(start, "frame"))
-    if n != frames:
-        return False, f"schedule ran {n} frames, planned {frames}", None
+    if (not variable and n != frames) or (variable and n < frames):
+        return False, f"schedule ran {n} frames, planned {'>= ' if variable else ''}{frames}", None
     dt = float(_field(end, "pt")) - float(_field(start, "pt"))
     measured = round(n / dt, 2) if dt > 0 else None
     if not measured or abs(measured / fps - 1) > tol:
@@ -461,7 +487,7 @@ def main(argv):
             lines, gap = wait_for_end(client, since, trial, timeout=(frames + a.settle_timeout) / a.fps * 3 + 30)
             server.cmd("hsd_md_run 0")
             client.cmd("hsd_md_run 0")
-            ok, why, fps = check_pacing(lines, frames, a.fps, a.fps_tol)
+            ok, why, fps = check_pacing(lines, frames, a.fps, a.fps_tol, variable=has_state_waits(steps))
             manifest["trials"].append({"trial": trial, "run": run, "batch": batch, "schedule": name, "yaw": yaw, "origin": [ox, oy, oz],
                                        "schedule_frames": frames, "reset": reset.get("reply", ""),
                                        "scheduled": sched.get("reply", ""), "sched_lines": lines,

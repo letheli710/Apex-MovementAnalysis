@@ -1,0 +1,230 @@
+{
+  "contract": "hsdmove-trial/2",
+  "trial_id": "M3_e8_hop350_d3_120fps_r1245",
+  "source": "r5flowstate",
+  "experiment": "M3_e8_hop350_d3",
+  "recorded_side": "cl",
+  "session": "11d20044-f92d-468e-a6e3-28bb709edce9",
+  "producer": "hsdtel.contract.export_trial from HSD.MoveDiag v0.2 frames + MOVE-TRACE usercmds",
+  "space": {
+    "axes": "source_zup_righthanded",
+    "x": "forward at yaw 0",
+    "y": "left",
+    "z": "up",
+    "length_unit": "u",
+    "meters_per_unit": 0.0254,
+    "angle_unit": "deg"
+  },
+  "timing": {
+    "variable_dt": true,
+    "steps": 702,
+    "duration_s": 5.85004,
+    "sampling": "one row per client script frame (WaitFrame) that simulated at least one usercmd",
+    "cmd_first": 43068,
+    "cmd_last": 43769,
+    "frames_without_cmd": 0,
+    "steps_with_several_cmds": 0,
+    "cmd_association": "usercmds whose MOVE-TRACE wall time is at or before the frame's; post-move origin equals the frame origin in 702/702 steps"
+  },
+  "step_semantics": "inputs held during the step; state sampled after the step",
+  "initial_state": {
+    "source": "MT pre-move state of the first usercmd of step 0 (o= v= ge= slide= spr= duck=)",
+    "cmd": 43068,
+    "pos": [
+      -14800.0,
+      6800.0,
+      294.274
+    ],
+    "vel": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "grounded": 1,
+    "sliding": 0,
+    "sprinting": 0,
+    "duck_state": 0,
+    "stance": "standing",
+    "crouched": 0,
+    "angles": {
+      "pitch": 0.0,
+      "yaw": 0.0
+    },
+    "angles_source": "HSD frame before step 0",
+    "buttons_held": 0,
+    "inputs_held": "",
+    "inputs_source": "MT usercmd 43067 (the command before step 0)"
+  },
+  "terrain": {
+    "map": "mp_rr_canyonlands_staging_mu1",
+    "map_source": "level-load log line of the session (LOG map)",
+    "start_origin": [
+      -14800.0,
+      6800.0,
+      294.274
+    ],
+    "standable": true,
+    "standable_source": "ground flag at trial start (ge= / IsOnGround); null = not on ground or unknown",
+    "ground_normal": null,
+    "ground_normal_source": "not recorded: neither MOVE-TRACE nor HSD.MoveDiag prints a surface normal",
+    "course_note": "M3 test field z 294.92; schedule e8_hop350_d3 @120 fps; Gibraltar pinned; empty-handed"
+  },
+  "parameters_side": null,
+  "parameters": {},
+  "parameter_issues": [],
+  "provenance": {
+    "step": "meta",
+    "t": "obs (Time() minus trial start)",
+    "dt": "drv (difference of observed Time(); frames without a usercmd are merged into the next step)",
+    "cmd": "obs MOVE-TRACE cmd= of the last usercmd logged at or before the frame (wall clock)",
+    "n_cmds": "drv (count of MOVE-TRACE lines assigned to the frame)",
+    "in_fwd": "obs GetInputAxisForward",
+    "in_right": "obs GetInputAxisRight",
+    "in_yaw": "obs",
+    "in_pitch": "obs",
+    "in_jump": "obs IsInputCommandHeld(IN_JUMP)",
+    "in_duck": "obs IsInputCommandHeld(IN_DUCK)",
+    "in_sprint": "obs MOVE-TRACE b= sprint bit (1<<15 in this build; see schema.BUTTON_BITS) of the step's last usercmd",
+    "buttons": "obs MOVE-TRACE b=",
+    "cmd_fwd": "obs MOVE-TRACE fwd=",
+    "cmd_side": "obs MOVE-TRACE sd=",
+    "movescale": "obs MOVE-TRACE msc=",
+    "maxspeed": "obs MOVE-TRACE ms=",
+    "pressed": "drv (MOVE-TRACE b= bits and fwd=/sd= signs, per usercmd, against the previous usercmd)",
+    "released": "drv (as pressed)",
+    "pos_x": "obs",
+    "pos_y": "obs",
+    "pos_z": "obs",
+    "vel_x": "obs",
+    "vel_y": "obs",
+    "vel_z": "obs",
+    "grounded": "obs",
+    "sliding": "obs",
+    "crouched": "obs",
+    "sprinting": "obs",
+    "events": "drv (hsdtel edge detection)"
+  },
+  "columns": {
+    "step": {
+      "unit": "",
+      "meaning": "0-based step index within the trial"
+    },
+    "t": {
+      "unit": "s",
+      "meaning": "time at the end of the step (trial-relative, starts near 0)"
+    },
+    "dt": {
+      "unit": "s",
+      "meaning": "duration of the step"
+    },
+    "cmd": {
+      "unit": "",
+      "meaning": "usercmd command_number of the last command simulated in the step"
+    },
+    "n_cmds": {
+      "unit": "",
+      "meaning": "number of usercmds logged in the step; cmd - previous cmd must equal it"
+    },
+    "in_fwd": {
+      "unit": "",
+      "meaning": "forward input -1..1 applied during the step"
+    },
+    "in_right": {
+      "unit": "",
+      "meaning": "right input -1..1 applied during the step"
+    },
+    "in_yaw": {
+      "unit": "deg",
+      "meaning": "view yaw during the step (Source convention: + = turn left)"
+    },
+    "in_pitch": {
+      "unit": "deg",
+      "meaning": "view pitch during the step"
+    },
+    "in_jump": {
+      "unit": "",
+      "meaning": "jump held 0/1"
+    },
+    "in_duck": {
+      "unit": "",
+      "meaning": "duck held 0/1"
+    },
+    "in_sprint": {
+      "unit": "",
+      "meaning": "sprint (IN_SPEED) held 0/1 in the usercmd"
+    },
+    "buttons": {
+      "unit": "",
+      "meaning": "usercmd m_nButtons held mask (in_buttons.h bits) of the step's last command"
+    },
+    "cmd_fwd": {
+      "unit": "",
+      "meaning": "usercmd forwardmove -1..1 of the step's last command"
+    },
+    "cmd_side": {
+      "unit": "",
+      "meaning": "usercmd sidemove -1..1 (+ = right) of the step's last command"
+    },
+    "movescale": {
+      "unit": "",
+      "meaning": "m_cachedMoveScale of the step's last usercmd (weapon/ability move-speed factor); optional"
+    },
+    "maxspeed": {
+      "unit": "u/s",
+      "meaning": "CMoveData maxspeed of the step's last usercmd; optional"
+    },
+    "pressed": {
+      "unit": "",
+      "meaning": "'|'-joined inputs that went down during the step: button names, AX_FWD/AX_BACK/AX_RIGHT/AX_LEFT"
+    },
+    "released": {
+      "unit": "",
+      "meaning": "'|'-joined inputs that went up during the step (same names)"
+    },
+    "pos_x": {
+      "unit": "u",
+      "meaning": "position after the step"
+    },
+    "pos_y": {
+      "unit": "u",
+      "meaning": ""
+    },
+    "pos_z": {
+      "unit": "u",
+      "meaning": ""
+    },
+    "vel_x": {
+      "unit": "u/s",
+      "meaning": "velocity after the step"
+    },
+    "vel_y": {
+      "unit": "u/s",
+      "meaning": ""
+    },
+    "vel_z": {
+      "unit": "u/s",
+      "meaning": ""
+    },
+    "grounded": {
+      "unit": "",
+      "meaning": "1/0 after the step; empty = unknown"
+    },
+    "sliding": {
+      "unit": "",
+      "meaning": "1/0 after the step; empty = unknown"
+    },
+    "crouched": {
+      "unit": "",
+      "meaning": "1/0 after the step; empty = unknown"
+    },
+    "sprinting": {
+      "unit": "",
+      "meaning": "1/0 after the step; empty = unknown"
+    },
+    "events": {
+      "unit": "",
+      "meaning": "'|'-joined events detected at this step: TAKEOFF, LAND, SLIDE_START, SLIDE_END"
+    }
+  },
+  "notes": ""
+}
