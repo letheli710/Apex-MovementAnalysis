@@ -73,6 +73,17 @@ Data: 21 scored trials.
   `sv_alter_portal_entrance_plane_guard` 0, `sv_alter_portal_exit_normal_hemisphere` 0 (`vscript_server_placement.cpp:2936-2946`).
   Shallow exits are logged at `:3261`.
 - **Which component finally rejects the spot is [open].**
+- **Second attempt, lead, `*_M6B_alter_sdkfix`** (13 trials: b_alter_stand ×5, b_alter_sprint ×5, bp_alter_hold12 ×3; all three levers on via
+  `--both-cvar`: min_depth 32, entrance_plane_guard 1, exit_normal_hemisphere 1).
+  - Still **0 portals**: 0 `ph=true` frames, no `ALTER: Teleporting` line.
+  - Dedi `[OPL-SRV]` counts:
+    - 5276 "entrance edge-correction failed" (overhang excess −24.0);
+    - 46 "min-depth reject depth=1.1": the lever now rejects the near-face exit;
+    - 46 "refined exit normal discarded (flipped hemisphere)";
+    - 31 "placement accepted", with the exit probe at loop 1 finding thickness 2538.0 u.
+  - That exit is far beyond the 30 m wall limit, so it is presumably still rejected downstream.
+  - Stopped here (stop-loss): the remaining cause is SDK placement geometry against this rock prop, not a movement question.
+  - This session is not analysed by `m6b_analysis.py` (diagnostic only).
 
 ### Source-supported [src]
 
