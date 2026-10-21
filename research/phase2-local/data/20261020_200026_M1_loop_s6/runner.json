@@ -1,0 +1,63 @@
+{
+ "schema": "hsd-runner/1",
+ "label": "M1_loop_s6",
+ "created": "20261020_195957",
+ "schedule": [
+  "wait 72",
+  "down forward",
+  "wait 432",
+  "up forward",
+  "wait 432",
+  "tap jump",
+  "wait 288"
+ ],
+ "schedule_frames": 1225,
+ "origin": [
+  -11699.0,
+  512.0,
+  1577.046
+ ],
+ "yaw": 0.0,
+ "trials": [
+  {
+   "trial": 900,
+   "run": 90,
+   "batch": 900,
+   "reset": "[HSD-RESET] ver=1 batch=900 run=90 ent=1 o=-11699,512,1577.05 vel=0,0,0 yaw=0 ground=1 slide=0 weapon=mp_weapon_melee_survival t=41.15",
+   "scheduled": "scheduled trial=900 fc=2490",
+   "sched_lines": [
+    "[HSD-SCHED] ver=1 trial=900 run=90 edge=start frame=0 fc=2520 pt=40.3854 t=41.3319 o=-11699,512,1577.05 yaw=0 settle_frames=30",
+    "[HSD-SCHED] ver=1 trial=900 run=90 edge=down key=forward frame=72 fc=2592 pt=40.8854 t=41.8418",
+    "[HSD-SCHED] ver=1 trial=900 run=90 edge=up key=forward frame=504 fc=3024 pt=43.8873 t=44.8418",
+    "[HSD-SCHED] ver=1 trial=900 run=90 edge=down key=jump frame=936 fc=3456 pt=46.8876 t=47.8432",
+    "[HSD-SCHED] ver=1 trial=900 run=90 edge=up key=jump frame=937 fc=3457 pt=46.8951 t=47.8502",
+    "[HSD-SCHED] ver=1 trial=900 run=90 edge=end frame=1225 fc=3745 pt=48.8957 t=49.8515 o=-11095.3,512,1576.92"
+   ],
+   "log_gap": false,
+   "measured_fps": 143.94,
+   "ok": true,
+   "why": "",
+   "warmup": true
+  },
+  {
+   "trial": 36,
+   "run": 36,
+   "batch": 36,
+   "reset": "[HSD-RESET] ver=1 batch=36 run=36 ent=1 o=-11699,512,1577.05 vel=0,0,0 yaw=0 ground=1 slide=0 weapon=mp_weapon_melee_survival t=51.05",
+   "scheduled": "scheduled trial=36 fc=3913",
+   "sched_lines": [
+    "[HSD-SCHED] ver=1 trial=36 run=36 edge=start frame=0 fc=3945 pt=50.2851 t=51.2405 o=-11699,512,1577.05 yaw=0 settle_frames=32",
+    "[HSD-SCHED] ver=1 trial=36 run=36 edge=down key=forward frame=72 fc=4017 pt=50.7853 t=51.7405",
+    "[HSD-SCHED] ver=1 trial=36 run=36 edge=up key=forward frame=504 fc=4449 pt=53.7864 t=54.7418",
+    "[HSD-SCHED] ver=1 trial=36 run=36 edge=down key=jump frame=936 fc=4881 pt=56.7873 t=57.7418",
+    "[HSD-SCHED] ver=1 trial=36 run=36 edge=up key=jump frame=937 fc=4882 pt=56.7951 t=57.7487",
+    "[HSD-SCHED] ver=1 trial=36 run=36 edge=end frame=1225 fc=5170 pt=58.7951 t=59.7488 o=-11095,512,1576.92"
+   ],
+   "log_gap": false,
+   "measured_fps": 143.95,
+   "ok": true,
+   "why": "",
+   "warmup": false
+  }
+ ]
+}

@@ -1,0 +1,61 @@
+{
+  "files": [
+    "C:\\Workspace\\Playground\\ReApex-DataAnalysis\\Apex-MovementAnalysis\\research\\phase2-local\\data\\20261020_195610_M1_loop_s4_game\\platform\\logs\\client\\c07b3ec3-ea25-4ab4-a072-132add167602\\bridge_trace.log",
+    "C:\\Workspace\\Playground\\ReApex-DataAnalysis\\Apex-MovementAnalysis\\research\\phase2-local\\data\\20261020_195610_M1_loop_s4_game\\platform\\logs\\client\\c07b3ec3-ea25-4ab4-a072-132add167602\\error.log",
+    "C:\\Workspace\\Playground\\ReApex-DataAnalysis\\Apex-MovementAnalysis\\research\\phase2-local\\data\\20261020_195610_M1_loop_s4_game\\platform\\logs\\client\\c07b3ec3-ea25-4ab4-a072-132add167602\\filesystem.log",
+    "C:\\Workspace\\Playground\\ReApex-DataAnalysis\\Apex-MovementAnalysis\\research\\phase2-local\\data\\20261020_195610_M1_loop_s4_game\\platform\\logs\\client\\c07b3ec3-ea25-4ab4-a072-132add167602\\message.log",
+    "C:\\Workspace\\Playground\\ReApex-DataAnalysis\\Apex-MovementAnalysis\\research\\phase2-local\\data\\20261020_195610_M1_loop_s4_game\\platform\\logs\\client\\c07b3ec3-ea25-4ab4-a072-132add167602\\net_trace.log",
+    "C:\\Workspace\\Playground\\ReApex-DataAnalysis\\Apex-MovementAnalysis\\research\\phase2-local\\data\\20261020_195610_M1_loop_s4_game\\platform\\logs\\client\\c07b3ec3-ea25-4ab4-a072-132add167602\\netconsole.log",
+    "C:\\Workspace\\Playground\\ReApex-DataAnalysis\\Apex-MovementAnalysis\\research\\phase2-local\\data\\20261020_195610_M1_loop_s4_game\\platform\\logs\\client\\c07b3ec3-ea25-4ab4-a072-132add167602\\script.log",
+    "C:\\Workspace\\Playground\\ReApex-DataAnalysis\\Apex-MovementAnalysis\\research\\phase2-local\\data\\20261020_195610_M1_loop_s4_game\\platform\\logs\\client\\c07b3ec3-ea25-4ab4-a072-132add167602\\script_warning.log",
+    "C:\\Workspace\\Playground\\ReApex-DataAnalysis\\Apex-MovementAnalysis\\research\\phase2-local\\data\\20261020_195610_M1_loop_s4_game\\platform\\logs\\client\\c07b3ec3-ea25-4ab4-a072-132add167602\\warning.log",
+    "C:\\Workspace\\Playground\\ReApex-DataAnalysis\\Apex-MovementAnalysis\\research\\phase2-local\\data\\20261020_195610_M1_loop_s4_game\\platform\\logs\\server\\97fc9877-df72-4717-9feb-f39fb09e42a4\\error.log",
+    "C:\\Workspace\\Playground\\ReApex-DataAnalysis\\Apex-MovementAnalysis\\research\\phase2-local\\data\\20261020_195610_M1_loop_s4_game\\platform\\logs\\server\\97fc9877-df72-4717-9feb-f39fb09e42a4\\filesystem.log",
+    "C:\\Workspace\\Playground\\ReApex-DataAnalysis\\Apex-MovementAnalysis\\research\\phase2-local\\data\\20261020_195610_M1_loop_s4_game\\platform\\logs\\server\\97fc9877-df72-4717-9feb-f39fb09e42a4\\message.log",
+    "C:\\Workspace\\Playground\\ReApex-DataAnalysis\\Apex-MovementAnalysis\\research\\phase2-local\\data\\20261020_195610_M1_loop_s4_game\\platform\\logs\\server\\97fc9877-df72-4717-9feb-f39fb09e42a4\\net_trace.log",
+    "C:\\Workspace\\Playground\\ReApex-DataAnalysis\\Apex-MovementAnalysis\\research\\phase2-local\\data\\20261020_195610_M1_loop_s4_game\\platform\\logs\\server\\97fc9877-df72-4717-9feb-f39fb09e42a4\\script.log",
+    "C:\\Workspace\\Playground\\ReApex-DataAnalysis\\Apex-MovementAnalysis\\research\\phase2-local\\data\\20261020_195610_M1_loop_s4_game\\platform\\logs\\server\\97fc9877-df72-4717-9feb-f39fb09e42a4\\script_warning.log",
+    "C:\\Workspace\\Playground\\ReApex-DataAnalysis\\Apex-MovementAnalysis\\research\\phase2-local\\data\\20261020_195610_M1_loop_s4_game\\platform\\logs\\server\\97fc9877-df72-4717-9feb-f39fb09e42a4\\warning.log"
+  ],
+  "summary": {
+    "errors": 0,
+    "warnings": 2,
+    "infos": 2,
+    "codes": {
+      "I_REPLAYS": 1,
+      "W_TELEPORT": 1,
+      "W_TIME_BACKWARDS": 1,
+      "I_JOIN": 1
+    }
+  },
+  "issues": [
+    {
+      "severity": "info",
+      "code": "I_REPLAYS",
+      "file": "message.log",
+      "line_no": 0,
+      "message": "37 re-predicted (rp=1) rows in ('MT', 'cl', 'cmd', 1, 'c07b3ec3-ea25-4ab4-a072-132add167602')"
+    },
+    {
+      "severity": "warning",
+      "code": "W_TELEPORT",
+      "file": "script.log",
+      "line_no": 730,
+      "message": "teleport in stream ('HSD', 'sv', 'evt', 1.0, '97fc9877-df72-4717-9feb-f39fb09e42a4')"
+    },
+    {
+      "severity": "warning",
+      "code": "W_TIME_BACKWARDS",
+      "file": "script.log",
+      "line_no": 713,
+      "message": "t 25.45 -> 25.28612 in ('HSD', 'sv', 'evt', 1.0, '97fc9877-df72-4717-9feb-f39fb09e42a4')"
+    },
+    {
+      "severity": "info",
+      "code": "I_JOIN",
+      "file": "",
+      "line_no": 0,
+      "message": "99.8% of client commands have a dedi line for the same usercmd (session, ent, reset batch, cmd) (2170/2175; ambiguous 0)"
+    }
+  ]
+}

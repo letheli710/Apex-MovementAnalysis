@@ -49,6 +49,7 @@ def main(argv):
     ap.add_argument("--run-base", type=int, required=True)
     ap.add_argument("--batch-base", type=int, required=True)
     ap.add_argument("--load-timeout", type=int, default=900)
+    ap.add_argument("--settle-s", type=int, default=15, help="idle seconds after the spawn before the first trial")
     ap.add_argument("trial_args", nargs="*", help="extra hsd_trial.py options (after --)")
     a = ap.parse_args(argv)
     py = sys.executable
@@ -58,7 +59,8 @@ def main(argv):
     if not wait_alive(a.game, a.load_timeout):
         subprocess.run(PS + ["-Stop"])
         print("level did not load in time"); return 2
-    print(f"[session] in level after {time.time() - t0:.0f} s")
+    print(f"[session] in level after {time.time() - t0:.0f} s; settling {a.settle_s} s")
+    time.sleep(a.settle_s)                              # level streaming hitches right after the spawn
 
     before = set(glob.glob(os.path.join(DATA, f"*_{a.label}")))
     rc = subprocess.run([py, os.path.join(HERE, "hsd_trial.py"), "--game", a.game, "--trials", str(a.trials),

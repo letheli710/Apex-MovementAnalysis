@@ -3,7 +3,9 @@
 then play a frame-indexed input schedule in the client VM.
 
 Per trial:
-  1. run label N on both consoles (hsd_md_run N; tags every [HSD-MD] line).
+  1. run label N on the dedi console (hsd_md_run N); the client label is set by the
+     schedule thread itself once the reset has settled (step 3), so the client trial
+     window starts after the teleport.
   2. dedi EVAL: the fs_1v1 teleport recipe (SetVelocity 0, SettleStance, SetOrigin,
      SetAngles, SetVelocity 0, PlantOnGround, SnapEyeAngles, SnapFeetToEyes;
      s21-platform/scripts/vscripts/gamemodes/fs_1v1/_1v1_match.nut:2087-2103), and a
@@ -90,6 +92,9 @@ void functionref() f = void function() : ( steps ) {
 			return
 		}
 	}
+	// The client label starts here, after the reset has settled, so a trial never contains the
+	// teleport (the dedi label was set before the reset and is inherited through the cmd join).
+	SetConVarInt( "hsd_md_run", $run )
 	int f0 = FrameCount()
 	printt( "[HSD-SCHED] ver=1 trial=$trial run=$run edge=start frame=0 fc=" + f0 + " pt=" + PlatformTime() + " t=" + Time() + " o=" + p.GetOrigin().x + "," + p.GetOrigin().y + "," + p.GetOrigin().z + " yaw=" + p.EyeAngles().y + " settle_frames=" + waited )
 	foreach ( string st in steps )
@@ -117,6 +122,7 @@ void functionref() f = void function() : ( steps ) {
 			printt( "[HSD-SCHED] ver=1 trial=$trial run=$run edge=up key=" + key + " frame=" + ( FrameCount() - f0 ) + " fc=" + FrameCount() + " pt=" + PlatformTime() + " t=" + Time() )
 		}
 	}
+	SetConVarInt( "hsd_md_run", 0 )
 	printt( "[HSD-SCHED] ver=1 trial=$trial run=$run edge=end frame=" + ( FrameCount() - f0 ) + " fc=" + FrameCount() + " pt=" + PlatformTime() + " t=" + Time() + " o=" + p.GetOrigin().x + "," + p.GetOrigin().y + "," + p.GetOrigin().z )
 }
 thread f()
@@ -201,6 +207,9 @@ def main(argv):
     ap.add_argument("--settle-timeout", type=int, default=1440)
     ap.add_argument("--fps", type=float, default=144.0, help="planned client frame rate (fps_max in hsd_client.cfg)")
     ap.add_argument("--fps-tol", type=float, default=0.03, help="allowed relative deviation of the measured frame rate")
+    ap.add_argument("--warmup", type=int, default=1,
+                    help="unscored warm-up trials first (run labels r90+, batches 900+); the first trial "
+                         "after a level load hitched in M1 session 3")
     ap.add_argument("--label", default="trials")
     ap.add_argument("--out", default=os.path.join(REPO, "research", "phase2-local", "data"))
     a = ap.parse_args(argv)
@@ -213,10 +222,11 @@ def main(argv):
                 "schedule_frames": frames, "origin": list(a.origin), "yaw": a.yaw, "trials": []}
 
     with AgentLink("server", a.game) as server, AgentLink("client", a.game) as client:
-        for k in range(a.trials):
-            run, batch, trial = a.run_base + k, a.batch_base + k, a.batch_base + k
+        plan = [(90 + w, 900 + w, True) for w in range(a.warmup)] +                [(a.run_base + k, a.batch_base + k, False) for k in range(a.trials)]
+        for run, batch, warm in plan:
+            trial = batch
             server.cmd(f"hsd_md_run {run}")
-            client.cmd(f"hsd_md_run {run}")
+            client.cmd("hsd_md_run 0")           # the schedule thread sets the client label once settled
             since = client.info()["logSeq"]
             reset = server.eval(RESET_SERVER.substitute(ox=ox, oy=oy, oz=oz, yaw=a.yaw, batch=batch, run=run))
             sched = client.eval(SCHED_CLIENT.substitute(
@@ -228,8 +238,9 @@ def main(argv):
             ok, why, fps = check_pacing(lines, frames, a.fps, a.fps_tol)
             manifest["trials"].append({"trial": trial, "run": run, "batch": batch, "reset": reset.get("reply", ""),
                                        "scheduled": sched.get("reply", ""), "sched_lines": lines,
-                                       "log_gap": gap, "measured_fps": fps, "ok": ok, "why": why})
-            print(f"trial {trial} run r{run}: {'ok' if ok else 'FAILED (' + why + ')'} fps={fps}")
+                                       "log_gap": gap, "measured_fps": fps, "ok": ok, "why": why, "warmup": warm})
+            tag = "warm-up " if warm else ""
+            print(f"{tag}trial {trial} run r{run}: {'ok' if ok else 'FAILED (' + why + ')'} fps={fps}")
             time.sleep(1.0)
 
     out = os.path.join(a.out, f"{stamp}_{a.label}")
@@ -237,7 +248,7 @@ def main(argv):
     with open(os.path.join(out, "runner.json"), "w", encoding="utf-8", newline="\n") as fh:
         json.dump(manifest, fh, indent=1)
     print("wrote", os.path.relpath(os.path.join(out, "runner.json"), REPO))
-    return 0 if all(t["ok"] for t in manifest["trials"]) else 1
+    return 0 if all(t["ok"] for t in manifest["trials"] if not t["warmup"]) else 1
 
 
 if __name__ == "__main__":

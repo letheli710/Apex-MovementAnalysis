@@ -1,0 +1,64 @@
+{
+ "trials": 6,
+ "full_sequence": true,
+ "no_cmd_gaps": true,
+ "min_join": 1.0,
+ "runner_ok": true,
+ "spans": {
+  "fwd_down->fwd_up": {
+   "min": 432,
+   "max": 432,
+   "spread": 0,
+   "ok": true
+  },
+  "fwd_up->stop": {
+   "min": 22,
+   "max": 22,
+   "spread": 0,
+   "ok": true
+  },
+  "jump->takeoff": {
+   "min": 1,
+   "max": 1,
+   "spread": 0,
+   "ok": true
+  },
+  "stop->jump": {
+   "min": 410,
+   "max": 410,
+   "spread": 0,
+   "ok": true
+  },
+  "takeoff->land": {
+   "min": 109,
+   "max": 109,
+   "spread": 0,
+   "ok": true
+  }
+ },
+ "peak_spd2d": {
+  "min": 199.525,
+  "max": 199.525,
+  "mean": 199.525,
+  "rel_spread": 0.0
+ },
+ "dist_x": {
+  "min": 603.77,
+  "max": 604.78,
+  "mean": 604.17,
+  "rel_spread": 0.00167
+ },
+ "apex_dz": {
+  "min": 54.99,
+  "max": 55.03,
+  "mean": 55.0,
+  "rel_spread": 0.00073
+ },
+ "takeoff_vz": {
+  "min": 276.715,
+  "max": 277.192,
+  "mean": 276.825,
+  "rel_spread": 0.00172
+ },
+ "consistent": true
+}
