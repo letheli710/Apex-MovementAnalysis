@@ -275,6 +275,15 @@ Newest entries at the bottom. Problems are tagged **[ISSUE]** and also listed in
   - **Alter: not triggerable** in this setup. The SDK placement never yields a usable spot; a retry with the 3 SDK levers on still produced none. Alter's conclusions are source-only.
   - **[ISSUE]** First-run input mistakes: Ash needs offhand4 then attack; Loba's real throw delay is 1.21 s, so the t07–t12 drops came too early. Both are documented, not hidden.
   - A Unity build of any legend waits for the user's decision.
+- **M6-C done** (HSD-Unity `de4495c`; lead-verified):
+  - Tests: EditMode 511/511, PlayMode 1/1.
+  - Default motor identical; M4 replays 114/114.
+  - Smoke: demos 34/34 as expected; course lap 80.82 s; feedback snapshot written.
+  - Course J–P with at least 2 ways through each section; 7 more chains (3 cross-family).
+  - Fuzz: 360 episodes, 1.51 M commands, caps held.
+  - F9/F10 feedback snapshots; Chinese design notes and guide.
+  - **[ISSUE→fixed]** In random play the player flew over the 800 u boundary walls; the walls are now 5000 u with an invisible ceiling.
+- **M6 summary** written (`m6/M6-REPORT.md`). Awaiting the user's choice of M6-B legend builds.
 
 ## Open issues
 

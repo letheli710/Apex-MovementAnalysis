@@ -12,7 +12,7 @@
 | M5.5 movement feedback & playability (user request after the first playtest) | **done** | physics-decoupled FPS camera + slide feedback, grapple states + range check, ability entities, one-key Movement Demo, HUD normal/diagnostic; simulation bit-identical with visuals on/off | [m55/ACCEPTANCE-M55.md](m55/ACCEPTANCE-M55.md), [m55/PLAYTEST-GUIDE-M55.md](m55/PLAYTEST-GUIDE-M55.md) |
 | M6-A general advanced movement (lurch/TS, climb/mantle/superglide, zipline, world) | **done** | 3 families playable, independent tests + regression, M5.5 unchanged, ≥ 3 real-input chains, Windows build + route | [m6/M6-A-REPORT.md](m6/M6-A-REPORT.md), [m6/PLAYTEST-GUIDE-M6.md](m6/PLAYTEST-GUIDE-M6.md) |
 | M6-B unique legend mobility (Alter, Loba, Ash, Valkyrie + grapple) | **research done** (Alter source-only: not triggerable); build scope awaits user | research conclusions, evidence classes, comparison; no full build without user OK | [m6/b_legends/M6-B-REPORT.md](m6/b_legends/M6-B-REPORT.md) |
-| M6-C combination playground | pending | natural combos, no stuck/over-speed/collision issues, free play, feedback entry | — |
+| M6-C combination playground | **done** | natural combos, no stuck/over-speed/collision issues, free play, feedback entry | [m6/unity/M6C-UNITY.md](m6/unity/M6C-UNITY.md), [m6/M6-C-DESIGN-NOTES.md](m6/M6-C-DESIGN-NOTES.md), [m6/PLAYTEST-GUIDE-M6C.md](m6/PLAYTEST-GUIDE-M6C.md); summary [m6/M6-REPORT.md](m6/M6-REPORT.md) |
 
 Rules in force: offline R5Flowstate and the Unity project only; no game files in git (raw logs stay local, `.gitignore`); no forged PASS; one process drives the game or the Unity editor at a time.
 
