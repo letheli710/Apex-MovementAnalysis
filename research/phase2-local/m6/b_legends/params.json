@@ -1,0 +1,436 @@
+{
+ "valk.census.jetpackEnabled": {
+  "value": "true",
+  "unit": "",
+  "source": "client [CLASSVAR] census (20261021_180800_M6B_valk)",
+  "n": 1
+ },
+ "valk.census.jetpackThrust": {
+  "value": 1.9,
+  "unit": "",
+  "source": "client [CLASSVAR] census (20261021_180800_M6B_valk)",
+  "n": 1
+ },
+ "valk.census.jetpackMeterRate": {
+  "value": 1.0,
+  "unit": "",
+  "source": "client [CLASSVAR] census (20261021_180800_M6B_valk)",
+  "n": 1
+ },
+ "valk.census.jetpackMeterOnActivation": {
+  "value": 1.0,
+  "unit": "",
+  "source": "client [CLASSVAR] census (20261021_180800_M6B_valk)",
+  "n": 1
+ },
+ "valk.census.jetpackTacticalMeterRate": {
+  "value": 1.0,
+  "unit": "",
+  "source": "client [CLASSVAR] census (20261021_180800_M6B_valk)",
+  "n": 1
+ },
+ "valk.census.jetpackThrustScaleOnActivation": {
+  "value": 1.8,
+  "unit": "",
+  "source": "client [CLASSVAR] census (20261021_180800_M6B_valk)",
+  "n": 1
+ },
+ "valk.census.jetpackThrustScaleTimeOnActivation": {
+  "value": 0.5,
+  "unit": "",
+  "source": "client [CLASSVAR] census (20261021_180800_M6B_valk)",
+  "n": 1
+ },
+ "valk.census.jetpackPostEffectTime": {
+  "value": 3.0,
+  "unit": "",
+  "source": "client [CLASSVAR] census (20261021_180800_M6B_valk)",
+  "n": 1
+ },
+ "valk.census.jetpackPostEffectGravity": {
+  "value": 0.45,
+  "unit": "",
+  "source": "client [CLASSVAR] census (20261021_180800_M6B_valk)",
+  "n": 1
+ },
+ "valk.census.jetpackPostEffectDrag": {
+  "value": 0.000125,
+  "unit": "",
+  "source": "client [CLASSVAR] census (20261021_180800_M6B_valk)",
+  "n": 1
+ },
+ "valk.census.jetpackTightnessUp": {
+  "value": 0.27,
+  "unit": "",
+  "source": "client [CLASSVAR] census (20261021_180800_M6B_valk)",
+  "n": 1
+ },
+ "valk.census.jetpackTightnessDown": {
+  "value": 0.1,
+  "unit": "",
+  "source": "client [CLASSVAR] census (20261021_180800_M6B_valk)",
+  "n": 1
+ },
+ "valk.census.jetpackTightnessSideways": {
+  "value": 0.11,
+  "unit": "",
+  "source": "client [CLASSVAR] census (20261021_180800_M6B_valk)",
+  "n": 1
+ },
+ "valk.census.jetpackTightnessForwardBack": {
+  "value": 0.14,
+  "unit": "",
+  "source": "client [CLASSVAR] census (20261021_180800_M6B_valk)",
+  "n": 1
+ },
+ "valk.census.glideDuration": {
+  "value": 8.0,
+  "unit": "",
+  "source": "client [CLASSVAR] census (20261021_180800_M6B_valk)",
+  "n": 1
+ },
+ "valk.census.glideEnabled": {
+  "value": "false",
+  "unit": "",
+  "source": "client [CLASSVAR] census (20261021_180800_M6B_valk)",
+  "n": 1
+ },
+ "valk.census.hoverEnabled": {
+  "value": "false",
+  "unit": "",
+  "source": "client [CLASSVAR] census (20261021_180800_M6B_valk)",
+  "n": 1
+ },
+ "valk.census.glideRechargeOnlyInGroundedState": {
+  "value": "false",
+  "unit": "",
+  "source": "client [CLASSVAR] census (20261021_180800_M6B_valk)",
+  "n": 1
+ },
+ "valk.census.glideRechargeOnlyWhenFeetOnGround": {
+  "value": "false",
+  "unit": "",
+  "source": "client [CLASSVAR] census (20261021_180800_M6B_valk)",
+  "n": 1
+ },
+ "alter.triggered_portals": {
+  "value": 0,
+  "unit": "trials",
+  "source": "dedi MT (no teleport), client ph=false, no 'ALTER: Teleporting'",
+  "n": 21
+ },
+ "alter.sdk_exit_depth": {
+  "value": 1.1000000000000003,
+  "unit": "u",
+  "source": "[OPL-SRV] exit probe (SDK placement reimplementation)",
+  "n": 21
+ },
+ "alter.sdk_wall_thickness": {
+  "value": 216.51349206349204,
+  "unit": "u",
+  "source": "[OPL-SRV] exit probe thickness",
+  "n": 21
+ },
+ "loba.throw_latency_from_melee": {
+  "value": 1.207750000000002,
+  "unit": "s",
+  "source": "client offhand1 press cmd -> dedi throw script line",
+  "n": 16,
+  "spread": [
+   1.1520000000000152,
+   1.2519999999999953
+  ]
+ },
+ "loba.speed_after_teleport": {
+  "value": 0.0,
+  "unit": "u/s",
+  "source": "dedi MT pre-velocity on the teleport cmd",
+  "n": 15,
+  "spread": [
+   0.0,
+   0.0
+  ]
+ },
+ "loba.early_drop_teleport_dist": {
+  "value": 883.0799999999999,
+  "unit": "u",
+  "source": "dedi MT; drop press 0.35 s after the throw (b_loba_drop_t15)",
+  "n": 5,
+  "spread": [
+   831.9,
+   932.2
+  ]
+ },
+ "loba.early_drop_throw_to_teleport": {
+  "value": 1.0084,
+  "unit": "s",
+  "source": "dedi throw line -> MT origin jump",
+  "n": 5,
+  "spread": [
+   0.948,
+   1.049
+  ]
+ },
+ "loba.late_drop_press_to_teleport": {
+  "value": 1.0936249999999998,
+  "unit": "s",
+  "source": "next trial's first offhand1 press -> MT origin jump (bracelet still in flight)",
+  "n": 8,
+  "spread": [
+   0.999,
+   1.151
+  ]
+ },
+ "ash.freeze_gap_vs_frames": {
+  "value": {
+   "a": 0.15159120734908127,
+   "b_per_frame": 0.10170056867891512
+  },
+  "unit": "s",
+  "source": "dedi MT command gap vs round(clamp(d/1200,0.3,1.8)/0.1)",
+  "n": 20,
+  "rms": 0.025128624350292568
+ },
+ "ash.freeze_gap_vs_dist": {
+  "value": {
+   "a": 0.20644069884018856,
+   "b": 0.0007969680415925915
+  },
+  "unit": "s, s/u",
+  "source": "dedi MT command gap",
+  "n": 20,
+  "rms": 0.025146956000714715
+ },
+ "ash.exit_speed": {
+  "value": 0.0,
+  "unit": "u/s",
+  "source": "dedi MT pre-velocity on the first post-breach cmd",
+  "n": 20,
+  "spread": [
+   0.0,
+   0.0
+  ]
+ },
+ "ash.exit_height_above_start": {
+  "value": 5.0,
+  "unit": "u",
+  "source": "dedi MT",
+  "n": 20
+ },
+ "ash.attack_to_entry": {
+  "value": 0.4030500000000039,
+  "unit": "s",
+  "source": "client attack press cmd -> dedi PhaseTunnel_PhaseEntity",
+  "n": 20,
+  "spread": [
+   0.4000000000000057,
+   0.45000000000000284
+  ]
+ },
+ "ash.b_ash_1200.freeze_gap": {
+  "value": 1.0763888888888886,
+  "unit": "s",
+  "source": "dedi MT command gap",
+  "n": 6,
+  "spread": [
+   1.05,
+   1.1
+  ]
+ },
+ "ash.b_ash_1200.dist": {
+  "value": 1102.7520000000004,
+  "unit": "u",
+  "source": "dedi MT start -> exit",
+  "n": 6
+ },
+ "ash.b_ash_2000.freeze_gap": {
+  "value": 1.6722222222222218,
+  "unit": "s",
+  "source": "dedi MT command gap",
+  "n": 6,
+  "spread": [
+   1.6416666666666666,
+   1.6916666666666667
+  ]
+ },
+ "ash.b_ash_2000.dist": {
+  "value": 1832.5310000000009,
+  "unit": "u",
+  "source": "dedi MT start -> exit",
+  "n": 6
+ },
+ "ash.b_ash_600.freeze_gap": {
+  "value": 0.6527777777777778,
+  "unit": "s",
+  "source": "dedi MT command gap",
+  "n": 6,
+  "spread": [
+   0.6166666666666667,
+   0.7
+  ]
+ },
+ "ash.b_ash_600.dist": {
+  "value": 551.223,
+  "unit": "u",
+  "source": "dedi MT start -> exit",
+  "n": 6
+ },
+ "ash.bp_ash_att.freeze_gap": {
+  "value": 1.05,
+  "unit": "s",
+  "source": "dedi MT command gap",
+  "n": 1,
+  "spread": [
+   1.05,
+   1.05
+  ]
+ },
+ "ash.bp_ash_att.dist": {
+  "value": 1102.7520000000004,
+  "unit": "u",
+  "source": "dedi MT start -> exit",
+  "n": 1
+ },
+ "ash.bp_ash_hold_att.freeze_gap": {
+  "value": 1.1,
+  "unit": "s",
+  "source": "dedi MT command gap",
+  "n": 1,
+  "spread": [
+   1.1,
+   1.1
+  ]
+ },
+ "ash.bp_ash_hold_att.dist": {
+  "value": 1102.7520000000004,
+  "unit": "u",
+  "source": "dedi MT start -> exit",
+  "n": 1
+ },
+ "valk.meter_drain_rate": {
+  "n": 5,
+  "spread": [
+   1.0001073156838014,
+   1.0004893205328744
+  ],
+  "value": 1.0002276302825865,
+  "unit": "1/s",
+  "source": "client glide= (HSD-STATE) slope while held (hold10)"
+ },
+ "valk.meter_activation_cost": {
+  "n": 25,
+  "spread": [
+   0.9996484044675356,
+   1.0001417109152126
+  ],
+  "value": 1.0000208785193914,
+  "unit": "meter",
+  "source": "client glide= step at activation (hold10 + pulses)"
+ },
+ "valk.meter_max": {
+  "value": 8.0,
+  "unit": "meter (= seconds at drain 1)",
+  "source": "glide= at trial start; census glideDuration",
+  "n": 10
+ },
+ "valk.time_to_empty_continuous": {
+  "n": 5,
+  "spread": [
+   7.0,
+   7.0
+  ],
+  "value": 7.0,
+  "unit": "s",
+  "source": "client glide= reaches 0 while held"
+ },
+ "valk.fuel_stop_vz_scale": {
+  "n": 5,
+  "spread": [
+   0.4000007877830603,
+   0.4000007880779567
+  ],
+  "value": 0.40000078784203963,
+  "unit": "",
+  "source": "dedi MT next pre / post vz at the fuel stop (vz 253.9 < terminal 265.75)"
+ },
+ "valk.post_effect_time": {
+  "n": 5,
+  "spread": [
+   2.9583333333333335,
+   2.9916666666666667
+  ],
+  "value": 2.9783333333333335,
+  "unit": "s",
+  "source": "dedi MT dvz = -0.45 g per cmd after the fuel stop (high altitude, probe not reached)"
+ },
+ "valk.release_above_terminal_scale": {
+  "n": 20,
+  "spread": [
+   1.0,
+   1.0
+  ],
+  "value": 1.0,
+  "unit": "",
+  "source": "dedi MT next pre / post vz on a 0.3 s pulse release (vz > 265.75)"
+ },
+ "valk.recharge_rate": {
+  "n": 5,
+  "spread": [
+   0.7484904546768786,
+   0.750078415717511
+  ],
+  "value": 0.7494255690392888,
+  "unit": "1/s",
+  "source": "client glide= slope after the recharge starts"
+ },
+ "valk.recharge_delay_after_landing": {
+  "n": 5,
+  "spread": [
+   4.416660623801093,
+   4.441144586307132
+  ],
+  "value": 4.429644815675658,
+  "unit": "s",
+  "source": "client glide=, waitland edge (hold10 only)"
+ },
+ "valk.recharge_delay_after_release": {
+  "n": 5,
+  "spread": [
+   4.975144586307152,
+   5.025007138101955
+  ],
+  "value": 5.00992481567566,
+  "unit": "s",
+  "source": "client glide=, jump up edge (hold10 only)"
+ },
+ "valk.terminal_pre_vz": {
+  "n": 5,
+  "spread": [
+   260.1073990498803,
+   260.1309501187642
+  ],
+  "value": 260.125899762469,
+  "unit": "u/s",
+  "source": "dedi MT pre vz 3..6.5 s after activation"
+ },
+ "valk.m4_model_resid_rms": {
+  "n": 25,
+  "spread": [
+   0.005409123729506473,
+   0.38415668838772166
+  ],
+  "value": 0.03947325768151643,
+  "unit": "u/s per cmd",
+  "source": "one-step (post_i -> pre_i+1) residual of the M4 jets model"
+ },
+ "valk.apex_hold10": {
+  "n": 5,
+  "spread": [
+   1888.774,
+   1889.663
+  ],
+  "value": 1889.1244000000002,
+  "unit": "u",
+  "source": "dedi MT"
+ }
+}
