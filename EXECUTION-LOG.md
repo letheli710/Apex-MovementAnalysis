@@ -42,6 +42,36 @@ Newest entries at the bottom. Problems are tagged **[ISSUE]** and also listed in
   - First error report: position RMS 32 u. Ground acceleration dominates: R5 shows a low-speed branch at about 2875 u/s² and move-scale-scaled acceleration. Jump apex is 56.0 in sim against 55.0 in R5.
 - Created the private repo `letheli710/HSD-Unity`: `main` holds the empty project, `m1/r5-replay` holds the pipeline.
 - **M1 accepted** (A1–A4). Next: M2 (E0 census per session, E1 ground, E2 air, E4 jump, E5 slide).
+- **M2 started** on branch `phase2-local/m2-params`.
+  - Contract: optional per-step `movescale`/`maxspeed` columns.
+  - Runner: multi-condition sessions with an E0 census at the start; 17 schedules covering E1/E2/E4/E5; per-schedule yaw.
+  - Pilot 1, on the spawn pad, exposed three problems: **[ISSUE→fixed]** `+back` does nothing (the command is `+backward`); **[ISSUE→fixed]** walls on the right of the pad; **[ISSUE→fixed]** hop chains fall off the pad after about 1100 u.
+  - `map_scan.py` traced the map from the dedi and found a flat, hull-clear field at z 294.92 (about 2000 × 1600 u). Pilot 2 on it is clean: all 17 conditions, no falls, every straight motion along +X.
+  - **[ISSUE→fixed]** The first scan JSON contained a local user path, caught before push. The tool now drops it, the commit was amended locally, and a local pre-commit hook blocks `<drive>:\Users\<name>` paths.
+- M2 main session (17 conditions × 5 trials): **[ISSUE]** only 32 of 85 trials passed the fps check.
+  - From the start the client ran steadily at about **138 fps**, and later dipped to 77–127.
+  - Desktop activity overlapped: Twinkle Tray started at 20:42 and VS Code/Chrome at 20:44, while the session started at 20:47.
+  - 138 on a 144 Hz display looks like an external frame cap (G-Sync/Reflex style). The cause is unverified.
+  - fps returned to 144 by r251; E4/E5 trials from there on are valid.
+  - The ±3 % threshold was **not** relaxed. The 12 short conditions were re-run instead (`M2_rerun`): 60/60 passed at about 143.9 fps.
+- Every M2 condition now has ≥ 5 valid trials. Started three offline analysis subagents (ground E1, air/jump E2+E4, slide E5). Exported 34 `hsdmove-trial/2` trials (2 per condition) for the Unity mapping; check-contract reports 0 problems.
+- M2 analysis by three subagents, each rerun by the lead with byte-identical outputs:
+  - **ground**: piecewise accel 2875 → 517.5 → sprint band, constant decel 1250 (not ×msc), crouch 92/1500; spreads ≤ 0.10 %.
+  - **air/jump**: half-step gravity 750; V = √(2g·56·frac) with 1.5·g·dt removed on the jump command (this explains 276.8); AirAccelerate = 500·dt, cap 60·msc; multi-jump frac 0.3 → 1 over 0.15 + 0.60 s; no air drag.
+  - **slide**: boost to min(v + 150·msc, 400·msc); decay (v − 100·dt)·0.7^dt; end below 125; slide jump refund / 350 floor.
+- **[ISSUE→understood]** `sprintAcceleration` differs between sessions (100 vs 102). Cause: the firing range assigns a **random legend per session** (M0/M1 Gibraltar, M2_main Pathfinder, M2_rerun Wraith). Wraith's class vars differ in sprintAcceleration and dodge only, and the measured sprint accel followed each session's census exactly (115.01 / 117.30).
+  - The models stay valid because they read live class vars.
+  - The runner now pins the legend (`--legend`, default gibraltar, via `Agent_SetLegend`); not yet verified live.
+  - SESSION-BASELINE corrected.
+- Wrote `m2/PARAMETER-TABLE.md`: value, unit, source and spread for every parameter. M2 R5-side acceptance passes (terminal speed spread 0 %, worst accel/decel spread 1.06 %). Started the Unity motor v2 subagent (the only Unity process).
+- The Unity motor v2 subagent built `R5MotorV2` (48/48 EditMode tests) and replayed 37 real trials.
+  - E1 position RMS is 0.03–0.66 u; terminal speed error 0.000 %. M1 trial: 32.2 → 1.38 u RMS.
+  - Worst case is e2_strafe (81 u RMS) from the unmodelled lurch, which belongs to M3.
+- **[ISSUE→fixed]** The Unity agent found that sprint is button **bit 15** (0x8000), not IN_SPEED 1<<17 from the SDK header. Data: 2160/2160 sprinting cmds carry bit 15 and none carry bit 17.
+  - Fixed the hsdtel schema and re-exported the 34 trials (`in_sprint` was always 0 before).
+  - The ground analysis re-run changed only a diagnostic field.
+  - The lead's Unity re-run produced identical tables.
+- **M2 accepted** (A1–A5): `m2/M2-REPORT.md`, `m2/PARAMETER-TABLE.md`.
 
 ## Open issues
 
@@ -53,4 +83,6 @@ Newest entries at the bottom. Problems are tagged **[ISSUE]** and also listed in
 | I4 | M0 | REA has no native provider | only if offline disassembly is approved and time-boxed |
 | I5 | M0 | Weapon move scale (1.15 empty-handed) | fix the weapon state per run; measure a weapon-held condition in M2 |
 | I6 | M0 | Unity project: most of the existing work is uncommitted on `main` | **closed**: the old project is deprecated; M1+ uses a new project in the workspace |
+| I9 | M2 | Firing range assigns a random legend per session; class vars differ between legends | runner pins the legend (`--legend`); verify live at the next session |
+| I8 | M2 | Client frame rate can sit at ~138 fps or dip while the desktop is in use (cause unverified) | the per-trial fps check rejects such trials; re-run them; avoid heavy desktop use during sessions |
 | I7 | M0 | The Unity batch run rewrote `ProjectSettings.asset`; delta unknown | **closed, won't fix**: the user says the old project is deprecated |

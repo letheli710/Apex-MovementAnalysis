@@ -1,0 +1,273 @@
+{
+  "format": "hsd-r5replay-summary/1",
+  "trial_id": "M2_e5_slidejump02_r276",
+  "trial_source": "r5flowstate",
+  "experiment": "M2_e5_slidejump02",
+  "contract": "hsdmove-trial/2",
+  "model": "ReferenceMotor/m1-first-guess",
+  "model_choices": ["Units: SOURCE (u, u/s); per-usercmd step with the recorded dt (dt / n_cmds sub-steps); double precision.", "Floor: flat plane at initial_state.pos.z; on ground z is pinned to it and v_z = 0.", "Wish: wishvel = cmd_fwd*F(yaw) + cmd_side*R(yaw), F=(cos,sin,0), R=(sin,-cos,0); wishspeed = speed*moveScale*min(|wishvel|,1).", "Ground: v_h += clamp_len(wishdir*wishspeed - v_h, rate*dt), rate = acceleration when wishspeed>0 else deceleration (vector approach, no separate friction, no lowSpeed/lowAcceleration branch).", "Jump: on the JUMP press edge while grounded, v_z = sqrt(2*sv_gravity*gravityScale*jumpHeight); no ground friction on that command; the air step runs on the same command.", "Air: half-step gravity (v_z -= g*dt/2; move; v_z -= g*dt/2); AirAccelerate with wishspd = min(wishspeed, airSpeed), accelspeed = min(airAcceleration*dt, wishspd - v_h.wishdir) (Phase 1 §3 [C] form, no *wishspeed).", "Land: after an air step, pos.z <= floor and v_z <= 0 -> snap to floor, v_z = 0, grounded.", "Not modelled: sprint, crouch/slide, lowSpeed/lowAcceleration, side/back speed scale, landSlowdown, skip_time/bhop penalties, collisions/slopes/steps."],
+  "alignment": {
+    "by": "cmd",
+    "ok": true,
+    "steps": 821,
+    "cmd_first": 81108,
+    "cmd_last": 81928
+  },
+  "floor_z_u": 294.92,
+  "parameters": {
+    "speed": 173.5,
+    "moveScale": 1.15,
+    "maxSpeed": 199.52499999999998,
+    "acceleration": 450,
+    "deceleration": 1250,
+    "airSpeed": 60,
+    "airAcceleration": 500,
+    "jumpHeight": 56,
+    "gravityScale": 1,
+    "svGravity": 750,
+    "gravity": 750,
+    "jumpVelocity": 289.82753492378879
+  },
+  "parameter_provenance": {
+    "speed": "trial.json parameters.speed",
+    "acceleration": "trial.json parameters.acceleration",
+    "deceleration": "trial.json parameters.deceleration",
+    "airSpeed": "trial.json parameters.airSpeed",
+    "airAcceleration": "trial.json parameters.airAcceleration",
+    "jumpHeight": "trial.json parameters.jumpHeight",
+    "gravityScale": "trial.json parameters.gravityScale",
+    "sv_gravity": "default (missing in trial.json)",
+    "svGravity": "default 750 (Phase 1 Movement-Analysis §4.1/§9; not in trial parameters)",
+    "moveScale": "default 1.15 (Gibraltar empty-handed)"
+  },
+  "units": "source units u, u/s; errors are sim - ref",
+  "overall": {
+    "n": 821,
+    "pos_rms_3d_u": 177.80732873279456,
+    "pos_max_3d_u": 266.60764244516213,
+    "pos_rms_h_u": 177.78660574880291,
+    "pos_max_h_u": 266.60764244516213,
+    "pos_rms_z_u": 2.7145842060606924,
+    "pos_max_abs_z_u": 12.583395654220908,
+    "vel_rms_3d_ups": 86.498038069148336,
+    "vel_max_3d_ups": 291.17001158858284,
+    "spd2d_rms_ups": 82.042329130556652,
+    "spd2d_max_abs_ups": 258.67900000000003,
+    "vz_rms_ups": 27.403773839477822,
+    "vz_max_abs_ups": 288.46746507621179,
+    "grounded_mismatch_steps": 8
+  },
+  "per_phase": {
+    "idle": {
+      "n": 205,
+      "pos_rms_3d_u": 144.18174192417396,
+      "pos_max_3d_u": 182.20026869522189,
+      "pos_rms_h_u": 144.18174192417396,
+      "pos_max_h_u": 182.20026869522189,
+      "pos_rms_z_u": 0,
+      "pos_max_abs_z_u": 0,
+      "vel_rms_3d_ups": 15.518567041395684,
+      "vel_max_3d_ups": 104.38749999999996,
+      "spd2d_rms_ups": 15.518567041395684,
+      "spd2d_max_abs_ups": 104.38749999999996,
+      "vz_rms_ups": 0,
+      "vz_max_abs_ups": 0,
+      "grounded_mismatch_steps": 0
+    },
+    "accel": {
+      "n": 288,
+      "pos_rms_3d_u": 99.621440739055942,
+      "pos_max_3d_u": 178.73875112411773,
+      "pos_rms_h_u": 99.621440207041971,
+      "pos_max_h_u": 178.73875094508549,
+      "pos_rms_z_u": 0.010295630140963012,
+      "pos_max_abs_z_u": 0.015999999999962711,
+      "vel_rms_3d_ups": 92.624843236329752,
+      "vel_max_3d_ups": 138.3965,
+      "spd2d_rms_ups": 92.624843236329752,
+      "spd2d_max_abs_ups": 138.3965,
+      "vz_rms_ups": 0,
+      "vz_max_abs_ups": 0,
+      "grounded_mismatch_steps": 0
+    },
+    "cruise": {
+      "n": 215,
+      "pos_rms_3d_u": 240.05809988268112,
+      "pos_max_3d_u": 266.60764244516213,
+      "pos_rms_h_u": 240.05283705112276,
+      "pos_max_h_u": 266.60764244516213,
+      "pos_rms_z_u": 1.5895732101391931,
+      "pos_max_abs_z_u": 12.583395654220908,
+      "vel_rms_3d_ups": 122.54462879575338,
+      "vel_max_3d_ups": 291.17001158858284,
+      "spd2d_rms_ups": 110.89651802491882,
+      "spd2d_max_abs_ups": 258.67900000000003,
+      "vz_rms_ups": 52.145453652623182,
+      "vz_max_abs_ups": 288.46746507621179,
+      "grounded_mismatch_steps": 8
+    },
+    "decel": {
+      "n": 10,
+      "pos_rms_3d_u": 186.30591343434415,
+      "pos_max_3d_u": 189.71540536389759,
+      "pos_rms_h_u": 186.30591315952731,
+      "pos_max_h_u": 189.71540519522387,
+      "pos_rms_z_u": 0.01011928851251523,
+      "pos_max_abs_z_u": 0.015999999999962711,
+      "vel_rms_3d_ups": 109.18865368491817,
+      "vel_max_3d_ups": 109.24899999999997,
+      "spd2d_rms_ups": 109.18865368491817,
+      "spd2d_max_abs_ups": 109.24899999999997,
+      "vz_rms_ups": 0,
+      "vz_max_abs_ups": 0,
+      "grounded_mismatch_steps": 0
+    },
+    "air": {
+      "n": 103,
+      "pos_rms_3d_u": 243.34506741839454,
+      "pos_max_3d_u": 260.38364679948023,
+      "pos_rms_h_u": 243.23519338978556,
+      "pos_max_h_u": 260.08491744514504,
+      "pos_rms_z_u": 7.311807813160101,
+      "pos_max_abs_z_u": 12.469131411151352,
+      "vel_rms_3d_ups": 51.624721508133142,
+      "vel_max_3d_ups": 51.692136163611686,
+      "spd2d_rms_ups": 48.52980820743565,
+      "spd2d_max_abs_ups": 48.694000000000017,
+      "vz_rms_ups": 17.6059531449398,
+      "vz_max_abs_ups": 17.900534923788683,
+      "grounded_mismatch_steps": 0
+    }
+  },
+  "events_ref": {
+    "forward_start_step": 71,
+    "release_step": 677,
+    "stop_step": 687,
+    "takeoff_step": 388,
+    "land_step": 491,
+    "apex_step": 439,
+    "apex_height_u": 49.36099999999999,
+    "takeoff_vz_ups": 267.027,
+    "peak_speed_step": 359,
+    "peak_speed_ups": 458.204,
+    "distance_h_u": 989.47199999999975
+  },
+  "events_sim": {
+    "forward_start_step": 71,
+    "release_step": 677,
+    "stop_step": 699,
+    "takeoff_step": 388,
+    "land_step": 499,
+    "apex_step": 443,
+    "apex_height_u": 55.998510052946813,
+    "takeoff_vz_ups": 284.60753492378876,
+    "peak_speed_step": 135,
+    "peak_speed_ups": 199.52499999999998,
+    "distance_h_u": 811.26840292977977
+  },
+  "event_deltas_sim_minus_ref": {
+    "forward_start_steps": 0,
+    "stop_steps": 12,
+    "release_to_stop_steps": 12,
+    "takeoff_steps": 0,
+    "land_steps": 8,
+    "airtime_steps": 8,
+    "apex_steps": 4,
+    "apex_height_u": 6.6375100529468227,
+    "takeoff_vz_ups": 17.580534923788775,
+    "peak_speed_ups": -258.67900000000003,
+    "peak_speed_steps": -224,
+    "distance_h_u": -178.20359707021998
+  },
+  "thresholds": {
+    "speed_rise_ups": 1,
+    "stop_ups": 1,
+    "cruise_fraction": 0.99
+  },
+  "events_all": {
+    "takeoff": {
+      "ref_steps": [388],
+      "sim_steps": [388],
+      "delta_steps_sim_minus_ref": [0],
+      "count_ref": 1,
+      "count_sim": 1,
+      "max_abs_delta_steps": 0
+    },
+    "land": {
+      "ref_steps": [491],
+      "sim_steps": [499],
+      "delta_steps_sim_minus_ref": [8],
+      "count_ref": 1,
+      "count_sim": 1,
+      "max_abs_delta_steps": 8
+    },
+    "slide_start": {
+      "ref_steps": [359, 491],
+      "sim_steps": [],
+      "delta_steps_sim_minus_ref": [],
+      "count_ref": 2,
+      "count_sim": 0,
+      "max_abs_delta_steps": 0
+    },
+    "slide_end": {
+      "ref_steps": [388, 599],
+      "sim_steps": [],
+      "delta_steps_sim_minus_ref": [],
+      "count_ref": 2,
+      "count_sim": 0,
+      "max_abs_delta_steps": 0
+    }
+  },
+  "jumps": [{"index":0,"ref_takeoff_step":388,"sim_takeoff_step":388,"ref_takeoff_vz":267.027,"sim_takeoff_vz":284.60753492378876,"takeoff_vz_err":17.580534923788775,"ref_apex_u":49.36099999999999,"sim_apex_u":55.998510052946813,"apex_err_u":6.6375100529468227,"ref_takeoff_spd2d":247.888,"sim_takeoff_spd2d":199.52499999999998,"takeoff_spd2d_err":-48.363000000000028}],
+  "jump_max_abs_takeoff_vz_err_ups": 17.580534923788775,
+  "jump_max_abs_apex_err_u": 6.6375100529468227,
+  "ground_ref": {
+    "terminal_speed_ups": null,
+    "terminal_release_step": -1,
+    "accel_low": {
+      "rate": 2868.2687056253412,
+      "n": 8
+    },
+    "accel_mid": {
+      "rate": 516.59880239520953,
+      "n": 12
+    },
+    "accel_sprint": {
+      "rate": 114.92352017989742,
+      "n": 123
+    },
+    "decel_duck": {
+      "rate": 1495.5840455840448,
+      "n": 1
+    },
+    "decel_stand": {
+      "rate": 1249.269076305221,
+      "n": 9
+    }
+  },
+  "ground_sim": {
+    "terminal_speed_ups": 199.52500000000046,
+    "terminal_release_step": 677,
+    "accel_mid": {
+      "rate": 449.99999999999977,
+      "n": 64
+    },
+    "decel_stand": {
+      "rate": 1250.0000000000002,
+      "n": 23
+    }
+  },
+  "terminal_speed_err_ups": null,
+  "flag_mismatch_steps": {
+    "grounded": 8,
+    "sliding": 137,
+    "sprinting": 287,
+    "maxspeed": 605,
+    "maxspeed_compared": 821,
+    "first_sliding_mismatch_step": 359,
+    "first_sprinting_mismatch_step": 72,
+    "first_maxspeed_mismatch_step": 72
+  },
+  "warnings": [],
+  "gated": false
+}
