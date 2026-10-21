@@ -1,0 +1,264 @@
+{
+ "_meta": {
+  "experiment": "M2 E5 slide and slide-jump momentum",
+  "truth": "client MOVE-TRACE first-time usercmds; dt per usercmd = FrameTime() of the joined HSD client frame",
+  "trials": {
+   "e5_slide": 5,
+   "e5_slidejump02": 5,
+   "e5_slidejump06": 5,
+   "e1_sprint": 5
+  },
+  "movescale": 1.15,
+  "units": "Source units (u), seconds",
+  "evidence_levels": "A = observed exactly (spread ~0) in every trial; B = fitted, spread <= 5 %; C = consistent but only one operating point or bracketed; D = census value, not exercised"
+ },
+ "slideRequiredStartSpeed": {
+  "value": 200,
+  "unit": "u/s",
+  "source": "census slideRequiredStartSpeed",
+  "n": 0,
+  "spread": null,
+  "evidence": "D",
+  "formula": "slide starts on the duck-press usercmd when grounded and |v_xy| >= value (threshold not exercised: slide entries were at 299, 248 and 350 u/s)"
+ },
+ "slideSpeedBoost": {
+  "value": 150,
+  "unit": "u/s (times movescale)",
+  "source": "census slideSpeedBoost; data only bound it: slideSpeedBoost*msc >= 161 (unscaled 150 rejected)",
+  "n": 5,
+  "observed_gain": 161.0,
+  "spread": {
+   "sd": 0.0,
+   "min": 161.0,
+   "max": 161.0,
+   "spread_pct": 0.0
+  },
+  "evidence": "C",
+  "formula": "v_peak = min(v_entry + slideSpeedBoost*msc, slideSpeedBoostCap*msc); lastSlideBoost = v_peak - v_entry"
+ },
+ "slideSpeedBoostCap": {
+  "value": 400,
+  "unit": "u/s (times movescale)",
+  "source": "census slideSpeedBoostCap; observed peak = 400 * 1.15",
+  "n": 5,
+  "observed_peak": 460.0,
+  "spread": {
+   "sd": 0.0,
+   "min": 460.0,
+   "max": 460.0,
+   "spread_pct": 0.0
+  },
+  "evidence": "A for 460 at msc 1.15 from 299; C for the scaling (one movescale)",
+  "formula": "cap = slideSpeedBoostCap * movescale = 460 u/s"
+ },
+ "slideDecel": {
+  "value": 100,
+  "fitted": 99.61038412757985,
+  "unit": "u/s^2",
+  "source": "census slideDecel (unscaled), confirmed: free fit a = D + k*v per trial over all slide usercmds",
+  "census_law_residual_u_per_s_per_cmd": {
+   "census_decelThenDecay_res_mean": 0.00041716702730102713,
+   "census_decelThenDecay_res_rms": 0.0035499540741881688,
+   "census_decelThenDecay_res_maxabs": 0.036533370020229466
+  },
+  "n": 15,
+  "spread": {
+   "sd": 0.28050368340947546,
+   "min": 99.01166645495891,
+   "max": 100.06274943048828,
+   "spread_pct": 1.055194179537701
+  },
+  "evidence": "B",
+  "formula": "per usercmd: v' = (v - slideDecel*dt) * slideVelocityDecay^dt"
+ },
+ "slideVelocityDecay": {
+  "value": 0.7,
+  "fitted": 0.7001019429023931,
+  "unit": "fraction of speed kept per second",
+  "source": "census slideVelocityDecay, confirmed: free fit exp(-k) per trial",
+  "n": 15,
+  "spread": {
+   "sd": 0.0005613676373887784,
+   "min": 0.6989194803864157,
+   "max": 0.7010215934619874,
+   "spread_pct": 0.3002581405298006
+  },
+  "evidence": "B",
+  "formula": "k = -ln(0.7) = 0.3567 1/s"
+ },
+ "slideStopSpeed": {
+  "value": 125,
+  "unit": "u/s",
+  "source": "census slideStopSpeed; last slide usercmd has pre >= 125 and post < 125",
+  "n": 5,
+  "observed_last_post": 124.75219999999999,
+  "observed_last_pre": 125.7622,
+  "spread": {
+   "sd": 0.1793905237185073,
+   "min": 124.422,
+   "max": 124.913,
+   "spread_pct": 0.3935802334548006
+  },
+  "evidence": "A",
+  "formula": "slide ends after the first usercmd whose post speed < slideStopSpeed (unscaled)"
+ },
+ "slideDuration_from460": {
+  "value": 1.692782,
+  "unit": "s",
+  "source": "observed (a consequence, not an input)",
+  "n": 5,
+  "spread": {
+   "sd": 0.0003995197116545217,
+   "min": 1.6922599999999988,
+   "max": 1.693460000000001,
+   "spread_pct": 0.07088922259347691
+  },
+  "evidence": "A",
+  "formula": "continuous: t = ln((v0 + D/k) / (125 + D/k)) / k = 1.689 s for v0 = 460; the census law stepped on the observed dt ends on the same usercmd (244) in 5/5 trials"
+ },
+ "crouchOverspeedDecel": {
+  "value": 1500.0,
+  "fitted": 1499.5544551765067,
+  "unit": "u/s^2",
+  "source": "fitted, rounded; no census key identified (standing decel = deceleration 1250; ratio 1.2)",
+  "n": 5,
+  "spread": {
+   "sd": 0.21186786540940708,
+   "min": 1499.316739873109,
+   "max": 1499.8565988707596,
+   "spread_pct": 0.036001293303281987
+  },
+  "evidence": "B (3 usercmds per trial)",
+  "formula": "ducked, after the slide: v' = max(v - 1500*dt, 92)"
+ },
+ "crouchMaxSpeed": {
+  "value": 92.0,
+  "unit": "u/s",
+  "source": "observed MT maxspeed (ms=92) and steady speed",
+  "n": 5,
+  "spread": {
+   "sd": 0.0,
+   "min": 92.0,
+   "max": 92.0,
+   "spread_pct": 0.0
+  },
+  "evidence": "A",
+  "formula": "crouch-walk speed at movescale 1.15"
+ },
+ "standStopDecel": {
+  "value": 1250.0,
+  "fitted": 1249.9320762334341,
+  "unit": "u/s^2",
+  "source": "fitted on e1_sprint release (baseline) == census deceleration",
+  "n": 5,
+  "spread": {
+   "sd": 0.1172504506197388,
+   "min": 1249.7323265886043,
+   "max": 1250.0674196179075,
+   "spread_pct": 0.026808899113376406
+  },
+  "evidence": "B (baseline only)",
+  "formula": "standing, no input: v' = v - 1250*dt"
+ },
+ "slideBoostRefundWindow": {
+  "value": 0.4,
+  "unit": "s",
+  "source": "Phase 1 source note (player.h m_lastSlideBoost); data bracket 0.201 < w <= 0.597",
+  "n": 10,
+  "jump_time_early": 0.20121600000000006,
+  "jump_time_late": 0.5967240000000003,
+  "evidence": "C (bracketed, edge not measured)",
+  "formula": "slide jump with t_since_boost < window: v_h' = v_h - lastSlideBoost"
+ },
+ "slideBoostRefundAmount": {
+  "value": 160.9924,
+  "unit": "u/s",
+  "source": "observed take-off speed change of the early jump (contains about +0.008 u/s air accel)",
+  "n": 5,
+  "spread": {
+   "sd": 0.0004898979485543336,
+   "min": -160.993,
+   "max": -160.992,
+   "spread_pct": 0.0006211473336659213
+  },
+  "expected": 161.0,
+  "evidence": "A",
+  "formula": "refund = lastSlideBoost (161 here: the actual gain, not slideSpeedBoost)"
+ },
+ "slideMaxJumpSpeed": {
+  "value": 350,
+  "unit": "u/s",
+  "source": "census slideMaxJumpSpeed; observed late take-off speed (unscaled)",
+  "n": 5,
+  "observed_takeoff": 350.005,
+  "observed_pre": 318.152,
+  "spread": {
+   "sd": 0.0,
+   "min": 350.005,
+   "max": 350.005,
+   "spread_pct": 0.0
+  },
+  "evidence": "C (one operating point: 318 -> 350)",
+  "formula": "chosen: outside the refund window v_h' = max(v_h, 350); alternative max(v_h, min(v_h + J, 350)) with J >= 31.85 u/s cannot be separated by these data"
+ },
+ "slideJumpHeight": {
+  "value": 50,
+  "unit": "u",
+  "source": "census slideJumpHeight; H estimated from the jump usercmd's post vz",
+  "H_est_early": 50.372181554025005,
+  "H_est_late": 49.903308497325,
+  "n": 10,
+  "spread_early": {
+   "sd": 0.0037593793184557732,
+   "min": 50.366995573500006,
+   "max": 50.37661629037499,
+   "spread_pct": 0.019099265860990845
+  },
+  "spread_late": {
+   "sd": 0.0012982293747097187,
+   "min": 49.90126565704165,
+   "max": 49.90527840204167,
+   "spread_pct": 0.008041040004859732
+  },
+  "evidence": "B",
+  "formula": "v_up = sqrt(2*750*slideJumpHeight) = 273.86 u/s; the logged post vz of the jump usercmd = v_up - 1.5*g*dt"
+ },
+ "gravity": {
+  "value": 750.0,
+  "fitted": 749.8890512720309,
+  "census": "sv_gravity 750 x gravityScale 1",
+  "unit": "u/s^2",
+  "source": "fitted (median of -dvz/dt per airborne usercmd, per trial)",
+  "n": 10,
+  "spread": [
+   {
+    "sd": 0.1671125183251786,
+    "min": 749.7854077253219,
+    "max": 750.2867405646302,
+    "spread_pct": 0.06684693243673041
+   },
+   {
+    "sd": 0.06297957374922947,
+    "min": 749.746830101901,
+    "max": 749.928977272727,
+    "spread_pct": 0.024292548628641143
+   }
+  ],
+  "evidence": "B",
+  "formula": "vz' = vz - 750*dt"
+ },
+ "landingWhileDucked": {
+  "value": null,
+  "unit": "-",
+  "source": "observed",
+  "land_speed_early": 248.10500000000002,
+  "land_speed_late": 350.2138,
+  "first_cmd_decel_obs_early": 188.16605846204573,
+  "first_cmd_decel_census_early": 188.49283696591922,
+  "first_cmd_decel_obs_late": 224.5187658688964,
+  "first_cmd_decel_census_late": 224.91248748157045,
+  "post_land_boost": 0.0,
+  "evidence": "A",
+  "formula": "landing with duck held and v >= 200: slide resumes on the landing usercmd, no speed loss, no new boost"
+ }
+}

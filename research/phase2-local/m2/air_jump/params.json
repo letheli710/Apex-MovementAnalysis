@@ -1,0 +1,121 @@
+{
+  "schema": "m2-air-jump-params/1",
+  "scope": "Gibraltar, empty-handed (movescale 1.15), flat test platform, 144 fps (dt ~ 0.00696 s, 1 usercmd per frame). Sessions 20261020_205712_M2_rerun and 20261020_204723_M2_main, ok=true, warmup=false trials only (42 trials, 118 jumps). Produced by air_jump_analysis.py; full numbers in results.json / analysis_output.txt.",
+  "units": "Source units (u), seconds (s); dt = usercmd frametime from the joined HSD frame (ft).",
+  "params": {
+    "gravity": {
+      "value": 750.0, "unit": "u/s^2",
+      "source": "census sv_gravity 750 x gravityScale 1; fitted per airborne usercmd (vz - pvz)/dt",
+      "fitted": 749.907, "n": 10054, "spread": {"sd": 0.705, "min": 748.429, "max": 751.608, "note": "spread is print quantisation (%.3f) over dt ~ 0.007 s"},
+      "formula": "dvz = -g*dt per airborne usercmd"
+    },
+    "vertical_integration": {
+      "value": "half-step (Source StartGravity/FinishGravity)", "unit": "-",
+      "source": "fitted: dz residual rms 0.00065 u (max 0.00217) vs 0.0184 u for explicit or semi-implicit Euler, n=10054",
+      "formula": "vz -= g*dt/2; z += vz*dt; vz -= g*dt/2   (== z += (vz_pre+vz_post)/2*dt)"
+    },
+    "horizontal_integration": {
+      "value": "post-acceleration velocity", "unit": "-",
+      "source": "fitted: dxy residual rms 0.00112 u (post v) vs 0.0332 u (pre v), n=10054",
+      "formula": "v_xy += air_accel(...); xy += v_xy*dt"
+    },
+    "jump_height": {
+      "value": 56.0, "unit": "u",
+      "source": "census jumpHeight 56",
+      "formula": "V = sqrt(2*g*jumpHeight*frac); frac = 1 for an unpenalised jump"
+    },
+    "jump_speed_V": {
+      "value": 289.828, "unit": "u/s",
+      "source": "derived sqrt(2*750*56); fitted from post vz of the jump command + 1.5*g*dt",
+      "fitted": 289.823, "n": 42, "spread": {"sd": 0.005, "min": 289.815, "max": 289.833},
+      "formula": "jump command: vz = -g*dt/2 (start gravity) + V; vz -= g*dt/2 (FinishGravity inside the jump); z += vz*dt; vz -= g*dt/2  =>  displacement uses V - g*dt, post vz = V - 1.5*g*dt (~282.0 at 144 fps)"
+    },
+    "jump_post_vz_144fps": {
+      "value": 282.003, "unit": "u/s", "source": "observed post vz of the jump command (first jumps)",
+      "n": 42, "spread": {"sd": 0.059, "min": 281.844, "max": 282.131},
+      "formula": "V - 1.5*g*dt; the next command's post vz (~276.8) is V - 2.5*g*dt"
+    },
+    "apex_height": {
+      "value": 54.95, "unit": "u",
+      "source": "observed max post z - take-off z, unpenalised jumps with no correction",
+      "n": 37, "spread": {"sd": 0.026, "min": 54.92, "max": 55.0},
+      "formula": "continuous half-step apex = V^2/(2g) - V*dt/2 + g*dt^2/8 = 54.996 at dt 0.00695; sampled max is <= that"
+    },
+    "air_time": {
+      "value": 0.7631, "unit": "s",
+      "source": "observed jump command .. landing command inclusive, flat ground, unpenalised",
+      "n": 37, "spread": {"sd": 0.0009, "min": 0.7602, "max": 0.7649},
+      "commands": {"mean": 108.89, "min": 106, "max": 109, "note": "landing command index minus jump command index"},
+      "formula": "emerges from V, half-step gravity and the 2 u ground probe; simulation reproduces the landing command index exactly in 112/113 jumps (off by 1 in 1)"
+    },
+    "ground_probe": {
+      "value": 2.0, "unit": "u",
+      "source": "Source CategorizePosition convention (not a census key); consistent with observed landing-command heights above floor 0.255..1.982 (n=118)",
+      "formula": "falling (vz<0) and floor within 2 u below -> grounded, vz=0 at the end of that command; next command snaps down onto the floor"
+    },
+    "antiMultiJumpHeightFrac": {
+      "value": 0.3, "unit": "fraction of jumpHeight",
+      "source": "census antiMultiJumpHeightFrac 0.3; fitted plateau 0.29998 (sd 0.00002, n=14, jumps < 0.05 s after landing)",
+      "formula": "frac(t) = clamp(0.3 + 0.7*(t - t0)/T, 0.3, 1); V = sqrt(2*g*jumpHeight*frac); t = time since the last landing"
+    },
+    "multiJumpPenalty_hold_t0": {
+      "value": 0.15, "unit": "s",
+      "source": "fitted (not a census key): linear fit of height frac vs dedi event clock JUMP.t - TOUCH_GROUND.t",
+      "fitted": 0.15002, "n": 62, "spread": {"fit_rms_frac": 0.00002, "max_abs_res_frac": 0.00004},
+      "formula": "penalty stays at 0.3 for t <= 0.15 s"
+    },
+    "multiJumpPenalty_ramp_T": {
+      "value": 0.6, "unit": "s",
+      "source": "fitted (not a census key): same fit; full height at t0+T = 0.75 s",
+      "fitted": 0.60001, "n": 62, "spread": {"fit_rms_frac": 0.00002},
+      "validation": "independent: 5 server-only penalised stand jumps (dedi treats the [HSD-RESET] teleport as a landing) predicted to within 0.0001 frac; 3 stand jumps at 0.767-0.793 s predicted unpenalised, observed unpenalised",
+      "formula": "linear in height (not in V): on the dedi clock height-frac linear rms 0.00002 vs V/V0-linear rms 0.0051"
+    },
+    "airAcceleration": {
+      "value": 500.0, "unit": "u/s^2 (applied as accelspeed = A*dt, no wishspeed factor)",
+      "source": "census airAcceleration 500; fitted a/dt on unclipped strafe commands",
+      "fitted": 499.946, "n": 391, "spread": {"sd": 0.264, "min": 499.495, "max": 500.492},
+      "formula": "AirAccelerate: wishcap = min(wishspeed, airSpeed*movescale); add = wishcap - dot(v_xy, wishdir); if add <= 0 return; v_xy += min(A*dt, add)*wishdir"
+    },
+    "air_wishspeed_cap": {
+      "value": 69.0, "unit": "u/s",
+      "source": "census airSpeed 60 x movescale 1.15; fitted bracket from add-speed-limited strafe commands [69.000, 69.000]",
+      "n": 1614, "spread": {"model_residual_rms": 0.0039, "model_residual_max": 0.0142, "unit": "u/s per command"},
+      "formula": "cap = airSpeed * movescale (airSpeed alone: residual rms 0.279, max 3.56 u/s per command)"
+    },
+    "air_wishdir_yaw": {
+      "value": "yaw of the frame that shows the command's post-state", "unit": "-",
+      "source": "fitted: previous-frame yaw gives residual rms 0.207 / max 3.50 vs 0.0039 / 0.0142",
+      "formula": "forward=(cos yaw, sin yaw), right=(sin yaw, -cos yaw); wishvel = fwd*forward + side*right; wishspeed = min(|wishvel|,1)*maxspeed (maxspeed airborne = speed 173.5 * 1.15 = 199.525)"
+    },
+    "airFriction": {"value": 0.0, "unit": "1/s", "source": "census airFriction 0; no-input horizontal speed change 0.0000 u/s per command (n=524)", "formula": "none"},
+    "airDrag": {"value": 0.0, "unit": "-", "source": "census airDrag 0; same evidence", "formula": "none"},
+    "jump_command_friction": {
+      "value": "skipped", "unit": "-",
+      "source": "observed: horizontal speed change on the jump command 0.003 u/s (sd 0.013, n=118) incl. hop0 jumps 1 command after landing",
+      "formula": "jump command: no ground friction; ground speed clamp (sprint 299) still applies"
+    },
+    "skip_speed_reduce": {
+      "value": null, "unit": "u/s",
+      "source": "not observed: no horizontal loss at take-off for ground times 0.007-0.60 s at 295-299 u/s (n=76 re-jumps); stock 100 per phase-1 notes",
+      "formula": "not modelled"
+    },
+    "landSlowdownDuration": {
+      "value": 1.0, "unit": "s",
+      "source": "census landSlowdownDuration 1; not observed: landing command speed change +0.005 u/s (n=76), maxspeed unchanged after landing (landing |vz| <= ~282)",
+      "formula": "not modelled (presumably hard landings only)"
+    },
+    "air_input_residual_gain": {
+      "value": 1.385e-05, "unit": "u/s^2 per (u/s)^2 of vz",
+      "source": "fitted, unexplained: with W held above the cap, horizontal speed still rises ~k*vz^2 (rms 0.088 u/s^2 vs 0.30 for a constant); total +0.301 u/s per full jump (n=5)",
+      "formula": "ignored in the model (0.1 % of speed)"
+    },
+    "lurch_single_condition": {
+      "value": {"speed_ratio": 0.8477, "turn_fraction_of_wish_angle": 0.4874, "v1": "0.6150*v0 + 0.5913*|v0|*wishdir"},
+      "unit": "-",
+      "source": "observed only in e2_strafe (5/5 identical, dedi identical): +moveright press edge 5 commands after a 299 u/s jump, sidemove 0.5 on that command, wish 90.7 deg off velocity",
+      "n": 5, "spread": {"speed_ratio_range": [0.8477, 0.8477], "turn_deg_range": [-44.227, -44.213]},
+      "formula": "unknown in general (needs E3); see AIR-JUMP-MODEL.md section 5"
+    }
+  }
+}

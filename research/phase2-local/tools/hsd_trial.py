@@ -234,6 +234,10 @@ def main(argv):
     ap.add_argument("--schedule", default="basic",
                     help=f"comma-separated names ({', '.join(SCHEDULES)}) or one literal step list; "
                          "each schedule runs --trials times in the given order")
+    ap.add_argument("--legend", default="gibraltar",
+                    help="legend set at session start with Agent_SetLegend (sv_agent_api.nut:739-774); the firing "
+                         "range otherwise spawns a random legend per session (M2: Pathfinder, Wraith), and legends "
+                         "differ in some class vars (Wraith sprintAcceleration 102 vs 100); '' keeps the spawn legend")
     ap.add_argument("--no-census", action="store_true",
                     help="skip the E0 census at the start (class vars + settings dump on both sides)")
     ap.add_argument("--origin", type=float, nargs=3, default=DEFAULT_ORIGIN)
@@ -255,9 +259,17 @@ def main(argv):
     stamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     manifest = {"schema": "hsd-runner/2", "label": a.label, "created": stamp,
                 "schedules": {n: {"steps": st, "frames": schedule_frames(st)} for n, st in scheds.items()},
-                "origin": list(a.origin), "yaw": a.yaw, "census": not a.no_census, "trials": []}
+                "origin": list(a.origin), "yaw": a.yaw, "census": not a.no_census, "legend": a.legend or None,
+                "legend_reply": None, "trials": []}
 
     with AgentLink("server", a.game) as server, AgentLink("client", a.game) as client:
+        if a.legend:
+            r = server.eval('Agent_SetLegend( "me", "%s" )' % a.legend.replace('"', ''))
+            manifest["legend_reply"] = r.get("reply", "")
+            print("legend:", manifest["legend_reply"])
+            if '"ok":true' not in manifest["legend_reply"].replace(" ", ""):
+                raise SystemExit("could not set the legend: " + manifest["legend_reply"])
+            time.sleep(2.0)
         if not a.no_census:
             # E0 census: client class vars (bridge_classvar_get) and both sides' settings dump.
             for side, line in ((client, "exec user/hsd_e0_classvars"), (client, "hsd_md_dump_now 1"),

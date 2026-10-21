@@ -1,0 +1,168 @@
+{
+ "_doc": "M2/E1 ground model parameters. 'source' says where the value comes from: census = the session's client class var (E0 dump), fitted = this analysis. spread_pct = (max-min)/mean over per-trial fits, pooled across the conditions where the parameter applies.",
+ "movescale": {
+  "value": 1.15,
+  "unit": "-",
+  "source": "observed MOVE-TRACE msc (constant in every E1 command)",
+  "formula": "multiplies speed, sprintspeed, crouch speed, lowSpeed, lowAcceleration, acceleration, sprintAcceleration"
+ },
+ "speed": {
+  "value": 173.5,
+  "unit": "u/s",
+  "source": "census speed; fitted terminal walk speed / msc",
+  "formula": "cap = speed*msc (stand, not sprinting)",
+  "n_trials": 5,
+  "spread_pct": 0.0,
+  "fitted_terminal": 199.525
+ },
+ "sprintspeed": {
+  "value": 260.0,
+  "unit": "u/s",
+  "source": "census sprintspeed; fitted terminal sprint speed / msc",
+  "formula": "cap = sprintspeed*msc while the sprint flag is set",
+  "n_trials": 5,
+  "spread_pct": 0.0,
+  "fitted_terminal": 299.0
+ },
+ "crouch_speed": {
+  "value": 80.0,
+  "unit": "u/s",
+  "source": "fitted: observed crouch maxspeed / msc (no census key read)",
+  "formula": "cap = crouch_speed*msc while ducked",
+  "n_trials": 5,
+  "spread_pct": 0.0,
+  "fitted_terminal": 92.0
+ },
+ "lowSpeed": {
+  "value": 120.0,
+  "unit": "u/s",
+  "source": "census lowSpeed; fitted band edge (bracketed)",
+  "formula": "if held and s < cap: s = min(cap, s + a*dt) with a chosen from the pre-move speed s: lowAcceleration*msc if s < lowSpeed*msc; else acceleration*msc if not sprinting or s + sprintAcceleration*msc*dt < speed*msc; else sprintAcceleration*msc",
+  "observed_edge_bracket_u_s": [
+   136.382,
+   138.472
+  ],
+  "model_edge_u_s": 138.0
+ },
+ "lowAcceleration": {
+  "value": 2500.0,
+  "unit": "u/s^2",
+  "source": "census lowAcceleration; fitted pooled rate / msc",
+  "formula": "if held and s < cap: s = min(cap, s + a*dt) with a chosen from the pre-move speed s: lowAcceleration*msc if s < lowSpeed*msc; else acceleration*msc if not sprinting or s + sprintAcceleration*msc*dt < speed*msc; else sprintAcceleration*msc",
+  "n_trials": 35,
+  "spread_pct": 0.096,
+  "fitted_pooled": 2874.728
+ },
+ "acceleration": {
+  "value": 450.0,
+  "unit": "u/s^2",
+  "source": "census acceleration; fitted pooled rate / msc",
+  "formula": "if held and s < cap: s = min(cap, s + a*dt) with a chosen from the pre-move speed s: lowAcceleration*msc if s < lowSpeed*msc; else acceleration*msc if not sprinting or s + sprintAcceleration*msc*dt < speed*msc; else sprintAcceleration*msc",
+  "n_trials": 30,
+  "spread_pct": 0.104,
+  "fitted_pooled": 517.463
+ },
+ "sprintAcceleration": {
+  "value": 102.0,
+  "unit": "u/s^2",
+  "source": "census sprintAcceleration of THIS session (102; the T0 smoke census had 100); fitted pooled rate / msc",
+  "formula": "if held and s < cap: s = min(cap, s + a*dt) with a chosen from the pre-move speed s: lowAcceleration*msc if s < lowSpeed*msc; else acceleration*msc if not sprinting or s + sprintAcceleration*msc*dt < speed*msc; else sprintAcceleration*msc",
+  "n_trials": 10,
+  "spread_pct": 0.022,
+  "fitted_pooled": 117.285
+ },
+ "deceleration": {
+  "value": 1250.0,
+  "unit": "u/s^2",
+  "source": "census deceleration; fitted pooled constant rate",
+  "formula": "if no move input: s = max(0, s - deceleration*dt)  (NOT scaled by movescale)",
+  "n_trials": 30,
+  "spread_pct": 0.077,
+  "fitted_pooled": 1249.9
+ },
+ "sprintDeceleration": {
+  "value": 1250.0,
+  "unit": "u/s^2",
+  "source": "census only; indistinguishable from deceleration here (both 1250; sprint stop fitted with the same rate)",
+  "formula": "if no move input: s = max(0, s - deceleration*dt)  (NOT scaled by movescale)",
+  "n_trials": 5,
+  "spread_pct": 0.027,
+  "fitted_sprint_stop": 1249.9322
+ },
+ "crouch_deceleration": {
+  "value": 1499.763,
+  "unit": "u/s^2",
+  "source": "fitted (crouch trials; no crouch census key was read)",
+  "formula": "while ducked with no move input: s = max(0, s - crouch_deceleration*dt) (not scaled by movescale)",
+  "n_trials": 5,
+  "spread_pct": 0.062
+ },
+ "stop_snap_speed": {
+  "value": 1.0,
+  "unit": "u/s",
+  "source": "assumed Source WalkMove value (speed < 1 -> 0); data bracket it",
+  "formula": "after decel: if s < stop_snap_speed: s = 0",
+  "n_trials": 35,
+  "observed_bracket_u_s": [
+   0.5792,
+   1.576
+  ]
+ },
+ "speedScaleBack": {
+  "value": 1.0,
+  "unit": "-",
+  "source": "census; back terminal speed equals walk",
+  "formula": "cap *= speedScaleBack when moving back (1 here)",
+  "n_trials": 5,
+  "spread_pct": 0.0,
+  "fitted_terminal": 199.525
+ },
+ "speedScaleSide": {
+  "value": 1.0,
+  "unit": "-",
+  "source": "census; side terminal speed equals walk",
+  "formula": "cap *= speedScaleSide when strafing (1 here)",
+  "n_trials": 5,
+  "spread_pct": 0.0,
+  "fitted_terminal": 199.525
+ },
+ "direction": {
+  "value": "normalized wishdir, instant redirect",
+  "unit": "-",
+  "source": "fitted (heading = wishdir; diagonal speed = walk speed; turn keeps speed)",
+  "formula": "v = s * wishdir; wishdir = normalize(fwd*forward(yaw) + side*right(yaw)) (horizontal; instant redirect)",
+  "n_trials": 10
+ },
+ "yaw_rate_turn_key": {
+  "value": -140.699,
+  "unit": "deg/s",
+  "source": "fitted from HSD yaw (+right console turn); a cl_yawspeed-type client setting, not movement physics",
+  "formula": "yaw -= rate*dt while +right is held",
+  "n_trials": 5,
+  "spread_pct": 0.034
+ },
+ "sprintStartDelay": {
+  "value": 0.2,
+  "unit": "s",
+  "source": "census only; no effect on the speed curve was found",
+  "formula": "not used by the speed model (sprint band starts when s >= speed*msc; see GROUND-MODEL.md)"
+ },
+ "sprintStartDuration": {
+  "value": 0.8,
+  "unit": "s",
+  "source": "census only; no effect on the speed curve was found",
+  "formula": "not used"
+ },
+ "sprintStartFastDuration": {
+  "value": 0.2,
+  "unit": "s",
+  "source": "census only; no effect on the speed curve was found",
+  "formula": "not used"
+ },
+ "sprintEndDuration": {
+  "value": 0.15,
+  "unit": "s",
+  "source": "census only; not exercised (sprint and forward were released together)",
+  "formula": "not used"
+ }
+}
