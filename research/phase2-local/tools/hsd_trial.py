@@ -483,7 +483,11 @@ def get_schedule(name):
 
 
 # Refill tactical, ultimate and glide/jet meters at every reset when --kit is set (_weapon_utility.nut:3810-3865).
-REFILL = "DevAbilities_RefillPlayer( p, true )"
+# The refill also puts the range-doubling dev mod on the grapple (DevAbilities_RefillWeapon, M5.5 finding); from M6 on every
+# --kit reset removes it again, so grapple range is the normal 850 setting (M4/M4b data ran with the mod; no effect found)
+REFILL = ("DevAbilities_RefillPlayer( p, true )\n"
+          "entity rgw = p.GetOffhandWeapon( OFFHAND_TACTICAL )\n"
+          "if ( IsValid( rgw ) && rgw.HasMod( \"infinite_abilities_grapple\" ) ) rgw.RemoveMod( \"infinite_abilities_grapple\" )")
 
 KIT_SERVER = r'''
 string out = ""
