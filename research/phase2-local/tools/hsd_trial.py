@@ -21,7 +21,9 @@ The schedule language (one step per ';'):  wait <frames> | down <key> | up <key>
 tap <key>  (down now, up on the next frame) | set <cvar> <value>.  Keys: forward backward moveleft
 moveright jump duck speed left right lookup lookdown offhand1 offhand4 (console +<key>).
 View turns use +left/+right/+lookup/+lookdown at a constant rate set with 'set cl_yawspeed N' /
-'set cl_pitchspeed N' (only VIEW_CVARS; the runner restores their session values after every trial).
+'set cl_pitchspeed N' (only VIEW_CVARS). A 'set' takes effect at the start of the trial: the runner sends it to the
+client console before the schedule starts (player.ClientCommand would forward it to the server, M4b finding) and
+restores the session value after the trial; the schedule thread only logs it.
 
   py -3 hsd_trial.py --trials 5 --run-base 11 --label M1_loop --schedule basic
 """
@@ -230,6 +232,8 @@ _CLEAR_GEO = 'foreach ( entity e in GetEntArrayByScriptName( "hsd_test_geo_m4" )
 SCHEDULE_PRE = {
     ("m4_pad_", "m4b_pad_"): _CLEAR_GEO + 'entity pad = JumpPad_CreateAtLocation( o + <300, 0, 0>, <0, 0, 0>, p, true )\n'
                'if ( IsValid( pad ) ) pad.SetScriptName( "hsd_test_geo_m4" )\npre = " pad=" + IsValid( pad )\n',
+    # view trials run on lane C after pad trials: remove a pad left from an earlier trial (M4b: one was run into)
+    "m4b_view": _CLEAR_GEO + 'pre = " geo=cleared"\n',
     "m4_lift_": 'thread SpaceElevator_PropDeploy( p, o + <120, 0, 0>, <0, 0, 0>, null )\npre = " lift=deployed"\n',
 }
 
@@ -349,7 +353,6 @@ void functionref() f = void function() : ( steps ) {
 		}
 		if ( verb == "set" )
 		{
-			p.ClientCommand( parts[1] + " " + parts[2] )
 			printt( "[HSD-SCHED] ver=1 trial=$trial run=$run edge=set cvar=" + parts[1] + " value=" + parts[2] + " frame=" + ( FrameCount() - f0 ) + " fc=" + FrameCount() + " pt=" + PlatformTime() + " t=" + Time() )
 			continue
 		}
@@ -635,6 +638,9 @@ def main(argv):
             pre = next((code for prefix, code in SCHEDULE_PRE.items() if name.startswith(prefix)), "")  # prefix may be a tuple
             reset = server.eval(RESET_SERVER.substitute(ox=ox, oy=oy, oz=oz, yaw=yaw, pitch=pitch, batch=batch, run=run,
                                                          refill=REFILL if a.kit else "", pre=pre))
+            for st in steps:
+                if st.startswith("set "):
+                    client.cmd(st[4:])
             sched = client.eval(SCHED_CLIENT.substitute(
                 steps=", ".join(json.dumps(s) for s in steps), ox=ox, oy=oy, oz=oz,
                 settle_frames=a.settle_frames, settle_timeout=a.settle_timeout, trial=trial, run=run))
