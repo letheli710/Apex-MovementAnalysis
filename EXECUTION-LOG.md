@@ -189,6 +189,15 @@ Newest entries at the bottom. Problems are tagged **[ISSUE]** and also listed in
   - 3 preset loadouts.
   - **[NOTE]** The 60 Hz determinism test limit was corrected from half a command to a full command: spatial triggers fire at command starts. The rationale is in `m5/unity/regression.md`; this is test design, not a pass-forcing change.
 - **M5 part B dispatched:** reference and fun configs, a playable build with a practice map, the playtest guide.
+- **M5 part B** (HSD-Unity 8480b2d; lead-verified):
+  - Tests: EditMode 174/174, PlayMode 1/1.
+  - Regression: default motor identical; the M4 replays match part A 114/114.
+  - Reference-config evaluation: the rerun is byte-identical; the build smoke test passes.
+  - Reference config: 604/633 one-second windows pass (95.4 %). Every base-movement family passes; the redirect fix takes M3 lurch from 78 to 92.7 %.
+  - **[OPEN]** The gravity lift (78.4 %) and jets (83.3 %) families fail. Causes: one-command offsets, and the lift ejecting off the test plateau.
+  - Fun config: wall-run, flight, gravity switch.
+  - Practice game: 5 stations, a 7-checkpoint time trial, HUD. Build at `HSD-Build\HSD-Practice.exe`, outside the repos.
+- **M5 done.** M5-REPORT.md and FINAL-REPORT.md (Chinese, answers the plan's 4 questions) written.
 
 ## Open issues
 
