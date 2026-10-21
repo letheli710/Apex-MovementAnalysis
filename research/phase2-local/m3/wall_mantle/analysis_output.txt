@@ -1,0 +1,492 @@
+== climb (trials ending in the final jump-up), per client fps
+-- 60 fps
+   t_air_to_contact               0.2664 (sd 0.0031, 0.2500..0.2754, n=49)
+   contact_dvz                    3.3259 (sd 0.0515, 2.9810..3.3380, n=49)
+   peak_vz                        180.8649 (sd 0.7391, 178.9280..184.8020, n=49)
+   peak_h                         27.9116 (sd 0.2643, 26.7630..28.0210, n=49)
+   peak_t                         0.1994 (sd 0.0030, 0.1834..0.2015, n=49)
+   climb_time                     0.8665 (sd 0.0026, 0.8501..0.8691, n=49)
+   climb_cmds                     51.9388 (sd 0.2422, 51.0000..52.0000, n=49)
+   end_abs_z                      442.6378 (sd 0.1129, 441.9340..442.6880, n=49)
+   end_h                          97.3988 (sd 0.1546, 96.7580..98.0770, n=49)
+   end_vz_pre                     57.8621 (sd 0.2007, 57.7780..59.1170, n=49)
+   final_dvz                      198.3394 (sd 0.4165, 198.1510..200.9330, n=49)
+   final_V_half                   204.5907 (sd 0.4163, 204.4060..207.1843, n=49)
+   final_post_vx                  -59.7549 (sd 0.0094, -59.7960..-59.7150, n=49)
+   accel_first8                   493.1628 (sd 0.5391, 490.1545..494.7717, n=49)
+   accel_after8                   487.0289 (sd 0.0711, 486.9005..487.1626, n=49)
+   decay_rate                     1.7269 (sd 0.0038, 1.7036..1.7325, n=49)
+   vx_over_vz                     0.0324 (sd 0.0000, 0.0324..0.0324, n=49)
+   contact_z                      345.2390 (sd 0.2409, 343.8570..345.7440, n=49)
+   contact_vz_pre                 83.5802 (sd 2.3229, 76.4940..95.8440, n=49)
+   decay_vz_at_contact            230.2842 (sd 0.4709, 229.3975..233.0242, n=49)
+   decay_zero_abs_z               475.3660 (sd 0.0200, 475.2481..475.3750, n=49)
+   end_abs_z_vs_contact_z_slope   0.40388
+-- 120 fps
+   t_air_to_contact               0.2748 (sd 0.0034, 0.2586..0.2836, n=67)
+   contact_dvz                    6.4696 (sd 0.0677, 6.3520..6.9920, n=67)
+   peak_vz                        180.1175 (sd 0.7885, 178.0710..184.0190, n=67)
+   peak_h                         26.1407 (sd 0.2618, 25.2280..27.1280, n=67)
+   peak_t                         0.1917 (sd 0.0036, 0.1752..0.2002, n=67)
+   climb_time                     0.8499 (sd 0.0015, 0.8426..0.8512, n=67)
+   climb_cmds                     101.8657 (sd 0.3436, 101.0000..102.0000, n=67)
+   end_abs_z                      442.1677 (sd 0.0720, 441.9340..442.3390, n=67)
+   end_h                          96.1488 (sd 0.2875, 95.3040..97.2960, n=67)
+   end_vz_pre                     57.8600 (sd 0.1200, 57.5660..58.2570, n=67)
+   final_dvz                      203.2121 (sd 0.2961, 202.5690..204.2200, n=67)
+   final_V_half                   206.3253 (sd 0.2645, 205.6965..207.1825, n=67)
+   final_post_vx                  -63.9386 (sd 0.0977, -64.5940..-63.9040, n=67)
+   accel_first8                   497.7315 (sd 0.8132, 493.3174..499.5038, n=67)
+   accel_after8                   486.2996 (sd 0.2411, 486.0526..487.3814, n=67)
+   decay_rate                     1.7349 (sd 0.0015, 1.7268..1.7408, n=67)
+   vx_over_vz                     0.0324 (sd 0.0000, 0.0324..0.0324, n=67)
+   contact_z                      346.0189 (sd 0.2609, 344.7130..346.6980, n=67)
+   contact_vz_pre                 80.3541 (sd 2.5226, 73.8440..92.4750, n=67)
+   decay_vz_at_contact            225.7459 (sd 0.4582, 224.5506..228.0291, n=67)
+   decay_zero_abs_z               475.3284 (sd 0.0052, 475.3078..475.3375, n=67)
+   end_abs_z_vs_contact_z_slope   -0.06862
+-- 144 fps
+   t_air_to_contact               0.2780 (sd 0.0057, 0.2640..0.2858, n=41)
+   contact_dvz                    6.9824 (sd 0.0249, 6.9400..7.0980, n=41)
+   peak_vz                        178.9701 (sd 1.2548, 177.3730..182.5780, n=41)
+   peak_h                         26.1682 (sd 0.4061, 25.0040..26.7700, n=41)
+   peak_t                         0.1938 (sd 0.0058, 0.1779..0.2019, n=41)
+   climb_time                     0.8483 (sd 0.0025, 0.8448..0.8543, n=41)
+   climb_cmds                     121.8293 (sd 1.3584, 115.0000..123.0000, n=41)
+   end_abs_z                      442.1102 (sd 0.1097, 441.9490..442.3220, n=41)
+   end_h                          95.8309 (sd 0.5089, 95.1430..97.3490, n=41)
+   end_vz_pre                     57.8126 (sd 0.1910, 57.4460..58.0950, n=41)
+   final_dvz                      203.9020 (sd 0.3996, 203.1250..204.4920, n=41)
+   final_V_half                   206.5075 (sd 0.4031, 205.7275..207.0982, n=41)
+   final_post_vx                  -64.6172 (sd 0.0284, -64.7100..-64.5670, n=41)
+   accel_first8                   498.8207 (sd 0.9306, 495.9172..499.5324, n=41)
+   accel_after8                   486.6564 (sd 0.7172, 485.5624..487.9852, n=41)
+   decay_rate                     1.7353 (sd 0.0058, 1.7198..1.7515, n=41)
+   vx_over_vz                     0.0324 (sd 0.0000, 0.0324..0.0324, n=41)
+   contact_z                      346.2794 (sd 0.4709, 344.8750..346.8820, n=41)
+   contact_vz_pre                 78.4646 (sd 4.1988, 72.6430..89.0230, n=41)
+   decay_vz_at_contact            224.7945 (sd 0.8449, 223.6875..227.2272, n=41)
+   decay_zero_abs_z               475.3026 (sd 0.0702, 474.8747..475.3581, n=41)
+   end_abs_z_vs_contact_z_slope   -0.05679
+== mantle
+     60 no_press       duration         0.5455 (sd 0.0650, 0.4666..0.6167, n=11)
+     60 no_press       start_z          468.0472 (sd 12.3220, 455.1650..483.2630, n=11)
+     60 no_press       exit_z           532.8360 (sd 0.0000, 532.8360..532.8360, n=11)
+     60 no_press       rise             64.7888 (sd 12.3220, 49.5730..77.6710, n=11)
+     60 no_press       exit_speed       299.0000 (sd 0.0000, 299.0000..299.0000, n=11)
+     60 no_press       air_cmds_before  6.3636 (sd 4.5227, 2.0000..12.0000, n=11)
+     60 failed_state3  duration         0.5804 (sd 0.0410, 0.4667..0.6167, n=23)
+     60 failed_state3  exit_speed       299.0000 (sd 0.0000, 299.0000..299.0000, n=23)
+    120 no_press       duration         0.5909 (sd 0.0103, 0.5750..0.6067, n=19)
+    120 no_press       start_z          456.7536 (sd 2.0642, 454.5850..460.1140, n=19)
+    120 no_press       exit_z           532.8360 (sd 0.0000, 532.8360..532.8360, n=19)
+    120 no_press       rise             76.0824 (sd 2.0642, 72.7220..78.2510, n=19)
+    120 no_press       exit_speed       299.0000 (sd 0.0000, 299.0000..299.0000, n=19)
+    120 no_press       air_cmds_before  6.0556 (sd 1.0556, 5.0000..8.0000, n=18)
+    120 failed_state3  duration         0.5899 (sd 0.0096, 0.5690..0.6072, n=29)
+    120 failed_state3  exit_speed       299.0000 (sd 0.0000, 299.0000..299.0000, n=29)
+    144 no_press       duration         0.5921 (sd 0.0098, 0.5764..0.6058, n=17)
+    144 no_press       start_z          456.1412 (sd 1.6574, 454.0760..458.9200, n=17)
+    144 no_press       exit_z           532.8360 (sd 0.0000, 532.8360..532.8360, n=17)
+    144 no_press       rise             76.6948 (sd 1.6574, 73.9160..78.7600, n=17)
+    144 no_press       exit_speed       299.0000 (sd 0.0000, 299.0000..299.0000, n=17)
+    144 no_press       air_cmds_before  7.2941 (sd 1.1048, 6.0000..9.0000, n=17)
+    144 failed_state3  duration         0.5929 (sd 0.0070, 0.5835..0.6044, n=7)
+    144 failed_state3  exit_speed       299.0000 (sd 0.0000, 299.0000..299.0000, n=7)
+== bounce per input|timing|fps
+-- back|0.15|144
+   t_since_contact  0.155 (sd 0.003, 0.151..0.158, n=6)
+   d_out            257.870 (sd 0.000, 257.869..257.870, n=6)
+   d_out_jump       257.870 (sd 0.000, 257.869..257.870, n=6)
+   d_tan            0.190 (sd 0.002, 0.188..0.192, n=6)
+   dvz              2.728 (sd 0.007, 2.721..2.738, n=6)
+   dvz_plus_1p5g    10.548 (sd 0.011, 10.530..10.557, n=6)
+   next_dvx         -0.004 (sd 0.000, -0.004..-0.004, n=6)
+   fwd              -0.500 (sd 0.000, -0.500..-0.500, n=6)
+   side             0.000 (sd 0.000, 0.000..0.000, n=6)
+   pre_vz           155.167 (sd 3.806, 151.622..160.015, n=6)
+   post             ['-252.845 (sd 0.123, -252.960..-252.688, n=6)', '-0.254 (sd 0.001, -0.254..-0.253, n=6)', '157.894 (sd 3.801, 154.360..162.737, n=6)']
+-- back|0.40|144
+   t_since_contact  0.409 (sd 0.002, 0.404..0.410, n=5)
+   d_out            257.869 (sd 0.001, 257.868..257.869, n=5)
+   d_out_jump       257.869 (sd 0.001, 257.868..257.869, n=5)
+   d_tan            0.148 (sd 0.001, 0.147..0.150, n=5)
+   dvz              2.039 (sd 0.046, 1.965..2.072, n=5)
+   dvz_plus_1p5g    9.892 (sd 0.013, 9.875..9.908, n=5)
+   next_dvx         -0.002 (sd 0.001, -0.003..-0.002, n=5)
+   fwd              -0.500 (sd 0.000, -0.500..-0.500, n=5)
+   side             0.000 (sd 0.000, 0.000..0.000, n=5)
+   pre_vz           125.028 (sd 0.703, 124.605..126.276, n=5)
+   post             ['-253.820 (sd 0.023, -253.834..-253.779, n=5)', '-0.235 (sd 0.000, -0.236..-0.235, n=5)', '127.067 (sd 0.720, 126.673..128.348, n=5)']
+-- fwd_held|e7|120
+   t_since_contact  0.828 (sd 0.015, 0.808..0.851, n=11)
+   d_out            103.523 (sd 0.032, 103.426..103.535, n=11)
+   d_out_jump       107.701 (sd 0.001, 107.699..107.703, n=11)
+   d_tan            -0.168 (sd 0.000, -0.168..-0.167, n=11)
+   dvz              0.353 (sd 0.024, 0.280..0.362, n=11)
+   dvz_plus_1p5g    9.753 (sd 0.049, 9.732..9.899, n=11)
+   next_dvx         4.178 (sd 0.033, 4.157..4.277, n=11)
+   fwd              1.000 (sd 0.000, 1.000..1.000, n=11)
+   side             0.000 (sd 0.000, 0.000..0.000, n=11)
+   pre_vz           60.220 (sd 1.565, 57.815..62.264, n=11)
+   post             ['-101.572 (sd 0.058, -101.659..-101.478, n=11)', '-0.543 (sd 0.001, -0.547..-0.543, n=11)', '60.573 (sd 1.567, 58.175..62.626, n=11)']
+-- fwd_held|e7|144
+   t_since_contact  0.730 (sd 0.066, 0.624..0.831, n=21)
+   d_out            104.223 (sd 0.032, 104.182..104.282, n=21)
+   d_out_jump       107.702 (sd 0.002, 107.699..107.704, n=21)
+   d_tan            -0.168 (sd 0.000, -0.168..-0.168, n=21)
+   dvz              0.879 (sd 0.024, 0.847..0.922, n=21)
+   dvz_plus_1p5g    8.705 (sd 0.049, 8.616..8.769, n=21)
+   next_dvx         3.479 (sd 0.034, 3.419..3.540, n=21)
+   fwd              1.000 (sd 0.000, 1.000..1.000, n=21)
+   side             0.000 (sd 0.000, 0.000..0.000, n=21)
+   pre_vz           71.753 (sd 8.278, 59.419..85.887, n=21)
+   post             ['-101.900 (sd 0.272, -102.329..-101.401, n=21)', '-0.542 (sd 0.002, -0.545..-0.539, n=21)', '72.632 (sd 8.277, 60.283..86.734, n=21)']
+-- fwd_held|e7|60
+   t_since_contact  0.800 (sd 0.044, 0.733..0.867, n=18)
+   d_out            99.369 (sd 0.007, 99.364..99.395, n=18)
+   d_out_jump       107.702 (sd 0.001, 107.699..107.703, n=18)
+   d_tan            -0.168 (sd 0.000, -0.168..-0.167, n=18)
+   dvz              -2.762 (sd 0.005, -2.766..-2.742, n=18)
+   dvz_plus_1p5g    15.987 (sd 0.011, 15.944..15.992, n=18)
+   next_dvx         8.333 (sd 0.006, 8.313..8.336, n=18)
+   fwd              1.000 (sd 0.000, 1.000..1.000, n=18)
+   side             0.000 (sd 0.000, 0.000..0.000, n=18)
+   pre_vz           65.233 (sd 5.102, 57.810..73.183, n=18)
+   post             ['-97.256 (sd 0.162, -97.494..-96.997, n=18)', '-0.545 (sd 0.001, -0.547..-0.544, n=18)', '62.471 (sd 5.104, 55.046..70.441, n=18)']
+-- none|0.15|144
+   t_since_contact  0.166 (sd 0.018, 0.152..0.202, n=6)
+   d_out            257.865 (sd 0.000, 257.864..257.865, n=6)
+   d_out_jump       257.865 (sd 0.000, 257.864..257.865, n=6)
+   d_tan            -0.402 (sd 0.000, -0.402..-0.402, n=6)
+   dvz              2.675 (sd 0.073, 2.534..2.744, n=6)
+   dvz_plus_1p5g    10.535 (sd 0.041, 10.454..10.563, n=6)
+   next_dvx         0.000 (sd 0.000, 0.000..0.000, n=6)
+   fwd              0.000 (sd 0.000, 0.000..0.000, n=6)
+   side             0.000 (sd 0.000, 0.000..0.000, n=6)
+   pre_vz           161.547 (sd 7.332, 151.682..174.542, n=6)
+   post             ['-252.633 (sd 0.237, -252.953..-252.213, n=6)', '-0.843 (sd 0.004, -0.848..-0.836, n=6)', '164.222 (sd 7.262, 154.426..177.076, n=6)']
+-- none|0.40|144
+   t_since_contact  0.410 (sd 0.004, 0.404..0.417, n=6)
+   d_out            257.864 (sd 0.001, 257.864..257.865, n=6)
+   d_out_jump       257.864 (sd 0.001, 257.864..257.865, n=6)
+   d_tan            -0.402 (sd 0.000, -0.402..-0.402, n=6)
+   dvz              2.050 (sd 0.036, 1.987..2.087, n=6)
+   dvz_plus_1p5g    9.893 (sd 0.013, 9.872..9.907, n=6)
+   next_dvx         0.000 (sd 0.000, 0.000..0.000, n=6)
+   fwd              0.000 (sd 0.000, 0.000..0.000, n=6)
+   side             0.000 (sd 0.000, 0.000..0.000, n=6)
+   pre_vz           124.587 (sd 1.176, 122.725..126.414, n=6)
+   post             ['-253.830 (sd 0.038, -253.890..-253.771, n=6)', '-0.784 (sd 0.002, -0.788..-0.781, n=6)', '126.636 (sd 1.185, 124.778..128.501, n=6)']
+-- side|0.15|144
+   t_since_contact  0.159 (sd 0.004, 0.152..0.163, n=6)
+   d_out            140.926 (sd 0.009, 140.915..140.942, n=6)
+   d_out_jump       140.926 (sd 0.009, 140.915..140.942, n=6)
+   d_tan            -177.459 (sd 0.016, -177.479..-177.430, n=6)
+   dvz              2.728 (sd 0.038, 2.673..2.788, n=6)
+   dvz_plus_1p5g    10.543 (sd 0.015, 10.517..10.565, n=6)
+   next_dvx         0.004 (sd 0.001, 0.004..0.005, n=6)
+   fwd              0.000 (sd 0.000, 0.000..0.000, n=6)
+   side             0.500 (sd 0.000, 0.500..0.500, n=6)
+   pre_vz           159.703 (sd 4.002, 151.614..161.949, n=6)
+   post             ['-135.755 (sd 0.129, -136.016..-135.679, n=6)', '-177.900 (sd 0.016, -177.920..-177.871, n=6)', '162.430 (sd 3.995, 154.360..164.662, n=6)']
+-- side|0.40|144
+   t_since_contact  0.406 (sd 0.005, 0.402..0.411, n=6)
+   d_out            140.956 (sd 0.002, 140.954..140.957, n=6)
+   d_out_jump       140.956 (sd 0.002, 140.954..140.957, n=6)
+   d_tan            -177.480 (sd 0.001, -177.481..-177.479, n=6)
+   dvz              2.083 (sd 0.012, 2.068..2.094, n=6)
+   dvz_plus_1p5g    9.896 (sd 0.015, 9.881..9.913, n=6)
+   next_dvx         0.005 (sd 0.000, 0.005..0.005, n=6)
+   fwd              0.000 (sd 0.000, 0.000..0.000, n=6)
+   side             0.500 (sd 0.000, 0.500..0.500, n=6)
+   pre_vz           125.722 (sd 1.301, 124.323..126.958, n=6)
+   post             ['-136.884 (sd 0.043, -136.931..-136.843, n=6)', '-177.865 (sd 0.002, -177.867..-177.863, n=6)', '127.805 (sd 1.313, 126.391..129.052, n=6)']
+   fit {"O_outward": 182.78299166666665, "I_inputdir": 75.08159166666665, "n_none": 12, "n_fwd": 50, "none_sd": 0.0005149286505615311, "fwd_sd": 0.0014708043058522919, "back_mean": 257.86927272727274, "side_pred_out": 182.78299166666665, "side_pred_tan": -75.08159166666665, "side_obs_out": {"n": 12, "mean": 140.9408333333333, "sd": 0.016623276853056274, "min": 140.915, "max": 140.95700000000002}, "side_obs_tan": {"n": 12, "mean": -177.4695833333333, "sd": 0.015547337295161901, "min": -177.481, "max": -177.43}} {"slope_vs_pre_vz": -0.01657674831858359, "intercept": 12.633546787207182, "rms": 2.575924661684327, "n": 85}
+== E7 per fps
+-- 144 fps
+   r736   N=130  mb wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r737   N=130  sg wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r739   N=133  sg wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r740   N=136  mb wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r741   N=136  sg wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r742   N=139  mb wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r743   N=139  sg wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r744   N=142  mb wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r745   N=142  sg wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r746   N=145  mb wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r747   N=145  sg wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r748   N=148  mb wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r749   N=148  sg wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r750   N=151  mb wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r751   N=151  sg wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r752   N=154  mb wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r753   N=154  sg wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r754   N=157  mb wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r755   N=157  sg wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r756   N=160  mb wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r757   N=160  sg wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r758   N=163  mb mantle_only    press-trav_start -0.0487 trav_start 1.1803 end 1.7651 anim None delta None gate None state None sides [] exit [299.0, 0.0, 0.0]
+   r759   N=163  sg mantle_only    press-trav_start -0.0548 trav_start 1.1873 end 1.7672 anim None delta None gate None state None sides [] exit [299.0, 0.0, 0.0]
+   r760   N=166  mb mantle_only    press-trav_start -0.0271 trav_start 1.1804 end 1.7791 anim None delta None gate None state None sides [] exit [299.0, 0.0, 0.0]
+   r761   N=166  sg mantle_only    press-trav_start -0.0343 trav_start 1.1862 end 1.785 anim None delta None gate None state None sides [] exit [299.0, 0.0, 0.0]
+   r762   N=169  mb failed_state3  press-trav_start 0.0209 trav_start 1.1538 end 1.7582 anim 0.032 delta 0.09 gate dec state 3 sides ['cl', 'sv'] exit [299.007, 0.0, 284.612]
+   r763   N=169  sg mantle_only    press-trav_start -0.0069 trav_start 1.1812 end 1.7651 anim None delta None gate None state None sides [] exit [299.0, 0.0, 0.0]
+   r529   N=171  mb exit_jump_unlogged press-trav_start 0.0345 trav_start 1.1537 end 1.7591 anim None delta None gate None state None sides [] exit [299.007, 0.0, 284.611]
+   r528   N=171  sg exit_jump_unlogged press-trav_start 0.0278 trav_start 1.1626 end 1.7682 anim None delta None gate None state None sides [] exit [299.007, 0.0, 284.612]
+   r764   N=172  mb failed_state3  press-trav_start 0.0139 trav_start 1.1805 end 1.764 anim 0.015 delta 0.04 gate dec state 3 sides ['cl', 'sv'] exit [299.007, 0.0, 284.612]
+   r765   N=172  sg failed_state3  press-trav_start 0.0348 trav_start 1.1583 end 1.7457 anim 0.067 delta 0.33 gate dec state 3 sides ['cl', 'sv'] exit [299.007, 0.0, 284.612]
+   r766   N=175  mb failed_state3  press-trav_start 0.0689 trav_start 1.1755 end 1.7678 anim 0.131 delta 1.12 gate dec state 3 sides ['cl', 'sv'] exit [299.007, 0.0, 284.612]
+   r767   N=175  sg failed_state3  press-trav_start 0.0418 trav_start 1.1745 end 1.771 anim 0.084 delta 0.5 gate dec state 3 sides ['cl', 'sv'] exit [299.007, 0.0, 284.578]
+   r531   N=177  mb exit_jump_unlogged press-trav_start 0.0626 trav_start 1.1678 end 1.7719 anim None delta None gate None state None sides [] exit [299.007, 0.0, 284.611]
+   r530   N=177  sg exit_jump_unlogged press-trav_start 0.0548 trav_start 1.1742 end 1.7722 anim None delta None gate None state None sides [] exit [299.007, 0.0, 284.675]
+   r768   N=178  mb failed_state3  press-trav_start 0.055 trav_start 1.1812 end 1.7779 anim 0.107 delta 0.78 gate dec state 3 sides ['cl', 'sv'] exit [299.007, 0.0, 284.611]
+   r769   N=178  sg failed_state3  press-trav_start 0.0548 trav_start 1.1815 end 1.7709 anim 0.117 delta 0.91 gate dec state 3 sides ['cl', 'sv'] exit [299.007, 0.0, 284.611]
+   r533   N=181  mb exit_jump_unlogged press-trav_start 0.0971 trav_start 1.1673 end 1.7516 anim None delta None gate None state None sides [] exit [299.007, 0.0, 284.611]
+   r532   N=181  sg exit_jump_unlogged press-trav_start 0.1166 trav_start 1.1903 end 1.767 anim None delta None gate None state None sides [] exit [299.007, 0.0, 284.573]
+   r535   N=185  mb exit_jump_unlogged press-trav_start 0.118 trav_start 1.1667 end 1.7708 anim None delta None gate None state None sides [] exit [299.007, 0.0, 284.611]
+   r534   N=185  sg exit_jump_unlogged press-trav_start 0.1176 trav_start 1.1659 end 1.7721 anim None delta None gate None state None sides [] exit [299.007, 0.0, 284.627]
+   r537   N=189  mb exit_jump_unlogged press-trav_start 0.1305 trav_start 1.1823 end 1.7861 anim None delta None gate None state None sides [] exit [299.007, 0.0, 284.672]
+   r536   N=189  sg exit_jump_unlogged press-trav_start 0.1375 trav_start 1.1732 end 1.7708 anim None delta None gate None state None sides [] exit [299.007, 0.0, 284.574]
+   r539   N=193  mb exit_jump_unlogged press-trav_start 0.1722 trav_start 1.1665 end 1.7707 anim None delta None gate None state None sides [] exit [299.007, 0.0, 284.679]
+   r538   N=193  sg exit_jump_unlogged press-trav_start 0.1511 trav_start 1.1873 end 1.7849 anim None delta None gate None state None sides [] exit [299.007, 0.0, 284.543]
+   r541   N=197  mb exit_jump_unlogged press-trav_start 0.1741 trav_start 1.1943 end 1.7708 anim None delta None gate None state None sides [] exit [299.007, 0.0, 284.612]
+   r540   N=197  sg exit_jump_unlogged press-trav_start 0.201 trav_start 1.1671 end 1.772 anim None delta None gate None state None sides [] exit [299.007, 0.0, 284.618]
+   r543   N=201  mb exit_jump_unlogged press-trav_start 0.2208 trav_start 1.1735 end 1.7774 anim None delta None gate None state None sides [] exit [299.007, 0.0, 284.676]
+   r542   N=201  sg exit_jump_unlogged press-trav_start 0.1956 trav_start 1.2013 end 1.7791 anim None delta None gate None state None sides [] exit [299.007, 0.0, 284.612]
+   r545   N=211  mb exit_jump_unlogged press-trav_start 0.2768 trav_start 1.1873 end 1.7849 anim None delta None gate None state None sides [] exit [299.007, 0.0, 284.54]
+   r544   N=211  sg exit_jump_unlogged press-trav_start 0.2928 trav_start 1.1724 end 1.7698 anim None delta None gate None state None sides [] exit [299.007, 0.0, 284.419]
+-- 120 fps
+   r1001  N=130  mb wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r1002  N=130  sg wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r1003  N=131  mb wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r1004  N=131  sg wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r905   N=132  mb wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r1005  N=132  sg wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r907   N=133  mb wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r908   N=133  sg wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r909   N=134  mb mantle_only    press-trav_start -0.05 trav_start 1.1667 end 1.7419 anim None delta None gate None state None sides [] exit [299.0, 0.0, 0.0]
+   r910   N=134  sg wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r911   N=135  mb wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r912   N=135  sg wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r913   N=136  mb mantle_only    press-trav_start -0.05 trav_start 1.1833 end 1.7656 anim None delta None gate None state None sides [] exit [299.0, 0.0, 0.0]
+   r914   N=136  sg mantle_only    press-trav_start -0.0333 trav_start 1.1666 end 1.7667 anim None delta None gate None state None sides [] exit [299.0, 0.0, 0.0]
+   r915   N=137  mb mantle_only    press-trav_start -0.0417 trav_start 1.1833 end 1.7666 anim None delta None gate None state None sides [] exit [299.0, 0.0, 0.0]
+   r916   N=137  sg mantle_only    press-trav_start -0.025 trav_start 1.1667 end 1.768 anim None delta None gate None state None sides [] exit [299.0, 0.0, 0.0]
+   r917   N=138  mb mantle_only    press-trav_start -0.0334 trav_start 1.1834 end 1.775 anim None delta None gate None state None sides [] exit [299.0, 0.0, 0.0]
+   r918   N=138  sg mantle_only    press-trav_start -0.0167 trav_start 1.1666 end 1.7667 anim None delta None gate None state None sides [] exit [299.0, 0.0, 0.0]
+   r919   N=139  mb mantle_only    press-trav_start -0.025 trav_start 1.1833 end 1.7666 anim None delta None gate None state None sides [] exit [299.0, 0.0, 0.0]
+   r920   N=139  sg mantle_only    press-trav_start -0.0083 trav_start 1.1668 end 1.7735 anim None delta None gate None state None sides [] exit [299.0, 0.0, 0.0]
+   r921   N=140  mb mantle_only    press-trav_start -0.0167 trav_start 1.1834 end 1.7666 anim None delta None gate None state None sides [] exit [299.0, 0.0, 0.0]
+   r922   N=140  sg mantle_only    press-trav_start 0.0 trav_start 1.1666 end 1.7666 anim None delta None gate None state None sides [] exit [299.0, 0.0, 0.0]
+   r923   N=141  mb mantle_only    press-trav_start -0.0083 trav_start 1.1834 end 1.7667 anim None delta None gate None state None sides [] exit [299.0, 0.0, 0.0]
+   r924   N=141  sg mantle_only    press-trav_start 0.0083 trav_start 1.1669 end 1.7713 anim None delta None gate None state None sides [] exit [299.0, 0.0, 0.0]
+   r925   N=142  mb mantle_only    press-trav_start 0.0 trav_start 1.1833 end 1.7669 anim None delta None gate None state None sides [] exit [299.0, 0.0, 0.0]
+   r926   N=142  sg failed_state3  press-trav_start 0.0167 trav_start 1.1666 end 1.7666 anim 0.018 delta 0.05 gate dec state 3 sides ['cl', 'sv'] exit [299.008, 0.0, 283.571]
+   r927   N=143  mb failed_state3  press-trav_start 0.0334 trav_start 1.1582 end 1.7654 anim 0.057 delta 0.25 gate dec state 3 sides ['cl', 'sv'] exit [299.008, 0.0, 283.521]
+   r928   N=143  sg failed_state3  press-trav_start 0.0167 trav_start 1.1749 end 1.7667 anim 0.018 delta 0.05 gate dec state 3 sides ['cl', 'sv'] exit [299.008, 0.0, 283.568]
+   r929   N=144  mb failed_state3  press-trav_start 0.017 trav_start 1.1832 end 1.7666 anim 0.018 delta 0.05 gate dec state 3 sides ['cl', 'sv'] exit [299.008, 0.0, 283.569]
+   r930   N=144  sg failed_state3  press-trav_start 0.0333 trav_start 1.1666 end 1.7582 anim 0.06 delta 0.27 gate dec state 3 sides ['cl', 'sv'] exit [299.008, 0.0, 283.56]
+   r931   N=145  mb failed_state3  press-trav_start 0.025 trav_start 1.1831 end 1.7664 anim 0.039 delta 0.13 gate dec state 3 sides ['cl', 'sv'] exit [299.008, 0.0, 283.562]
+   r1006  N=145  sg failed_state3  press-trav_start 0.0354 trav_start 1.175 end 1.7658 anim 0.066 delta 0.32 gate dec state 3 sides ['cl', 'sv'] exit [299.008, 0.0, 283.537]
+   r1007  N=146  mb failed_state3  press-trav_start 0.0167 trav_start 1.2 end 1.775 anim 0.018 delta 0.05 gate dec state 3 sides ['cl', 'sv'] exit [299.008, 0.0, 283.569]
+   r1008  N=146  sg failed_state3  press-trav_start 0.0332 trav_start 1.1835 end 1.763 anim 0.059 delta 0.27 gate dec state 3 sides ['cl', 'sv'] exit [299.007, 0.0, 284.443]
+   r1009  N=147  mb failed_state3  press-trav_start 0.05 trav_start 1.175 end 1.7666 anim 0.101 delta 0.7 gate dec state 3 sides ['cl', 'sv'] exit [299.008, 0.0, 283.569]
+   r1010  N=147  sg failed_state3  press-trav_start 0.0417 trav_start 1.1833 end 1.775 anim 0.08 delta 0.46 gate dec state 3 sides ['cl', 'sv'] exit [299.008, 0.0, 283.568]
+   r1011  N=148  mb failed_state3  press-trav_start 0.0666 trav_start 1.1667 end 1.7714 anim 0.112 delta 0.85 gate dec state 3 sides ['cl', 'sv'] exit [299.008, 0.0, 283.431]
+   r1012  N=148  sg failed_state3  press-trav_start 0.0417 trav_start 1.1917 end 1.7667 anim 0.08 delta 0.46 gate dec state 3 sides ['cl', 'sv'] exit [299.008, 0.0, 283.566]
+   r1013  N=149  mb failed_state3  press-trav_start 0.0667 trav_start 1.1751 end 1.7667 anim 0.131 delta 1.11 gate dec state 3 sides ['cl', 'sv'] exit [299.008, 0.0, 283.566]
+   r940   N=149  sg failed_state3  press-trav_start 0.05 trav_start 1.1918 end 1.7608 anim 0.101 delta 0.7 gate dec state 3 sides ['cl', 'sv'] exit [299.008, 0.0, 283.567]
+   r941   N=150  mb failed_state3  press-trav_start 0.0919 trav_start 1.1584 end 1.7419 anim 0.189 delta 2.06 gate dec state 3 sides ['cl', 'sv'] exit [299.008, 0.0, 283.572]
+   r942   N=150  sg failed_state3  press-trav_start 0.075 trav_start 1.175 end 1.7665 anim 0.145 delta 1.33 gate dec state 3 sides ['cl', 'sv'] exit [299.008, 0.0, 283.565]
+   r1201  N=185  mb failed_state3  press-trav_start 0.375 trav_start 1.1667 end 1.7667 anim 0.626 delta 3.66 gate angle state 3 sides ['cl', 'sv'] exit [299.008, 0.0, 283.569]
+   r1202  N=186  mb failed_state3  press-trav_start 0.4065 trav_start 1.1562 end 1.7497 anim 0.7 delta 2.62 gate angle state 3 sides ['cl', 'sv'] exit [299.008, 0.0, 283.434]
+   r1203  N=187  mb failed_state3  press-trav_start 0.3667 trav_start 1.1917 end 1.7667 anim 0.664 delta 3.13 gate angle state 3 sides ['cl', 'sv'] exit [299.008, 0.0, 283.568]
+   r1204  N=188  mb failed_state3  press-trav_start 0.4037 trav_start 1.1634 end 1.7614 anim 0.685 delta 2.84 gate angle state 3 sides ['cl', 'sv'] exit [299.008, 0.0, 283.526]
+   r1205  N=189  mb failed_state3  press-trav_start 0.3916 trav_start 1.1834 end 1.7667 anim 0.689 delta 2.77 gate angle state 3 sides ['cl', 'sv'] exit [299.008, 0.0, 283.569]
+   r1206  N=190  mb failed_state3  press-trav_start 0.4167 trav_start 1.1667 end 1.7666 anim 0.695 delta 2.69 gate angle state 3 sides ['cl', 'sv'] exit [299.008, 0.0, 283.569]
+   r1207  N=191  mb failed_state3  press-trav_start 0.4167 trav_start 1.1756 end 1.759 anim 0.732 delta 2.16 gate angle state 3 sides ['cl', 'sv'] exit [299.008, 0.0, 283.583]
+   r1208  N=192  mb failed_state3  press-trav_start 0.4476 trav_start 1.152 end 1.7415 anim 0.769 delta 1.64 gate angle state 3 sides ['cl', 'sv'] exit [299.008, 0.0, 283.562]
+   r1209  N=193  mb failed_state3  press-trav_start 0.4417 trav_start 1.1666 end 1.7666 anim 0.737 delta 2.08 gate angle state 3 sides ['cl', 'sv'] exit [299.008, 0.0, 283.568]
+   r1210  N=194  mb failed_state3  press-trav_start 0.4417 trav_start 1.175 end 1.7667 anim 0.755 delta 1.83 gate angle state 3 sides ['cl', 'sv'] exit [299.008, 0.0, 283.568]
+   r1211  N=195  mb failed_state3  press-trav_start 0.4584 trav_start 1.1666 end 1.767 anim 0.766 delta 1.69 gate angle state 3 sides ['cl', 'sv'] exit [299.008, 0.0, 283.568]
+   r1232  N=195  sg failed_state3  press-trav_start 0.45 trav_start 1.1753 end 1.767 anim 0.77 delta 1.63 gate angle state 3 sides ['cl', 'sv'] exit [299.008, 0.0, 283.518]
+   r1212  N=196  mb boost_state4   press-trav_start 0.4583 trav_start 1.175 end 1.7667 anim 0.783 delta 1.45 gate ok state 4 sides ['cl', 'sv'] exit [388.708, 0.0, 361.161]
+   r1213  N=197  mb boost_state4   press-trav_start 0.4628 trav_start 1.1806 end 1.7613 anim 0.815 delta 1.05 gate ok state 4 sides ['cl', 'sv'] exit [388.708, 0.0, 361.12]
+   r1214  N=198  mb boost_state4   press-trav_start 0.4833 trav_start 1.1666 end 1.7666 anim 0.806 delta 1.16 gate ok state 4 sides ['cl', 'sv'] exit [388.708, 0.0, 361.162]
+   r1215  N=199  mb boost_state4   press-trav_start 0.4732 trav_start 1.1832 end 1.7657 anim 0.824 delta 0.95 gate ok state 4 sides ['cl', 'sv'] exit [388.708, 0.0, 361.128]
+   r1216  N=200  mb boost_state4   press-trav_start 0.5032 trav_start 1.168 end 1.7729 anim 0.843 delta 0.74 gate ok state 4 sides ['cl', 'sv'] exit [388.708, 0.0, 361.084]
+   r1233  N=200  sg boost_state4   press-trav_start 0.4834 trav_start 1.1837 end 1.7671 anim 0.842 delta 0.74 gate ok state 4 sides ['cl', 'sv'] exit [388.708, 0.0, 361.218]
+   r1217  N=201  mb boost_state4   press-trav_start 0.4916 trav_start 1.1834 end 1.7667 anim 0.856 delta 0.61 gate ok state 4 sides ['cl', 'sv'] exit [388.708, 0.0, 361.162]
+   r1218  N=202  mb boost_state4   press-trav_start 0.5168 trav_start 1.1668 end 1.7668 anim 0.863 delta 0.54 gate ok state 4 sides ['cl', 'sv'] exit [388.708, 0.0, 361.166]
+   r1220  N=204  mb boost_state4   press-trav_start 0.5332 trav_start 1.1668 end 1.7667 anim 0.89 delta 0.32 gate ok state 4 sides ['cl', 'sv'] exit [388.708, 0.0, 361.165]
+   r1221  N=205  mb boost_state4   press-trav_start 0.5583 trav_start 1.15 end 1.7667 anim 0.915 delta 0.16 gate ok state 4 sides ['cl', 'sv'] exit [388.708, 0.0, 361.163]
+   r1234  N=205  sg boost_state4   press-trav_start 0.5165 trav_start 1.1916 end 1.7664 anim 0.915 delta 0.16 gate ok state 4 sides ['cl', 'sv'] exit [388.708, 0.0, 361.158]
+   r1222  N=206  mb boost_state4   press-trav_start 0.5499 trav_start 1.1668 end 1.7667 anim 0.918 delta 0.14 gate ok state 4 sides ['cl', 'sv'] exit [388.708, 0.0, 361.162]
+   r1223  N=207  mb boost_state4   press-trav_start 0.5333 trav_start 1.1917 end 1.7667 anim 0.943 delta 0.05 gate ok state 4 sides ['cl', 'sv'] exit [388.708, 0.0, 361.162]
+   r1224  N=208  mb boost_state4   press-trav_start 0.5668 trav_start 1.1667 end 1.7669 anim 0.946 delta 0.04 gate ok state 4 sides ['cl', 'sv'] exit [388.708, 0.0, 361.189]
+   r1225  N=209  mb boost_state4   press-trav_start 0.5584 trav_start 1.1833 end 1.7667 anim 0.968 delta 0.0 gate ok state 4 sides ['cl', 'sv'] exit [388.708, 0.0, 361.164]
+   r1226  N=210  mb boost_state4   press-trav_start 0.5833 trav_start 1.1667 end 1.7667 anim 0.974 delta 0.0 gate ok state 4 sides ['cl', 'sv'] exit [388.708, 0.0, 361.161]
+   r1235  N=210  sg boost_state4   press-trav_start 0.5752 trav_start 1.1749 end 1.7667 anim 0.979 delta 0.0 gate ok state 4 sides ['cl', 'sv'] exit [388.708, 0.0, 361.163]
+   r1227  N=211  mb boost_state4   press-trav_start 0.575 trav_start 1.1834 end 1.7667 anim 0.995 delta 0.0 gate ok state 4 sides ['cl', 'sv'] exit [388.708, 0.0, 361.167]
+   r1228  N=212  mb boost_state4   press-trav_start 0.6085 trav_start 1.1583 end 1.7751 anim 0.999 delta 0.0 gate ok state 4 sides ['cl', 'sv'] exit [388.708, 0.0, 361.161]
+   r1229  N=213  mb jump_on_top    press-trav_start 0.6083 trav_start 1.1666 end 1.7666 anim None delta None gate None state None sides [] exit [299.0, 0.0, 0.0]
+   r1230  N=214  mb jump_on_top    press-trav_start 0.6085 trav_start 1.175 end 1.7668 anim None delta None gate None state None sides [] exit [299.0, 0.0, 0.0]
+   r1231  N=215  mb jump_on_top    press-trav_start 0.625 trav_start 1.1665 end 1.7666 anim None delta None gate None state None sides [] exit [299.0, 0.0, 0.0]
+-- 60 fps
+   r1116  N=60   mb wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r1117  N=60   sg wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r1118  N=61   mb wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r1119  N=61   sg wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r1120  N=62   mb wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r1121  N=62   sg wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r1122  N=63   mb wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r1123  N=63   sg wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r1124  N=64   mb wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r1125  N=64   sg wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r1126  N=65   mb wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r1127  N=65   sg wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r1128  N=66   mb wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r1129  N=66   sg wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r1130  N=67   mb wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r1131  N=67   sg wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r1132  N=68   mb wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r1133  N=68   sg wall_bounce    press-trav_start None trav_start None end None anim None delta None gate None state None sides [] exit []
+   r1134  N=69   mb mantle_only    press-trav_start -0.1833 trav_start 1.3333 end 1.8 anim None delta None gate None state None sides [] exit [299.0, 0.0, 0.0]
+   r1135  N=69   sg mantle_only    press-trav_start -0.0333 trav_start 1.1833 end 1.7834 anim None delta None gate None state None sides [] exit [299.0, 0.0, 0.0]
+   r1136  N=70   mb mantle_only    press-trav_start -0.0333 trav_start 1.2001 end 1.7668 anim None delta None gate None state None sides [] exit [299.0, 0.0, 0.0]
+   r1137  N=70   sg mantle_only    press-trav_start 0.0 trav_start 1.1667 end 1.7834 anim None delta None gate None state None sides [] exit [299.0, 0.0, 0.0]
+   r1138  N=71   mb mantle_only    press-trav_start -0.0167 trav_start 1.2 end 1.7666 anim None delta None gate None state None sides [] exit [299.0, 0.0, 0.0]
+   r1139  N=71   sg mantle_only    press-trav_start 0.0167 trav_start 1.1667 end 1.7834 anim None delta None gate None state None sides [] exit [299.0, 0.0, 0.0]
+   r1140  N=72   mb mantle_only    press-trav_start 0.0167 trav_start 1.1833 end 1.7834 anim None delta None gate None state None sides [] exit [299.0, 0.0, 0.0]
+   r1141  N=72   sg mantle_only    press-trav_start -0.1334 trav_start 1.3331 end 1.7998 anim None delta None gate None state None sides [] exit [299.0, 0.0, 0.0]
+   r1142  N=73   mb failed_state3  press-trav_start 0.0333 trav_start 1.1834 end 1.7835 anim 0.036 delta 0.12 gate dec state 3 sides ['cl', 'sv'] exit [299.016, 0.0, 277.302]
+   r1143  N=73   sg mantle_only    press-trav_start 0.0167 trav_start 1.2001 end 1.7667 anim None delta None gate None state None sides [] exit [299.0, 0.0, 0.0]
+   r1144  N=74   mb failed_state3  press-trav_start 0.0667 trav_start 1.1667 end 1.7834 anim 0.102 delta 0.71 gate dec state 3 sides ['cl', 'sv'] exit [299.016, 0.0, 277.31]
+   r1145  N=74   sg failed_state3  press-trav_start 0.0333 trav_start 1.2 end 1.7666 anim 0.036 delta 0.12 gate dec state 3 sides ['cl', 'sv'] exit [299.016, 0.0, 277.303]
+   r1146  N=75   mb failed_state3  press-trav_start 0.0833 trav_start 1.1666 end 1.7833 anim 0.13 delta 1.09 gate dec state 3 sides ['cl', 'sv'] exit [299.016, 0.0, 277.306]
+   r1147  N=75   sg failed_state3  press-trav_start 0.0666 trav_start 1.1834 end 1.7834 anim 0.119 delta 0.94 gate dec state 3 sides ['cl', 'sv'] exit [299.016, 0.0, 277.308]
+   r1148  N=76   mb mantle_only    press-trav_start -0.0667 trav_start 1.3334 end 1.8 anim None delta None gate None state None sides [] exit [299.0, 0.0, 0.0]
+   r1149  N=76   sg failed_state3  press-trav_start 0.0834 trav_start 1.1833 end 1.7833 anim 0.161 delta 1.58 gate dec state 3 sides ['cl', 'sv'] exit [299.016, 0.0, 277.306]
+   r1150  N=77   mb failed_state3  press-trav_start 0.0833 trav_start 1.2 end 1.7665 anim 0.161 delta 1.58 gate dec state 3 sides ['cl', 'sv'] exit [299.016, 0.0, 277.304]
+   r1151  N=77   sg failed_state3  press-trav_start 0.1166 trav_start 1.1667 end 1.7833 anim 0.185 delta 1.99 gate dec state 3 sides ['cl', 'sv'] exit [299.016, 0.0, 277.304]
+   r1152  N=78   mb failed_state3  press-trav_start 0.1169 trav_start 1.1833 end 1.7834 anim 0.221 delta 2.62 gate dec state 3 sides ['cl', 'sv'] exit [299.016, 0.0, 277.311]
+   r1153  N=78   sg failed_state3  press-trav_start 0.1167 trav_start 1.1834 end 1.7834 anim 0.221 delta 2.62 gate dec state 3 sides ['cl', 'sv'] exit [299.016, 0.0, 277.304]
+   r1154  N=79   mb failed_state3  press-trav_start 0.1167 trav_start 1.1999 end 1.7665 anim 0.244 delta 3.03 gate dec state 3 sides ['cl', 'sv'] exit [299.016, 0.0, 277.303]
+   r1155  N=79   sg failed_state3  press-trav_start 0.1168 trav_start 1.2 end 1.7669 anim 0.244 delta 3.03 gate dec state 3 sides ['cl', 'sv'] exit [299.016, 0.0, 277.099]
+   r1156  N=80   mb mantle_only    press-trav_start 0.0 trav_start 1.3336 end 1.8003 anim None delta None gate None state None sides [] exit [299.0, 0.0, 0.0]
+   r1157  N=80   sg failed_state3  press-trav_start 0.15 trav_start 1.1834 end 1.7833 anim 0.276 delta 3.57 gate dec state 3 sides ['cl', 'sv'] exit [299.016, 0.0, 277.302]
+   r1301  N=90   mb failed_state3  press-trav_start 0.3333 trav_start 1.1667 end 1.7833 anim 0.546 delta 4.6 gate angle state 3 sides ['cl', 'sv'] exit [299.016, 0.0, 277.314]
+   r1302  N=91   mb failed_state3  press-trav_start 0.3333 trav_start 1.1835 end 1.7502 anim 0.615 delta 3.81 gate angle state 3 sides ['cl', 'sv'] exit [299.016, 0.0, 277.33]
+   r1303  N=92   mb failed_state3  press-trav_start 0.3333 trav_start 1.2 end 1.7667 anim 0.615 delta 3.81 gate angle state 3 sides ['cl', 'sv'] exit [299.016, 0.0, 277.311]
+   r1304  N=93   mb failed_state3  press-trav_start 0.2167 trav_start 1.3326 end 1.7993 anim 0.521 delta 3.87 gate angle state 3 sides ['cl', 'sv'] exit [299.016, 0.0, 277.311]
+   r1305  N=94   mb failed_state3  press-trav_start 0.3667 trav_start 1.2 end 1.7666 anim 0.67 delta 3.05 gate angle state 3 sides ['cl', 'sv'] exit [299.016, 0.0, 277.312]
+   r1306  N=95   mb failed_state3  press-trav_start 0.3833 trav_start 1.2 end 1.7667 anim 0.698 delta 2.65 gate angle state 3 sides ['cl', 'sv'] exit [299.016, 0.0, 277.311]
+   r1307  N=96   mb failed_state3  press-trav_start 0.4166 trav_start 1.1833 end 1.7833 anim 0.721 delta 2.32 gate angle state 3 sides ['cl', 'sv'] exit [299.016, 0.0, 277.312]
+   r1308  N=97   mb failed_state3  press-trav_start 0.4333 trav_start 1.1833 end 1.7834 anim 0.748 delta 1.93 gate angle state 3 sides ['cl', 'sv'] exit [299.016, 0.0, 277.309]
+   r1309  N=98   mb failed_state3  press-trav_start 0.4667 trav_start 1.1768 end 1.7935 anim 0.767 delta 1.66 gate angle state 3 sides ['cl', 'sv'] exit [299.016, 0.0, 277.315]
+   r1324  N=98   sg failed_state3  press-trav_start 0.3001 trav_start 1.3333 end 1.8 anim 0.687 delta 1.96 gate angle state 3 sides ['cl', 'sv'] exit [299.016, 0.0, 277.311]
+   r1310  N=99   mb boost_state4   press-trav_start 0.4833 trav_start 1.1667 end 1.7833 anim 0.796 delta 1.28 gate ok state 4 sides ['cl', 'sv'] exit [388.715, 0.0, 354.904]
+   r1311  N=100  mb boost_state4   press-trav_start 0.5167 trav_start 1.15 end 1.7666 anim 0.85 delta 0.66 gate ok state 4 sides ['cl', 'sv'] exit [388.715, 0.0, 354.907]
+   r1312  N=101  mb boost_state4   press-trav_start 0.4834 trav_start 1.2 end 1.7666 anim 0.865 delta 0.52 gate ok state 4 sides ['cl', 'sv'] exit [388.715, 0.0, 354.906]
+   r1325  N=101  sg boost_state4   press-trav_start 0.4832 trav_start 1.2002 end 1.7667 anim 0.865 delta 0.52 gate ok state 4 sides ['cl', 'sv'] exit [388.715, 0.0, 354.904]
+   r1313  N=102  mb boost_state4   press-trav_start 0.4999 trav_start 1.2 end 1.7666 anim 0.893 delta 0.3 gate ok state 4 sides ['cl', 'sv'] exit [388.715, 0.0, 354.904]
+   r1314  N=103  mb boost_state4   press-trav_start 0.5333 trav_start 1.1833 end 1.7833 anim 0.915 delta 0.16 gate ok state 4 sides ['cl', 'sv'] exit [388.715, 0.0, 354.905]
+   r1315  N=104  mb boost_state4   press-trav_start 0.55 trav_start 1.1833 end 1.7833 anim 0.943 delta 0.05 gate ok state 4 sides ['cl', 'sv'] exit [388.715, 0.0, 354.906]
+   r1326  N=104  sg boost_state4   press-trav_start 0.5332 trav_start 1.2 end 1.7666 anim 0.948 delta 0.04 gate ok state 4 sides ['cl', 'sv'] exit [388.715, 0.0, 354.904]
+   r1316  N=105  mb boost_state4   press-trav_start 0.5833 trav_start 1.1667 end 1.7833 anim 0.963 delta 0.01 gate ok state 4 sides ['cl', 'sv'] exit [388.715, 0.0, 354.901]
+   r1317  N=106  mb boost_state4   press-trav_start 0.5999 trav_start 1.1667 end 1.7833 anim 0.99 delta 0.0 gate ok state 4 sides ['cl', 'sv'] exit [388.715, 0.0, 354.905]
+   r1318  N=107  mb boost_state4   press-trav_start 0.45 trav_start 1.3333 end 1.8 anim 0.987 delta 0.0 gate ok state 4 sides ['cl', 'sv'] exit [299.016, 0.0, 277.313]
+   r1319  N=108  mb jump_on_top    press-trav_start 0.5999 trav_start 1.2001 end 1.7667 anim None delta None gate None state None sides [] exit [299.0, 0.0, 0.0]
+   r1320  N=109  mb jump_on_top    press-trav_start 0.5294 trav_start 1.3 end 1.7608 anim None delta None gate None state None sides [] exit [299.0, 0.0, 0.0]
+   r1321  N=110  mb jump_on_top    press-trav_start 0.6667 trav_start 1.1667 end 1.7834 anim None delta None gate None state None sides [] exit [299.0, 0.0, 0.0]
+   r1322  N=111  mb jump_on_top    press-trav_start 0.65 trav_start 1.2 end 1.7667 anim None delta None gate None state None sides [] exit [299.0, 0.0, 0.0]
+   r1323  N=112  mb jump_on_top    press-trav_start 0.6834 trav_start 1.1833 end 1.7833 anim None delta None gate None state None sides [] exit [299.0, 0.0, 0.0]
+== E7 class windows {"144": {"exit_jump_unlogged": {"n": 18, "N_min": 171, "N_max": 211, "rel_trav_start_min": 0.0278, "rel_trav_start_max": 0.2928, "anim_max": null, "crouch_n": 9}, "failed_state3": {"n": 7, "N_min": 169, "N_max": 178, "rel_trav_start_min": 0.0139, "rel_trav_start_max": 0.0689, "anim_max": 0.131, "crouch_n": 3}, "mantle_only": {"n": 5, "N_min": 163, "N_max": 169, "rel_trav_start_min": -0.0548, "rel_trav_start_max": -0.0069, "anim_max": null, "crouch_n": 3}, "wall_bounce": {"n": 21, "N_min": 130, "N_max": 160, "rel_trav_start_min": null, "rel_trav_start_max": null, "anim_max": null, "crouch_n": 11}}, "120": {"boost_state4": {"n": 19, "N_min": 196, "N_max": 212, "rel_trav_start_min": 0.4583, "rel_trav_start_max": 0.6085, "anim_max": 0.999, "crouch_n": 3}, "failed_state3": {"n": 29, "N_min": 142, "N_max": 195, "rel_trav_start_min": 0.0167, "rel_trav_start_max": 0.4584, "anim_max": 0.77, "crouch_n": 10}, "jump_on_top": {"n": 3, "N_min": 213, "N_max": 215, "rel_trav_start_min": 0.6083, "rel_trav_start_max": 0.625, "anim_max": null, "crouch_n": 0}, "mantle_only": {"n": 14, "N_min": 134, "N_max": 142, "rel_trav_start_min": -0.05, "rel_trav_start_max": 0.0083, "anim_max": null, "crouch_n": 6}, "wall_bounce": {"n": 11, "N_min": 130, "N_max": 135, "rel_trav_start_min": null, "rel_trav_start_max": null, "anim_max": null, "crouch_n": 6}}, "60": {"boost_state4": {"n": 11, "N_min": 99, "N_max": 107, "rel_trav_start_min": 0.45, "rel_trav_start_max": 0.5999, "anim_max": 0.99, "crouch_n": 2}, "failed_state3": {"n": 23, "N_min": 73, "N_max": 98, "rel_trav_start_min": 0.0333, "rel_trav_start_max": 0.4667, "anim_max": 0.767, "crouch_n": 8}, "jump_on_top": {"n": 5, "N_min": 108, "N_max": 112, "rel_trav_start_min": 0.5294, "rel_trav_start_max": 0.6834, "anim_max": null, "crouch_n": 0}, "mantle_only": {"n": 11, "N_min": 69, "N_max": 80, "rel_trav_start_min": -0.1833, "rel_trav_start_max": 0.0167, "anim_max": null, "crouch_n": 5}, "wall_bounce": {"n": 18, "N_min": 60, "N_max": 68, "rel_trav_start_min": null, "rel_trav_start_max": null, "anim_max": null, "crouch_n": 9}}}
+== measured boost window {"120": {"n_boost": 19, "n_fail": 29, "n_jump_on_top": 3, "N_boost": [196, 212], "N_fail_max": 195, "N_top_min": 213, "anim_open": {"last_fail": 0.77, "first_boost": 0.783}, "raw_open": {"last_fail": 0.77, "first_boost": 0.783}, "delta_open": {"last_fail": 1.63, "first_boost": 1.45}, "anim_last_boost": 0.999, "frames_before_end_boost": [1.0, 16.0], "frames_before_end_fail_min": 17.0, "exit_post_boost": [{"n": 19, "mean": 388.70799999999986, "sd": 1.7520318360109786e-13, "min": 388.708, "max": 388.708}, {"n": 19, "mean": 361.15873684210527, "sd": 0.02660585170652103, "min": 361.084, "max": 361.218}], "cl_sv_mismatch": []}, "60": {"n_boost": 11, "n_fail": 23, "n_jump_on_top": 5, "N_boost": [99, 107], "N_fail_max": 98, "N_top_min": 108, "anim_open": {"last_fail": 0.767, "first_boost": 0.796}, "raw_open": {"last_fail": 0.767, "first_boost": 0.796}, "delta_open": {"last_fail": 1.66, "first_boost": 1.28}, "anim_last_boost": 0.99, "frames_before_end_boost": [1.0, 8.0], "frames_before_end_fail_min": 9.0, "exit_post_boost": [{"n": 11, "mean": 380.5605454545455, "sd": 27.045266097280805, "min": 299.016, "max": 388.715}, {"n": 11, "mean": 347.8508181818181, "sd": 23.394747696088462, "min": 277.313, "max": 354.907}], "cl_sv_mismatch": ["r1318"]}}
+== hop350 by D {"d0_first": {"n": 3, "cmds_since_land": {"n": 3, "mean": 1.0, "sd": 0.0, "min": 1, "max": 1}, "pre_speed": {"n": 3, "mean": 350.1673333333333, "sd": 0.001154700538384765, "min": 350.166, "max": 350.168}, "post_speed": {"n": 3, "mean": 299.003, "sd": 0.0, "min": 299.003, "max": 299.003}, "loss": {"n": 3, "mean": 51.16433333333335, "sd": 0.001154700538384765, "min": 51.16300000000001, "max": 51.16500000000002}, "V": {"n": 3, "mean": 158.73533333333333, "sd": 0.003003470215157027, "min": 158.73225, "max": 158.73825}}, "d0_later": {"n": 6, "cmds_since_land": {"n": 6, "mean": 1.0, "sd": 0.0, "min": 1, "max": 1}, "pre_speed": {"n": 6, "mean": 299.0638333333334, "sd": 0.0014719601443814866, "min": 299.062, "max": 299.065}, "post_speed": {"n": 6, "mean": 299.0033333333333, "sd": 0.0005163977795114649, "min": 299.003, "max": 299.004}, "loss": {"n": 6, "mean": 0.0605000000000094, "sd": 0.0013784048752011704, "min": 0.05900000000002592, "max": 0.06200000000001182}, "V": {"n": 6, "mean": 158.73829166666664, "sd": 0.003124166555526562, "min": 158.73425, "max": 158.7425}}, "d1_first": {"n": 3, "cmds_since_land": {"n": 3, "mean": 2.0, "sd": 0.0, "min": 2, "max": 2}, "pre_speed": {"n": 3, "mean": 339.74133333333333, "sd": 0.005773502691891007, "min": 339.738, "max": 339.748}, "post_speed": {"n": 3, "mean": 299.003, "sd": 0.0, "min": 299.003, "max": 299.003}, "loss": {"n": 3, "mean": 40.738333333333344, "sd": 0.005773502691891007, "min": 40.735000000000014, "max": 40.745000000000005}, "V": {"n": 3, "mean": 158.73716666666667, "sd": 0.005713653238812316, "min": 158.7335, "max": 158.74375}}, "d1_later": {"n": 6, "cmds_since_land": {"n": 6, "mean": 2.0, "sd": 0.0, "min": 2, "max": 2}, "pre_speed": {"n": 6, "mean": 299.0, "sd": 0.0, "min": 299.0, "max": 299.0}, "post_speed": {"n": 6, "mean": 299.003, "sd": 0.0, "min": 299.003, "max": 299.003}, "loss": {"n": 6, "mean": -0.002999999999985903, "sd": 0.0, "min": -0.002999999999985903, "max": -0.002999999999985903}, "V": {"n": 6, "mean": 158.73966666666666, "sd": 0.0038459935864041104, "min": 158.73325, "max": 158.74375}}, "d2_first": {"n": 3, "cmds_since_land": {"n": 3, "mean": 3.0, "sd": 0.0, "min": 3, "max": 3}, "pre_speed": {"n": 3, "mean": 329.32300000000004, "sd": 0.006244997998391808, "min": 329.318, "max": 329.33}, "post_speed": {"n": 3, "mean": 299.003, "sd": 0.0, "min": 299.003, "max": 299.003}, "loss": {"n": 3, "mean": 30.32000000000001, "sd": 0.006244997998391809, "min": 30.314999999999998, "max": 30.326999999999998}, "V": {"n": 3, "mean": 158.73708333333335, "sd": 0.0033572061797430284, "min": 158.73325, "max": 158.7395}}, "d2_later": {"n": 6, "cmds_since_land": {"n": 6, "mean": 3.0, "sd": 0.0, "min": 3, "max": 3}, "pre_speed": {"n": 6, "mean": 299.0, "sd": 0.0, "min": 299.0, "max": 299.0}, "post_speed": {"n": 6, "mean": 299.003, "sd": 0.0, "min": 299.003, "max": 299.003}, "loss": {"n": 6, "mean": -0.002999999999985903, "sd": 0.0, "min": -0.002999999999985903, "max": -0.002999999999985903}, "V": {"n": 6, "mean": 158.73737500000001, "sd": 0.00407661011134936, "min": 158.73325, "max": 158.74349999999998}}, "d3_first": {"n": 3, "cmds_since_land": {"n": 3, "mean": 4.0, "sd": 0.0, "min": 4, "max": 4}, "pre_speed": {"n": 3, "mean": 318.89000000000004, "sd": 0.022113344387510312, "min": 318.873, "max": 318.915}, "post_speed": {"n": 3, "mean": 299.003, "sd": 0.0, "min": 299.003, "max": 299.003}, "loss": {"n": 3, "mean": 19.887000000000018, "sd": 0.022113344387510312, "min": 19.870000000000005, "max": 19.912000000000035}, "V": {"n": 3, "mean": 158.73441666666668, "sd": 0.0011273124382074296, "min": 158.73325, "max": 158.7355}}, "d3_later": {"n": 6, "cmds_since_land": {"n": 6, "mean": 4.0, "sd": 0.0, "min": 4, "max": 4}, "pre_speed": {"n": 6, "mean": 299.0, "sd": 0.0, "min": 299.0, "max": 299.0}, "post_speed": {"n": 6, "mean": 299.003, "sd": 0.0, "min": 299.003, "max": 299.003}, "loss": {"n": 6, "mean": -0.002999999999985903, "sd": 0.0, "min": -0.002999999999985903, "max": -0.002999999999985903}, "V": {"n": 6, "mean": 158.741125, "sd": 0.002978044660515104, "min": 158.7365, "max": 158.74375}}, "d5_first": {"n": 3, "cmds_since_land": {"n": 3, "mean": 6.0, "sd": 0.0, "min": 6, "max": 6}, "pre_speed": {"n": 3, "mean": 299.0, "sd": 0.0, "min": 299.0, "max": 299.0}, "post_speed": {"n": 3, "mean": 299.00333333333333, "sd": 0.0005773502692087918, "min": 299.003, "max": 299.004}, "loss": {"n": 3, "mean": -0.0033333333333303017, "sd": 0.0005773502692087918, "min": -0.004000000000019099, "max": -0.002999999999985903}, "V": {"n": 3, "mean": 158.74191666666667, "sd": 0.0021262251370376055, "min": 158.7395, "max": 158.7435}}, "d5_later": {"n": 6, "cmds_since_land": {"n": 6, "mean": 6.0, "sd": 0.0, "min": 6, "max": 6}, "pre_speed": {"n": 6, "mean": 299.0, "sd": 0.0, "min": 299.0, "max": 299.0}, "post_speed": {"n": 6, "mean": 299.003, "sd": 0.0, "min": 299.003, "max": 299.003}, "loss": {"n": 6, "mean": -0.002999999999985903, "sd": 0.0, "min": -0.002999999999985903, "max": -0.002999999999985903}, "V": {"n": 6, "mean": 158.736875, "sd": 0.003750833240756725, "min": 158.73325, "max": 158.74224999999998}}, "d10_first": {"n": 3, "cmds_since_land": {"n": 3, "mean": 11.0, "sd": 0.0, "min": 11, "max": 11}, "pre_speed": {"n": 3, "mean": 299.0, "sd": 0.0, "min": 299.0, "max": 299.0}, "post_speed": {"n": 3, "mean": 299.00333333333333, "sd": 0.0005773502692087918, "min": 299.003, "max": 299.004}, "loss": {"n": 3, "mean": -0.0033333333333303017, "sd": 0.0005773502692087918, "min": -0.004000000000019099, "max": -0.002999999999985903}, "V": {"n": 3, "mean": 158.74016666666668, "sd": 0.004964457002875237, "min": 158.7345, "max": 158.74375}}, "d10_later": {"n": 6, "cmds_since_land": {"n": 6, "mean": 11.0, "sd": 0.0, "min": 11, "max": 11}, "pre_speed": {"n": 6, "mean": 299.0, "sd": 0.0, "min": 299.0, "max": 299.0}, "post_speed": {"n": 6, "mean": 299.00333333333333, "sd": 0.0005163977795114649, "min": 299.003, "max": 299.004}, "loss": {"n": 6, "mean": -0.0033333333333303017, "sd": 0.0005163977795114649, "min": -0.004000000000019099, "max": -0.002999999999985903}, "V": {"n": 6, "mean": 158.737875, "sd": 0.004454632420302099, "min": 158.7335, "max": 158.74300000000002}}}
+== E7 traversal timing {"144": {"start_after_first": {"n": 30, "mean": 1.1758133333333336, "sd": 0.011543492967254633, "min": 1.1537, "max": 1.2013}, "end_after_first": {"n": 30, "mean": 1.7705466666666667, "sd": 0.009320379351955984, "min": 1.7457, "max": 1.7861}}, "120": {"start_after_first": {"n": 65, "mean": 1.174049230769231, "sd": 0.010627986684294361, "min": 1.15, "max": 1.2}, "end_after_first": {"n": 65, "mean": 1.7655292307692305, "sd": 0.006512793253400436, "min": 1.7415, "max": 1.7751}}, "60": {"start_after_first": {"n": 50, "mean": 1.2078700000000004, "sd": 0.05517525047796447, "min": 1.15, "max": 1.3336}, "end_after_first": {"n": 50, "mean": 1.7790819999999994, "sd": 0.012339213913373946, "min": 1.7502, "max": 1.8003}}}
+== anim vs time {"slope_per_s": 1.6418073582353274, "intercept": -0.14018047958151436, "rms": 0.05175478694694024, "n": 89, "implied_traversal_s": 0.6090848569925008, "anim0_time_s": 0.08538180735904687}
+== remaining traversal vs anim (scored) {"T_s": 0.5877119938664425, "offset_s": -0.004226533323902715, "rms": 0.010822925732647017, "n": 89, "anim_range": [0.015, 0.999]}
+== remaining traversal vs anim (scored + rejected) {"T_s": 0.588176510501519, "offset_s": -0.003980441197453166, "rms": 0.010545970923141188, "n": 99}
+== rejected TRIG (anim, apply-trig s, delta, gate, state, run, fps) [[0.661, 0.20100000000000762, 3.19, "angle", 3, "r902", 101.39], [0.018, 0.5669999999999931, 0.05, "dec", 3, "r904", 112.78], [0.825, 0.10400000000004184, 0.94, "ok", 4, "r932", 99.12], [0.126, 0.5249999999999773, 1.03, "dec", 3, "r933", 103.07], [0.499, 0.29200000000003, 4.96, "angle", 3, "r934", 102.81], [0.872, 0.06800000000004047, 0.45, "ok", 4, "r935", 101.78], [0.132, 0.5199999999999818, 1.12, "dec", 3, "r936", 103.44], [0.657, 0.20100000000002183, 3.25, "angle", 3, "r937", 102.56], [0.829, 0.10199999999997544, 0.89, "ok", 4, "r938", 101.05], [0.175, 0.4840000000000373, 1.82, "dec", 3, "r939", 104.04]]
+== climb end bracket {"abs_z": {"lo": 441.913, "hi": 441.934}, "h_above_contact": {"lo": 97.08099999999996, "hi": 95.14300000000003}, "time_since_contact": {"lo": 0.8524099999999996, "hi": 0.842620000000001}, "vz_pre": {"hi": 58.159, "lo": 59.117}, "n": 157, "note": "a variable is a consistent end trigger only if lo < hi (for vz: end when vz <= thr, lo < thr < hi)"}
+== E8 chains
+   144 r771   e8_fast_hops    jump pre 318.08 post 350.005 V 273.60 sl 1 since_land None; jump pre 299.00 post 299.003 V 158.74 sl 0 since_land 17; jump pre 299.00 post 299.005 V 215.44 sl 0 since_land 53; jump pre 299.00 post 299.003 V 175.70 sl 0 since_land 30 || land air 350.17->350.17 1st-ground 350.17->341.49 vz -212.4 decel -1250.9 sl 0->0 toCap 6 decels [-1250.9, -1249.4, -1249.1, -1249.4, -1249.2, -1109.9] held {'s': 0.1179, 'cmds': 17, 'min': 299.0, 'max': 341.487, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -144.3 decel -9.1 sl 0->0 toCap 1 decels [-9.1] held {'s': 0.367, 'cmds': 53, 'min': 299.0, 'max': 299.005, 'last': 299.005}; land air 299.14->299.14 1st-ground 299.14->299.00 vz -203.4 decel -20.7 sl 0->0 toCap 1 decels [-20.7] held {'s': 0.208, 'cmds': 30, 'min': 299.0, 'max': 299.003, 'last': 299.003}; land air 299.08->299.08 1st-ground 299.08->299.00 vz -159.8 decel -11.7 sl 0->0 toCap 1 decels [-11.7] held {'s': 0.3193, 'cmds': 46, 'min': 299.0, 'max': 299.0, 'last': 299.0}
+   144 r775   e8_slide_chain  jump pre 318.07 post 350.005 V 273.60 sl 1 since_land None; jump pre 239.63 post 239.638 V 239.31 sl 1 since_land 79 || land air 350.21->350.21 1st-ground 350.21->348.64 vz -264.5 decel -224.6 sl 0->1 toCap 35 decels [-224.6, -223.9, -223.3, -223.0, -222.4, -221.9, -221.3, -220.9] held {'s': 0.5478, 'cmds': 79, 'min': 239.631, 'max': 348.642, 'last': 239.638}; land air 239.88->239.89 1st-ground 239.89->238.60 vz -227.0 decel -185.2 sl 0->1 toCap 0 decels [-185.2] held {'s': 0.6365, 'cmds': 92, 'min': 134.313, 'max': 238.604, 'last': 134.313}
+   144 r776   e8_slide_chain  jump pre 315.07 post 350.005 V 273.57 sl 1 since_land None; jump pre 222.94 post 222.948 V 255.79 sl 1 since_land 86 || land air 350.21->350.21 1st-ground 350.21->348.34 vz -265.0 decel -224.5 sl 0->1 toCap 30 decels [-224.5, -223.7, -222.9, -222.3, -221.7, -221.0, -220.4, -219.8] held {'s': 0.6394, 'cmds': 86, 'min': 222.94, 'max': 348.336, 'last': 222.948}; land air 223.26->223.27 1st-ground 223.27->222.01 vz -241.8 decel -179.4 sl 0->1 toCap 0 decels [-179.4] held {'s': 0.5999, 'cmds': 86, 'min': 126.328, 'max': 222.011, 'last': 126.328}
+   144 r777   e8_slide_chain  jump pre 318.32 post 350.005 V 273.60 sl 1 since_land None; jump pre 239.54 post 239.544 V 239.33 sl 1 since_land 79 || land air 350.21->350.21 1st-ground 350.21->348.65 vz -264.7 decel -224.3 sl 0->1 toCap 35 decels [-224.3, -224.1, -223.3, -223.1, -222.2, -221.6, -221.0, -220.6] held {'s': 0.5484, 'cmds': 79, 'min': 239.538, 'max': 348.654, 'last': 239.544}; land air 239.79->239.80 1st-ground 239.80->238.51 vz -227.3 decel -185.3 sl 0->1 toCap 0 decels [-185.3] held {'s': 0.64, 'cmds': 92, 'min': 133.718, 'max': 238.512, 'last': 133.718}
+   144 r778   e8_slide_chain  jump pre 317.98 post 350.005 V 273.59 sl 1 since_land None; jump pre 238.37 post 238.373 V 240.58 sl 1 since_land 80 || land air 350.20->350.21 1st-ground 350.21->348.65 vz -260.4 decel -224.3 sl 0->1 toCap 35 decels [-224.3, -223.7, -223.3, -222.7, -222.5, -221.9, -221.0, -220.7] held {'s': 0.5548, 'cmds': 80, 'min': 238.366, 'max': 348.65, 'last': 238.373}; land air 238.63->238.63 1st-ground 238.63->237.35 vz -230.0 decel -184.9 sl 0->1 toCap 0 decels [-184.9] held {'s': 0.6314, 'cmds': 91, 'min': 134.065, 'max': 237.35, 'last': 134.065}
+   144 r779   e8_slide_chain  jump pre 316.98 post 350.005 V 273.58 sl 1 since_land None; jump pre 236.83 post 236.837 V 242.12 sl 1 since_land 81 || land air 350.20->350.21 1st-ground 350.21->348.65 vz -261.0 decel -224.5 sl 0->1 toCap 35 decels [-224.5, -224.0, -223.3, -222.8, -222.3, -221.7, -221.2, -220.6] held {'s': 0.5631, 'cmds': 81, 'min': 236.83, 'max': 348.65, 'last': 236.837}; land air 237.09->237.10 1st-ground 237.10->235.82 vz -228.5 decel -184.0 sl 0->1 toCap 0 decels [-184.0] held {'s': 0.6321, 'cmds': 91, 'min': 132.728, 'max': 235.821, 'last': 132.728}
+   144 r780   e8_drop_land    jump pre 299.00 post 299.007 V 289.82 sl 0 since_land None || land air 299.69->299.70 1st-ground 299.70->299.00 vz -589.9 decel -101.6 sl 0->0 toCap 1 decels [-101.6] held {'s': 0.7282, 'cmds': 105, 'min': 299.0, 'max': 299.0, 'last': 299.0}
+   144 r781   e8_drop_land    jump pre 299.00 post 299.007 V 289.82 sl 0 since_land None || land air 299.68->299.69 1st-ground 299.69->299.00 vz -584.7 decel -101.6 sl 0->0 toCap 1 decels [-101.6] held {'s': 0.7221, 'cmds': 104, 'min': 299.0, 'max': 299.0, 'last': 299.0}
+   144 r782   e8_drop_land    jump pre 299.00 post 299.007 V 289.82 sl 0 since_land None || land air 299.69->299.70 1st-ground 299.70->299.00 vz -585.6 decel -99.6 sl 0->0 toCap 1 decels [-99.6] held {'s': 0.7422, 'cmds': 107, 'min': 299.0, 'max': 299.0, 'last': 299.0}
+   144 r783   e8_drop_land    jump pre 299.00 post 299.007 V 289.83 sl 0 since_land None || land air 299.68->299.69 1st-ground 299.69->299.00 vz -583.5 decel -99.6 sl 0->0 toCap 1 decels [-99.6] held {'s': 0.7436, 'cmds': 107, 'min': 299.0, 'max': 299.0, 'last': 299.0}
+   144 r784   e8_drop_land    jump pre 299.00 post 299.007 V 289.82 sl 0 since_land None || land air 299.68->299.69 1st-ground 299.69->299.00 vz -583.7 decel -99.6 sl 0->0 toCap 1 decels [-99.6] held {'s': 0.733, 'cmds': 105, 'min': 299.0, 'max': 299.0, 'last': 299.0}
+   144 r546   e8_fast_hops    jump pre 315.13 post 350.005 V 273.57 sl 1 since_land None; jump pre 299.00 post 299.003 V 158.74 sl 0 since_land 18; jump pre 299.00 post 299.005 V 215.69 sl 0 since_land 53 || land air 350.16->350.17 1st-ground 350.17->341.49 vz -211.0 decel -1249.2 sl 0->0 toCap 6 decels [-1249.2, -1250.9, -1249.2, -1249.2, -1249.4, -1116.1] held {'s': 0.1253, 'cmds': 18, 'min': 299.0, 'max': 341.485, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -141.1 decel -8.5 sl 0->0 toCap 1 decels [-8.5] held {'s': 0.3679, 'cmds': 53, 'min': 299.0, 'max': 299.005, 'last': 299.005}; land air 300.44->300.45 1st-ground 300.45->299.00 vz -884.1 decel -208.8 sl 0->0 toCap 1 decels [-208.8] held {'s': 0.0613, 'cmds': 9, 'min': 299.0, 'max': 299.0, 'last': 299.0}
+   144 r547   e8_slide_chain  jump pre 318.01 post 350.005 V 273.60 sl 1 since_land None; jump pre 239.59 post 239.596 V 239.36 sl 1 since_land 79 || land air 350.21->350.21 1st-ground 350.21->348.64 vz -264.7 decel -224.6 sl 0->1 toCap 35 decels [-224.6, -224.0, -223.5, -223.0, -222.4, -221.9, -221.3, -220.8] held {'s': 0.548, 'cmds': 79, 'min': 239.589, 'max': 348.644, 'last': 239.596}; land air 239.87->239.88 1st-ground 239.88->238.59 vz -238.1 decel -185.0 sl 0->1 toCap 0 decels [-185.0] held {'s': 0.1731, 'cmds': 25, 'min': 219.76949617724478, 'max': 238.59, 'last': 224.90463680635844}; land air 225.20->531.73 1st-ground 531.73->523.05 vz -757.8 decel -1249.1 sl 0->0 toCap 27 decels [-1249.1, -1250.9, -1249.4, -1249.1, -1249.3, -1250.9, -1249.3, -1249.3] held None
+   144 r548   e8_drop_land    jump pre 299.00 post 299.007 V 289.82 sl 0 since_land None || land air 299.69->299.70 1st-ground 299.70->299.00 vz -585.6 decel -100.1 sl 0->0 toCap 1 decels [-100.1] held {'s': 0.7288, 'cmds': 105, 'min': 299.0, 'max': 299.0, 'last': 299.0}
+   120 r943   e8_fast_hops    jump pre 317.27 post 350.006 V 273.54 sl 1 since_land None; jump pre 299.00 post 299.003 V 158.74 sl 0 since_land 15; jump pre 299.00 post 299.005 V 215.45 sl 0 since_land 44; jump pre 299.00 post 299.004 V 178.31 sl 0 since_land 26 || land air 350.16->350.17 1st-ground 350.17->339.73 vz -211.6 decel -1249.7 sl 0->0 toCap 5 decels [-1249.7, -1249.2, -1250.8, -1249.3, -1131.7] held {'s': 0.1252, 'cmds': 15, 'min': 299.0, 'max': 339.733, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -144.8 decel -7.4 sl 0->0 toCap 1 decels [-7.4] held {'s': 0.3668, 'cmds': 44, 'min': 299.0, 'max': 299.005, 'last': 299.005}; land air 299.14->299.14 1st-ground 299.14->299.00 vz -200.3 decel -17.0 sl 0->0 toCap 1 decels [-17.0] held {'s': 0.2168, 'cmds': 26, 'min': 299.0, 'max': 299.004, 'last': 299.004}; land air 299.08->299.08 1st-ground 299.08->299.00 vz -162.6 decel -10.2 sl 0->0 toCap 1 decels [-10.2] held {'s': 0.3168, 'cmds': 38, 'min': 299.0, 'max': 299.0, 'last': 299.0}
+   120 r944   e8_fast_hops    jump pre 316.79 post 350.006 V 273.52 sl 1 since_land None; jump pre 299.00 post 299.003 V 158.74 sl 0 since_land 15; jump pre 299.00 post 299.005 V 215.76 sl 0 since_land 44; jump pre 299.00 post 299.004 V 178.31 sl 0 since_land 26 || land air 350.16->350.17 1st-ground 350.17->339.74 vz -211.3 decel -1249.9 sl 0->0 toCap 5 decels [-1249.9, -1250.5, -1250.1, -1249.9, -1109.4] held {'s': 0.1252, 'cmds': 15, 'min': 299.0, 'max': 339.744, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -144.4 decel -7.4 sl 0->0 toCap 1 decels [-7.4] held {'s': 0.3671, 'cmds': 44, 'min': 299.0, 'max': 299.005, 'last': 299.005}; land air 299.14->299.14 1st-ground 299.14->299.00 vz -199.9 decel -17.0 sl 0->0 toCap 1 decels [-17.0] held {'s': 0.2168, 'cmds': 26, 'min': 299.0, 'max': 299.004, 'last': 299.004}; land air 299.08->299.08 1st-ground 299.08->299.00 vz -162.6 decel -10.2 sl 0->0 toCap 1 decels [-10.2] held {'s': 0.3166, 'cmds': 38, 'min': 299.0, 'max': 299.0, 'last': 299.0}
+   120 r945   e8_fast_hops    jump pre 317.30 post 350.006 V 273.54 sl 1 since_land None; jump pre 299.00 post 299.003 V 158.74 sl 0 since_land 15; jump pre 299.00 post 299.005 V 215.71 sl 0 since_land 44; jump pre 299.00 post 299.004 V 178.30 sl 0 since_land 26 || land air 350.16->350.17 1st-ground 350.17->339.75 vz -211.1 decel -1249.4 sl 0->0 toCap 5 decels [-1249.4, -1249.4, -1249.5, -1249.4, -1138.8] held {'s': 0.1251, 'cmds': 15, 'min': 299.0, 'max': 339.747, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -144.6 decel -7.4 sl 0->0 toCap 1 decels [-7.4] held {'s': 0.367, 'cmds': 44, 'min': 299.0, 'max': 299.005, 'last': 299.005}; land air 299.14->299.14 1st-ground 299.14->299.00 vz -200.3 decel -17.0 sl 0->0 toCap 1 decels [-17.0] held {'s': 0.2168, 'cmds': 26, 'min': 299.0, 'max': 299.004, 'last': 299.004}; land air 299.08->299.08 1st-ground 299.08->299.00 vz -162.7 decel -10.2 sl 0->0 toCap 1 decels [-10.2] held {'s': 0.3169, 'cmds': 38, 'min': 299.0, 'max': 299.0, 'last': 299.0}
+   120 r946   e8_fast_hops    jump pre 317.44 post 350.006 V 273.54 sl 1 since_land None; jump pre 299.00 post 299.003 V 158.73 sl 0 since_land 15; jump pre 299.00 post 299.005 V 215.52 sl 0 since_land 44; jump pre 299.00 post 299.004 V 178.16 sl 0 since_land 26 || land air 350.16->350.17 1st-ground 350.17->339.75 vz -210.9 decel -1250.5 sl 0->0 toCap 5 decels [-1250.5, -1250.5, -1249.4, -1250.7, -1139.9] held {'s': 0.125, 'cmds': 15, 'min': 299.0, 'max': 339.75, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -144.6 decel -7.5 sl 0->0 toCap 1 decels [-7.5] held {'s': 0.3664, 'cmds': 44, 'min': 299.0, 'max': 299.005, 'last': 299.005}; land air 299.14->299.14 1st-ground 299.14->299.00 vz -200.4 decel -17.1 sl 0->0 toCap 1 decels [-17.1] held {'s': 0.2168, 'cmds': 26, 'min': 299.0, 'max': 299.004, 'last': 299.004}; land air 299.08->299.08 1st-ground 299.08->299.00 vz -162.8 decel -10.2 sl 0->0 toCap 1 decels [-10.2] held {'s': 0.3165, 'cmds': 38, 'min': 299.0, 'max': 299.0, 'last': 299.0}
+   120 r1014  e8_fast_hops    jump pre 317.45 post 350.006 V 273.53 sl 1 since_land None; jump pre 299.00 post 299.003 V 158.74 sl 0 since_land 15; jump pre 299.00 post 299.005 V 215.70 sl 0 since_land 44; jump pre 299.00 post 299.004 V 178.20 sl 0 since_land 26 || land air 350.16->350.17 1st-ground 350.17->339.75 vz -211.0 decel -1249.3 sl 0->0 toCap 5 decels [-1249.3, -1249.6, -1249.3, -1249.4, -1137.5] held {'s': 0.1253, 'cmds': 15, 'min': 299.0, 'max': 339.748, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -144.2 decel -7.4 sl 0->0 toCap 1 decels [-7.4] held {'s': 0.3667, 'cmds': 44, 'min': 299.0, 'max': 299.005, 'last': 299.005}; land air 299.14->299.14 1st-ground 299.14->299.00 vz -200.2 decel -17.0 sl 0->0 toCap 1 decels [-17.0] held {'s': 0.2168, 'cmds': 26, 'min': 299.0, 'max': 299.004, 'last': 299.004}; land air 299.08->299.08 1st-ground 299.08->299.00 vz -162.5 decel -10.2 sl 0->0 toCap 1 decels [-10.2] held {'s': 0.3169, 'cmds': 38, 'min': 299.0, 'max': 299.0, 'last': 299.0}
+   120 r1015  e8_slide_chain  jump pre 317.39 post 350.006 V 273.54 sl 1 since_land None; jump pre 237.91 post 237.918 V 241.60 sl 1 since_land 67 || land air 350.20->350.21 1st-ground 350.21->348.34 vz -260.9 decel -224.2 sl 0->1 toCap 29 decels [-224.2, -223.7, -222.9, -222.4, -221.6, -221.2, -220.4, -219.7] held {'s': 0.5588, 'cmds': 67, 'min': 237.91, 'max': 348.34, 'last': 237.918}; land air 238.17->238.18 1st-ground 238.18->236.64 vz -230.5 decel -184.5 sl 0->1 toCap 0 decels [-184.5] held {'s': 0.6338, 'cmds': 76, 'min': 133.367, 'max': 236.642, 'last': 133.367}
+   120 r1016  e8_slide_chain  jump pre 317.38 post 350.006 V 273.53 sl 1 since_land None; jump pre 237.88 post 237.891 V 241.61 sl 1 since_land 67 || land air 350.20->350.21 1st-ground 350.21->348.34 vz -261.1 decel -224.3 sl 0->1 toCap 29 decels [-224.3, -223.7, -223.0, -222.3, -221.7, -221.1, -220.4, -219.7] held {'s': 0.5589, 'cmds': 67, 'min': 237.883, 'max': 348.339, 'last': 237.891}; land air 238.15->238.15 1st-ground 238.15->236.62 vz -230.2 decel -184.6 sl 0->1 toCap 0 decels [-184.6] held {'s': 0.6338, 'cmds': 76, 'min': 133.353, 'max': 236.615, 'last': 133.353}
+   120 r1017  e8_slide_chain  jump pre 317.38 post 350.006 V 273.54 sl 1 since_land None; jump pre 237.89 post 237.902 V 241.63 sl 1 since_land 67 || land air 350.20->350.21 1st-ground 350.21->348.33 vz -260.6 decel -224.6 sl 0->1 toCap 29 decels [-224.6, -223.7, -223.2, -222.5, -221.8, -221.1, -220.5, -219.9] held {'s': 0.5588, 'cmds': 67, 'min': 237.894, 'max': 348.335, 'last': 237.902}; land air 238.16->238.16 1st-ground 238.16->236.63 vz -230.6 decel -184.5 sl 0->1 toCap 0 decels [-184.5] held {'s': 0.6334, 'cmds': 76, 'min': 133.381, 'max': 236.626, 'last': 133.381}
+   120 r1018  e8_slide_chain  jump pre 317.42 post 350.006 V 273.54 sl 1 since_land None; jump pre 237.94 post 237.951 V 241.49 sl 1 since_land 67 || land air 350.20->350.21 1st-ground 350.21->348.34 vz -261.2 decel -224.5 sl 0->1 toCap 29 decels [-224.5, -223.8, -223.2, -222.5, -222.0, -221.2, -220.5, -219.9] held {'s': 0.5584, 'cmds': 67, 'min': 237.943, 'max': 348.343, 'last': 237.951}; land air 238.21->238.21 1st-ground 238.21->236.68 vz -230.6 decel -184.5 sl 0->1 toCap 0 decels [-184.5] held {'s': 0.6337, 'cmds': 76, 'min': 133.394, 'max': 236.675, 'last': 133.394}
+   120 r1019  e8_slide_chain  jump pre 316.52 post 350.006 V 273.53 sl 1 since_land None; jump pre 237.91 post 237.918 V 241.56 sl 1 since_land 67 || land air 350.21->350.21 1st-ground 350.21->348.34 vz -264.1 decel -224.3 sl 0->1 toCap 29 decels [-224.3, -223.7, -223.1, -222.3, -221.7, -221.0, -220.4, -219.8] held {'s': 0.5587, 'cmds': 67, 'min': 237.91, 'max': 348.343, 'last': 237.918}; land air 238.17->238.18 1st-ground 238.18->236.64 vz -230.5 decel -184.6 sl 0->1 toCap 0 decels [-184.6] held {'s': 0.6333, 'cmds': 76, 'min': 133.4, 'max': 236.643, 'last': 133.4}
+   120 r1020  e8_drop_land    jump pre 299.00 post 299.008 V 289.82 sl 0 since_land None || land air 299.68->299.69 1st-ground 299.69->299.00 vz -584.1 decel -83.3 sl 0->0 toCap 1 decels [-83.3] held {'s': 0.7255, 'cmds': 87, 'min': 299.0, 'max': 299.0, 'last': 299.0}
+   120 r1021  e8_drop_land    jump pre 299.00 post 299.008 V 289.82 sl 0 since_land None || land air 299.68->299.69 1st-ground 299.69->299.00 vz -584.0 decel -83.4 sl 0->0 toCap 1 decels [-83.4] held {'s': 0.7417, 'cmds': 89, 'min': 299.0, 'max': 299.0, 'last': 299.0}
+   120 r1022  e8_drop_land    jump pre 299.00 post 299.008 V 289.82 sl 0 since_land None || land air 299.68->299.69 1st-ground 299.69->299.00 vz -583.9 decel -83.3 sl 0->0 toCap 1 decels [-83.3] held {'s': 0.7339, 'cmds': 88, 'min': 299.0, 'max': 299.0, 'last': 299.0}
+   120 r1023  e8_drop_land    jump pre 299.00 post 299.008 V 289.82 sl 0 since_land None || land air 299.68->299.69 1st-ground 299.69->299.00 vz -584.0 decel -83.3 sl 0->0 toCap 1 decels [-83.3] held {'s': 0.7339, 'cmds': 88, 'min': 299.0, 'max': 299.0, 'last': 299.0}
+   120 r1024  e8_drop_land    jump pre 299.00 post 299.008 V 289.82 sl 0 since_land None || land air 299.68->299.69 1st-ground 299.69->299.00 vz -583.9 decel -83.4 sl 0->0 toCap 1 decels [-83.4] held {'s': 0.7253, 'cmds': 87, 'min': 299.0, 'max': 299.0, 'last': 299.0}
+   120 r1236  e8_hop350_d0    jump pre 317.85 post 350.006 V 273.53 sl 1 since_land None; jump pre 350.17 post 299.003 V 158.73 sl 0 since_land 1; jump pre 299.06 post 299.004 V 158.74 sl 0 since_land 1; jump pre 299.06 post 299.004 V 158.74 sl 0 since_land 1 || land air 350.16->350.17 1st-ground 350.17->299.00 vz -209.6 decel -6112.7 sl 0->0 toCap 1 decels [-6112.7] held {'s': 0.0084, 'cmds': 1, 'min': 299.003, 'max': 299.003, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -148.6 decel -7.1 sl 0->0 toCap 1 decels [-7.1] held {'s': 0.0085, 'cmds': 1, 'min': 299.004, 'max': 299.004, 'last': 299.004}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -150.8 decel -7.2 sl 0->0 toCap 1 decels [-7.2] held {'s': 0.0085, 'cmds': 1, 'min': 299.004, 'max': 299.004, 'last': 299.004}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -144.4 decel -7.3 sl 0->0 toCap 1 decels [-7.3] held {'s': 0.3028, 'cmds': 36, 'min': 299.0, 'max': 299.0, 'last': 299.0}
+   120 r1237  e8_hop350_d0    jump pre 317.44 post 350.006 V 273.53 sl 1 since_land None; jump pre 350.17 post 299.003 V 158.74 sl 0 since_land 1; jump pre 299.06 post 299.003 V 158.73 sl 0 since_land 1; jump pre 299.06 post 299.003 V 158.74 sl 0 since_land 1 || land air 350.16->350.17 1st-ground 350.17->299.00 vz -211.2 decel -6134.9 sl 0->0 toCap 1 decels [-6134.9] held {'s': 0.0083, 'cmds': 1, 'min': 299.003, 'max': 299.003, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -144.8 decel -7.1 sl 0->0 toCap 1 decels [-7.1] held {'s': 0.0083, 'cmds': 1, 'min': 299.003, 'max': 299.003, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -150.8 decel -7.4 sl 0->0 toCap 1 decels [-7.4] held {'s': 0.0083, 'cmds': 1, 'min': 299.003, 'max': 299.003, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -151.0 decel -7.8 sl 0->0 toCap 1 decels [-7.8] held {'s': 0.3004, 'cmds': 36, 'min': 299.0, 'max': 299.0, 'last': 299.0}
+   120 r1238  e8_hop350_d0    jump pre 317.66 post 350.006 V 273.53 sl 1 since_land None; jump pre 350.17 post 299.003 V 158.74 sl 0 since_land 1; jump pre 299.06 post 299.003 V 158.74 sl 0 since_land 1; jump pre 299.06 post 299.003 V 158.74 sl 0 since_land 1 || land air 350.16->350.17 1st-ground 350.17->299.00 vz -212.1 decel -6142.3 sl 0->0 toCap 1 decels [-6142.3] held {'s': 0.0083, 'cmds': 1, 'min': 299.003, 'max': 299.003, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -144.4 decel -7.1 sl 0->0 toCap 1 decels [-7.1] held {'s': 0.0083, 'cmds': 1, 'min': 299.003, 'max': 299.003, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -150.8 decel -7.4 sl 0->0 toCap 1 decels [-7.4] held {'s': 0.0083, 'cmds': 1, 'min': 299.003, 'max': 299.003, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -144.7 decel -7.4 sl 0->0 toCap 1 decels [-7.4] held {'s': 0.3007, 'cmds': 36, 'min': 299.0, 'max': 299.0, 'last': 299.0}
+   120 r1239  e8_hop350_d1    jump pre 317.27 post 350.006 V 273.53 sl 1 since_land None; jump pre 339.74 post 299.003 V 158.74 sl 0 since_land 2; jump pre 299.00 post 299.003 V 158.74 sl 0 since_land 2; jump pre 299.00 post 299.003 V 158.74 sl 0 since_land 2 || land air 350.16->350.17 1st-ground 350.17->339.74 vz -211.5 decel -1250.6 sl 0->0 toCap 2 decels [-1250.6, -4878.4] held {'s': 0.0167, 'cmds': 2, 'min': 299.003, 'max': 339.738, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -144.8 decel -7.4 sl 0->0 toCap 1 decels [-7.4] held {'s': 0.0167, 'cmds': 2, 'min': 299.0, 'max': 299.003, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -144.6 decel -7.4 sl 0->0 toCap 1 decels [-7.4] held {'s': 0.0167, 'cmds': 2, 'min': 299.0, 'max': 299.003, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -144.7 decel -7.4 sl 0->0 toCap 1 decels [-7.4] held {'s': 0.3003, 'cmds': 36, 'min': 299.0, 'max': 299.0, 'last': 299.0}
+   120 r1240  e8_hop350_d1    jump pre 317.28 post 350.006 V 273.54 sl 1 since_land None; jump pre 339.74 post 299.003 V 158.73 sl 0 since_land 2; jump pre 299.00 post 299.003 V 158.74 sl 0 since_land 2; jump pre 299.00 post 299.003 V 158.74 sl 0 since_land 2 || land air 350.16->350.17 1st-ground 350.17->339.74 vz -211.6 decel -1250.6 sl 0->0 toCap 2 decels [-1250.6, -4884.3] held {'s': 0.0167, 'cmds': 2, 'min': 299.003, 'max': 339.738, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -144.8 decel -7.4 sl 0->0 toCap 1 decels [-7.4] held {'s': 0.0167, 'cmds': 2, 'min': 299.0, 'max': 299.003, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -144.8 decel -7.4 sl 0->0 toCap 1 decels [-7.4] held {'s': 0.0167, 'cmds': 2, 'min': 299.0, 'max': 299.003, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -144.7 decel -7.4 sl 0->0 toCap 1 decels [-7.4] held {'s': 0.3004, 'cmds': 36, 'min': 299.0, 'max': 299.0, 'last': 299.0}
+   120 r1241  e8_hop350_d1    jump pre 317.45 post 350.006 V 273.52 sl 1 since_land None; jump pre 339.75 post 299.003 V 158.73 sl 0 since_land 2; jump pre 299.00 post 299.003 V 158.74 sl 0 since_land 2; jump pre 299.00 post 299.003 V 158.73 sl 0 since_land 2 || land air 350.16->350.17 1st-ground 350.17->339.75 vz -210.2 decel -1250.8 sl 0->0 toCap 2 decels [-1250.8, -4891.4] held {'s': 0.0167, 'cmds': 2, 'min': 299.003, 'max': 339.748, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -143.7 decel -7.3 sl 0->0 toCap 1 decels [-7.3] held {'s': 0.0167, 'cmds': 2, 'min': 299.0, 'max': 299.003, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -144.6 decel -7.4 sl 0->0 toCap 1 decels [-7.4] held {'s': 0.0167, 'cmds': 2, 'min': 299.0, 'max': 299.003, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -141.0 decel -7.0 sl 0->0 toCap 1 decels [-7.0] held {'s': 0.2965, 'cmds': 36, 'min': 299.0, 'max': 299.0, 'last': 299.0}
+   120 r1242  e8_hop350_d2    jump pre 317.29 post 350.006 V 273.53 sl 1 since_land None; jump pre 329.33 post 299.003 V 158.73 sl 0 since_land 3; jump pre 299.00 post 299.003 V 158.74 sl 0 since_land 3; jump pre 299.00 post 299.003 V 158.74 sl 0 since_land 3 || land air 350.16->350.17 1st-ground 350.17->339.75 vz -211.4 decel -1250.8 sl 0->0 toCap 3 decels [-1250.8, -1249.3, -3640.7] held {'s': 0.025, 'cmds': 3, 'min': 299.003, 'max': 339.749, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -144.5 decel -7.4 sl 0->0 toCap 1 decels [-7.4] held {'s': 0.025, 'cmds': 3, 'min': 299.0, 'max': 299.003, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -144.7 decel -7.4 sl 0->0 toCap 1 decels [-7.4] held {'s': 0.025, 'cmds': 3, 'min': 299.0, 'max': 299.003, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -144.8 decel -7.4 sl 0->0 toCap 1 decels [-7.4] held {'s': 0.3003, 'cmds': 36, 'min': 299.0, 'max': 299.0, 'last': 299.0}
+   120 r1243  e8_hop350_d2    jump pre 317.27 post 350.006 V 273.52 sl 1 since_land None; jump pre 329.32 post 299.003 V 158.74 sl 0 since_land 3; jump pre 299.00 post 299.003 V 158.73 sl 0 since_land 3; jump pre 299.00 post 299.003 V 158.73 sl 0 since_land 3 || land air 350.16->350.17 1st-ground 350.17->339.75 vz -211.5 decel -1249.6 sl 0->0 toCap 3 decels [-1249.6, -1250.0, -3635.3] held {'s': 0.025, 'cmds': 3, 'min': 299.003, 'max': 339.746, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -144.7 decel -7.4 sl 0->0 toCap 1 decels [-7.4] held {'s': 0.025, 'cmds': 3, 'min': 299.0, 'max': 299.003, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -144.6 decel -7.4 sl 0->0 toCap 1 decels [-7.4] held {'s': 0.025, 'cmds': 3, 'min': 299.0, 'max': 299.003, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -144.5 decel -7.4 sl 0->0 toCap 1 decels [-7.4] held {'s': 0.3002, 'cmds': 36, 'min': 299.0, 'max': 299.0, 'last': 299.0}
+   120 r1244  e8_hop350_d2    jump pre 317.27 post 350.006 V 273.53 sl 1 since_land None; jump pre 329.32 post 299.003 V 158.74 sl 0 since_land 3; jump pre 299.00 post 299.003 V 158.74 sl 0 since_land 3; jump pre 299.00 post 299.003 V 158.74 sl 0 since_land 3 || land air 350.16->350.17 1st-ground 350.17->339.74 vz -211.6 decel -1250.0 sl 0->0 toCap 3 decels [-1250.0, -1250.0, -3634.9] held {'s': 0.025, 'cmds': 3, 'min': 299.003, 'max': 339.743, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -144.5 decel -7.4 sl 0->0 toCap 1 decels [-7.4] held {'s': 0.025, 'cmds': 3, 'min': 299.0, 'max': 299.003, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -144.4 decel -7.4 sl 0->0 toCap 1 decels [-7.4] held {'s': 0.025, 'cmds': 3, 'min': 299.0, 'max': 299.003, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -144.3 decel -7.4 sl 0->0 toCap 1 decels [-7.4] held {'s': 0.3002, 'cmds': 36, 'min': 299.0, 'max': 299.0, 'last': 299.0}
+   120 r1245  e8_hop350_d3    jump pre 317.29 post 350.006 V 273.53 sl 1 since_land None; jump pre 318.87 post 299.003 V 158.73 sl 0 since_land 4; jump pre 299.00 post 299.003 V 158.74 sl 0 since_land 4; jump pre 299.00 post 299.003 V 158.74 sl 0 since_land 4 || land air 350.16->350.17 1st-ground 350.17->339.74 vz -211.5 decel -1249.2 sl 0->0 toCap 4 decels [-1249.2, -1249.3, -1249.3, -2382.5] held {'s': 0.0334, 'cmds': 4, 'min': 299.003, 'max': 339.737, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -144.8 decel -7.4 sl 0->0 toCap 1 decels [-7.4] held {'s': 0.0334, 'cmds': 4, 'min': 299.0, 'max': 299.003, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -144.8 decel -7.4 sl 0->0 toCap 1 decels [-7.4] held {'s': 0.0334, 'cmds': 4, 'min': 299.0, 'max': 299.003, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -144.7 decel -7.4 sl 0->0 toCap 1 decels [-7.4] held {'s': 0.3005, 'cmds': 36, 'min': 299.0, 'max': 299.0, 'last': 299.0}
+   120 r1246  e8_hop350_d3    jump pre 317.26 post 350.006 V 273.54 sl 1 since_land None; jump pre 318.88 post 299.003 V 158.74 sl 0 since_land 4; jump pre 299.00 post 299.003 V 158.74 sl 0 since_land 4; jump pre 299.00 post 299.003 V 158.74 sl 0 since_land 4 || land air 350.16->350.17 1st-ground 350.17->339.74 vz -211.6 decel -1250.5 sl 0->0 toCap 4 decels [-1250.5, -1250.5, -1250.4, -2383.6] held {'s': 0.0334, 'cmds': 4, 'min': 299.003, 'max': 339.739, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -144.8 decel -7.4 sl 0->0 toCap 1 decels [-7.4] held {'s': 0.0334, 'cmds': 4, 'min': 299.0, 'max': 299.003, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -144.8 decel -7.4 sl 0->0 toCap 1 decels [-7.4] held {'s': 0.0334, 'cmds': 4, 'min': 299.0, 'max': 299.003, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -144.8 decel -7.4 sl 0->0 toCap 1 decels [-7.4] held {'s': 0.3004, 'cmds': 36, 'min': 299.0, 'max': 299.0, 'last': 299.0}
+   120 r1247  e8_hop350_d3    jump pre 317.30 post 350.006 V 273.54 sl 1 since_land None; jump pre 318.92 post 299.003 V 158.73 sl 0 since_land 4; jump pre 299.00 post 299.003 V 158.74 sl 0 since_land 4; jump pre 299.00 post 299.003 V 158.74 sl 0 since_land 4 || land air 350.16->350.17 1st-ground 350.17->339.75 vz -211.7 decel -1250.7 sl 0->0 toCap 4 decels [-1250.7, -1250.7, -1250.5, -2390.4] held {'s': 0.0333, 'cmds': 4, 'min': 299.003, 'max': 339.75, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -144.6 decel -7.4 sl 0->0 toCap 1 decels [-7.4] held {'s': 0.0334, 'cmds': 4, 'min': 299.0, 'max': 299.003, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -144.6 decel -7.4 sl 0->0 toCap 1 decels [-7.4] held {'s': 0.0334, 'cmds': 4, 'min': 299.0, 'max': 299.003, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -144.7 decel -7.4 sl 0->0 toCap 1 decels [-7.4] held {'s': 0.3003, 'cmds': 36, 'min': 299.0, 'max': 299.0, 'last': 299.0}
+   120 r1248  e8_hop350_d5    jump pre 317.30 post 350.006 V 273.54 sl 1 since_land None; jump pre 299.00 post 299.004 V 158.74 sl 0 since_land 6; jump pre 299.00 post 299.003 V 158.74 sl 0 since_land 6; jump pre 299.00 post 299.003 V 158.73 sl 0 since_land 6 || land air 350.16->350.17 1st-ground 350.17->339.75 vz -211.6 decel -1250.5 sl 0->0 toCap 5 decels [-1250.5, -1250.8, -1249.4, -1249.9, -1137.5] held {'s': 0.0503, 'cmds': 6, 'min': 299.0, 'max': 339.751, 'last': 299.004}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -143.5 decel -7.3 sl 0->0 toCap 1 decels [-7.3] held {'s': 0.0502, 'cmds': 6, 'min': 299.0, 'max': 299.003, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -140.9 decel -7.1 sl 0->0 toCap 1 decels [-7.1] held {'s': 0.05, 'cmds': 6, 'min': 299.0, 'max': 299.003, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -142.4 decel -7.3 sl 0->0 toCap 1 decels [-7.3] held {'s': 0.3009, 'cmds': 36, 'min': 299.0, 'max': 299.0, 'last': 299.0}
+   120 r1249  e8_hop350_d5    jump pre 317.27 post 350.006 V 273.53 sl 1 since_land None; jump pre 299.00 post 299.003 V 158.74 sl 0 since_land 6; jump pre 299.00 post 299.003 V 158.73 sl 0 since_land 6; jump pre 299.00 post 299.003 V 158.74 sl 0 since_land 6 || land air 350.16->350.17 1st-ground 350.17->339.74 vz -211.4 decel -1249.9 sl 0->0 toCap 5 decels [-1249.9, -1249.6, -1250.0, -1249.9, -1135.9] held {'s': 0.05, 'cmds': 6, 'min': 299.0, 'max': 339.744, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -144.8 decel -7.4 sl 0->0 toCap 1 decels [-7.4] held {'s': 0.05, 'cmds': 6, 'min': 299.0, 'max': 299.003, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -144.5 decel -7.4 sl 0->0 toCap 1 decels [-7.4] held {'s': 0.05, 'cmds': 6, 'min': 299.0, 'max': 299.003, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -144.6 decel -7.4 sl 0->0 toCap 1 decels [-7.4] held {'s': 0.3003, 'cmds': 36, 'min': 299.0, 'max': 299.0, 'last': 299.0}
+   120 r1250  e8_hop350_d5    jump pre 317.29 post 350.006 V 273.53 sl 1 since_land None; jump pre 299.00 post 299.003 V 158.74 sl 0 since_land 6; jump pre 299.00 post 299.003 V 158.74 sl 0 since_land 6; jump pre 299.00 post 299.003 V 158.74 sl 0 since_land 6 || land air 350.16->350.17 1st-ground 350.17->339.74 vz -211.5 decel -1249.5 sl 0->0 toCap 5 decels [-1249.5, -1249.3, -1249.5, -1249.2, -1130.4] held {'s': 0.0501, 'cmds': 6, 'min': 299.0, 'max': 339.735, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -144.8 decel -7.4 sl 0->0 toCap 1 decels [-7.4] held {'s': 0.05, 'cmds': 6, 'min': 299.0, 'max': 299.003, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -144.7 decel -7.4 sl 0->0 toCap 1 decels [-7.4] held {'s': 0.05, 'cmds': 6, 'min': 299.0, 'max': 299.003, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -144.8 decel -7.4 sl 0->0 toCap 1 decels [-7.4] held {'s': 0.3003, 'cmds': 36, 'min': 299.0, 'max': 299.0, 'last': 299.0}
+   120 r1251  e8_hop350_d10   jump pre 317.38 post 350.006 V 273.53 sl 1 since_land None; jump pre 299.00 post 299.003 V 158.73 sl 0 since_land 11; jump pre 299.00 post 299.003 V 158.73 sl 0 since_land 11; jump pre 299.00 post 299.003 V 158.74 sl 0 since_land 11 || land air 350.16->350.17 1st-ground 350.17->339.74 vz -211.5 decel -1250.1 sl 0->0 toCap 5 decels [-1250.1, -1250.1, -1250.2, -1250.7, -1134.1] held {'s': 0.0917, 'cmds': 11, 'min': 299.0, 'max': 339.742, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -144.8 decel -7.4 sl 0->0 toCap 1 decels [-7.4] held {'s': 0.0918, 'cmds': 11, 'min': 299.0, 'max': 299.003, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -144.8 decel -7.4 sl 0->0 toCap 1 decels [-7.4] held {'s': 0.0917, 'cmds': 11, 'min': 299.0, 'max': 299.003, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -144.7 decel -7.4 sl 0->0 toCap 1 decels [-7.4] held {'s': 0.3003, 'cmds': 36, 'min': 299.0, 'max': 299.0, 'last': 299.0}
+   120 r1252  e8_hop350_d10   jump pre 317.31 post 350.006 V 273.53 sl 1 since_land None; jump pre 299.00 post 299.004 V 158.74 sl 0 since_land 11; jump pre 299.00 post 299.004 V 158.74 sl 0 since_land 11; jump pre 299.00 post 299.004 V 158.73 sl 0 since_land 11 || land air 350.16->350.17 1st-ground 350.17->339.37 vz -211.4 decel -1250.2 sl 0->0 toCap 5 decels [-1250.2, -1250.1, -1250.7, -1250.2, -920.9] held {'s': 0.0946, 'cmds': 11, 'min': 299.0, 'max': 339.366, 'last': 299.004}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -141.6 decel -6.9 sl 0->0 toCap 1 decels [-6.9] held {'s': 0.095, 'cmds': 11, 'min': 299.0, 'max': 299.004, 'last': 299.004}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -139.1 decel -6.9 sl 0->0 toCap 1 decels [-6.9] held {'s': 0.0933, 'cmds': 11, 'min': 299.0, 'max': 299.004, 'last': 299.004}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -140.4 decel -7.1 sl 0->0 toCap 1 decels [-7.1] held {'s': 0.3053, 'cmds': 36, 'min': 299.0, 'max': 299.0, 'last': 299.0}
+   120 r1253  e8_hop350_d10   jump pre 317.34 post 350.006 V 273.53 sl 1 since_land None; jump pre 299.00 post 299.003 V 158.74 sl 0 since_land 11; jump pre 299.00 post 299.003 V 158.74 sl 0 since_land 11; jump pre 299.00 post 299.003 V 158.74 sl 0 since_land 11 || land air 350.16->350.17 1st-ground 350.17->339.74 vz -211.5 decel -1249.5 sl 0->0 toCap 5 decels [-1249.5, -1249.6, -1249.5, -1249.5, -1129.9] held {'s': 0.0918, 'cmds': 11, 'min': 299.0, 'max': 339.735, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -144.8 decel -7.4 sl 0->0 toCap 1 decels [-7.4] held {'s': 0.0922, 'cmds': 11, 'min': 299.0, 'max': 299.003, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -144.3 decel -7.4 sl 0->0 toCap 1 decels [-7.4] held {'s': 0.0918, 'cmds': 11, 'min': 299.0, 'max': 299.003, 'last': 299.003}; land air 299.06->299.06 1st-ground 299.06->299.00 vz -144.3 decel -7.4 sl 0->0 toCap 1 decels [-7.4] held {'s': 0.2919, 'cmds': 36, 'min': 299.0, 'max': 299.0, 'last': 299.0}
+== parity (client vs dedi MOVE-TRACE, same usercmd)
+   e6: trials 42 cmds 30019 worst pos 2.105 worst vel 0.694; trials with any vel diff > 0.01: 19
+      key cmd contact              n 42 max|diff| 0.001  >0.01: 0
+      key cmd climb_end_or_bounce  n 42 max|diff| 0.694  >0.01: 33
+      key cmd mantle_exit          n 5 max|diff| 0.014  >0.01: 5
+   e7: trials 195 cmds 104599 worst pos 6.310 worst vel 204.954; trials with any vel diff > 0.01: 195
+      key cmd contact              n 195 max|diff| 0.001  >0.01: 0
+      key cmd climb_end_or_bounce  n 195 max|diff| 3.514  >0.01: 173
+      key cmd mantle_exit          n 145 max|diff| 89.699  >0.01: 145
+   e8: trials 47 cmds 38434 worst pos 0.247 worst vel 9.006; trials with any vel diff > 0.01: 13
+      key cmd contact              n 11 max|diff| 0.001  >0.01: 0
+      key cmd climb_end_or_bounce  n 11 max|diff| 0.584  >0.01: 11
+      key cmd mantle_exit          n 11 max|diff| 0.014  >0.01: 11
+   compared cmds total 173052
+   MB-TRIG cl/sv pairs 89: max |anim diff| 0.001, max |delta diff| 0.01, same state 88/89
+== rejected E7 trials (frame rate outside tolerance; supplementary only)
+   144 r738   e7_mb_f133   fps 137.57 |  | 
+   120 r901   e7_mb_f130   fps 101.66 |  | 
+   120 r902   e7_sg_f130   fps 101.39 | anim 0.661 delta 3.19 prev 3.39 gate angle -> 3 t 76.103 | state 3 speed 299.0 vel [299.0, 0.0, 289.8] t 76.304
+   120 r903   e7_mb_f131   fps 101.14 |  | 
+   120 r904   e7_sg_f131   fps 112.78 | anim 0.018 delta 0.05 prev 0.0 gate dec -> 3 t 91.632 | state 3 speed 299.0 vel [299.0, 0.0, 289.8] t 92.199
+   120 r906   e7_sg_f132   fps 115.77 |  | 
+   120 r932   e7_sg_f145   fps 99.12 | anim 0.825 delta 0.94 prev 1.1 gate ok -> 4 t 285.799 | state 4 speed 388.7 vel [388.7, 0.0, 367.4] t 285.903
+   120 r933   e7_mb_f146   fps 103.07 | anim 0.126 delta 1.03 prev 0.84 gate dec -> 3 t 293.72 | state 3 speed 299.0 vel [299.0, 0.0, 289.8] t 294.245
+   120 r934   e7_sg_f146   fps 102.81 | anim 0.499 delta 4.96 prev 5.03 gate angle -> 3 t 301.575 | state 3 speed 299.0 vel [299.0, 0.0, 289.8] t 301.867
+   120 r935   e7_mb_f147   fps 101.78 | anim 0.872 delta 0.45 prev 0.59 gate ok -> 4 t 309.924 | state 4 speed 388.7 vel [388.7, 0.0, 367.4] t 309.992
+   120 r936   e7_sg_f147   fps 103.44 | anim 0.132 delta 1.12 prev 0.91 gate dec -> 3 t 317.648 | state 3 speed 299.0 vel [299.0, 0.0, 289.8] t 318.168
+   120 r937   e7_mb_f148   fps 102.56 | anim 0.657 delta 3.25 prev 3.44 gate angle -> 3 t 325.628 | state 3 speed 299.0 vel [299.0, 0.0, 289.8] t 325.829
+   120 r938   e7_sg_f148   fps 101.05 | anim 0.829 delta 0.89 prev 1.05 gate ok -> 4 t 333.867 | state 4 speed 388.7 vel [388.7, 0.0, 367.4] t 333.969
+   120 r939   e7_mb_f149   fps 104.04 | anim 0.175 delta 1.82 prev 1.59 gate dec -> 3 t 341.703 | state 3 speed 299.0 vel [299.0, 0.0, 289.8] t 342.187
+   120 r1219  e7_mb_f203   fps None |  | 

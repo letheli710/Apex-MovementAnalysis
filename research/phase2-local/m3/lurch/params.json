@@ -1,0 +1,62 @@
+{
+  "_about": "M3 E3 lurch (tap-strafe) parameters. Every value is printed by lurch_analysis.py (analysis_output.txt, results.json). Sessions: M3_lurch_chain + M3_pilot (144 fps), M3_fps120 + M3_fps120_rerun (120 fps), M3_fps60 (60 fps); 102 scored e3_* trials (ok=true, warmup=false). Gibraltar, movescale 1.15 in every trial.",
+  "model": "on an airborne command with a press edge in IN_FORWARD|IN_BACK|IN_MOVELEFT|IN_MOVERIGHT (0x618): v = AirAccelerate(v) [M2]; t = time since the start of the jump command; lam = lam_max * clamp((t_zero - t) / (t_zero - t_full_end), 0, 1); d = normalize((1-lam)*vhat + lam*wishdir); D = |v|*d - v; if |D| > clamp_len: D *= clamp_len/|D|; v += D (horizontal only)",
+  "lam_max": {
+    "value": 0.7, "unit": "1 (lerp weight between velocity direction and wish direction)",
+    "source": "[fit] direction of D on presses with t < 0.20 s, sideways (theta 88.4-89.4 deg), sprint 60/120/144 fps, walk, slide",
+    "n": 44, "mean": 0.70000, "sd": 0.000003, "range": [0.69999, 0.70001]
+  },
+  "clamp_len": {
+    "value": 209.3, "unit": "u/s (max |D| per lurch)",
+    "source": "[fit] |D| on every press whose speed dropped (clamped), any t, any condition incl. back",
+    "n": 61, "mean": 209.3001, "sd": 0.0016, "range": [209.2976, 209.3023],
+    "note": "equals 0.7*299 = 0.7*260*1.15 and 182*1.15; movescale was 1.15 in every trial, so whether it scales with movescale or sprint speed is not determined"
+  },
+  "t_full_end": {
+    "value": 0.200, "unit": "s since the start of the jump command (curtime at press - curtime at jump)",
+    "source": "[fit] linear fit of lam vs t over the 34 fade samples (0.001 < lam < 0.69998), intercept at lam_max",
+    "n": 34, "fit_all": 0.2000, "se_all": 0.0002,
+    "per_fps": {"60": 0.2000, "120": 0.1996, "144": 0.2002},
+    "sample_brackets": {"60": [0.1833, 0.2666], "120": [0.1832, 0.2502], "144": [0.1807, 0.2488]}
+  },
+  "t_zero": {
+    "value": 0.500, "unit": "s since the start of the jump command",
+    "source": "[fit] same fit, intercept at lam = 0",
+    "n": 34, "fit_all": 0.5001, "se_all": 0.0002,
+    "per_fps": {"60": 0.5001, "120": 0.4990, "144": 0.5005},
+    "sample_brackets": {"60": [0.4667, 0.5000], "120": [0.4921, 0.6333], "144": [0.4934, 0.6320]},
+    "in_commands": {"60": 30.0, "120": 59.8, "144": 72.0}
+  },
+  "fade_slope": {
+    "value": -2.3333, "unit": "1/s (= -lam_max / 0.3 s)",
+    "source": "[fit] slope of lam vs t", "n": 34, "fit_all": -2.3329, "se_all": 0.0024,
+    "per_fps": {"60": -2.3329, "120": -2.3378, "144": -2.3307},
+    "linearity_rms_lam_per_fps": {"60": 0.0001, "120": 0.0002, "144": 0.0003}
+  },
+  "window_clock_offset": {
+    "value": 0.0, "unit": "ms",
+    "source": "[obs] time offset implied by each fade sample under the rounded window (0.7 / 0.2 s / 0.5 s), relative to the summed HSD frametimes",
+    "per_fps_mean_ms": {"60": -0.033, "120": 0.738, "144": -0.347},
+    "per_fps_sd_ms": {"60": 0.032, "120": 0.178, "144": 0.180},
+    "note": "sub-millisecond, sign differs by session: treated as clock/sampling uncertainty of the window edges (about +-1 ms), not as a frame-rate effect"
+  },
+  "order": {
+    "value": "AirAccelerate first, lurch second, same command",
+    "source": "[fit] lurch-before-AirAccelerate gives 2.9-7.0 u/s max error on early presses vs 0.002 for the chosen order"
+  },
+  "commands_affected": {
+    "value": 1, "unit": "command (the press-edge command only)",
+    "source": "[obs] max |v1 - AirAccelerate| on the other 9666 airborne commands of the 102 jumps = 0.033 u/s"
+  },
+  "model_error": {
+    "unit": "u/s, |v1_pred - v1_obs| on the press command, rounded parameters",
+    "plateau_and_back_and_wtap_max": 0.006,
+    "fade_max": {"60": 0.108, "120": 0.934, "144": 0.686},
+    "fade_rms": {"60": 0.035, "120": 0.494, "144": 0.248}
+  },
+  "dedi_parity": {
+    "value": "dedi reproduces the lurch natively",
+    "source": "[obs] dedi MT identical within 0.002 on 101/102 press commands; r1033 (t = 0.492 s, lam 0.016) differs by 0.022 u/s (|D| 4.880 client vs 4.858 dedi, about 0.03 ms of clock); no client correction followed in any trial; no rp=1 replay covered a press command",
+    "n": 102
+  }
+}

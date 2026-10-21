@@ -38,6 +38,9 @@ param(
     [int]$Run = 0,
     [string[]]$DediExtra = @(),
     [string[]]$ClientExtra = @(),
+    # Cosmetic only (movement uses per-usercmd dt): vsync and AA off to avoid the ~138 fps vsync/G-Sync
+    # plateau and load dips seen in M2_main. Launch ConVars, so the player's videoconfig.txt is untouched.
+    [string[]]$ClientVideo = @('+mat_vsync_mode', '0', '+mat_antialias_mode', '0'),
     [int]$HostReadyTimeoutSec = 300,
     [switch]$Stop
 )
@@ -107,6 +110,7 @@ if ($Offline) { $cArgs += '-offline', '+cl_onlineAuthEnable', '0' }
 $cArgs += '+timeout_during_load', '600', '-language', 'english'
 $cArgs += Exec-Args $ClientExec
 if ($Run) { $cArgs += '+hsd_md_run', "$Run" }
+$cArgs += $ClientVideo
 $cArgs += $ClientExtra
 $cArgs += '+miles_language', 'english', '-windowed', '-width', "$Width", '-height', "$Height", '+connect', "127.0.0.1:$Port"
 $client = Start-R5 $ClientExe $cArgs @{}

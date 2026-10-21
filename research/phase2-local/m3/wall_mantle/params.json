@@ -1,0 +1,467 @@
+{
+ "schema": "m3-wall-mantle-params/1",
+ "scope": "Gibraltar (pinned), empty-handed, movescale 1.15, spawned rock wall (face x ~ -13706, normal -X, top 532.836 = floor 294.92 + 237.9 standing height), approach from lane A at sprint 299 u/s. Sessions 20261020_221951_M3_wall_chain + 20261020_215746_M3_pilot (144 fps), 20261020_223838_M3_fps120 + 20261020_224455_M3_fps120_rerun (120 fps), 20261020_225255_M3_fps60 (60 fps); update 2: 20261020_233003_M3_late_hops120 (120 fps, late E7 presses + e8_hop350_d*) and 20261020_233547_M3_late60 (60 fps, late E7 presses); runner trials with ok=true and warmup=false only. Produced by wall_mantle_analysis.py (results.json, analysis_output.txt).",
+ "units": "Source units (u), seconds (s), u/s, u/s^2. dt = usercmd frametime. z values marked 'abs' are world z on this map; floor = 294.92.",
+ "evidence_levels": {
+  "measured": "read directly from first-time client usercmds (dedi checked)",
+  "fitted": "parameter of a formula fitted to the usercmds; residual given",
+  "bounded": "never observed; only a lower/upper bound follows from the scored trials",
+  "supplementary": "from runner-rejected trials (frame rate outside +/-3 %) or from source; never used for a fitted value",
+  "census": "live class var read by the session census"
+ },
+ "params": {
+  "approach_jump_distance": {
+   "value": 100,
+   "unit": "u",
+   "source": "measured: climb-jump take-off x ~ -13808 vs face -13706",
+   "n": 100,
+   "spread": "+/-1.5",
+   "level": "measured",
+   "note": "schedule geometry, not a game parameter"
+  },
+  "contact_origin_offset_from_face": {
+   "value": 17.2,
+   "unit": "u",
+   "source": "measured: contact usercmd post x -13723.13..-13723.32 vs face -13706",
+   "n": 188,
+   "spread": "17.1..17.3",
+   "level": "measured"
+  },
+  "contact_horizontal": {
+   "value": "into-wall speed removed",
+   "unit": "-",
+   "source": "measured: |v_h| 299 -> 2.8 on the contact usercmd",
+   "n": 100,
+   "level": "measured",
+   "formula": "afterwards the climb velocity lies along the face: vx/vz = 0.0324 (sd 0.0000) -> face leans 1.86 deg"
+  },
+  "contact_dvz": {
+   "value": 9.59,
+   "unit": "u/s",
+   "source": "fitted over 3 fps: contact usercmd dvz = 6.98 (144), 6.46 (120), 3.33 (60)",
+   "n": 100,
+   "spread": {
+    "sd_per_fps": [
+     0.025,
+     0.021,
+     0.003
+    ]
+   },
+   "level": "fitted",
+   "formula": "vz_post = vz_pre + 9.59 - g*dt/2"
+  },
+  "climb_accel_up": {
+   "value": 490,
+   "unit": "u/s^2",
+   "source": "fitted: first 8 climb usercmds 498.8/497.7/493.2, later 486.7/486.3/487.0 (144/120/60 fps)",
+   "n": 100,
+   "spread": {
+    "min": 486.3,
+    "max": 498.8
+   },
+   "level": "fitted",
+   "formula": "vz += a_up*dt while below the speed line; a single 490 keeps vz within ~1 u/s"
+  },
+  "climb_speed_line_k": {
+   "value": 1.735,
+   "unit": "1/s (= (u/s)/u)",
+   "source": "fitted per trial after the peak: dvz/dt = -k*vz <=> vz = k*(Z0 - z)",
+   "n": 100,
+   "spread": {
+    "144": 1.7353,
+    "120": 1.7348,
+    "60": 1.7275,
+    "sd_max": 0.0058
+   },
+   "level": "fitted"
+  },
+  "climb_speed_line_Z0_abs": {
+   "value": 475.33,
+   "unit": "u (abs z)",
+   "source": "fitted intercept of vz_post vs z_post (zero-speed height); independent of the contact height",
+   "n": 100,
+   "spread": {
+    "144": 475.3,
+    "120": 475.33,
+    "60": 475.37,
+    "sd_max": 0.07
+   },
+   "level": "fitted",
+   "note": "= floor + 180.41 = ledge top - 57.5 on this wall; with one wall height the reference (floor, ledge, climbHeight) cannot be separated"
+  },
+  "climb_peak_vz": {
+   "value": 179.6,
+   "unit": "u/s",
+   "source": "measured (where a_up meets the speed line)",
+   "n": 100,
+   "spread": {
+    "144": 178.97,
+    "120": 180.13,
+    "60": 180.74,
+    "sd_max": 1.25
+   },
+   "level": "measured",
+   "formula": "consequence of contact vz, a_up and the line"
+  },
+  "climb_peak_time": {
+   "value": 0.195,
+   "unit": "s after contact",
+   "n": 100,
+   "spread": "0.178..0.202",
+   "level": "measured"
+  },
+  "climb_end_abs_z": {
+   "value": 441.93,
+   "unit": "u (abs z)",
+   "source": "bracket over all trials: climb ends on the first usercmd whose pre z >= thr; thr in (441.913, 441.934] (157 climbs incl. update 2; was (441.913, 441.949] over 100). Height above contact (95.1..96.9), time since contact (0.843..0.851 s) and vz (57.8..58.2) give no consistent threshold",
+   "n": 157,
+   "spread": {
+    "bracket": [
+     441.913,
+     441.934
+    ]
+   },
+   "level": "fitted",
+   "note": "= floor + 147.0 = ledge top - 90.9 on this wall. census climbHeight 100 is not reached here (climb gain 95.1..97.4 u); whether a taller wall stops at climbHeight is untested"
+  },
+  "climb_duration": {
+   "value": 0.85,
+   "unit": "s (contact to climb end)",
+   "n": 100,
+   "spread": {
+    "144": 0.8483,
+    "120": 0.85,
+    "60": 0.8671
+   },
+   "level": "measured",
+   "formula": "consequence; 122 / 102 / 52 usercmds"
+  },
+  "climb_end_vz": {
+   "value": 57.8,
+   "unit": "u/s",
+   "n": 100,
+   "spread": "57.4..58.2",
+   "level": "measured"
+  },
+  "climb_final_jump_dvz": {
+   "value": 208.0,
+   "unit": "u/s",
+   "source": "fitted over 3 fps: dvz = 203.90 (144), 203.22 (120), 198.22 (60) = 208.0 - 584*dt",
+   "n": 100,
+   "spread": {
+    "sd_per_fps": [
+     0.4,
+     0.22,
+     0.04
+    ]
+   },
+   "level": "fitted",
+   "compare": "census climbFinalJumpUpHeight 28 -> sqrt(2*750*28) = 204.9 (dt->0 value is 1.5 % higher)",
+   "formula": "vz_post = vz_pre + 208.0 - 584*dt"
+  },
+  "climb_final_outward_kick": {
+   "value": 68.1,
+   "unit": "u/s along wall normal",
+   "source": "fitted over 3 fps: post vx -64.62 (144), -63.92 (120), -59.75 (60) = -(68.1 - 500*dt); the 500*dt is air acceleration toward the held W",
+   "n": 100,
+   "spread": {
+    "sd_max": 0.028
+   },
+   "level": "fitted"
+  },
+  "post_climb_air_phase": {
+   "value": 0.05,
+   "unit": "s",
+   "source": "measured: 6-9 airborne usercmds between the final jump-up and the first traversal frame (144/120 fps)",
+   "n": 36,
+   "spread": "5..9 cmds",
+   "level": "measured"
+  },
+  "mantle_traversal_duration": {
+   "value": 0.59,
+   "unit": "s",
+   "source": "measured: gap in MOVE-TRACE (no FullWalkMove) between last pre-mantle and first post-mantle usercmd",
+   "n": 47,
+   "spread": {
+    "144": "0.592 sd 0.010",
+    "120": "0.591 sd 0.010",
+    "60": "0.546 sd 0.065 (4/24 late starts at +0.15 s with 0.467 s traversals)"
+   },
+   "level": "measured"
+  },
+  "mantle_traversal_from_anim": {
+   "value": 0.588,
+   "unit": "s",
+   "source": "fitted on scored trials only (update 2): remaining time (MB-APPLY t - MB-TRIG t) = 0.588*(1 - anim) - 0.004, rms 0.011 s, n=89, anim 0.015..0.999",
+   "level": "fitted",
+   "superseded": "0.579 s from the earlier fit that needed rejected trials"
+  },
+  "mantle_exit_speed": {
+   "value": 299.0,
+   "unit": "u/s horizontal, vz 0",
+   "source": "measured first usercmd after the traversal; = MB-APPLY pose speed (GetPoseSpeed_Sprint with sprint held) x 1",
+   "n": "47 no-press + 37 state-3 exits",
+   "spread": 0.0,
+   "level": "measured"
+  },
+  "mantle_exit_z_abs": {
+   "value": 532.836,
+   "unit": "u (abs z)",
+   "n": 47,
+   "spread": 0.0,
+   "level": "measured"
+  },
+  "mantle_rise": {
+   "value": 76.5,
+   "unit": "u (traversal start to exit)",
+   "n": 47,
+   "spread": "72.7..78.8 at 120/144; 49.6..77.7 at 60",
+   "level": "measured"
+  },
+  "mb_failed_exit_jump": {
+   "value": 289.82,
+   "unit": "u/s (V)",
+   "source": "MB-APPLY state 3 vel (299.0, 0, 289.8) on client and dedi; first post-traversal usercmd post vz = V - g*dt (284.61 / 283.57 / 277.30)",
+   "n": 37,
+   "spread": "post vz sd < 0.2",
+   "level": "measured",
+   "formula": "h = 56 (= jumpHeight): exit v = (299 along move dir, V)"
+  },
+  "mb_boost_exit": {
+   "value": {
+    "speed": 388.708,
+    "V": 367.42
+   },
+   "unit": "u/s",
+   "source": "measured, scored update-2 trials: first post-traversal usercmd v_h = 388.708 (120) / 388.715 (60), post vz = 361.16 (120, sd 0.03) / 354.905 (60) = V - g*dt; MB-APPLY state 4 vel (388.7, 0, 367.4) on both sides",
+   "n": 29,
+   "level": "measured",
+   "compare": "SDK FSM: 299 x 1.3 = 388.7 and sqrt(2*750*90) = 367.42: exact"
+  },
+  "mb_press_ignored_first_traversal_frame": {
+   "value": 1,
+   "unit": "frame",
+   "source": "measured: presses on the last pre-traversal usercmd or the first traversal frame (rel. start <= +1 frame) never produced MB-TRIG; from +2 frames on they always did (60: +16.7 ms ignored / +33 ms trig; 120: +8.3 ms ignored / +16.7 ms trig; 144: +13.9 ms trig)",
+   "n": 85,
+   "level": "measured"
+  },
+  "mb_boost_window_scored": {
+   "value": "never observed",
+   "unit": "-",
+   "source": "scored presses reached anim 0.131 (144, logged), 0.189 (120), 0.277 (60); 144 pilot (MB log off) presses up to +0.293 s into the traversal exited at 299 u/s (no boost)",
+   "level": "bounded",
+   "bound": {
+    "144": "window starts later than traversal start + 0.293 s",
+    "120": "later than + 0.092 s",
+    "60": "later than + 0.150 s"
+   },
+   "superseded_by": "mb_boost_window_measured (update 2)"
+  },
+  "mb_boost_window_estimate": {
+   "value": 0.125,
+   "unit": "s (last part of the traversal)",
+   "source": "supplementary: state 4 at anim 0.825/0.829/0.872 (delta 0.94/0.89/0.45 deg), state 3 'angle' at anim 0.499..0.661 (delta 4.96..3.19); delta < 1.5 deg crossed at anim ~0.78 (linear interpolation) -> window = T*(1 - 0.78) with T = 0.579 s",
+   "level": "supplementary",
+   "bound": {
+    "min_s": 0.101,
+    "max_s": 0.196
+   },
+   "frames": {
+    "144": "18 (15..28)",
+    "120": "15 (12..24)",
+    "60": "7.5 (6..12)"
+   },
+   "N_after_climb_jump": {
+    "144": "~237..255 (start 227..240)",
+    "120": "~197..212 (start 188..200)",
+    "60": "~99..107 (start 95..101)"
+   },
+   "compare": "source comment: sweet spot opens about the last 0.10-0.13 s",
+   "superseded_by": "mb_boost_window_measured (update 2): measured last 16 frames @120 / 8 @60 = 133 ms, anim edge 0.770..0.796, inside this estimate (0.10..0.20 s, anim ~0.78)"
+  },
+  "wall_bounce_outward_O": {
+   "value": 182.78,
+   "unit": "u/s",
+   "source": "fitted from none/back (dv_out = O + I = 257.865, n=23) and W held (dv_out + 500*dt = O - I = 107.702, n=50, 3 fps)",
+   "n": 73,
+   "spread": {
+    "sd_none": 0.0005,
+    "sd_fwd": 0.0015
+   },
+   "level": "fitted",
+   "compare": "census wallrunJumpOutwardSpeed 188 (-2.8 %)"
+  },
+  "wall_bounce_inputdir_I": {
+   "value": 75.08,
+   "unit": "u/s",
+   "source": "fitted, same equations",
+   "n": 73,
+   "level": "fitted",
+   "compare": "census wallrunJumpInputDirSpeed 75 (+0.1 %)"
+  },
+  "wall_bounce_input_dir_rule": {
+   "value": "normalised stick direction; zero stick -> wall normal",
+   "unit": "-",
+   "source": "back at half stick (fwd -0.5 on the press usercmd) = no input to 0.005 u/s",
+   "n": 23,
+   "level": "fitted"
+  },
+  "wall_bounce_up": {
+   "value": "vz kept: vz_post = vz_pre + U - g*dt/2, U = 3.5..5.3",
+   "unit": "u/s",
+   "source": "measured: U = 5.28/5.33/5.33 (none/back/side at 0.15 s), 4.66/4.64/4.69 (0.40 s), 3.48/3.48/3.49 (W held, late climb, 144/120/60 fps)",
+   "n": 85,
+   "level": "measured",
+   "compare": "census wallrunJumpUpSpeed 240 is NOT added and is not a floor (post vz 55..177)"
+  },
+  "wall_bounce_side_measured": {
+   "value": {
+    "outward": 140.94,
+    "along_input": 177.47
+   },
+   "unit": "u/s (dv, moveright pressed on the jump usercmd, half stick)",
+   "n": 12,
+   "spread": {
+    "sd": 0.017
+   },
+   "level": "measured",
+   "note": "the O/I model predicts 182.78 / 75.08; not explained (|dv| 226.6 at 51.5 deg from the normal). Use the measured vector for a pure side press"
+  },
+  "wall_bounce_timing_dependence": {
+   "value": "none",
+   "unit": "-",
+   "source": "dv identical (< 0.03 u/s) at 0.15 s, 0.40 s and 0.62..0.87 s after contact",
+   "n": 85,
+   "level": "measured"
+  },
+  "landing_overspeed_decel": {
+   "value": 1250,
+   "unit": "u/s^2",
+   "source": "measured: first ground usercmds after a 350 u/s landing with sprint + W held: -1249.2..-1250.9 per cmd down to 299 (5 cmds at 120, 6 at 144; 0.041 s)",
+   "n": 7,
+   "level": "measured",
+   "note": "same value as the M2 no-input deceleration; the landing usercmd itself keeps the air speed; a jump on any of these commands ends at 299 instead (hop350)"
+  },
+  "landing_cap_clip": {
+   "value": 299.0,
+   "unit": "u/s",
+   "source": "measured: every hop / drop landing at 299.06..300.45 is 299.000 after the first ground usercmd",
+   "n": "all E8 hop and drop landings (29 trials)",
+   "level": "measured"
+  },
+  "skip_speed_reduce": {
+   "value": "not observed as -100; jump clamps horizontal speed to 299",
+   "unit": "u/s",
+   "source": "e8_hop350_d{0,1,2,3,5,10} x3 at 120 fps: first re-jump pre speed 350.17 (D0) / 339.74 (D1) / 329.32 (D2) / 318.89 (D3) / 299.00 (D5, D10) -> post 299.003 in every trial (sd 0); later re-jumps 299.06 -> 299.003. A -100 reduction would give 250. The data cannot separate min(v, 299) from max(v - 100, 299) for v < 399",
+   "n": 54,
+   "level": "measured",
+   "formula": "v_h(after ground jump) = min(v_h, sprint cap 299) (+ air accel)"
+  },
+  "landSlowdownDuration_effect": {
+   "value": "none observed",
+   "unit": "-",
+   "source": "232 u drop, impact vz -584..-590: 299.7 -> 299.0 on the first ground cmd, then 299.000 constant for the 0.72..0.74 s W + sprint stayed held",
+   "n": 11,
+   "level": "bounded",
+   "census": 1.0
+  },
+  "slide_resume_on_landing": {
+   "value": "slide continues, no boost, no extra loss",
+   "unit": "-",
+   "source": "measured: ducked landing at 350.21 -> slide flag on, first ground dv/dt -224.5 = -(100 + 0.3567*v) (M2 slide rule); second landing at 223..240 likewise (-184.5)",
+   "n": 10,
+   "level": "measured"
+  },
+  "slide_jump_from_resumed_slide": {
+   "value": "horizontal speed kept, no 350 floor",
+   "unit": "-",
+   "source": "measured: 2nd slide jump at 222.9..239.6 u/s leaves at the same speed (+0.008); 1st slide jump (fresh boosted slide) 315..318 -> 350.005",
+   "n": 10,
+   "level": "measured",
+   "note": "M2's v = max(v, 350) holds only for the boosted slide; v = max(v, min(350, v + stored boost gain)) fits both, cannot be separated here"
+  },
+  "slide_jump_V_chain": {
+   "value": "273.86*sqrt(frac)",
+   "unit": "u/s",
+   "source": "measured V 239.3..242.1 = slideJumpHeight 50 with antiMultiJump frac 0.76..0.78 (M2 rule) in 9/10; r776 7 u/s above the rule",
+   "n": 10,
+   "level": "measured"
+  },
+  "parity": {
+   "value": "contact, bounce and mantle exit identical; climb drifts",
+   "unit": "-",
+   "source": "client vs dedi MOVE-TRACE of the same usercmd: contact <= 0.001, mantle exit <= 0.014 (print precision), climb drift <= 0.13 u / 0.7 u/s, one trial (r760) did the final jump-up one usercmd apart; MB-TRIG anim/delta/state identical 37/37 pairs",
+   "n": 206,
+   "level": "measured"
+  },
+  "mb_boost_window_measured": {
+   "value": {
+    "frames_before_traversal_end": {
+     "120": 16,
+     "60": 8
+    },
+    "ms": {
+     "120": 133,
+     "60": 133
+    },
+    "anim_open": [
+     0.77,
+     0.783
+    ]
+   },
+   "unit": "frames / ms / traversal frac",
+   "source": "measured on dedi MB-TRIG (authoritative): 120 fps boost for N 196..212 (press 1..16 frames before the first post-traversal usercmd), state 3 'angle' for N <= 195 (>= 17 frames before), ordinary jump on top for N >= 213; 60 fps boost N 99..107 (1..8 frames before), state 3 N <= 98 (>= 9), jump on top N >= 108. Opening edge: anim 0.770 fail / 0.783 boost (120), 0.767 / 0.796 (60); delta 1.63 / 1.45 and 1.66 / 1.28 deg (threshold 1.5). Window runs to the last traversal frame (anim 0.99..0.999)",
+   "n": {
+    "120": "19 boost, 12 late fails, 3 on-top",
+    "60": "11 boost, 10 late fails, 5 on-top"
+   },
+   "level": "measured",
+   "bound": {
+    "120_ms": [
+     133,
+     142
+    ],
+    "60_ms": [
+     133,
+     150
+    ]
+   },
+   "N_after_climb_jump": {
+    "120": "196..212",
+    "60": "99..107 (traversal start jitter +-1..2 frames; 60 fps late starts shift it)"
+   }
+  },
+  "mb_boost_window_144": {
+   "value": "untested",
+   "unit": "-",
+   "source": "lower bound only: no boost for presses up to +0.293 s into the traversal (pilot, MB log off) / anim 0.131 (logged). Prediction from the measured anim edge (0.777) and T 0.588 s: last ~0.131 s = ~19 frames, N ~236..255",
+   "level": "bounded"
+  },
+  "mb_classic_input": {
+   "value": "no difference",
+   "unit": "-",
+   "source": "jump+crouch (sg) vs jump only at the same N: 120 N195 both state 3, N200/205/210 both boost; 60 N101/104 both boost, N98 both state 3; identical exit velocities",
+   "n": 10,
+   "level": "measured"
+  },
+  "mb_client_mispredict": {
+   "value": "1 of 30 boosts",
+   "unit": "-",
+   "source": "r1318 (60 fps, press on the last traversal frame, anim 0.987, delta ~0): client gate 'dec' (delta -0.00 vs prev 0.01) -> state 3, dedi 'ok' -> state 4; client exits at 299/277 and is corrected to 388.7 three usercmds later",
+   "level": "measured"
+  },
+  "mb_lurch_after_boost": {
+   "value": "not tested",
+   "unit": "-",
+   "source": "no strafe input in any E7 schedule; source says state 4 suppresses tap strafe until next traversal or landing (mantle_boost.cpp:116-121, mantle_boost_disables_tap_strafes)",
+   "level": "bounded"
+  },
+  "hop_jump_height_penalty": {
+   "value": 0.3,
+   "unit": "frac",
+   "source": "all re-jumps (D 0..10 frames = 1..11 usercmds = 0.008..0.092 s after landing) V = 158.735 (sd 0.004) = 289.82*sqrt(0.3): M2 antiMultiJump hold (0.15 s) confirmed",
+   "n": 54,
+   "level": "measured"
+  }
+ }
+}
