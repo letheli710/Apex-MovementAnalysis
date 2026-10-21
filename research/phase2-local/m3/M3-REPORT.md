@@ -22,7 +22,7 @@ Both analyses were re-run by the lead, with byte-identical results.
 |---|---|---|
 | A1 | Trigger logic and window data for tap strafe, climb/wall jump, landing links | **PASS** (§3) |
 | A2 | Windows at several frame rates; bounds where sampling limits precision | **PASS**: 60/120/144 fps. Lurch and mantle-boost windows are both **time-based** (§3.1, §3.3). 144 fps mantle boost: lower bound only (§4) |
-| A3 | Tap strafe + one wall/landing link implemented in Unity and verified | see §5 |
+| A3 | Tap strafe + one wall/landing link implemented in Unity and verified | **PASS**: lurch press-command error ≤ 0.04° on the plateau; slide-chain link 88.4 → 2.2 u RMS; 67/67 tests (§5) |
 | A4 | Design advice: copy / simplify / remove; frame-rate independence | **PASS** (§6) |
 
 ## 2. Data
@@ -117,10 +117,43 @@ All trials were automated: Gibraltar pinned, empty-handed (movescale 1.15), z 29
 | O3 | Climb end rule (absolute height vs ledge vs climbHeight) | one wall height only |
 | O4 | Side-press wall bounce (140.9 / 177.5 split) | not explained by the 2-term formula; measured vector kept |
 | O5 | `skip_speed_reduce`, `landSlowdownDuration` | not triggered by any input tried |
+| O6 | Ground redirect after landing with a strafe key held: R5 turns velocity at about 1250 u/s² (the M2 model redirects instantly) | M2 turn data had W held while turning the view; needs a ground-turn-with-strafe experiment |
+| O7 | Crouch-height transition (about 16 u origin drop when releasing duck mid-air) | motor has no stance-height model |
 
 ## 5. Unity
 
-_Filled in when the Unity subagent has run._
+`HSD-Unity`, branch `m3/advanced-tech`, model id `R5MotorV2/m3`:
+
+- **Lurch** sits in the air step after AirAccelerate. Its parameters are in the preset: 0.7 / 0.2 s / 0.5 s / 209.3.
+  - The press edge is a 0x618 move bit that was not held on the previous command.
+- **Ground re-jump cap**: min(v_h, cap).
+- **Slide-chain rules**: landing while ducked resumes the slide; a slide jump from a resumed slide keeps its speed.
+- **Reusable primitives** for the game controller: `WallBounce` (normal·182.78 + input·75.08) and `MantleBoost` (last 133 ms of the mantle → ×1.3 exit + 90 u jump; otherwise an ordinary jump).
+- **EditMode tests: 67/67** (48 old + 19 new: lurch plateau/fade/clamp/back-brake/W no-op, the time-based window at 60/120/144 dt, ground-jump cap, slide rules, WallBounce, MantleBoost edges). Re-run by the lead.
+- **Replay of the 30 M3 trials** ([unity/index.md](unity/index.md)). The lead re-ran it:
+  - 22 trials were byte-identical to the subagent's output.
+  - 8 were re-exported with the census they lacked (those sessions ran without one), then replayed again.
+
+| Condition | Press-command heading error | Press Δv error | Before (M2 motor) |
+|---|---|---|---|
+| lurch plateau (t < 0.2 s), back-brake, W re-press | ≤ 0.04° | ≤ 0.011 u/s | up to 64° / 209.3 u/s |
+| lurch fade (t 0.25–0.49 s) | ≤ 0.25° | 0.02–1.98 u/s (≈ 1 ms window clock) | |
+
+**Other trial results:**
+
+- Air phase (take-off → landing): about 0.1–0.4 u position RMS on most e3 trials, against 15–72 u before.
+- **Landing link e8_slide_chain: 88.4 → 2.2 u position RMS.**
+- M2 e2_strafe (one lurch each): 80.8 → 0.47 u position RMS, heading 43.6° → 0.006°.
+
+**M2 regression:** 35/37 M2/M1 trials are byte-identical; the 2 that changed are exactly the e2_strafe trials above.
+
+**Where error remains** (none of it from the new formulas):
+
+- **Ground phase after a lurch landing** (e3 overall 12–43 u). R5 turns the landed velocity toward the held key at about 1250 u/s². The M2 ground model redirects instantly; M2 measured instant redirect only while turning the view with W held. → open item O6.
+- **Crouch release in the air** (slide350, fast hops). R5 lowers the origin by about 16 u when the duck is released mid-air, so landing comes 8–10 steps late. The motor has no crouch-height transition, so the 350 → 299 re-jump cap is covered by a unit test, not by the replay. → O7.
+- **Not replayed:** wall, climb and mantle (no wall geometry in the replay). They exist as tested primitives.
+
+**Acceptance A3: PASS.** Tap strafe and one landing link (slide chain) are implemented in Unity and verified against real trials. Wall bounce and mantle boost are implemented as verified-formula primitives.
 
 ## 6. Design advice for High Speed Doom
 

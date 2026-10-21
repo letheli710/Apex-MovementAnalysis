@@ -105,6 +105,11 @@ Newest entries at the bottom. Problems are tagged **[ISSUE]** and also listed in
   - The first mantle sweep pressed too early, so the runner got state waits (`waitair`/`waitland`) and late sweeps were run. Mantle boost window = **last 133 ms of the mantle at both 60 and 120 fps** (time-based). Exit 388.7 / vz 367.4 matches the SDK FSM; jump+crouch = jump.
   - Ground re-jump caps at 299; skip_speed_reduce and landSlowdown not observed.
 - Wrote the M3 report draft with design advice. Started the Unity M3 subagent: lurch, landing/slide links, and WallBounce/MantleBoost primitives.
+- Unity M3 subagent: lurch, ground re-jump cap, slide-chain rules, WallBounce/MantleBoost primitives.
+  - 67/67 tests. Lurch press error ≤ 0.04° on the plateau; slide-chain RMS 88.4 → 2.2 u; M2 regression 35/37 byte-identical (the 2 changed are the intended strafe trials).
+  - **[ISSUE→fixed]** 8 exported trials had no census: those sessions ran `--no-census` and were exported with `--params logs`. Re-exported with the same-build Gibraltar census from M3_fps120; the lead re-ran the replay: 22 trials identical, 8 updated.
+  - **[ISSUE]** Two model gaps left open: the ground redirect after landing with a strafe key held (R5 about 1250 u/s², model instant) and the crouch-height transition in the air (M3 report O6/O7).
+- **M3 accepted** (A1–A4): `m3/M3-REPORT.md`, including design advice.
 
 ## Open issues
 

@@ -1,0 +1,322 @@
+{
+  "format": "hsd-r5replay-summary/1",
+  "trial_id": "M3_e8_hop350_d0_120fps_r1236",
+  "trial_source": "r5flowstate",
+  "experiment": "M3_e8_hop350_d0",
+  "contract": "hsdmove-trial/2",
+  "model": "R5MotorV2/m2",
+  "model_choices": ["Units: SOURCE (u, u/s); one step per usercmd with the recorded dt (dt / n_cmds sub-steps); double precision; flat floor at initial_state z.", "Parameters: census class vars from the trial's own trial.json parameters; fitted constants (crouch speed 80, crouch decel 1500, stop snap 1, ground probe 2, multi-jump t0 0.15 / T 0.60, refund window 0.4) from the M2 params.json; movescale per step from samples.csv when present.", "Ground (GROUND-MODEL §2): piecewise accel low/mid/sprint by PRE-move speed, sprint edge rule 's + sprintAccel·msc·dt < speed·msc', caps speed/sprintspeed/crouch 80 ×msc, constant decel 1250 standing / 1500 ducked (not ×msc), snap < 1 u/s to 0, v = s·wishdir (instant redirect, diagonal normalized, input magnitude ignored on the ground).", "Sprint flag (GROUND-MODEL §3.3 'spr set one command after the press'; AIR-JUMP §3.1/§4.1): grounded pre-state, sprint held on this AND the previous command, forward > 0, not ducked, not sliding. Sprint button = IN_SPEED (1<<17) or bit 15 (the M2 trials record sprint as bit 15; in_sprint is always 0).", "Ducked state (choice): ducked = IN_DUCK held on the previous command (pre-state flag, mirrors the sprint flag lag); the release command still decelerates at 1500 in e5 data.", "Ground over-speed with input held (choice, not in GROUND-MODEL): s = max(cap, s - D·dt) with D = 1500 ducked (SLIDE-MODEL §4) or deceleration standing.", "speedScaleBack / speedScaleSide (choice, both 1 in every trial): multiply the cap when fwd < 0 / when fwd = 0 and side != 0.", "Jump (AIR-JUMP §2.2, §4.2, §6): press edge while grounded; frac = clamp(f + (1-f)(t-0.15)/0.60, f, 1), f = antiMultiJumpHeightFrac, t = start of the jump command - start of the last landing command (first jump of a trial: no landing yet -> frac 1, the trial reset is not a landing); V = sqrt(2 g H frac); vz = -g dt/2 + V, -g dt/2, move, -g dt/2 (post vz = V - 1.5 g dt); no ground friction; the jump command uses AirAccelerate (choice: 'ground clamp still applies' read as the clamp on ground commands only).", "Air (AIR-JUMP §2.1, §3.2): half-step gravity g = sv_gravity·gravityScale; AirAccelerate accelspeed = airAcceleration·dt, wishcap = airSpeed·msc, wishspeed = min(|wishvel|,1)·maxspeed_air (speed·msc, crouch·msc if duck held), current yaw; no air friction/drag.", "Land (AIR-JUMP §2.3): vz < 0 and floor within 2 u below after the move -> grounded, vz = 0, z kept; the next ground command snaps z to the floor.", "Slide (SLIDE-MODEL §6): duck press edge, grounded, |v| >= slideRequiredStartSpeed (unscaled) -> vPeak = min(|v| + 150·msc, 400·msc) before the move, lastBoost = vPeak - |v|; per command s = (s - 100·dt)·0.7^dt along the current velocity direction (no steering, no slideAccel); ends after the first command with post s < 125; ducked afterwards: over-speed decel 1500 down to 92.", "Slide jump (SLIDE-MODEL §5, H1): now - tBoost < 0.4 s -> s -= lastBoost, else s = max(s, 350); H = slideJumpHeight 50; the multi-jump frac is applied to slide jumps too (choice; frac = 1 in every trial used). Landing with duck held and s >= 200 resumes the slide with no boost and no speed loss.", "Not modelled: lurch (first strafe press in air), slideAccel / slideWantToStopDecel / slideMaxStopSpeed, landSlowdown, skip_speed_reduce, the 1.4e-5·vz² residual air gain, the duck transition (hull/eye offset), sprint timing keys, server corrections, slopes/steps/collisions."],
+  "alignment": {
+    "by": "cmd",
+    "ok": true,
+    "steps": 694,
+    "cmd_first": 35086,
+    "cmd_last": 35779
+  },
+  "floor_z_u": 294.274,
+  "parameters": {
+    "speed": 173.5,
+    "sprintspeed": 260,
+    "acceleration": 450,
+    "lowSpeed": 120,
+    "lowAcceleration": 2500,
+    "sprintAcceleration": 102,
+    "deceleration": 1250,
+    "sprintDeceleration": 1250,
+    "speedScaleBack": 1,
+    "speedScaleSide": 1,
+    "gravityScale": 1,
+    "jumpHeight": 56,
+    "airSpeed": 60,
+    "airAcceleration": 500,
+    "antiMultiJumpHeightFrac": 0.3,
+    "slideDecel": 100,
+    "slideVelocityDecay": 0.7,
+    "slideRequiredStartSpeed": 200,
+    "slideSpeedBoost": 150,
+    "slideSpeedBoostCap": 400,
+    "slideJumpHeight": 50,
+    "slideMaxJumpSpeed": 350,
+    "slideStopSpeed": 125,
+    "svGravity": 750,
+    "moveScale": 1.15,
+    "crouchSpeed": 80,
+    "crouchDeceleration": 1500,
+    "stopSnapSpeed": 1,
+    "groundProbe": 2,
+    "multiJumpHoldT0": 0.15,
+    "multiJumpRampT": 0.6,
+    "slideBoostRefundWindow": 0.4,
+    "sprintButtonMask": "0x28000",
+    "gravity": 750
+  },
+  "parameter_provenance": {
+    "speed": "preset (missing in trial.json parameters)",
+    "sprintspeed": "preset (missing in trial.json parameters)",
+    "acceleration": "preset (missing in trial.json parameters)",
+    "lowSpeed": "preset (missing in trial.json parameters)",
+    "lowAcceleration": "preset (missing in trial.json parameters)",
+    "sprintAcceleration": "preset (missing in trial.json parameters)",
+    "deceleration": "preset (missing in trial.json parameters)",
+    "sprintDeceleration": "preset (missing in trial.json parameters)",
+    "speedScaleBack": "preset (missing in trial.json parameters)",
+    "speedScaleSide": "preset (missing in trial.json parameters)",
+    "gravityScale": "preset (missing in trial.json parameters)",
+    "jumpHeight": "preset (missing in trial.json parameters)",
+    "airSpeed": "preset (missing in trial.json parameters)",
+    "airAcceleration": "preset (missing in trial.json parameters)",
+    "antiMultiJumpHeightFrac": "preset (missing in trial.json parameters)",
+    "slideDecel": "preset (missing in trial.json parameters)",
+    "slideVelocityDecay": "preset (missing in trial.json parameters)",
+    "slideRequiredStartSpeed": "preset (missing in trial.json parameters)",
+    "slideSpeedBoost": "preset (missing in trial.json parameters)",
+    "slideSpeedBoostCap": "preset (missing in trial.json parameters)",
+    "slideJumpHeight": "preset (missing in trial.json parameters)",
+    "slideMaxJumpSpeed": "preset (missing in trial.json parameters)",
+    "slideStopSpeed": "preset (missing in trial.json parameters)",
+    "svGravity": "sv_gravity 750 (air_jump/params.json gravity; no class var)",
+    "crouchSpeed": "M2 params.json (fitted / no census key)",
+    "crouchDeceleration": "M2 params.json (fitted / no census key)",
+    "stopSnapSpeed": "M2 params.json (fitted / no census key)",
+    "groundProbe": "M2 params.json (fitted / no census key)",
+    "multiJumpHoldT0": "M2 params.json (fitted / no census key)",
+    "multiJumpRampT": "M2 params.json (fitted / no census key)",
+    "slideBoostRefundWindow": "M2 params.json (fitted / no census key)",
+    "moveScale": "samples.csv movescale column per step (fallback 1.15)",
+    "sprintButtonMask": "IN_SPEED (1<<17) | bit 15 (sprint bit seen in the M2 trials)"
+  },
+  "units": "source units u, u/s; errors are sim - ref",
+  "overall": {
+    "n": 694,
+    "pos_rms_3d_u": 8.1682722003883121,
+    "pos_max_3d_u": 21.259445529152455,
+    "pos_rms_h_u": 2.6541881844307769,
+    "pos_max_h_u": 4.5600568865227924,
+    "pos_rms_z_u": 7.725021412349883,
+    "pos_max_abs_z_u": 20.774892298251928,
+    "vel_rms_3d_ups": 62.209322664285025,
+    "vel_max_3d_ups": 374.39047060692826,
+    "spd2d_rms_ups": 5.86919214810976,
+    "spd2d_max_abs_ups": 50.997000000000014,
+    "vz_rms_ups": 61.931836803680348,
+    "vz_max_abs_ups": 370.90097124741692,
+    "grounded_mismatch_steps": 76
+  },
+  "per_phase": {
+    "idle": {
+      "n": 92,
+      "pos_rms_3d_u": 2.6503809302730765,
+      "pos_max_3d_u": 4.4939395125236326,
+      "pos_rms_h_u": 2.6228544916275527,
+      "pos_max_h_u": 4.4472661649850824,
+      "pos_rms_z_u": 0.38099001470426297,
+      "pos_max_abs_z_u": 0.646000000000015,
+      "vel_rms_3d_ups": 0,
+      "vel_max_3d_ups": 0,
+      "spd2d_rms_ups": 0,
+      "spd2d_max_abs_ups": 0,
+      "vz_rms_ups": 0,
+      "vz_max_abs_ups": 0,
+      "grounded_mismatch_steps": 0
+    },
+    "accel": {
+      "n": 240,
+      "pos_rms_3d_u": 0.57764198918154908,
+      "pos_max_3d_u": 0.85582953404251461,
+      "pos_rms_h_u": 0.40005019601580594,
+      "pos_max_h_u": 0.560391029924932,
+      "pos_rms_z_u": 0.4166894627097405,
+      "pos_max_abs_z_u": 0.66199999999997772,
+      "vel_rms_3d_ups": 0.6272843260725498,
+      "vel_max_3d_ups": 1.7281230000004371,
+      "spd2d_rms_ups": 0.6272843260725498,
+      "spd2d_max_abs_ups": 1.7281230000004371,
+      "vz_rms_ups": 0,
+      "vz_max_abs_ups": 0,
+      "grounded_mismatch_steps": 0
+    },
+    "cruise": {
+      "n": 112,
+      "pos_rms_3d_u": 3.7163020440557957,
+      "pos_max_3d_u": 21.259445529152455,
+      "pos_rms_h_u": 2.6676069757118235,
+      "pos_max_h_u": 4.5419473626217837,
+      "pos_rms_z_u": 2.5874261160054233,
+      "pos_max_abs_z_u": 20.774892298251928,
+      "vel_rms_3d_ups": 22.549340052568148,
+      "vel_max_3d_ups": 215.31503523738419,
+      "spd2d_rms_ups": 0.020006973760758273,
+      "spd2d_max_abs_ups": 0.16599999999999682,
+      "vz_rms_ups": 22.549331176940814,
+      "vz_max_abs_ups": 215.31497124741696,
+      "grounded_mismatch_steps": 2
+    },
+    "decel": {
+      "n": 28,
+      "pos_rms_3d_u": 4.4979986945166237,
+      "pos_max_3d_u": 4.5055385576058278,
+      "pos_rms_h_u": 4.4501949522482853,
+      "pos_max_h_u": 4.4577262526797048,
+      "pos_rms_z_u": 0.6540314540273563,
+      "pos_max_abs_z_u": 0.66199999999997772,
+      "vel_rms_3d_ups": 0.045834231592877354,
+      "vel_max_3d_ups": 0.090999999999866077,
+      "spd2d_rms_ups": 0.045834231592877354,
+      "spd2d_max_abs_ups": 0.090999999999866077,
+      "vz_rms_ups": 0,
+      "vz_max_abs_ups": 0,
+      "grounded_mismatch_steps": 0
+    },
+    "air": {
+      "n": 222,
+      "pos_rms_3d_u": 13.992355086449663,
+      "pos_max_3d_u": 20.809367083010251,
+      "pos_rms_h_u": 3.5931592084450514,
+      "pos_max_h_u": 4.5600568865227924,
+      "pos_rms_z_u": 13.523136018248877,
+      "pos_max_abs_z_u": 20.314411893668705,
+      "vel_rms_3d_ups": 108.81707184209905,
+      "vel_max_3d_ups": 374.39047060692826,
+      "spd2d_rms_ups": 10.356694059295089,
+      "spd2d_max_abs_ups": 50.997000000000014,
+      "vz_rms_ups": 108.32310008696533,
+      "vz_max_abs_ups": 370.90097124741692,
+      "grounded_mismatch_steps": 74
+    }
+  },
+  "events_ref": {
+    "forward_start_step": 60,
+    "release_step": 634,
+    "stop_step": 662,
+    "takeoff_step": 372,
+    "land_step": 448,
+    "apex_step": 414,
+    "apex_height_u": 32.853999999999985,
+    "takeoff_vz_ups": 264.161,
+    "peak_speed_step": 300,
+    "peak_speed_ups": 457.742,
+    "distance_h_u": 1485.7480003664816
+  },
+  "events_sim": {
+    "forward_start_step": 60,
+    "release_step": 634,
+    "stop_step": 662,
+    "takeoff_step": 372,
+    "land_step": 456,
+    "apex_step": 414,
+    "apex_height_u": 48.865606254955367,
+    "takeoff_vz_ups": 264.49002875258316,
+    "peak_speed_step": 300,
+    "peak_speed_ups": 457.73904884409512,
+    "distance_h_u": 1490.1951437285315
+  },
+  "event_deltas_sim_minus_ref": {
+    "forward_start_steps": 0,
+    "stop_steps": 0,
+    "release_to_stop_steps": 0,
+    "takeoff_steps": 0,
+    "land_steps": 8,
+    "airtime_steps": 8,
+    "apex_steps": 0,
+    "apex_height_u": 16.011606254955382,
+    "takeoff_vz_ups": 0.32902875258315589,
+    "peak_speed_ups": -0.002951155904895586,
+    "peak_speed_steps": 0,
+    "distance_h_u": 4.4471433620499283
+  },
+  "thresholds": {
+    "speed_rise_ups": 1,
+    "stop_ups": 1,
+    "cruise_fraction": 0.99
+  },
+  "events_all": {
+    "takeoff": {
+      "ref_steps": [372, 449, 499, 549],
+      "sim_steps": [372, 499],
+      "delta_steps_sim_minus_ref": [0, 50],
+      "count_ref": 4,
+      "count_sim": 2,
+      "max_abs_delta_steps": 50
+    },
+    "land": {
+      "ref_steps": [448, 498, 548, 597],
+      "sim_steps": [456, 565],
+      "delta_steps_sim_minus_ref": [8, 67],
+      "count_ref": 4,
+      "count_sim": 2,
+      "max_abs_delta_steps": 67
+    },
+    "slide_start": {
+      "ref_steps": [300],
+      "sim_steps": [300],
+      "delta_steps_sim_minus_ref": [0],
+      "count_ref": 1,
+      "count_sim": 1,
+      "max_abs_delta_steps": 0
+    },
+    "slide_end": {
+      "ref_steps": [372],
+      "sim_steps": [372],
+      "delta_steps_sim_minus_ref": [0],
+      "count_ref": 1,
+      "count_sim": 1,
+      "max_abs_delta_steps": 0
+    }
+  },
+  "jumps": [{"index":0,"ref_takeoff_step":372,"sim_takeoff_step":372,"ref_takeoff_vz":264.161,"sim_takeoff_vz":264.49002875258316,"takeoff_vz_err":0.32902875258315589,"ref_apex_u":32.199999999999989,"sim_apex_u":48.865606254955367,"apex_err_u":16.665606254955378,"ref_takeoff_spd2d":350.006,"sim_takeoff_spd2d":350,"takeoff_spd2d_err":-0.0059999999999718057}, {"index":1,"ref_takeoff_step":449,"sim_takeoff_step":499,"ref_takeoff_vz":149.316,"sim_takeoff_vz":203.3852193987384,"takeoff_vz_err":54.0692193987384,"ref_apex_u":16.125,"sim_apex_u":29.330795830723275,"apex_err_u":13.205795830723275,"ref_takeoff_spd2d":299.003,"sim_takeoff_spd2d":299,"takeoff_spd2d_err":-0.0029999999999859028}, {"index":2,"ref_takeoff_step":499,"sim_takeoff_step":-1,"ref_takeoff_vz":149.178,"sim_takeoff_vz":null,"takeoff_vz_err":null,"ref_apex_u":16.117000000000019,"sim_apex_u":null,"apex_err_u":null,"ref_takeoff_spd2d":299.004,"sim_takeoff_spd2d":null,"takeoff_spd2d_err":null}, {"index":3,"ref_takeoff_step":549,"sim_takeoff_step":-1,"ref_takeoff_vz":149.173,"sim_takeoff_vz":null,"takeoff_vz_err":null,"ref_apex_u":16.115000000000009,"sim_apex_u":null,"apex_err_u":null,"ref_takeoff_spd2d":299.004,"sim_takeoff_spd2d":null,"takeoff_spd2d_err":null}],
+  "jump_max_abs_takeoff_vz_err_ups": 54.0692193987384,
+  "jump_max_abs_apex_err_u": 16.665606254955378,
+  "ground_ref": {
+    "terminal_speed_ups": null,
+    "terminal_release_step": -1,
+    "accel_low": {
+      "rate": 2877.2754550910181,
+      "n": 6
+    },
+    "accel_mid": {
+      "rate": 517.9669467269872,
+      "n": 13
+    },
+    "accel_sprint": {
+      "rate": 115.050732150554,
+      "n": 103
+    },
+    "decel_stand": {
+      "rate": 1250.2823650209625,
+      "n": 28
+    }
+  },
+  "ground_sim": {
+    "terminal_speed_ups": null,
+    "terminal_release_step": -1,
+    "accel_low": {
+      "rate": 2874.9999999999995,
+      "n": 6
+    },
+    "accel_mid": {
+      "rate": 517.50000000000023,
+      "n": 13
+    },
+    "accel_sprint": {
+      "rate": 117.30000000000051,
+      "n": 101
+    },
+    "decel_stand": {
+      "rate": 1249.9999999999995,
+      "n": 28
+    }
+  },
+  "terminal_speed_err_ups": null,
+  "flag_mismatch_steps": {
+    "grounded": 76,
+    "sliding": 0,
+    "sprinting": 76,
+    "maxspeed": 85,
+    "maxspeed_compared": 694,
+    "first_sliding_mismatch_step": -1,
+    "first_sprinting_mismatch_step": 449,
+    "first_maxspeed_mismatch_step": 373
+  },
+  "warnings": [],
+  "gated": false
+}
