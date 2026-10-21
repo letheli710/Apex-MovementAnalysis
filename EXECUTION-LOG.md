@@ -145,6 +145,15 @@ Newest entries at the bottom. Problems are tagged **[ISSUE]** and also listed in
   - **[OPEN]** Jet fuel drain was not observed.
   - **[NOTE]** With W held after a jet release, the client mispredicts the slow fall and the dedi corrects it. The model follows the dedi.
 - Unity M4 primitives subagent dispatched (HSD-Unity branch `m4/ability-primitives`).
+- **M4b added** (user-approved via side session: "我觉得可以给加进去"):
+  - Why: an external review of M3 found the runner had no per-command view control. Grapple trials were therefore straight pulls only, with no swing or turning during the pull, so detach and post-release momentum were not measured.
+  - Runner changes:
+    - New keys `lookup`/`lookdown`.
+    - New step `set cl_yawspeed|cl_pitchspeed N`, whitelisted; the session values are restored after each trial.
+    - New schedules: `m4b_view_*` (acceptance), `m4b_swing_*` (anchor offset sideways via start y 6350 and yaw 20°, turn during the pull, jump release), `m4b_pad_rejump[_w]`.
+  - Runs wait until the Unity M4 subagent finishes: one heavy process at a time.
+  - Unity combination checks (grapple → slide, pad → lurch) are folded into the M5 skill-slot rules.
+  - Report wording to soften: tap strafe models a single-press lurch only; superglide variants are untested; Unity wall/mantle is checked by formula and unit tests only; all findings apply to R5Flowstate S21, not official S21.
 
 ## Open issues
 

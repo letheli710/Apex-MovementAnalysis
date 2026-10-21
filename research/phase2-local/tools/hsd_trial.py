@@ -18,8 +18,10 @@ Per trial:
   4. waits for the schedule's 'end' line in the client log ring, then label 0.
 
 The schedule language (one step per ';'):  wait <frames> | down <key> | up <key> |
-tap <key>  (down now, up on the next frame).  Keys: forward back moveleft moveright
-jump duck speed (console +<key>).
+tap <key>  (down now, up on the next frame) | set <cvar> <value>.  Keys: forward backward moveleft
+moveright jump duck speed left right lookup lookdown offhand1 offhand4 (console +<key>).
+View turns use +left/+right/+lookup/+lookdown at a constant rate set with 'set cl_yawspeed N' /
+'set cl_pitchspeed N' (only VIEW_CVARS; the runner restores their session values after every trial).
 
   py -3 hsd_trial.py --trials 5 --run-base 11 --label M1_loop --schedule basic
 """
@@ -170,6 +172,20 @@ SCHEDULES = {
     "m4_grapple_hold": "wait 72; tap offhand1; wait 3.0s; wait 2.5s",
     "m4_grapple_jump": "wait 72; tap offhand1; wait 0.6s; tap jump; wait 4.0s",
     "m4_grapple_fwd": "wait 72; tap offhand1; down forward; wait 3.0s; up forward; wait 2.5s",
+    # M4b view control acceptance: constant-rate turns, checked per usercmd in MOVE-TRACE
+    "m4b_view_yaw": "wait 72; set cl_yawspeed 90; down right; wait 1.0s; up right; wait 0.5s; down left; wait 0.5s; up left; wait 0.5s",
+    "m4b_view_pitch": "wait 72; set cl_pitchspeed 45; down lookup; wait 0.5s; up lookup; wait 0.3s; down lookdown; wait 1.0s; up lookdown; wait 0.5s",
+    "m4b_view_run": "wait 72; set cl_yawspeed 90; down speed; down forward; wait 0.8s; down right; wait 1.0s; up right; wait 0.5s; up forward; up speed; wait 0.8s",
+    # M4b grapple swing: anchor offset sideways (start 150 u left of the wall centre line, aim 20 deg right of the
+    # wall normal so the hook lands near the centre), then turning during the pull and a jump release
+    "m4b_swing_side": "wait 72; tap offhand1; wait 3.0s; wait 2.5s",
+    "m4b_swing_turn": "wait 72; set cl_yawspeed 90; tap offhand1; wait 0.45s; down right; wait 0.6s; up right; wait 2.0s; wait 2.5s",
+    "m4b_swing_turn_w": "wait 72; set cl_yawspeed 90; tap offhand1; down forward; wait 0.45s; down right; wait 0.6s; up right; wait 2.0s; up forward; wait 2.5s",
+    "m4b_swing_jump": "wait 72; tap offhand1; wait 0.8s; tap jump; wait 3.0s",
+    "m4b_swing_turn_jump": "wait 72; set cl_yawspeed 90; tap offhand1; wait 0.45s; down right; wait 0.35s; tap jump; wait 0.25s; up right; wait 3.0s",
+    # M4b re-jump after a jump-pad landing (3 frames after touchdown), without and with forward held
+    "m4b_pad_rejump": "wait 72; down speed; down forward; wait 1.5s; up forward; up speed; waitair; waitland; waitf 3; tap jump; wait 3.0s",
+    "m4b_pad_rejump_w": "wait 72; down speed; down forward; wait 1.5s; up speed; waitair; waitland; waitf 3; tap jump; wait 1.5s; up forward; wait 1.5s",
     # grapple variants: distance to the wall (244 u near, 694 u far) and pitch (0, -20)
     "m4_grapple_near": "wait 72; tap offhand1; wait 3.0s; wait 2.5s",
     "m4_grapple_far": "wait 72; tap offhand1; wait 3.5s; wait 2.5s",
@@ -197,23 +213,30 @@ SCHEDULES = {
     "e8_drop_land": "wait 72; down speed; down forward; wait 1.2s; tap jump; wait 4.0s; up forward; up speed; wait 1.5s",
 }
 
-KEYS = {"forward", "backward", "moveleft", "moveright", "jump", "duck", "speed", "left", "right", "offhand1", "offhand4"}
+KEYS = {"forward", "backward", "moveleft", "moveright", "jump", "duck", "speed", "left", "right", "lookup", "lookdown",
+        "offhand1", "offhand4"}
+# Client cvars a schedule may change with 'set' (constant-rate view turns, M4b).
+VIEW_CVARS = ("cl_yawspeed", "cl_pitchspeed")
 
 # View pitch per schedule (Source: + = down). Grapple trials aim slightly up at the test wall.
 SCHEDULE_PITCH = {"m4_grapple_hold": -10.0, "m4_grapple_jump": -10.0, "m4_grapple_fwd": -10.0,
-                  "m4_grapple_near": -10.0, "m4_grapple_far": -10.0, "m4_grapple_p0": 0.0, "m4_grapple_p20": -20.0}
+                  "m4_grapple_near": -10.0, "m4_grapple_far": -10.0, "m4_grapple_p0": 0.0, "m4_grapple_p20": -20.0,
+                  "m4b_swing_side": -10.0, "m4b_swing_turn": -10.0, "m4b_swing_turn_w": -10.0, "m4b_swing_jump": -10.0,
+                  "m4b_swing_turn_jump": -10.0}
 
 # Server snippets run inside the reset (after the teleport, inside try/catch) for prop-based abilities.
 # Every spawned prop gets the script name hsd_test_geo; the previous one is removed first.
 _CLEAR_GEO = 'foreach ( entity e in GetEntArrayByScriptName( "hsd_test_geo_m4" ) ) e.Destroy()\n'
 SCHEDULE_PRE = {
-    "m4_pad_": _CLEAR_GEO + 'entity pad = JumpPad_CreateAtLocation( o + <300, 0, 0>, <0, 0, 0>, p, true )\n'
+    ("m4_pad_", "m4b_pad_"): _CLEAR_GEO + 'entity pad = JumpPad_CreateAtLocation( o + <300, 0, 0>, <0, 0, 0>, p, true )\n'
                'if ( IsValid( pad ) ) pad.SetScriptName( "hsd_test_geo_m4" )\npre = " pad=" + IsValid( pad )\n',
     "m4_lift_": 'thread SpaceElevator_PropDeploy( p, o + <120, 0, 0>, <0, 0, 0>, null )\npre = " lift=deployed"\n',
 }
 
 # Facing so that the schedule's ground motion runs along +X (Source yaw: 0 = +X, 90 = +Y; right = (sin, -cos)).
-SCHEDULE_YAW = {"e1_side": 90.0, "e1_back": 180.0, "e1_diag": 45.0}
+SCHEDULE_YAW = {"e1_side": 90.0, "e1_back": 180.0, "e1_diag": 45.0,
+                "m4b_swing_side": 20.0, "m4b_swing_turn": 20.0, "m4b_swing_turn_w": 20.0, "m4b_swing_jump": 20.0,
+                "m4b_swing_turn_jump": 20.0}
 
 # Start positions per schedule prefix (M3). Lane A faces the test wall (test_geometry.py: rock face at
 # x ~ -13706, y 6380..6620, top ~ +232 u); lane B is the open part of the field at y 5900.
@@ -222,13 +245,16 @@ LANE_B = (-14200.0, 5900.0, 294.92)
 # Lane C: y 6800 is flat from x -14825 to -12475 (m3/map/field_fine.json) and 81 u clear of the wall's bounds.
 LANE_C = (-14800.0, 6800.0, 294.92)
 SPAWN_PAD = (-11699.0, 512.0, 1577.046)  # visible firing-range floor (M0/M1)
-SCHEDULE_ORIGIN_PREFIX = {"m4_valk": LANE_C, "m4_pounce": LANE_C, "m4_stim": LANE_C, "m4_ctrl": LANE_C, "m4_pad": LANE_C, "m4_lift": LANE_C,
+SCHEDULE_ORIGIN_PREFIX = {"m4b_view": LANE_C, "m4b_pad": LANE_C, "m4_valk": LANE_C, "m4_pounce": LANE_C, "m4_stim": LANE_C, "m4_ctrl": LANE_C, "m4_pad": LANE_C, "m4_lift": LANE_C,
                           "m4_grapple": LANE_A, "x_pad_": SPAWN_PAD, "e8_hop350": LANE_C, "e3_": LANE_B, "e8_fast": LANE_C, "e8_slide": LANE_C, "e6_": LANE_A, "e7_": LANE_A,
                           "e8_drop": LANE_A}
 
 
 # Exact-name origins take precedence over prefixes (grapple distance variants on lane A).
 SCHEDULE_ORIGIN = {"m4_grapple_near": (-13950.0, 6500.0, 294.92), "m4_grapple_far": (-14400.0, 6500.0, 294.92)}
+# M4b swing: lane A shifted 150 u to -Y (the wall spans y 6279..6719, so a 20 deg aim hits it near y 6493)
+SCHEDULE_ORIGIN.update({n: (-14100.0, 6350.0, 294.92) for n in ("m4b_swing_side", "m4b_swing_turn", "m4b_swing_turn_w",
+                                                                  "m4b_swing_jump", "m4b_swing_turn_jump")})
 
 
 def origin_for(name, default):
@@ -319,6 +345,12 @@ void functionref() f = void function() : ( steps ) {
 				g++
 			}
 			printt( "[HSD-SCHED] ver=1 trial=$trial run=$run edge=" + verb + " frame=" + ( FrameCount() - f0 ) + " fc=" + FrameCount() + " pt=" + PlatformTime() + " t=" + Time() + " waited=" + g )
+			continue
+		}
+		if ( verb == "set" )
+		{
+			p.ClientCommand( parts[1] + " " + parts[2] )
+			printt( "[HSD-SCHED] ver=1 trial=$trial run=$run edge=set cvar=" + parts[1] + " value=" + parts[2] + " frame=" + ( FrameCount() - f0 ) + " fc=" + FrameCount() + " pt=" + PlatformTime() + " t=" + Time() )
 			continue
 		}
 		string key = parts[1]
@@ -427,6 +459,11 @@ def parse_schedule(spec, fps=144.0):
         if verb in ("down", "up", "tap"):
             if arg not in KEYS:
                 raise ValueError(f"unknown key in {s!r}")
+        elif verb == "set":
+            cvar, _, val = arg.partition(" ")
+            if cvar not in VIEW_CVARS:
+                raise ValueError(f"cvar not allowed in {s!r}")
+            float(val)
         else:
             raise ValueError(f"unknown step {s!r}")
     return steps
@@ -537,6 +574,12 @@ def main(argv):
                 "legend_reply": None, "trials": []}
 
     with AgentLink("server", a.game) as server, AgentLink("client", a.game) as client:
+        # session values of the view-rate cvars, restored after every trial ('set' steps change them)
+        view_cvars = {}
+        for cv in VIEW_CVARS:
+            r = client.eval(f'AgentLink_Reply( GetConVarString( "{cv}" ) )', check=False)
+            view_cvars[cv] = r.get("reply", "")
+        manifest["view_cvars"] = view_cvars
         if a.fps != 144.0:
             client.cmd(f"fps_max {a.fps:g}")
             time.sleep(3.0)
@@ -589,7 +632,7 @@ def main(argv):
             yaw = SCHEDULE_YAW.get(name, a.yaw)
             ox, oy, oz = origin_for(name, tuple(a.origin))
             pitch = SCHEDULE_PITCH.get(name, 0.0)
-            pre = next((code for prefix, code in SCHEDULE_PRE.items() if name.startswith(prefix)), "")
+            pre = next((code for prefix, code in SCHEDULE_PRE.items() if name.startswith(prefix)), "")  # prefix may be a tuple
             reset = server.eval(RESET_SERVER.substitute(ox=ox, oy=oy, oz=oz, yaw=yaw, pitch=pitch, batch=batch, run=run,
                                                          refill=REFILL if a.kit else "", pre=pre))
             sched = client.eval(SCHED_CLIENT.substitute(
@@ -598,6 +641,9 @@ def main(argv):
             lines, gap = wait_for_end(client, since, trial, timeout=(frames + a.settle_timeout) / a.fps * 3 + 30)
             server.cmd("hsd_md_run 0")
             client.cmd("hsd_md_run 0")
+            for cv, val in view_cvars.items():
+                if val and any(st.startswith("set " + cv + " ") for st in steps):
+                    client.cmd(f"{cv} {val}")
             ok, why, fps = check_pacing(lines, frames, a.fps, a.fps_tol, variable=has_state_waits(steps))
             manifest["trials"].append({"trial": trial, "run": run, "batch": batch, "schedule": name, "yaw": yaw, "origin": [ox, oy, oz],
                                        "schedule_frames": frames, "reset": reset.get("reply", ""),
