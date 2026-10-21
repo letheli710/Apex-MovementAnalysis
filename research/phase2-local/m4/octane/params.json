@@ -1,0 +1,197 @@
+{
+ "_scope": "Octane (character_octane), R5Flowstate S21 client / S3 dedi, 120 fps, lane C flat floor; sessions M4_octane + M4_octane_rerun",
+ "stim.boost_factor": {
+  "value": 1.298038,
+  "unit": "x movescale",
+  "source": "fitted (walk cap / 173.5 / 1.15)",
+  "n": 13,
+  "spread": "sd 0.00e+00",
+  "note": "= 1 + 2*severity; severity 0.15 stored as 38/255 = 0.14902"
+ },
+ "stim.severity_effective": {
+  "value": 0.149019,
+  "unit": "-",
+  "source": "fitted; script 0.15 (sh_stim.gnut:12)",
+  "n": 13
+ },
+ "stim.tap_to_onset": {
+  "value": 0.1598,
+  "unit": "s",
+  "source": "observed",
+  "n": 13,
+  "spread": "0.1583..0.1666",
+  "note": "19-20 cmds at 120 fps; weapon deploy 0.15 s [inf]"
+ },
+ "stim.full_duration": {
+  "value": 6.0048,
+  "unit": "s",
+  "source": "observed (dedi)",
+  "n": 10,
+  "spread": "sd 0.0042",
+  "note": "script duration 6.0 s; first faded command at 6.0 s after onset"
+ },
+ "stim.fade_duration": {
+  "value": 0.4913,
+  "unit": "s",
+  "source": "observed (dedi)",
+  "n": 5,
+  "spread": "sd 0.0013",
+  "note": "script fade 0.5 s; shape: see fade_shape"
+ },
+ "stim.fade_shape": {
+  "value": "cosine",
+  "unit": "-",
+  "source": "fitted",
+  "n": 309,
+  "note": "{\"linear\": 0.01975, \"smoothstep\": 0.00182, \"cosine\": 0.0017, \"quadratic_out\": 0.03256}"
+ },
+ "stim.sprintspeed_mod": {
+  "value": 282.0,
+  "unit": "u/s",
+  "source": "fitted (sprint cap / msc)",
+  "n": 1373,
+  "note": "stim_sprint mod: base 260 -> 282"
+ },
+ "stim.sprintAcceleration_mod": {
+  "value": 120.0,
+  "unit": "u/s^2 (x msc)",
+  "source": "fitted",
+  "n": 653,
+  "spread": "sd 0.057",
+  "note": "base 100 -> 120"
+ },
+ "stim.walk_speed": {
+  "value": 173.5,
+  "unit": "u/s (x msc)",
+  "source": "fitted: unchanged",
+  "n": 1705
+ },
+ "stim.acceleration": {
+  "value": 449.99,
+  "unit": "u/s^2 (x msc)",
+  "source": "fitted: unchanged",
+  "n": 96
+ },
+ "stim.lowAcceleration": {
+  "value": 2500.0,
+  "unit": "u/s^2 (x msc)",
+  "source": "fitted: unchanged",
+  "n": 32
+ },
+ "stim.deceleration": {
+  "value": 1249.9,
+  "unit": "u/s^2 (not x msc)",
+  "source": "fitted: unchanged",
+  "n": 383
+ },
+ "pad.push_speed": {
+  "value": 1150.0,
+  "unit": "u/s",
+  "source": "script JUMP_PAD_PUSH_VELOCITY; confirmed",
+  "n": 15,
+  "spread": "h_out 514.309 vs pred 514.296"
+ },
+ "pad.vert_override": {
+  "value": 2.0,
+  "unit": "-",
+  "source": "script JUMP_PAD_VERT_OVERRIDE; confirmed",
+  "n": 10
+ },
+ "pad.ducked_vert_scalar": {
+  "value": 0.5,
+  "unit": "-",
+  "source": "SDK cvar; confirmed",
+  "n": 5
+ },
+ "pad.launch_h_standing": {
+  "value": 514.296,
+  "unit": "u/s",
+  "source": "formula, observed +1 tick drift",
+  "n": 10,
+  "spread": "514.309 (sd 0.000, 514.309..514.309, n=10)"
+ },
+ "pad.launch_vz_standing": {
+  "value": 1028.591,
+  "unit": "u/s",
+  "source": "formula; intercept fit",
+  "n": 10,
+  "spread": "launch vz 1028.5858 (sd 0.0012, 1028.5841..1028.5871, n=10)"
+ },
+ "pad.launch_h_ducked": {
+  "value": 813.173,
+  "unit": "u/s",
+  "source": "formula",
+  "n": 5,
+  "spread": "813.181 (sd 0.000, 813.181..813.181, n=5)"
+ },
+ "pad.launch_vz_ducked": {
+  "value": 813.173,
+  "unit": "u/s",
+  "source": "formula; intercept fit",
+  "n": 5,
+  "spread": "launch vz 813.1647 (sd 0.0009, 813.1641..813.1661, n=5)"
+ },
+ "pad.slowmo_timescale": {
+  "value": 0.8,
+  "unit": "-",
+  "source": "fitted (position step / (v*dt)); m_slowMoEnabled [src]",
+  "n": 15,
+  "spread": "sd 0.00007",
+  "note": "gravity in velocity units 600.27 = 750*0.8004"
+ },
+ "pad.debounce": {
+  "value": 1.0,
+  "unit": "s",
+  "source": "SDK constant; not exercised"
+ },
+ "pad.double_jump_delay": {
+  "value": 0.1,
+  "unit": "s",
+  "source": "SDK cvar; not exercised"
+ },
+ "land.f0_model": {
+  "value": "f0 = clamp(a + b*vz^2, 0, 1)",
+  "unit": "-",
+  "source": "fitted (two impact clusters)",
+  "n": 15,
+  "note": "{\"a\": 1.996467057, \"b\": -1.671e-06, \"rms\": 9.8896e-05, \"max\": 0.000341732, \"v_f1\": 772.120959115, \"v_f0\": 1092.911367069}"
+ },
+ "land.f0_onset_impact": {
+  "value": 772.1,
+  "unit": "u/s",
+  "source": "fitted (extrapolated)",
+  "n": 15
+ },
+ "land.f0_zero_impact": {
+  "value": 1092.9,
+  "unit": "u/s",
+  "source": "fitted (extrapolated)",
+  "n": 15
+ },
+ "land.recovery_T": {
+  "value": 0.998,
+  "unit": "s",
+  "source": "fitted (client, uncorrected landings); census landSlowdownDuration 1",
+  "n": 1439,
+  "spread": "rms 0.00028 (in f)"
+ },
+ "land.recovery_exponent": {
+  "value": 2,
+  "unit": "-",
+  "source": "fitted",
+  "spread": "free p: 2.00"
+ },
+ "lurch.clamp": {
+  "value": "0.7 * sprint cap (sprintspeed * msc)",
+  "unit": "u/s",
+  "source": "fitted: M3 lurch clamp under stim",
+  "n": 10,
+  "spread": "stim 294.667 = 0.7*420.954; ctrl 209.3 = 0.7*299",
+  "note": "resolves M3 open question 2; 209.3 const and 182*msc rejected (errors 85 / 23 u/s)"
+ },
+ "land.no_slowdown_max_observed_impact": {
+  "value": 279.8,
+  "unit": "u/s",
+  "source": "observed"
+ }
+}

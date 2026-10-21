@@ -1,0 +1,141 @@
+# M4 Octane analysis
+
+session 20261021_002526_M4_octane: scored trials 30, parse errors 0, census True
+session 20261021_003657_M4_octane_rerun: scored trials 15, parse errors 0, census False
+
+## 0. Trials, join and client/dedi parity
+m4_ctrl_air      n=5 runs=[1553, 1554, 1555, 1556, 1557] cmds=3200 joined=3195 state_bad=0 max|cl-sv| pos/vel=3.710 msc=0.0000
+m4_ctrl_sprint   n=5 runs=[1501, 1502, 1503, 1504, 1505] cmds=5100 joined=5095 state_bad=0 max|cl-sv| pos/vel=0.001 msc=0.0000
+m4_pad_crouch    n=5 runs=[1536, 1537, 1538, 1539, 1540] cmds=4800 joined=4795 state_bad=0 max|cl-sv| pos/vel=0.000 msc=0.0032
+m4_pad_jumpin    n=5 runs=[1541, 1543, 1563, 1564, 1565] cmds=3785 joined=3780 state_bad=0 max|cl-sv| pos/vel=0.000 msc=0.0000
+m4_pad_sprint    n=5 runs=[1531, 1532, 1533, 1534, 1535] cmds=3600 joined=3595 state_bad=0 max|cl-sv| pos/vel=0.000 msc=0.0134
+m4_pad_walk      n=5 runs=[1558, 1559, 1560, 1561, 1562] cmds=3900 joined=3895 state_bad=0 max|cl-sv| pos/vel=0.016 msc=0.0167
+m4_stim_air      n=5 runs=[1516, 1517, 1518, 1519, 1552] cmds=3205 joined=3200 state_bad=0 max|cl-sv| pos/vel=3.956 msc=0.0019
+m4_stim_sprint   n=5 runs=[1506, 1507, 1508, 1509, 1510] cmds=5104 joined=5099 state_bad=1 max|cl-sv| pos/vel=0.257 msc=0.0062
+m4_stim_walk     n=5 runs=[1511, 1512, 1513, 1515, 1551] cmds=4085 joined=4080 state_bad=0 max|cl-sv| pos/vel=0.000 msc=0.3427
+
+## 1. Stim (m4_stim_*, controls m4_ctrl_*)
+  {"run": 1506, "schedule": "m4_stim_sprint", "session": "20261021_002526_M4_octane", "msc_first": 1.15, "taps": [179], "onset": 198, "tap_to_onset_cmds": 19, "tap_to_onset_s": 0.15833, "onset_step": [1.15, 1.4927], "plateau_msc": 1.4927, "plateau_walkcap": [258.991], "ramp_start_cl": 900, "ramp_end_cl": 960, "full_s_cl": 5.99024, "ramp_s_cl": 0.49997, "onset_to_end_s_cl": 6.49021, "nonmono_cl": [10], "onset_sv": 198, "onset_cl_minus_sv_cmds": 0, "ramp_start_sv": 901, "ramp_end_sv": 960, "full_s_sv": 5.99857, "rampshift_cmds_cl_minus_sv": -1, "onset_to_end_s_sv": 6.49021, "ramp_s_sv": 0.49164, "cl_differs_in_fade_cmds": [0, 8]}
+  {"run": 1507, "schedule": "m4_stim_sprint", "session": "20261021_002526_M4_octane", "msc_first": 1.15, "taps": [179], "onset": 198, "tap_to_onset_cmds": 19, "tap_to_onset_s": 0.15834, "onset_step": [1.15, 1.4927], "plateau_msc": 1.4927, "plateau_walkcap": [258.991], "ramp_start_cl": 916, "ramp_end_cl": 977, "full_s_cl": 5.99134, "ramp_s_cl": 0.50831, "onset_to_end_s_cl": 6.49965, "nonmono_cl": [6], "onset_sv": 198, "onset_cl_minus_sv_cmds": 0, "ramp_start_sv": 918, "ramp_end_sv": 977, "full_s_sv": 6.008, "rampshift_cmds_cl_minus_sv": -2, "onset_to_end_s_sv": 6.49965, "ramp_s_sv": 0.49165, "cl_differs_in_fade_cmds": [0, 57]}
+  {"run": 1508, "schedule": "m4_stim_sprint", "session": "20261021_002526_M4_octane", "msc_first": 1.15, "taps": [179], "onset": 198, "tap_to_onset_cmds": 19, "tap_to_onset_s": 0.16207, "onset_step": [1.15, 1.4927], "plateau_msc": 1.4927, "plateau_walkcap": [258.991], "ramp_start_cl": 915, "ramp_end_cl": 975, "full_s_cl": 5.99197, "ramp_s_cl": 0.50027, "onset_to_end_s_cl": 6.49224, "nonmono_cl": [11], "onset_sv": 198, "onset_cl_minus_sv_cmds": 0, "ramp_start_sv": 917, "ramp_end_sv": 976, "full_s_sv": 6.00863, "rampshift_cmds_cl_minus_sv": -2, "onset_to_end_s_sv": 6.50058, "ramp_s_sv": 0.49195, "cl_differs_in_fade_cmds": [0, 58]}
+  {"run": 1509, "schedule": "m4_stim_sprint", "session": "20261021_002526_M4_octane", "msc_first": 1.15, "taps": [179], "onset": 198, "tap_to_onset_cmds": 19, "tap_to_onset_s": 0.16051, "onset_step": [1.15, 1.4927], "plateau_msc": 1.4927, "plateau_walkcap": [258.991], "ramp_start_cl": 915, "ramp_end_cl": 976, "full_s_cl": 5.99073, "ramp_s_cl": 0.50874, "onset_to_end_s_cl": 6.49947, "nonmono_cl": [6], "onset_sv": 198, "onset_cl_minus_sv_cmds": 0, "ramp_start_sv": 917, "ramp_end_sv": 976, "full_s_sv": 6.00741, "rampshift_cmds_cl_minus_sv": -2, "onset_to_end_s_sv": 6.49947, "ramp_s_sv": 0.49206, "cl_differs_in_fade_cmds": [0, 57]}
+  {"run": 1510, "schedule": "m4_stim_sprint", "session": "20261021_002526_M4_octane", "msc_first": 1.15, "taps": [179], "onset": 198, "tap_to_onset_cmds": 19, "tap_to_onset_s": 0.15846, "onset_step": [1.15, 1.4927], "plateau_msc": 1.4927, "plateau_walkcap": [258.991], "ramp_start_cl": 916, "ramp_end_cl": 976, "full_s_cl": 5.98812, "ramp_s_cl": 0.50565, "onset_to_end_s_cl": 6.49377, "nonmono_cl": [7], "onset_sv": 198, "onset_cl_minus_sv_cmds": 0, "ramp_start_sv": 918, "ramp_end_sv": 976, "full_s_sv": 6.0048, "rampshift_cmds_cl_minus_sv": -2, "onset_to_end_s_sv": 6.49377, "ramp_s_sv": 0.48897, "cl_differs_in_fade_cmds": [0, 4]}
+  {"run": 1511, "schedule": "m4_stim_walk", "session": "20261021_002526_M4_octane", "msc_first": 1.15, "taps": [59], "onset": 78, "tap_to_onset_cmds": 19, "tap_to_onset_s": 0.15846, "onset_step": [1.15, 1.4927], "plateau_msc": 1.4927, "plateau_walkcap": [258.991], "ramp_start_cl": 798, "ramp_end_cl": null, "full_s_cl": 6.00243, "onset_sv": 79, "onset_cl_minus_sv_cmds": -1, "ramp_start_sv": 799, "ramp_end_sv": null, "full_s_sv": 6.00243, "rampshift_cmds_cl_minus_sv": -1}
+  {"run": 1512, "schedule": "m4_stim_walk", "session": "20261021_002526_M4_octane", "msc_first": 1.15, "taps": [59], "onset": 78, "tap_to_onset_cmds": 19, "tap_to_onset_s": 0.15846, "onset_step": [1.15, 1.4927], "plateau_msc": 1.4927, "plateau_walkcap": [258.991], "ramp_start_cl": 778, "ramp_end_cl": null, "full_s_cl": 6.00204, "onset_sv": 79, "onset_cl_minus_sv_cmds": -1, "ramp_start_sv": 779, "ramp_end_sv": null, "full_s_sv": 6.00204, "rampshift_cmds_cl_minus_sv": -1}
+  {"run": 1513, "schedule": "m4_stim_walk", "session": "20261021_002526_M4_octane", "msc_first": 1.15, "taps": [59], "onset": 78, "tap_to_onset_cmds": 19, "tap_to_onset_s": 0.1625, "onset_step": [1.15, 1.4927], "plateau_msc": 1.4927, "plateau_walkcap": [258.991], "ramp_start_cl": 796, "ramp_end_cl": null, "full_s_cl": 5.99012, "onset_sv": 78, "onset_cl_minus_sv_cmds": 0, "ramp_start_sv": 798, "ramp_end_sv": null, "full_s_sv": 6.0068, "rampshift_cmds_cl_minus_sv": -2}
+  {"run": 1515, "schedule": "m4_stim_walk", "session": "20261021_002526_M4_octane", "msc_first": 1.15, "taps": [59], "onset": 78, "tap_to_onset_cmds": 19, "tap_to_onset_s": 0.15842, "onset_step": [1.15, 1.4927], "plateau_msc": 1.4927, "plateau_walkcap": [258.991], "ramp_start_cl": 796, "ramp_end_cl": null, "full_s_cl": 5.99384, "onset_sv": 78, "onset_cl_minus_sv_cmds": 0, "ramp_start_sv": 798, "ramp_end_sv": null, "full_s_sv": 6.01052, "rampshift_cmds_cl_minus_sv": -2}
+  {"run": 1516, "schedule": "m4_stim_air", "session": "20261021_002526_M4_octane", "msc_first": 1.15, "taps": [179], "onset": 198, "tap_to_onset_cmds": 19, "tap_to_onset_s": 0.15852, "onset_step": [1.15, 1.4927], "plateau_msc": 1.4927, "plateau_walkcap": [258.991], "ramp_start_cl": null, "ramp_end_cl": null, "onset_sv": 198, "onset_cl_minus_sv_cmds": 0, "ramp_start_sv": null, "ramp_end_sv": null}
+  {"run": 1517, "schedule": "m4_stim_air", "session": "20261021_002526_M4_octane", "msc_first": 1.4927, "taps": [179], "carry_over": true, "onset": null, "tap_without_onset": true}
+  {"run": 1518, "schedule": "m4_stim_air", "session": "20261021_002526_M4_octane", "msc_first": 1.15, "taps": [179], "onset": 198, "tap_to_onset_cmds": 19, "tap_to_onset_s": 0.15847, "onset_step": [1.15, 1.4927], "plateau_msc": 1.4927, "plateau_walkcap": [258.991], "ramp_start_cl": null, "ramp_end_cl": null, "onset_sv": 198, "onset_cl_minus_sv_cmds": 0, "ramp_start_sv": null, "ramp_end_sv": null}
+  {"run": 1519, "schedule": "m4_stim_air", "session": "20261021_002526_M4_octane", "msc_first": 1.4927, "taps": [179], "carry_over": true, "onset": null, "tap_without_onset": true}
+  {"run": 1551, "schedule": "m4_stim_walk", "session": "20261021_003657_M4_octane_rerun", "msc_first": 1.15, "taps": [59], "onset": 79, "tap_to_onset_cmds": 20, "tap_to_onset_s": 0.16661, "onset_step": [1.15, 1.4927], "plateau_msc": 1.4927, "plateau_walkcap": [258.991], "ramp_start_cl": 799, "ramp_end_cl": null, "full_s_cl": 5.99852, "onset_sv": 79, "onset_cl_minus_sv_cmds": 0, "ramp_start_sv": 799, "ramp_end_sv": null, "full_s_sv": 5.99852, "rampshift_cmds_cl_minus_sv": 0}
+  {"run": 1552, "schedule": "m4_stim_air", "session": "20261021_003657_M4_octane_rerun", "msc_first": 1.15, "taps": [179], "onset": 198, "tap_to_onset_cmds": 19, "tap_to_onset_s": 0.15836, "onset_step": [1.15, 1.4927], "plateau_msc": 1.4927, "plateau_walkcap": [258.991], "ramp_start_cl": null, "ramp_end_cl": null, "onset_sv": 198, "onset_cl_minus_sv_cmds": 0, "ramp_start_sv": null, "ramp_end_sv": null}
+plateau msc (printed 4 dp): 1.4927 (sd 0.0000, 1.4927..1.4927, n=13); walk cap during stim 258.991 (sd 0.000, 258.991..258.991, n=13) -> msc = cap/173.5 = 1.492744 (sd 0.000000, 1.492744..1.492744, n=13)
+boost factor msc/1.15 = 1.298038; severity (extraScale 2) = 0.149019; 0.15 -> 38/255 = 0.149020 -> factor 1.298039; unquantised 0.15 -> 1.300000
+tap -> onset: 0.1598 (sd 0.0025, 0.1583..0.1666, n=13) s, 19.1 (sd 0.3, 19.0..20.0, n=13) cmds; onset is a single-command step: [(1.15, 1.4927)]
+full strength (onset -> first faded cmd): dedi 6.0048 (sd 0.0042, 5.9985..6.0105, n=10) s, client 5.9939 (sd 0.0052, 5.9881..6.0024, n=10) s
+fade (first faded -> back to 1.15): dedi 0.4913 (sd 0.0013, 0.4890..0.4921, n=5) s; onset -> end dedi 6.4967 (sd 0.0045, 6.4902..6.5006, n=5) s
+client fade starts -1.50 (sd 0.71, -2.00..0.00, n=10) cmds before the dedi; client msc differs from the dedi on fade cmds (first,last rel. to dedi fade start): [(0, 8), (0, 57), (0, 58), (0, 57), (0, 4)]
+client onset minus dedi onset (cmds): [0, 0, 0, 0, 0, -1, -1, 0, 0, 0, 0, 0, 0]
+  fade shape linear        : rms 0.01975 max 0.03809 (fade T 0.452 s, time shift +10.0 ms), n=309
+  fade shape smoothstep    : rms 0.00182 max 0.00399 (fade T 0.484 s, time shift +6.0 ms), n=309
+  fade shape cosine        : rms 0.00170 max 0.00346 (fade T 0.500 s, time shift -2.0 ms), n=309
+  fade shape quadratic_out : rms 0.03256 max 0.05948 (fade T 0.440 s, time shift -10.0 ms), n=309
+carry-over trials (stim of the previous trial still active at start): [1517, 1519]; their tap produced a new stim: [False, False]
+
+### 1b. Caps, accelerations, decel
+  terminal ctrl sprint: 299.000 (sd 0.000, 299.000..299.000, n=2884) -> /msc = 260.000
+  terminal ctrl walk  : 123.993 (sd 49.169, 92.000..199.525, n=2319) -> /msc = 107.820
+  terminal stim sprint: 420.954 (sd 0.000, 420.954..420.954, n=1373) -> /msc = 282.000
+  terminal stim walk  : 258.991 (sd 0.000, 258.991..258.991, n=1705) -> /msc = 173.500
+  accel ctrl  low   : a/msc = 2500.01 (sd 0.99, 2498.49..2502.27, n=130)
+  accel ctrl  sprint: a/msc = 100.01 (sd 0.06, 99.86..100.13, n=2767)
+  accel ctrl  walk  : a/msc = 450.03 (sd 0.17, 449.67..450.34, n=381)
+  accel stim  low   : a/msc = 2500.05 (sd 0.98, 2498.65..2501.49, n=32)
+  accel stim  sprint: a/msc = 119.88 (sd 1.87, 99.98..137.44, n=659)
+  accel stim  walk  : a/msc = 449.99 (sd 0.19, 449.75..450.29, n=96)
+  stim sprint band split: ~120 120.002 (sd 0.057, 119.882..120.153, n=653); ~100 (stim_sprint mod absent) n=5; other [137.44]
+  commands with boost but sprintAcceleration 100 (run, cmd, msc, maxspeed/msc): [(1506, 201, 1.4927, 260.01), (1507, 203, 1.4927, 260.01), (1508, 201, 1.4927, 260.01), (1509, 202, 1.4927, 260.01), (1516, 203, 1.4927, 260.01), (1517, 89, 1.4921, 260.0), (1517, 94, 1.4872, 260.0), (1517, 95, 1.4847, 260.0), (1517, 96, 1.4817, 260.01), (1517, 97, 1.4784, 259.99), (1517, 98, 1.4745, 260.0), (1517, 99, 1.4703, 260.0), (1517, 100, 1.4656, 260.0), (1517, 101, 1.4606, 259.99), (1517, 102, 1.4553, 260.0), (1517, 103, 1.4497, 260.0), (1517, 104, 1.4437, 260.0), (1517, 105, 1.4374, 260.01), (1517, 106, 1.4309, 259.99), (1517, 107, 1.4238, 260.0), (1517, 108, 1.4164, 260.01), (1517, 109, 1.4088, 260.0), (1517, 110, 1.401, 259.99), (1519, 89, 1.4925, 260.0), (1519, 95, 1.4812, 260.0), (1519, 101, 1.4552, 260.01), (1519, 102, 1.4494, 260.0), (1519, 103, 1.4433, 259.99), (1519, 104, 1.4368, 260.0), (1519, 105, 1.43, 260.0), (1519, 106, 1.4229, 259.99), (1519, 107, 1.4155, 260.0), (1519, 108, 1.4078, 260.0), (1553, 89, 1.4925, 260.01), (1553, 95, 1.4815, 260.0), (1553, 101, 1.4549, 260.0), (1553, 102, 1.4491, 260.0), (1553, 103, 1.4429, 260.01), (1553, 104, 1.4364, 260.0), (1553, 105, 1.4296, 260.0), (1553, 106, 1.4225, 260.01), (1553, 107, 1.4152, 260.0), (1553, 108, 1.4076, 259.99)]
+  no-input decel ctrl: 1250.1 (sd 0.5, 1249.2..1250.8, n=248) u/s^2
+  no-input decel stim: 1249.9 (sd 0.5, 1249.2..1250.8, n=383) u/s^2
+
+### 1c. Jump and air strafe with stim (m4_stim_air) vs control (m4_ctrl_air)
+  r1516 m4_stim_air  msc@jump 1.4927 cap 420.95 s jump 420.954->420.959 vz 280.442 press k=4 t=0.0334 lam=0.700 s 420.995->358.261 |D|=294.667 | L=209.3 const: L=209.3 err=85.367; L=182*msc: L=271.7 err=22.996; L=0.7*sprintcap: L=294.7 err=0.001 | other air cmds n=89 max resid 0.0134, max(add) -159.7
+  r1517 m4_stim_air  msc@jump 1.1500 cap 299.00 s jump 299.000->299.008 vz 280.441 press k=4 t=0.0333 lam=0.700 s 299.059->254.842 |D|=209.298 | L=209.3 const: L=209.3 err=0.002; L=182*msc: L=209.3 err=0.002; L=0.7*sprintcap: L=209.3 err=0.002 | other air cmds n=89 max resid 0.0136, max(add) -109.0
+  r1518 m4_stim_air  msc@jump 1.4927 cap 420.95 s jump 420.954->420.959 vz 280.440 press k=4 t=0.0334 lam=0.700 s 420.995->358.261 |D|=294.667 | L=209.3 const: L=209.3 err=85.367; L=182*msc: L=271.7 err=22.996; L=0.7*sprintcap: L=294.7 err=0.001 | other air cmds n=89 max resid 0.0134, max(add) -159.7
+  r1519 m4_stim_air  msc@jump 1.1500 cap 299.00 s jump 299.000->299.008 vz 280.428 press k=4 t=0.0334 lam=0.700 s 299.059->254.844 |D|=209.298 | L=209.3 const: L=209.3 err=0.002; L=182*msc: L=209.3 err=0.002; L=0.7*sprintcap: L=209.3 err=0.002 | other air cmds n=89 max resid 0.0139, max(add) -109.0
+  r1552 m4_stim_air  msc@jump 1.4927 cap 420.95 s jump 420.954->420.959 vz 280.444 press k=4 t=0.0333 lam=0.700 s 420.996->358.313 |D|=294.669 | L=209.3 const: L=209.3 err=85.369; L=182*msc: L=271.7 err=22.998; L=0.7*sprintcap: L=294.7 err=0.002 | other air cmds n=88 max resid 0.0134, max(add) -159.8
+  r1553 m4_ctrl_air  msc@jump 1.1500 cap 299.00 s jump 299.000->299.008 vz 280.469 press k=4 t=0.0332 lam=0.700 s 299.059->254.838 |D|=209.302 | L=209.3 const: L=209.3 err=0.002; L=182*msc: L=209.3 err=0.002; L=0.7*sprintcap: L=209.3 err=0.002 | other air cmds n=89 max resid 0.0139, max(add) -109.0
+  r1554 m4_ctrl_air  msc@jump 1.1500 cap 299.00 s jump 299.000->299.008 vz 280.444 press k=4 t=0.0333 lam=0.700 s 299.059->254.842 |D|=209.302 | L=209.3 const: L=209.3 err=0.002; L=182*msc: L=209.3 err=0.002; L=0.7*sprintcap: L=209.3 err=0.002 | other air cmds n=89 max resid 0.0139, max(add) -109.0
+  r1555 m4_ctrl_air  msc@jump 1.1500 cap 299.00 s jump 299.000->299.008 vz 280.443 press k=4 t=0.0333 lam=0.700 s 299.059->254.842 |D|=209.302 | L=209.3 const: L=209.3 err=0.002; L=182*msc: L=209.3 err=0.002; L=0.7*sprintcap: L=209.3 err=0.002 | other air cmds n=89 max resid 0.0139, max(add) -109.0
+  r1556 m4_ctrl_air  msc@jump 1.1500 cap 299.00 s jump 299.000->299.007 vz 281.254 press k=4 t=0.0304 lam=0.700 s 299.052->254.732 |D|=209.301 | L=209.3 const: L=209.3 err=0.001; L=182*msc: L=209.3 err=0.001; L=0.7*sprintcap: L=209.3 err=0.001 | other air cmds n=90 max resid 0.0146, max(add) -108.7
+  r1557 m4_ctrl_air  msc@jump 1.1500 cap 299.00 s jump 299.000->299.008 vz 280.439 press k=4 t=0.0333 lam=0.700 s 299.059->254.842 |D|=209.297 | L=209.3 const: L=209.3 err=0.003; L=182*msc: L=209.3 err=0.003; L=0.7*sprintcap: L=209.3 err=0.003 | other air cmds n=89 max resid 0.0136, max(add) -109.0
+
+## 2. Jump pad
+  r1531 m4_pad_sprint dt 0.00834 duck 0 in |h| 299.000 -> out |h| 514.309 vz 1026.084 dir +0.000 (in 0.0, yaw 0.0) | pred h 514.296 v 1028.591 | dedi same True | k_xy 0.80001 g 600.11 air 3.4348s rise 708.32 |h| gain launch->landing +0.638 driftW 1.500 n51 drift0 0.0000 n359
+  r1532 m4_pad_sprint dt 0.00858 duck 0 in |h| 299.000 -> out |h| 514.309 vz 1026.009 dir +0.000 (in 0.0, yaw 0.0) | pred h 514.296 v 1028.591 | dedi same True | k_xy 0.79994 g 600.07 air 3.4400s rise 708.42 |h| gain launch->landing +0.639 driftW 1.502 n51 drift0 0.0000 n359
+  r1533 m4_pad_sprint dt 0.00834 duck 0 in |h| 299.000 -> out |h| 514.309 vz 1026.082 dir +0.000 (in 0.0, yaw 0.0) | pred h 514.296 v 1028.591 | dedi same True | k_xy 0.80008 g 600.16 air 3.4357s rise 708.32 |h| gain launch->landing +0.637 driftW 1.497 n51 drift0 0.0000 n359
+  r1534 m4_pad_sprint dt 0.00835 duck 0 in |h| 299.000 -> out |h| 514.309 vz 1026.081 dir +0.000 (in 0.0, yaw 0.0) | pred h 514.296 v 1028.591 | dedi same True | k_xy 0.80008 g 600.17 air 3.4368s rise 708.30 |h| gain launch->landing +0.672 driftW 1.491 n54 drift0 0.0000 n356
+  r1535 m4_pad_sprint dt 0.00834 duck 0 in |h| 299.000 -> out |h| 514.309 vz 1026.083 dir +0.000 (in 0.0, yaw 0.0) | pred h 514.296 v 1028.591 | dedi same True | k_xy 0.79994 g 600.06 air 3.4353s rise 708.32 |h| gain launch->landing +0.638 driftW 1.500 n51 drift0 0.0000 n358
+  r1536 m4_pad_crouch dt 0.00834 duck 2 in |h| 92.000 -> out |h| 813.181 vz 810.661 dir +0.000 (in 0.0, yaw 0.0) | pred h 813.173 v 813.173 | dedi same True | k_xy 0.80004 g 600.37 air 2.6932s rise 442.51 |h| gain launch->landing +0.574 driftW 0.421 n149 drift0 0.0000 n164
+  r1537 m4_pad_crouch dt 0.00833 duck 2 in |h| 92.000 -> out |h| 813.181 vz 810.664 dir +0.000 (in 0.0, yaw 0.0) | pred h 813.173 v 813.173 | dedi same True | k_xy 0.79998 g 600.33 air 2.7008s rise 439.67 |h| gain launch->landing +0.574 driftW 0.466 n148 drift0 0.0000 n174
+  r1538 m4_pad_crouch dt 0.00834 duck 2 in |h| 92.000 -> out |h| 813.181 vz 810.663 dir +0.000 (in 0.0, yaw 0.0) | pred h 813.173 v 813.173 | dedi same True | k_xy 0.79999 g 600.34 air 2.6941s rise 440.94 |h| gain launch->landing +0.574 driftW 0.455 n150 drift0 0.0000 n170
+  r1539 m4_pad_crouch dt 0.00833 duck 2 in |h| 92.000 -> out |h| 813.181 vz 810.664 dir +0.000 (in 0.0, yaw 0.0) | pred h 813.173 v 813.173 | dedi same True | k_xy 0.79999 g 600.34 air 2.6942s rise 440.55 |h| gain launch->landing +0.575 driftW 0.460 n150 drift0 0.0000 n171
+  r1540 m4_pad_crouch dt 0.00833 duck 2 in |h| 92.000 -> out |h| 813.181 vz 810.665 dir +0.000 (in 0.0, yaw 0.0) | pred h 813.173 v 813.173 | dedi same True | k_xy 0.80000 g 600.35 air 2.7006s rise 442.91 |h| gain launch->landing +0.575 driftW 0.427 n149 drift0 0.0000 n159
+  r1558 m4_pad_walk   dt 0.00833 duck 0 in |h| 199.525 -> out |h| 514.309 vz 1026.084 dir +0.000 (in 0.0, yaw 0.0) | pred h 514.296 v 1028.591 | dedi same True | k_xy 0.80009 g 600.39 air 3.4332s rise 707.78 |h| gain launch->landing +1.411 driftW 1.192 n142 drift0 0.0000 n268
+  r1559 m4_pad_walk   dt 0.00834 duck 0 in |h| 199.525 -> out |h| 514.309 vz 1026.083 dir +0.000 (in 0.0, yaw 0.0) | pred h 514.296 v 1028.591 | dedi same True | k_xy 0.80008 g 600.38 air 3.4333s rise 707.78 |h| gain launch->landing +1.411 driftW 1.192 n142 drift0 0.0000 n267
+  r1560 m4_pad_walk   dt 0.00832 duck 0 in |h| 199.525 -> out |h| 514.309 vz 1026.089 dir +0.000 (in 0.0, yaw 0.0) | pred h 514.296 v 1028.591 | dedi same True | k_xy 0.80011 g 600.41 air 3.4331s rise 707.78 |h| gain launch->landing +1.411 driftW 1.193 n142 drift0 0.0000 n268
+  r1561 m4_pad_walk   dt 0.00834 duck 0 in |h| 199.525 -> out |h| 514.309 vz 1026.084 dir +0.000 (in 0.0, yaw 0.0) | pred h 514.296 v 1028.591 | dedi same True | k_xy 0.80001 g 600.33 air 3.4345s rise 707.78 |h| gain launch->landing +1.411 driftW 1.192 n142 drift0 0.0000 n268
+  r1562 m4_pad_walk   dt 0.00838 duck 0 in |h| 199.525 -> out |h| 514.309 vz 1026.070 dir +0.000 (in 0.0, yaw 0.0) | pred h 514.296 v 1028.591 | dedi same True | k_xy 0.79987 g 600.23 air 3.4363s rise 707.80 |h| gain launch->landing +1.412 driftW 1.191 n142 drift0 0.0000 n268
+  slow-mo factor k from position (sum dx / sum v*dt): 0.80001 (sd 0.00007, 0.79987..0.80011, n=15); gravity in velocity units 600.271 (sd 0.123, 600.065..600.408, n=15) = 750*0.80036
+  stance standing (n=10, approach speeds [199.53, 299.0]): launch vz = vz_out + 0.5*g*dt = 1028.5858 (sd 0.0012, 1028.5841..1028.5871, n=10) vs formula 1028.5913; |h| out 514.3090 (sd 0.0000, 514.3090..514.3090, n=10) vs formula 514.2956 (+ one command of W drift)
+  stance ducked (n=5, approach speeds [92.0]): launch vz = vz_out + 0.5*g*dt = 813.1647 (sd 0.0009, 813.1641..813.1661, n=5) vs formula 813.1728; |h| out 813.1810 (sd 0.0000, 813.1810..813.1810, n=5) vs formula 813.1728 (+ one command of W drift)
+  W-held horizontal drift in flight: d|h|/dt = -0.190 + 0.00184*vz (rms 0.173, n=1714); |h| gain launch->landing 0.877 (sd 0.392, 0.574..1.412, n=15) u/s
+  m4_pad_jumpin: no launch in 5 trials; while within 48 u (radius 32 + hull 16) of the pad axis the feet were 32.94 (sd 0.77, 32.57..34.32, n=5) u above the floor (trigger above-height 32), airborne=True
+  launch command start x relative to the pad centre (reset x + 300): -47.47 (sd 0.45, -47.98..-46.26, n=15) u
+
+## 3. Landing slowdown
+  r1516 m4_stim_air   vz_pre  -276.064 |h|  358.399-> 358.403 ratio 1.00001 msc_next/base 1.00000 recover 0.0167 s fall 53.17 u buttons 00000400 max|cl-sv| msc 0.0000
+  r1517 m4_stim_air   vz_pre  -276.138 |h|  255.067-> 255.073 ratio 1.00002 msc_next/base 1.00000 recover 0.0167 s fall 53.20 u buttons 00000400 max|cl-sv| msc 0.0000
+  r1518 m4_stim_air   vz_pre  -276.082 |h|  358.399-> 358.403 ratio 1.00001 msc_next/base 1.00000 recover 0.0167 s fall 53.18 u buttons 00000400 max|cl-sv| msc 0.0000
+  r1519 m4_stim_air   vz_pre  -276.207 |h|  255.069-> 255.074 ratio 1.00002 msc_next/base 1.00000 recover 0.0167 s fall 53.23 u buttons 00000400 max|cl-sv| msc 0.0000
+  r1531 m4_pad_sprint vz_pre -1025.149 |h|  514.947-> 123.528 ratio 0.23988 msc_next/base 0.23991 recover 1.0012 s fall 707.48 u buttons 00000000 max|cl-sv| msc 0.0088
+  r1532 m4_pad_sprint vz_pre -1028.080 |h|  514.948-> 118.356 ratio 0.22984 msc_next/base 0.22991 recover None s fall 707.88 u buttons 00000000 max|cl-sv| msc 0.0090
+  r1533 m4_pad_sprint vz_pre -1025.912 |h|  514.946-> 122.185 ratio 0.23728 msc_next/base 0.23730 recover 1.0011 s fall 707.78 u buttons 00000000 max|cl-sv| msc 0.0134
+  r1534 m4_pad_sprint vz_pre -1026.570 |h|  514.981-> 121.030 ratio 0.23502 msc_next/base 0.23504 recover 1.001 s fall 707.76 u buttons 00000000 max|cl-sv| msc 0.0079
+  r1535 m4_pad_sprint vz_pre -1025.293 |h|  514.947-> 123.276 ratio 0.23940 msc_next/base 0.23948 recover 1.0006 s fall 707.67 u buttons 00000000 max|cl-sv| msc 0.0099
+  r1536 m4_pad_crouch vz_pre  -796.261 |h|  813.755-> 762.184 ratio 0.93663 msc_next/base 0.93661 recover 1.0011 s fall 440.12 u buttons 00000000 max|cl-sv| msc 0.0015
+  r1537 m4_pad_crouch vz_pre  -800.711 |h|  813.755-> 752.534 ratio 0.92477 msc_next/base 0.92478 recover 1.0003 s fall 439.13 u buttons 00000000 max|cl-sv| msc 0.0009
+  r1538 m4_pad_crouch vz_pre  -796.712 |h|  813.755-> 761.209 ratio 0.93543 msc_next/base 0.93539 recover 1.001 s fall 439.03 u buttons 00000000 max|cl-sv| msc 0.0023
+  r1539 m4_pad_crouch vz_pre  -797.079 |h|  813.756-> 760.765 ratio 0.93488 msc_next/base 0.93487 recover 0.9992 s fall 438.68 u buttons 00000000 max|cl-sv| msc 0.0013
+  r1540 m4_pad_crouch vz_pre  -800.623 |h|  813.756-> 752.712 ratio 0.92498 msc_next/base 0.92496 recover 1.0001 s fall 442.37 u buttons 00000000 max|cl-sv| msc 0.0032
+  r1541 m4_pad_jumpin vz_pre  -276.210 |h|  273.962-> 273.970 ratio 1.00003 msc_next/base 1.00000 recover 0.0167 s fall 53.25 u buttons 00008008 max|cl-sv| msc 0.0000
+  r1543 m4_pad_jumpin vz_pre  -276.311 |h|  274.009-> 274.017 ratio 1.00003 msc_next/base 1.00000 recover 0.0167 s fall 53.29 u buttons 00008008 max|cl-sv| msc 0.0000
+  r1552 m4_stim_air   vz_pre  -275.634 |h|  358.450-> 358.455 ratio 1.00001 msc_next/base 1.00000 recover 0.0167 s fall 53.01 u buttons 00000400 max|cl-sv| msc 0.0000
+  r1553 m4_ctrl_air   vz_pre  -275.696 |h|  255.063-> 255.069 ratio 1.00002 msc_next/base 1.00000 recover 0.0167 s fall 53.04 u buttons 00000400 max|cl-sv| msc 0.0000
+  r1554 m4_ctrl_air   vz_pre  -275.869 |h|  255.066-> 255.072 ratio 1.00002 msc_next/base 1.00000 recover 0.0167 s fall 53.10 u buttons 00000400 max|cl-sv| msc 0.0000
+  r1555 m4_ctrl_air   vz_pre  -275.837 |h|  255.066-> 255.073 ratio 1.00003 msc_next/base 1.00000 recover 0.0167 s fall 53.09 u buttons 00000400 max|cl-sv| msc 0.0000
+  r1556 m4_ctrl_air   vz_pre  -279.784 |h|  254.963-> 254.970 ratio 1.00003 msc_next/base 1.00000 recover 0.0173 s fall 54.67 u buttons 00000400 max|cl-sv| msc 0.0000
+  r1557 m4_ctrl_air   vz_pre  -275.854 |h|  255.066-> 255.072 ratio 1.00002 msc_next/base 1.00000 recover 0.0167 s fall 53.10 u buttons 00000400 max|cl-sv| msc 0.0000
+  r1558 m4_pad_walk   vz_pre -1025.209 |h|  515.720-> 123.613 ratio 0.23969 msc_next/base 0.23974 recover 1.0 s fall 707.25 u buttons 00000000 max|cl-sv| msc 0.0000
+  r1559 m4_pad_walk   vz_pre -1025.191 |h|  515.720-> 123.646 ratio 0.23975 msc_next/base 0.23983 recover 1.0165 s fall 707.25 u buttons 00000000 max|cl-sv| msc 0.0101
+  r1560 m4_pad_walk   vz_pre -1025.181 |h|  515.720-> 123.662 ratio 0.23979 msc_next/base 0.23983 recover 1.0 s fall 707.25 u buttons 00000000 max|cl-sv| msc 0.0061
+  r1561 m4_pad_walk   vz_pre -1025.744 |h|  515.720-> 122.668 ratio 0.23786 msc_next/base 0.23791 recover 1.0019 s fall 707.26 u buttons 00000000 max|cl-sv| msc 0.0167
+  r1562 m4_pad_walk   vz_pre -1026.433 |h|  515.721-> 121.449 ratio 0.23549 msc_next/base 0.23557 recover 1.0169 s fall 707.26 u buttons 00000000 max|cl-sv| msc 0.0064
+  r1563 m4_pad_jumpin vz_pre  -276.132 |h|  274.090-> 274.099 ratio 1.00003 msc_next/base 1.00000 recover 0.0167 s fall 53.22 u buttons 00008008 max|cl-sv| msc 0.0000
+  r1564 m4_pad_jumpin vz_pre  -276.055 |h|  274.207-> 274.215 ratio 1.00003 msc_next/base 1.00000 recover 0.0167 s fall 53.19 u buttons 00008008 max|cl-sv| msc 0.0000
+  r1565 m4_pad_jumpin vz_pre  -275.603 |h|  274.571-> 274.579 ratio 1.00003 msc_next/base 1.00000 recover 0.0167 s fall 53.02 u buttons 00008008 max|cl-sv| msc 0.0000
+  soft landings: n=15, max impact 279.8; hard: n=15, min impact 796.3
+  f0 model linear_vz : f0 = 3.365222 + -3.0489e-03*x  rms 0.00050 max 0.00086; f0=1 at |vz|=775.8, f0=0 at |vz|=1103.7
+  f0 model linear_vz2: f0 = 1.996467 + -1.6714e-06*x  rms 0.00010 max 0.00034; f0=1 at |vz|=772.1, f0=0 at |vz|=1092.9
+  cluster |vz|~798.3 n=5: d f0/d|vz| = -0.002694 (se 0.000049); linear-|vz| predicts -0.003049, vz^2 predicts -0.002669
+  cluster |vz|~1025.9 n=10: d f0/d|vz| = -0.003429 (se 0.000002); linear-|vz| predicts -0.003049, vz^2 predicts -0.003429
+  f0 model fall height: f0 = 2.071914 + -2.5930e-03*H  rms 0.00351 max 0.00849; f0=1 at H=413.4, f0=0 at H=799.0
+  landings whose recovery the dedi delayed (client corrected; residual vs T=1 curve > 0.01): [1532, 1559, 1562]
+  recovery client_all_p1             : f = f0 + (1-f0)*((t+0ms)/T)^1.00: best T 1.050 s, rms 0.10268, max 0.18784, n=1804
+  recovery client_all_p2             : f = f0 + (1-f0)*((t+0ms)/T)^2.00: best T 1.004 s, rms 0.00552, max 0.02185, n=1804
+  recovery client_all_p3             : f = f0 + (1-f0)*((t+0ms)/T)^3.00: best T 0.950 s, rms 0.04249, max 0.10123, n=1804
+  recovery client_clean_p2           : f = f0 + (1-f0)*((t+0ms)/T)^2.00: best T 0.998 s, rms 0.00028, max 0.00197, n=1439
+  recovery dedi_all_p2               : f = f0 + (1-f0)*((t+0ms)/T)^2.00: best T 1.008 s, rms 0.00476, max 0.01587, n=1804
+  recovery client_clean_p2_free_eps  : f = f0 + (1-f0)*((t+0ms)/T)^2.00: best T 0.998 s, rms 0.00028, max 0.00197, n=1439
+  recovery client_clean_free_p       : f = f0 + (1-f0)*((t+0ms)/T)^2.00: best T 0.998 s, rms 0.00028, max 0.00197, n=1439

@@ -110,6 +110,29 @@ Newest entries at the bottom. Problems are tagged **[ISSUE]** and also listed in
   - **[ISSUE→fixed]** 8 exported trials had no census: those sessions ran `--no-census` and were exported with `--params logs`. Re-exported with the same-build Gibraltar census from M3_fps120; the lead re-ran the replay: 22 trials identical, 8 updated.
   - **[ISSUE]** Two model gaps left open: the ground redirect after landing with a strafe key held (R5 about 1250 u/s², model instant) and the crouch-height transition in the air (M3 report O6/O7).
 - **M3 accepted** (A1–A4): `m3/M3-REPORT.md`, including design advice.
+- M3 PRs merged (research #4, HSD-Unity #3). **M4 started** on branch `phase2-local/m4-abilities`.
+  - Source research subagent wrote `m4/ABILITY-TRIGGERS.md`:
+    - `Agent_SetLegend` sets only the setfile; the kit must be equipped with `GiveOffhandWeapon` / `GivePassive`.
+    - `+offhand1` = tactical (bit 21), `+offhand4` = ultimate.
+    - Refill with `DevAbilities_RefillPlayer`. Avoid `infinite_abilities`, which doubles grapple range.
+    - Jump pad and gravity lift can be created deterministically from the server (`JumpPad_CreateAtLocation`, `SpaceElevator_PropDeploy`).
+  - Runner: `--kit` (equip and refill), per-schedule pitch, per-schedule server snippets (pad/lift spawn inside try/catch), keys offhand1/offhand4. 15 M4 schedules for stim, pad, lift and grapple, with control runs.
+  - **[ISSUE→fixed]** A pilot crashed on an undefined Python constant (REFILL); fixed and re-run.
+  - Pilot finding: after a jump-pad landing, `msc` dropped to 0.28 and recovered to 1.15 over about 0.95 s. This is the landing slowdown (census landSlowdownDuration 1) that M3 could not trigger.
+  - Running sessions M4_octane (stim, pad, controls), M4_horizon (lift + controls), M4_pathfinder (grapple at the test wall), 5 trials per condition at 120 fps.
+- M4 sessions: Octane 31/45 + rerun 15/15; Horizon 25/25; Pathfinder 15/15.
+  - **[ISSUE]** The game drops frames while analysis subagents run in parallel (Valkyrie 12/15, Revenant 6/15). Failed trials are re-run with the machine idle.
+  - Rule from here: no heavy offline analysis while a game session runs.
+- **Octane model** (subagent, lead-verified identical):
+  - Stim: move scale ×1.298 for 6.0 s, then a cosine fade over 0.5 s. Hidden sprintspeed 282 and sprintAcceleration 120 while stimmed.
+  - Jump pad: launch = 1150·normalize(h + 2.0·up), or 1.0 ducked. Horizontal speed is *replaced*. Flight runs in 0.8× slow-mo.
+  - **Landing slowdown**: speed ×clamp(1.996 − 1.67e-6·vz², 0, 1) on impact (no effect below |vz| ≈ 772), then recovers over landSlowdownDuration 1.0 s. This explains why M3's −585 drop showed nothing.
+  - Lurch clamp = 0.7 × current sprint cap (closes M3 O1 in part).
+- **Lift / grapple / Horizon** (subagent, lead-verified identical with the documented reference):
+  - Lift: vz set to 300; steering 2000 u/s² up to 170; hover at 90 % of 1200 u for 0.5 s; eject 400 along the view + 450 up.
+  - Grapple: 0.2 s hop, pull from 0.402 s, about 557 u/s² toward the target up to 612 u/s; W held clamps horizontal speed to 483.
+  - Horizon passive: airSpeed 80, airAcceleration 800, landSlowdownDuration 0.
+  - **[ISSUE→fixed]** A lift from the previous trial was still alive in 5 trials (10 s lifetime; overlapping lifts). The analysis excluded them; lift schedules are now padded to more than 10 s between deployments and re-run.
 
 ## Open issues
 

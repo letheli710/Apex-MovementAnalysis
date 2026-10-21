@@ -1,0 +1,1115 @@
+{
+  "contract": "hsdmove-trial/2",
+  "trial_id": "M4_m4_pad_walk_r1559",
+  "source": "r5flowstate",
+  "experiment": "M4_m4_pad_walk",
+  "recorded_side": "cl",
+  "session": "73e8ad53-450a-47de-b027-b209e065d8d6",
+  "producer": "hsdtel.contract.export_trial from HSD.MoveDiag v0.2 frames + MOVE-TRACE usercmds",
+  "space": {
+    "axes": "source_zup_righthanded",
+    "x": "forward at yaw 0",
+    "y": "left",
+    "z": "up",
+    "length_unit": "u",
+    "meters_per_unit": 0.0254,
+    "angle_unit": "deg"
+  },
+  "timing": {
+    "variable_dt": true,
+    "steps": 780,
+    "duration_s": 6.50835,
+    "sampling": "one row per client script frame (WaitFrame) that simulated at least one usercmd",
+    "cmd_first": 11006,
+    "cmd_last": 11785,
+    "frames_without_cmd": 0,
+    "steps_with_several_cmds": 0,
+    "cmd_association": "usercmds whose MOVE-TRACE wall time is at or before the frame's; post-move origin equals the frame origin in 780/780 steps"
+  },
+  "step_semantics": "inputs held during the step; state sampled after the step",
+  "initial_state": {
+    "source": "MT pre-move state of the first usercmd of step 0 (o= v= ge= slide= spr= duck=)",
+    "cmd": 11006,
+    "pos": [
+      -14800.0,
+      6800.0,
+      294.274
+    ],
+    "vel": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "grounded": 1,
+    "sliding": 0,
+    "sprinting": 0,
+    "duck_state": 0,
+    "stance": "standing",
+    "crouched": 0,
+    "angles": {
+      "pitch": 0.0,
+      "yaw": 0.0
+    },
+    "angles_source": "HSD frame before step 0",
+    "buttons_held": 0,
+    "inputs_held": "",
+    "inputs_source": "MT usercmd 11005 (the command before step 0)"
+  },
+  "terrain": {
+    "map": "mp_rr_canyonlands_staging_mu1",
+    "map_source": "level-load log line of the session (LOG map)",
+    "start_origin": [
+      -14800.0,
+      6800.0,
+      294.274
+    ],
+    "standable": true,
+    "standable_source": "ground flag at trial start (ge= / IsOnGround); null = not on ground or unknown",
+    "ground_normal": null,
+    "ground_normal_source": "not recorded: neither MOVE-TRACE nor HSD.MoveDiag prints a surface normal",
+    "course_note": "M4 M4_octane_rerun; schedule m4_pad_walk @120 fps; kit equipped; parameters from the M4_octane census (same build and legend)"
+  },
+  "parameters_side": "cl",
+  "parameters": {
+    "speed": {
+      "value": "173.5",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {},
+      "other_side_readings": {},
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "sprintspeed": {
+      "value": "260",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {},
+      "other_side_readings": {},
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "acceleration": {
+      "value": "450",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {},
+      "other_side_readings": {},
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "deceleration": {
+      "value": "1250",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {},
+      "other_side_readings": {},
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "lowSpeed": {
+      "value": "120",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {},
+      "other_side_readings": {},
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "lowAcceleration": {
+      "value": "2500",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {},
+      "other_side_readings": {},
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "sprintAcceleration": {
+      "value": "100",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {},
+      "other_side_readings": {},
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "sprintDeceleration": {
+      "value": "1250",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {},
+      "other_side_readings": {},
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "gravityScale": {
+      "value": "1",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {
+        "cl_setting": "1.000000"
+      },
+      "other_side_readings": {
+        "sv_setting": "1.000000"
+      },
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "jumpHeight": {
+      "value": "56",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {
+        "cl_setting": "56.000000"
+      },
+      "other_side_readings": {
+        "sv_setting": "56.000000"
+      },
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "stepHeight": {
+      "value": "22",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {
+        "cl_setting": "22.000000"
+      },
+      "other_side_readings": {
+        "sv_setting": "22.000000"
+      },
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "airSpeed": {
+      "value": "60",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {
+        "cl_setting": "60.000000"
+      },
+      "other_side_readings": {
+        "sv_setting": "60.000000"
+      },
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "airAcceleration": {
+      "value": "500",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {
+        "cl_setting": "500.000000"
+      },
+      "other_side_readings": {
+        "sv_setting": "500.000000"
+      },
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "airFriction": {
+      "value": "0",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {
+        "cl_setting": "0.000000"
+      },
+      "other_side_readings": {
+        "sv_setting": "0.000000"
+      },
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "airDrag": {
+      "value": "0",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {
+        "cl_setting": "0.000000"
+      },
+      "other_side_readings": {
+        "sv_setting": "0.000000"
+      },
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "doubleJump": {
+      "value": "false",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype0",
+      "differs_between_readers": false,
+      "same_side_readings": {},
+      "other_side_readings": {},
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "superjumpMinHeight": {
+      "value": "112",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {
+        "cl_setting": "112.000000"
+      },
+      "other_side_readings": {
+        "sv_setting": "112.000000"
+      },
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "superjumpMaxHeight": {
+      "value": "200",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {
+        "cl_setting": "200.000000"
+      },
+      "other_side_readings": {
+        "sv_setting": "200.000000"
+      },
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "superjumpHorzSpeed": {
+      "value": "240",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {
+        "cl_setting": "240.000000"
+      },
+      "other_side_readings": {
+        "sv_setting": "240.000000"
+      },
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "superjumpLimit": {
+      "value": "1",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {
+        "cl_setting": "1.000000"
+      },
+      "other_side_readings": {
+        "sv_setting": "1.000000"
+      },
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "slideAccel": {
+      "value": "50",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {
+        "cl_setting": "50.000000"
+      },
+      "other_side_readings": {
+        "sv_setting": "50.000000"
+      },
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "slideDecel": {
+      "value": "100",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {
+        "cl_setting": "100.000000"
+      },
+      "other_side_readings": {
+        "sv_setting": "100.000000"
+      },
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "slideVelocityDecay": {
+      "value": "0.7",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {
+        "cl_setting": "0.700000"
+      },
+      "other_side_readings": {
+        "sv_setting": "0.700000"
+      },
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "slideRequiredStartSpeed": {
+      "value": "200",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {
+        "cl_setting": "200.000000"
+      },
+      "other_side_readings": {
+        "sv_setting": "200.000000"
+      },
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "slideSpeedBoost": {
+      "value": "150",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {
+        "cl_setting": "150.000000"
+      },
+      "other_side_readings": {
+        "sv_setting": "150.000000"
+      },
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "slideSpeedBoostCap": {
+      "value": "400",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {
+        "cl_setting": "400.000000"
+      },
+      "other_side_readings": {
+        "sv_setting": "400.000000"
+      },
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "slideJumpHeight": {
+      "value": "50",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {
+        "cl_setting": "50.000000"
+      },
+      "other_side_readings": {
+        "sv_setting": "50.000000"
+      },
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "slideMaxJumpSpeed": {
+      "value": "350",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {
+        "cl_setting": "350.000000"
+      },
+      "other_side_readings": {
+        "sv_setting": "350.000000"
+      },
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "slideStopSpeed": {
+      "value": "125",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {
+        "cl_setting": "125.000000"
+      },
+      "other_side_readings": {
+        "sv_setting": "125.000000"
+      },
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "slideMaxStopSpeed": {
+      "value": "350",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {
+        "cl_setting": "350.000000"
+      },
+      "other_side_readings": {
+        "sv_setting": "350.000000"
+      },
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "slideWantToStopDecel": {
+      "value": "400",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {
+        "cl_setting": "400.000000"
+      },
+      "other_side_readings": {
+        "sv_setting": "400.000000"
+      },
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "slideSuperJumpHeight": {
+      "value": "65",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {
+        "cl_setting": "65.000000"
+      },
+      "other_side_readings": {
+        "sv_setting": "65.000000"
+      },
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "slideSuperJumpCooldown": {
+      "value": "2",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {
+        "cl_setting": "2.000000"
+      },
+      "other_side_readings": {
+        "sv_setting": "2.000000"
+      },
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "sprintStartDelay": {
+      "value": "0.2",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {
+        "cl_setting": "0.200000"
+      },
+      "other_side_readings": {
+        "sv_setting": "0.200000"
+      },
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "sprintStartDuration": {
+      "value": "0.8",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {
+        "cl_setting": "0.800000"
+      },
+      "other_side_readings": {
+        "sv_setting": "0.800000"
+      },
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "sprintStartFastDuration": {
+      "value": "0.2",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {
+        "cl_setting": "0.200000"
+      },
+      "other_side_readings": {
+        "sv_setting": "0.200000"
+      },
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "sprintEndDuration": {
+      "value": "0.15",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {
+        "cl_setting": "0.150000"
+      },
+      "other_side_readings": {
+        "sv_setting": "0.150000"
+      },
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "speedScaleSide": {
+      "value": "1",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {
+        "cl_setting": "1.000000"
+      },
+      "other_side_readings": {
+        "sv_setting": "1.000000"
+      },
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "speedScaleBack": {
+      "value": "1",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {
+        "cl_setting": "1.000000"
+      },
+      "other_side_readings": {
+        "sv_setting": "1.000000"
+      },
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "landSlowdownDuration": {
+      "value": "1",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {
+        "cl_setting": "1.000000"
+      },
+      "other_side_readings": {
+        "sv_setting": "1.000000"
+      },
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "antiMultiJumpHeightFrac": {
+      "value": "0.3",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {
+        "cl_setting": "0.300000"
+      },
+      "other_side_readings": {
+        "sv_setting": "0.300000"
+      },
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "mantleAngleScale": {
+      "value": "1",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {
+        "cl_setting": "1.000000"
+      },
+      "other_side_readings": {
+        "sv_setting": "1.000000"
+      },
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "climbEnabled": {
+      "value": "true",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype0",
+      "differs_between_readers": false,
+      "same_side_readings": {},
+      "other_side_readings": {},
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "climbHeight": {
+      "value": "100",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {
+        "cl_setting": "100.000000"
+      },
+      "other_side_readings": {
+        "sv_setting": "100.000000"
+      },
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "climbFinalJumpUpHeight": {
+      "value": "28",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {
+        "cl_setting": "28.000000"
+      },
+      "other_side_readings": {
+        "sv_setting": "28.000000"
+      },
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "climbSpeedStart": {
+      "value": "200",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {
+        "cl_setting": "200.000000"
+      },
+      "other_side_readings": {
+        "sv_setting": "200.000000"
+      },
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "wallrun": {
+      "value": "false",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype0",
+      "differs_between_readers": false,
+      "same_side_readings": {},
+      "other_side_readings": {},
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "wallrun_timeLimit": {
+      "value": "2",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {
+        "cl_setting": "2.000000"
+      },
+      "other_side_readings": {
+        "sv_setting": "2.000000"
+      },
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "wallrun_hangTimeLimit": {
+      "value": "4",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {
+        "cl_setting": "4.000000"
+      },
+      "other_side_readings": {
+        "sv_setting": "4.000000"
+      },
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "wallrunAccelerateHorizontal": {
+      "value": "200",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {
+        "cl_setting": "200.000000"
+      },
+      "other_side_readings": {
+        "sv_setting": "200.000000"
+      },
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "wallrunAccelerateVertical": {
+      "value": "450",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {
+        "cl_setting": "450.000000"
+      },
+      "other_side_readings": {
+        "sv_setting": "450.000000"
+      },
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "wallrunMaxSpeedHorizontal": {
+      "value": "225",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {
+        "cl_setting": "225.000000"
+      },
+      "other_side_readings": {
+        "sv_setting": "225.000000"
+      },
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "wallrunMaxSpeedVertical": {
+      "value": "112",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {
+        "cl_setting": "112.000000"
+      },
+      "other_side_readings": {
+        "sv_setting": "112.000000"
+      },
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "wallrunJumpOutwardSpeed": {
+      "value": "188",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {
+        "cl_setting": "188.000000"
+      },
+      "other_side_readings": {
+        "sv_setting": "188.000000"
+      },
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "wallrunJumpUpSpeed": {
+      "value": "240",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {
+        "cl_setting": "240.000000"
+      },
+      "other_side_readings": {
+        "sv_setting": "240.000000"
+      },
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "wallrunJumpInputDirSpeed": {
+      "value": "75",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {
+        "cl_setting": "75.000000"
+      },
+      "other_side_readings": {
+        "sv_setting": "75.000000"
+      },
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "dodgeSpeed": {
+      "value": "750",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {
+        "cl_setting": "750.000000"
+      },
+      "other_side_readings": {
+        "sv_setting": "750.000000"
+      },
+      "side_mismatch": false,
+      "experiment": "E0"
+    },
+    "dodgeDuration": {
+      "value": "0",
+      "side": "cl",
+      "reader": "cl_classvar",
+      "reader_desc": "client class var: bridge_classvar_get on the live class-var block",
+      "type": "cvtype2",
+      "differs_between_readers": false,
+      "same_side_readings": {
+        "cl_setting": "0.000000"
+      },
+      "other_side_readings": {
+        "sv_setting": "0.000000"
+      },
+      "side_mismatch": false,
+      "experiment": "E0"
+    }
+  },
+  "parameter_issues": [],
+  "provenance": {
+    "step": "meta",
+    "t": "obs (Time() minus trial start)",
+    "dt": "drv (difference of observed Time(); frames without a usercmd are merged into the next step)",
+    "cmd": "obs MOVE-TRACE cmd= of the last usercmd logged at or before the frame (wall clock)",
+    "n_cmds": "drv (count of MOVE-TRACE lines assigned to the frame)",
+    "in_fwd": "obs GetInputAxisForward",
+    "in_right": "obs GetInputAxisRight",
+    "in_yaw": "obs",
+    "in_pitch": "obs",
+    "in_jump": "obs IsInputCommandHeld(IN_JUMP)",
+    "in_duck": "obs IsInputCommandHeld(IN_DUCK)",
+    "in_sprint": "obs MOVE-TRACE b= sprint bit (1<<15 in this build; see schema.BUTTON_BITS) of the step's last usercmd",
+    "buttons": "obs MOVE-TRACE b=",
+    "cmd_fwd": "obs MOVE-TRACE fwd=",
+    "cmd_side": "obs MOVE-TRACE sd=",
+    "movescale": "obs MOVE-TRACE msc=",
+    "maxspeed": "obs MOVE-TRACE ms=",
+    "pressed": "drv (MOVE-TRACE b= bits and fwd=/sd= signs, per usercmd, against the previous usercmd)",
+    "released": "drv (as pressed)",
+    "pos_x": "obs",
+    "pos_y": "obs",
+    "pos_z": "obs",
+    "vel_x": "obs",
+    "vel_y": "obs",
+    "vel_z": "obs",
+    "grounded": "obs",
+    "sliding": "obs",
+    "crouched": "obs",
+    "sprinting": "obs",
+    "events": "drv (hsdtel edge detection)"
+  },
+  "columns": {
+    "step": {
+      "unit": "",
+      "meaning": "0-based step index within the trial"
+    },
+    "t": {
+      "unit": "s",
+      "meaning": "time at the end of the step (trial-relative, starts near 0)"
+    },
+    "dt": {
+      "unit": "s",
+      "meaning": "duration of the step"
+    },
+    "cmd": {
+      "unit": "",
+      "meaning": "usercmd command_number of the last command simulated in the step"
+    },
+    "n_cmds": {
+      "unit": "",
+      "meaning": "number of usercmds logged in the step; cmd - previous cmd must equal it"
+    },
+    "in_fwd": {
+      "unit": "",
+      "meaning": "forward input -1..1 applied during the step"
+    },
+    "in_right": {
+      "unit": "",
+      "meaning": "right input -1..1 applied during the step"
+    },
+    "in_yaw": {
+      "unit": "deg",
+      "meaning": "view yaw during the step (Source convention: + = turn left)"
+    },
+    "in_pitch": {
+      "unit": "deg",
+      "meaning": "view pitch during the step"
+    },
+    "in_jump": {
+      "unit": "",
+      "meaning": "jump held 0/1"
+    },
+    "in_duck": {
+      "unit": "",
+      "meaning": "duck held 0/1"
+    },
+    "in_sprint": {
+      "unit": "",
+      "meaning": "sprint (IN_SPEED) held 0/1 in the usercmd"
+    },
+    "buttons": {
+      "unit": "",
+      "meaning": "usercmd m_nButtons held mask (in_buttons.h bits) of the step's last command"
+    },
+    "cmd_fwd": {
+      "unit": "",
+      "meaning": "usercmd forwardmove -1..1 of the step's last command"
+    },
+    "cmd_side": {
+      "unit": "",
+      "meaning": "usercmd sidemove -1..1 (+ = right) of the step's last command"
+    },
+    "movescale": {
+      "unit": "",
+      "meaning": "m_cachedMoveScale of the step's last usercmd (weapon/ability move-speed factor); optional"
+    },
+    "maxspeed": {
+      "unit": "u/s",
+      "meaning": "CMoveData maxspeed of the step's last usercmd; optional"
+    },
+    "pressed": {
+      "unit": "",
+      "meaning": "'|'-joined inputs that went down during the step: button names, AX_FWD/AX_BACK/AX_RIGHT/AX_LEFT"
+    },
+    "released": {
+      "unit": "",
+      "meaning": "'|'-joined inputs that went up during the step (same names)"
+    },
+    "pos_x": {
+      "unit": "u",
+      "meaning": "position after the step"
+    },
+    "pos_y": {
+      "unit": "u",
+      "meaning": ""
+    },
+    "pos_z": {
+      "unit": "u",
+      "meaning": ""
+    },
+    "vel_x": {
+      "unit": "u/s",
+      "meaning": "velocity after the step"
+    },
+    "vel_y": {
+      "unit": "u/s",
+      "meaning": ""
+    },
+    "vel_z": {
+      "unit": "u/s",
+      "meaning": ""
+    },
+    "grounded": {
+      "unit": "",
+      "meaning": "1/0 after the step; empty = unknown"
+    },
+    "sliding": {
+      "unit": "",
+      "meaning": "1/0 after the step; empty = unknown"
+    },
+    "crouched": {
+      "unit": "",
+      "meaning": "1/0 after the step; empty = unknown"
+    },
+    "sprinting": {
+      "unit": "",
+      "meaning": "1/0 after the step; empty = unknown"
+    },
+    "events": {
+      "unit": "",
+      "meaning": "'|'-joined events detected at this step: TAKEOFF, LAND, SLIDE_START, SLIDE_END"
+    }
+  },
+  "notes": ""
+}

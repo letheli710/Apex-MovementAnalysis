@@ -150,6 +150,38 @@ SCHEDULES = {
     # ---- M3 landing chains: slide-jump at 350 into hops (lane B); climb over the wall and drop 232 u (lane A)
     "e8_fast_hops": "wait 72; down speed; down forward; wait 2.0s; down duck; wait 86; tap jump; up duck; wait 109; tap jump; wait 109; tap jump; wait 109; tap jump; wait 110; up forward; up speed; wait 1.0s",
     "e8_slide_chain": "wait 72; down speed; down forward; wait 2.0s; down duck; wait 86; tap jump; wait 109; wait 0.5s; tap jump; wait 109; wait 0.5s; up duck; up forward; up speed; wait 1.0s",
+    # ---- M4 legend abilities (session per legend; --kit equips the abilities; abilities refilled at every reset)
+    # Octane stim on lane C: sprint 1 s, stim, sprint 3 s, release, stand 4 s (msc decay is logged per usercmd)
+    "m4_stim_sprint": "wait 72; down speed; down forward; wait 1.0s; tap offhand1; wait 3.0s; up forward; up speed; wait 4.0s",
+    "m4_ctrl_sprint": "wait 72; down speed; down forward; wait 1.0s; wait 3.0s; up forward; up speed; wait 4.0s",
+    "m4_stim_walk": "wait 72; tap offhand1; wait 0.3s; down forward; wait 3.0s; up forward; wait 3.0s",
+    "m4_stim_air": "wait 72; down speed; down forward; wait 1.0s; tap offhand1; wait 1.0s; tap jump; waitf 3; up forward; up speed; down moveright; wait 0.8s; up moveright; wait 2.0s",
+    "m4_ctrl_air": "wait 72; down speed; down forward; wait 1.0s; wait 1.0s; tap jump; waitf 3; up forward; up speed; down moveright; wait 0.8s; up moveright; wait 2.0s",
+    # Octane jump pad (spawned by the reset 300 u ahead on lane C): walk / sprint / crouch-walk onto it
+    "m4_pad_walk": "wait 72; down forward; wait 2.5s; up forward; wait 3.5s",
+    "m4_pad_sprint": "wait 72; down speed; down forward; wait 1.5s; up forward; up speed; wait 4.0s",
+    "m4_pad_crouch": "wait 72; down duck; wait 0.5s; down forward; wait 4.0s; up forward; up duck; wait 3.0s",
+    "m4_pad_jumpin": "wait 72; down speed; down forward; wait 0.8s; tap jump; wait 1.0s; up forward; up speed; wait 4.0s",
+    # Horizon gravity lift (spawned by the reset 120 u ahead): walk in and ride; jump out early; strafe inside
+    "m4_lift_ride": "wait 72; down forward; wait 0.6s; up forward; wait 7.0s; wait 3.0s",
+    "m4_lift_jumpout": "wait 72; down forward; wait 0.6s; up forward; wait 1.5s; tap jump; wait 4.0s; wait 5.0s",
+    "m4_lift_strafe": "wait 72; down forward; wait 0.6s; up forward; wait 1.0s; down moveright; wait 1.0s; up moveright; wait 5.0s; wait 4.0s",
+    # Pathfinder grapple on lane A toward the test wall (394 u ahead): fire and hang on; fire then jump-release
+    "m4_grapple_hold": "wait 72; tap offhand1; wait 3.0s; wait 2.5s",
+    "m4_grapple_jump": "wait 72; tap offhand1; wait 0.6s; tap jump; wait 4.0s",
+    "m4_grapple_fwd": "wait 72; tap offhand1; down forward; wait 3.0s; up forward; wait 2.5s",
+    # grapple variants: distance to the wall (244 u near, 694 u far) and pitch (0, -20)
+    "m4_grapple_near": "wait 72; tap offhand1; wait 3.0s; wait 2.5s",
+    "m4_grapple_far": "wait 72; tap offhand1; wait 3.5s; wait 2.5s",
+    "m4_grapple_p0": "wait 72; tap offhand1; wait 3.0s; wait 2.5s",
+    "m4_grapple_p20": "wait 72; tap offhand1; wait 3.0s; wait 2.5s",
+    # Priority 2: Valkyrie jets (passive; hold +jump while airborne) and Revenant shadow pounce (charge +offhand1)
+    "m4_valk_jets": "wait 72; tap jump; waitair; wait 0.2s; down jump; wait 2.0s; up jump; wait 3.0s",
+    "m4_valk_jets_fwd": "wait 72; tap jump; waitair; wait 0.2s; down jump; down forward; wait 2.0s; up jump; up forward; wait 3.0s",
+    "m4_valk_ctrl": "wait 72; tap jump; waitair; wait 0.2s; wait 2.0s; wait 3.0s",
+    "m4_pounce_c0": "wait 72; tap offhand1; wait 4.0s",
+    "m4_pounce_c06": "wait 72; down offhand1; wait 0.6s; up offhand1; wait 4.0s",
+    "m4_pounce_c13": "wait 72; down offhand1; wait 1.3s; up offhand1; wait 4.0s",
     # ---- visible-ground cross-checks on the spawn pad (defined; not scheduled for now)
     #      and e4_stand, and a shorter slide that stays on the pad
     "x_pad_sprint": "wait 72; down speed; down forward; wait 432; up forward; up speed; wait 288",
@@ -165,7 +197,20 @@ SCHEDULES = {
     "e8_drop_land": "wait 72; down speed; down forward; wait 1.2s; tap jump; wait 4.0s; up forward; up speed; wait 1.5s",
 }
 
-KEYS = {"forward", "backward", "moveleft", "moveright", "jump", "duck", "speed", "left", "right"}
+KEYS = {"forward", "backward", "moveleft", "moveright", "jump", "duck", "speed", "left", "right", "offhand1", "offhand4"}
+
+# View pitch per schedule (Source: + = down). Grapple trials aim slightly up at the test wall.
+SCHEDULE_PITCH = {"m4_grapple_hold": -10.0, "m4_grapple_jump": -10.0, "m4_grapple_fwd": -10.0,
+                  "m4_grapple_near": -10.0, "m4_grapple_far": -10.0, "m4_grapple_p0": 0.0, "m4_grapple_p20": -20.0}
+
+# Server snippets run inside the reset (after the teleport, inside try/catch) for prop-based abilities.
+# Every spawned prop gets the script name hsd_test_geo; the previous one is removed first.
+_CLEAR_GEO = 'foreach ( entity e in GetEntArrayByScriptName( "hsd_test_geo_m4" ) ) e.Destroy()\n'
+SCHEDULE_PRE = {
+    "m4_pad_": _CLEAR_GEO + 'entity pad = JumpPad_CreateAtLocation( o + <300, 0, 0>, <0, 0, 0>, p, true )\n'
+               'if ( IsValid( pad ) ) pad.SetScriptName( "hsd_test_geo_m4" )\npre = " pad=" + IsValid( pad )\n',
+    "m4_lift_": 'thread SpaceElevator_PropDeploy( p, o + <120, 0, 0>, <0, 0, 0>, null )\npre = " lift=deployed"\n',
+}
 
 # Facing so that the schedule's ground motion runs along +X (Source yaw: 0 = +X, 90 = +Y; right = (sin, -cos)).
 SCHEDULE_YAW = {"e1_side": 90.0, "e1_back": 180.0, "e1_diag": 45.0}
@@ -177,11 +222,18 @@ LANE_B = (-14200.0, 5900.0, 294.92)
 # Lane C: y 6800 is flat from x -14825 to -12475 (m3/map/field_fine.json) and 81 u clear of the wall's bounds.
 LANE_C = (-14800.0, 6800.0, 294.92)
 SPAWN_PAD = (-11699.0, 512.0, 1577.046)  # visible firing-range floor (M0/M1)
-SCHEDULE_ORIGIN_PREFIX = {"x_pad_": SPAWN_PAD, "e8_hop350": LANE_C, "e3_": LANE_B, "e8_fast": LANE_C, "e8_slide": LANE_C, "e6_": LANE_A, "e7_": LANE_A,
+SCHEDULE_ORIGIN_PREFIX = {"m4_valk": LANE_C, "m4_pounce": LANE_C, "m4_stim": LANE_C, "m4_ctrl": LANE_C, "m4_pad": LANE_C, "m4_lift": LANE_C,
+                          "m4_grapple": LANE_A, "x_pad_": SPAWN_PAD, "e8_hop350": LANE_C, "e3_": LANE_B, "e8_fast": LANE_C, "e8_slide": LANE_C, "e6_": LANE_A, "e7_": LANE_A,
                           "e8_drop": LANE_A}
 
 
+# Exact-name origins take precedence over prefixes (grapple distance variants on lane A).
+SCHEDULE_ORIGIN = {"m4_grapple_near": (-13950.0, 6500.0, 294.92), "m4_grapple_far": (-14400.0, 6500.0, 294.92)}
+
+
 def origin_for(name, default):
+    if name in SCHEDULE_ORIGIN:
+        return SCHEDULE_ORIGIN[name]
     for prefix, o in SCHEDULE_ORIGIN_PREFIX.items():
         if name.startswith(prefix):
             return o
@@ -190,7 +242,7 @@ def origin_for(name, default):
 RESET_SERVER = string.Template(r'''
 entity p = GetPlayerArray()[0]
 vector o = <$ox, $oy, $oz>
-vector a = <0, $yaw, 0>
+vector a = <$pitch, $yaw, 0>
 p.SetVelocity( <0, 0, 0> )
 p.SettleStance()
 p.SetOrigin( o )
@@ -199,9 +251,19 @@ p.SetVelocity( <0, 0, 0> )
 p.PlantOnGround()
 p.SnapEyeAngles( a )
 p.SnapFeetToEyes()
+string pre = ""
+try
+{
+	$refill
+	$pre
+}
+catch ( preErr )
+{
+	pre = " pre_error=" + string( preErr )
+}
 entity w = p.GetActiveWeapon( eActiveInventorySlot.mainHand )
 string wn = w == null ? "none" : w.GetWeaponClassName()
-string s = "[HSD-RESET] ver=1 batch=$batch run=$run ent=" + p.GetEntIndex() + " o=" + p.GetOrigin().x + "," + p.GetOrigin().y + "," + p.GetOrigin().z + " vel=" + p.GetVelocity().x + "," + p.GetVelocity().y + "," + p.GetVelocity().z + " yaw=" + p.EyeAngles().y + " ground=" + ( p.IsOnGround() ? 1 : 0 ) + " slide=" + ( p.IsSliding() ? 1 : 0 ) + " weapon=" + wn + " t=" + Time()
+string s = "[HSD-RESET] ver=1 batch=$batch run=$run ent=" + p.GetEntIndex() + " o=" + p.GetOrigin().x + "," + p.GetOrigin().y + "," + p.GetOrigin().z + " vel=" + p.GetVelocity().x + "," + p.GetVelocity().y + "," + p.GetVelocity().z + " yaw=" + p.EyeAngles().y + " ground=" + ( p.IsOnGround() ? 1 : 0 ) + " slide=" + ( p.IsSliding() ? 1 : 0 ) + " weapon=" + wn + " t=" + Time() + pre
 printt( s )
 AgentLink_Reply( s )
 ''')
@@ -300,6 +362,42 @@ def get_schedule(name):
         return ("wait 72; down speed; down forward; wait 1.0s; tap jump; waitf %d; up forward; up speed; down moveright; "
                 "wait 0.9s; up moveright; wait 0.5s" % k)
     return None
+
+
+# Refill tactical, ultimate and glide/jet meters at every reset when --kit is set (_weapon_utility.nut:3810-3865).
+REFILL = "DevAbilities_RefillPlayer( p, true )"
+
+KIT_SERVER = r'''
+string out = ""
+try
+{
+	entity p = GetPlayerArray()[0]
+	ItemFlavor c = LoadoutSlot_GetItemFlavor( ToEHI( p ), Loadout_Character() )
+	foreach ( int slot in [ OFFHAND_TACTICAL, OFFHAND_ULTIMATE ] )
+	{
+		entity old = p.GetOffhandWeapon( slot )
+		if ( IsValid( old ) )
+			p.TakeOffhandWeapon( slot )
+	}
+	string tac = CharacterAbility_GetWeaponClassname( CharacterClass_GetTacticalAbility( c ) )
+	string ult = CharacterAbility_GetWeaponClassname( CharacterClass_GetUltimateAbility( c ) )
+	p.GiveOffhandWeapon( tac, OFFHAND_TACTICAL, [] )
+	p.GiveOffhandWeapon( ult, OFFHAND_ULTIMATE, [] )
+	int np = 0
+	foreach ( ItemFlavor ab in CharacterClass_GetPassiveAbilities( c ) )
+	{
+		GivePassive( p, CharacterAbility_GetPassiveIndex( ab ) )
+		np++
+	}
+	DevAbilities_RefillPlayer( p, true )
+	out = "legend=" + ItemFlavor_GetHumanReadableRef( c ) + " tactical=" + tac + " ultimate=" + ult + " passives=" + np
+}
+catch ( err )
+{
+	out = "error=" + string( err )
+}
+AgentLink_Reply( out )
+'''
 
 
 def parse_schedule(spec, fps=144.0):
@@ -403,6 +501,9 @@ def main(argv):
                          "differ in some class vars (Wraith sprintAcceleration 102 vs 100); '' keeps the spawn legend")
     ap.add_argument("--geometry", choices=["none", "m3"], default="none",
                     help="m3: (re)spawn the test wall on lane A before the trials (test_geometry.py)")
+    ap.add_argument("--kit", action="store_true",
+                    help="equip the legend's tactical, ultimate and passives (Agent_SetLegend changes only the setfile; "
+                         "m4/ABILITY-TRIGGERS.md) and refill abilities at every reset")
     ap.add_argument("--no-census", action="store_true",
                     help="skip the E0 census at the start (class vars + settings dump on both sides)")
     ap.add_argument("--origin", type=float, nargs=3, default=DEFAULT_ORIGIN)
@@ -459,6 +560,13 @@ def main(argv):
             if '"ok":true' not in manifest["legend_reply"].replace(" ", ""):
                 raise SystemExit("could not set the legend: " + manifest["legend_reply"])
             time.sleep(2.0)
+        if a.kit:
+            r = server.eval(KIT_SERVER, check=False)
+            manifest["kit_reply"] = r.get("reply", "")
+            print("kit:", manifest["kit_reply"])
+            if "error" in manifest["kit_reply"] or not manifest["kit_reply"]:
+                raise SystemExit("could not equip the legend kit")
+            time.sleep(1.0)
         if not a.no_census:
             # E0 census: client class vars (bridge_classvar_get) and both sides' settings dump.
             for side, line in ((client, "exec user/hsd_e0_classvars"), (client, "hsd_md_dump_now 1"),
@@ -480,7 +588,10 @@ def main(argv):
             since = client.info()["logSeq"]
             yaw = SCHEDULE_YAW.get(name, a.yaw)
             ox, oy, oz = origin_for(name, tuple(a.origin))
-            reset = server.eval(RESET_SERVER.substitute(ox=ox, oy=oy, oz=oz, yaw=yaw, batch=batch, run=run))
+            pitch = SCHEDULE_PITCH.get(name, 0.0)
+            pre = next((code for prefix, code in SCHEDULE_PRE.items() if name.startswith(prefix)), "")
+            reset = server.eval(RESET_SERVER.substitute(ox=ox, oy=oy, oz=oz, yaw=yaw, pitch=pitch, batch=batch, run=run,
+                                                         refill=REFILL if a.kit else "", pre=pre))
             sched = client.eval(SCHED_CLIENT.substitute(
                 steps=", ".join(json.dumps(s) for s in steps), ox=ox, oy=oy, oz=oz,
                 settle_frames=a.settle_frames, settle_timeout=a.settle_timeout, trial=trial, run=run))
