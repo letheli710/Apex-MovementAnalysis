@@ -315,6 +315,26 @@ SCHEDULES.update({
     "a2r_mrel_t078": _A2_RUN + "wait 0.78s; up forward; up speed; wait 2.0s",
 })
 
+# M6-B legend abilities (m6/SOURCE-AUDIT.md M6-B). Alter Void Passage through the lane-A rock (hold tactical to place,
+# release; start 600 u / 150 u from the face); Loba translocation with an early drop (second tactical press) on the long
+# P3 lane; Ash Phase Breach (ultimate) aimed at the ground 600 / 1200 / 2000 u ahead; Valkyrie jets: a 10 s hold to burn
+# the meter and a pulse run (start cost per activation).
+SCHEDULES.update({
+    "b_alter_sprint": "wait 72; down speed; down forward; down offhand1; wait 0.4s; up offhand1; wait 3.0s; up forward; up speed; wait 2.0s",
+    "b_alter_walk": "wait 72; down forward; down offhand1; wait 0.4s; up offhand1; wait 4.0s; up forward; wait 2.0s",
+    "b_alter_stand": "wait 72; down offhand1; wait 0.4s; up offhand1; wait 1.0s; down forward; wait 2.5s; up forward; wait 2.0s",
+    "b_loba_drop_t07": "wait 72; tap offhand1; wait 0.7s; tap offhand1; wait 3.0s",
+    "b_loba_drop_t09": "wait 72; tap offhand1; wait 0.9s; tap offhand1; wait 3.0s",
+    "b_loba_drop_t12": "wait 72; tap offhand1; wait 1.2s; tap offhand1; wait 3.0s",
+    "b_loba_drop_t15": "wait 72; tap offhand1; wait 1.5s; tap offhand1; wait 3.0s",
+    "b_loba_sprint_t09": "wait 72; down speed; down forward; wait 0.8s; tap offhand1; wait 0.9s; tap offhand1; up forward; up speed; wait 3.0s",
+    "b_ash_600": "wait 72; tap offhand4; wait 3.5s",
+    "b_ash_1200": "wait 72; tap offhand4; wait 3.5s",
+    "b_ash_2000": "wait 72; tap offhand4; wait 3.5s",
+    "b_valk_hold10": "wait 72; tap jump; waitair; wait 0.2s; down jump; wait 10.0s; up jump; waitland; wait 6.0s",
+    "b_valk_pulse": "wait 72; tap jump; waitair; wait 0.2s; " + "; ".join(["down jump; wait 0.3s; up jump; wait 0.35s"] * 4) + "; waitland; wait 3.0s",
+})
+
 # M6-A3 ziplines (geometry m6zip; m6/SOURCE-AUDIT.md E-Z). The player starts under the flat rope Z1 (100 u above the
 # floor) facing along it, mounts with +use, then rides / jumps off / crouches off. z5 = Super Jump: a second jump K
 # frames after the jump-off.
@@ -369,7 +389,8 @@ KEYS = {"forward", "backward", "moveleft", "moveright", "jump", "duck", "speed",
 VIEW_CVARS = ("cl_yawspeed", "cl_pitchspeed")
 
 # View pitch per schedule (Source: + = down). Grapple trials aim slightly up at the test wall.
-SCHEDULE_PITCH = {"g1_rel_tac": -10.0, "g1_rel_attack": -10.0, "g1_hold": -10.0, "g3_hook": -9.09, "g3_hook_use": -9.09,
+SCHEDULE_PITCH = {"b_ash_600": 5.71, "b_ash_1200": 2.86, "b_ash_2000": 1.72, "b_loba_drop_t07": -15.0,
+                  "b_loba_drop_t09": -15.0, "b_loba_drop_t12": -15.0, "b_loba_drop_t15": -15.0, "b_loba_sprint_t09": -15.0, "g1_rel_tac": -10.0, "g1_rel_attack": -10.0, "g1_hold": -10.0, "g3_hook": -9.09, "g3_hook_use": -9.09,
                   "z7b_air": -15.0, "z7c_air_hold": -15.0, "z2_jump_pu30": -30.0, "z2_jump_pd30": 30.0, "m55_nomod_hold": -10.0, "m4_grapple_hold": -10.0, "m4_grapple_jump": -10.0, "m4_grapple_fwd": -10.0,
                   "m4_grapple_near": -10.0, "m4_grapple_far": -10.0, "m4_grapple_p0": 0.0, "m4_grapple_p20": -20.0,
                   "m4b_swing_side": -10.0, "m4b_swing_turn": -10.0, "m4b_swing_turn_w": -10.0, "m4b_swing_jump": -10.0,
@@ -425,7 +446,8 @@ LANE_B = (-14200.0, 5900.0, 294.92)
 # Lane C: y 6800 is flat from x -14825 to -12475 (m3/map/field_fine.json) and 81 u clear of the wall's bounds.
 LANE_C = (-14800.0, 6800.0, 294.92)
 SPAWN_PAD = (-11699.0, 512.0, 1577.046)  # visible firing-range floor (M0/M1)
-SCHEDULE_ORIGIN_PREFIX = {"a2r_": LANE_A, "g1_": LANE_A, "a2_": LANE_A, "z": (-14550.0, 6800.0, 294.92), "a1_wb": LANE_A, "a1_": LANE_B, "m4b_view": LANE_C, "m4b_pad": LANE_C, "m4_valk": LANE_C, "m4_pounce": LANE_C, "m4_stim": LANE_C, "m4_ctrl": LANE_C, "m4_pad": LANE_C, "m4_lift": LANE_C,
+SCHEDULE_ORIGIN_PREFIX = {"b_alter_stand": (-13856.0, 6500.0, 294.92), "b_alter_": (-14306.0, 6500.0, 294.92),
+                          "b_loba_": (-14900.0, 6650.0, 294.92), "b_ash_": (-14900.0, 6650.0, 294.92), "b_valk_": LANE_C, "a2r_": LANE_A, "g1_": LANE_A, "a2_": LANE_A, "z": (-14550.0, 6800.0, 294.92), "a1_wb": LANE_A, "a1_": LANE_B, "m4b_view": LANE_C, "m4b_pad": LANE_C, "m4_valk": LANE_C, "m4_pounce": LANE_C, "m4_stim": LANE_C, "m4_ctrl": LANE_C, "m4_pad": LANE_C, "m4_lift": LANE_C,
                           "m4_grapple": LANE_A, "x_pad_": SPAWN_PAD, "e8_hop350": LANE_C, "e3_": LANE_B, "e8_fast": LANE_C, "e8_slide": LANE_C, "e6_": LANE_A, "e7_": LANE_A,
                           "e8_drop": LANE_A}
 
