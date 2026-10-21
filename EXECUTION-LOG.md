@@ -198,6 +198,30 @@ Newest entries at the bottom. Problems are tagged **[ISSUE]** and also listed in
   - Fun config: wall-run, flight, gravity switch.
   - Practice game: 5 stations, a 7-checkpoint time trial, HUD. Build at `HSD-Build\HSD-Practice.exe`, outside the repos.
 - **M5 done.** M5-REPORT.md and FINAL-REPORT.md (Chinese, answers the plan's 4 questions) written.
+- M5 merged (research #6, HSD-Unity #5). The user played the first build: the movement core stays, but actions are hard to perceive without first-person feedback. **M5.5 "Movement Feedback & Playability" started** (branches `phase2-local/m55-feedback`, HSD-Unity `m55/feedback`).
+- **Grapple range** (`m55/GRAPPLE-RANGE.md`):
+  - Unity's 850 is the R5 weapon config value (`grapple_maxLength` / `grapple_maxLengthVert`). The measured effective range at pitch 0 is 830–840 u: 830 attaches 3/3, 840 attaches 0/3.
+  - **[ISSUE]** `DevAbilities_RefillWeapon` always adds the dev mod `infinite_abilities_grapple`, which doubles the range. So every M4/M4b grapple trial ran with it, and attaches still happened at 1200 u with the mod.
+    - Impact: none found. All hooks were ≤ 705 u, and a mod-removed control gives the same pull.
+    - Fix: `m55_nomod` schedules remove the mod after the refill.
+- M5.5 part A (camera, slide feedback, HUD modes) dispatched to a Unity subagent.
+- **M5.5 part A** (HSD-Unity `m55/feedback` ebe3062; lead-verified):
+  - Tests: EditMode 204/204, PlayMode 1/1.
+  - Regression: replay byte-identical (M2/M1 111/111, M3 90/90); M4 replays 114/114.
+  - Smoke line identical to M5's.
+  - Camera: two cascaded first-order lags, no overshoot, frame-rate independent.
+  - The `AimPivot` carries only the raw aim. A bit-identical simulation test compares feedback at max against off.
+  - HUD normal / diagnostic (F3).
+  - **[NOTE]** The pitch kick moves the on-screen crosshair a few pixels on hard landings; the crosshair still marks the true aim.
+- M5.5 part B dispatched: grapple states, ability entities, Movement Demo, build, guide and acceptance note.
+- **M5.5 part B** (HSD-Unity f9d1841; lead-verified):
+  - Tests: EditMode 262/262, PlayMode 1/1.
+  - Regression byte-identical; M4 replays 114/114.
+  - Build `HSD-Build\M55\HSD-Practice.exe` smoke: 6 demos SUCCESS, and 6 failure cases FAIL with the expected reasons.
+  - Grapple states and range display; ability entities with trigger volumes (F4) and launch arrows.
+  - F6 Movement Demo goes through the normal input path; its trajectory equals the recorded inputs fed to `SkillBody.Step`, 12/12 bit-identical.
+  - The acceptance note's requirement table was rewritten by the lead to match the user's six M5.5 requirements.
+- **M5.5 done.**
 
 ## Open issues
 
