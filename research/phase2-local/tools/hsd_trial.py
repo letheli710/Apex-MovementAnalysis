@@ -196,6 +196,25 @@ SCHEDULES = {
     "m4_wraith_ctrl": "wait 72; down speed; down forward; wait 0.5s; wait 4.2s; up forward; up speed; wait 1.0s",
     "m4_loba_tele": "wait 72; down speed; down forward; wait 1.0s; tap offhand1; wait 3.0s; up forward; up speed; wait 1.0s",
     "m4_loba_tele_still": "wait 72; tap offhand1; wait 3.0s; wait 1.0s",
+    # M5.5 grapple range check: pitch 0 straight at the test wall face (x -13706) from 800 / 840 / 860 / 900 u
+    "m55_range_d800": "wait 72; tap offhand1; wait 2.5s",
+    "m55_range_d840": "wait 72; tap offhand1; wait 2.5s",
+    "m55_range_d860": "wait 72; tap offhand1; wait 2.5s",
+    "m55_range_d900": "wait 72; tap offhand1; wait 2.5s",
+    "m55_range_d950": "wait 72; tap offhand1; wait 2.5s",
+    "m55_range_d1000": "wait 72; tap offhand1; wait 2.5s",
+    "m55_range_d1050": "wait 72; tap offhand1; wait 2.5s",
+    "m55_range_d1100": "wait 72; tap offhand1; wait 2.5s",
+    "m55_range_d1200": "wait 72; tap offhand1; wait 2.5s",
+    # the same without the infinite_abilities_grapple mod (DevAbilities_RefillWeapon adds it: range x2, M5.5 finding)
+    "m55_nomod_d800": "wait 72; tap offhand1; wait 2.5s",
+    "m55_nomod_d840": "wait 72; tap offhand1; wait 2.5s",
+    "m55_nomod_d860": "wait 72; tap offhand1; wait 2.5s",
+    "m55_nomod_d900": "wait 72; tap offhand1; wait 2.5s",
+    "m55_nomod_d810": "wait 72; tap offhand1; wait 2.5s",
+    "m55_nomod_d820": "wait 72; tap offhand1; wait 2.5s",
+    "m55_nomod_d830": "wait 72; tap offhand1; wait 2.5s",
+    "m55_nomod_hold": "wait 72; tap offhand1; wait 3.0s; wait 2.5s",
     # M4b re-jump after a jump-pad landing (3 frames after touchdown), without and with forward held
     "m4b_pad_rejump": "wait 72; down speed; down forward; wait 1.5s; up forward; up speed; waitair; waitland; waitf 3; tap jump; wait 3.0s",
     "m4b_pad_rejump_w": "wait 72; down speed; down forward; wait 1.5s; up speed; waitair; waitland; waitf 3; tap jump; wait 1.5s; up forward; wait 1.5s",
@@ -232,7 +251,7 @@ KEYS = {"forward", "backward", "moveleft", "moveright", "jump", "duck", "speed",
 VIEW_CVARS = ("cl_yawspeed", "cl_pitchspeed")
 
 # View pitch per schedule (Source: + = down). Grapple trials aim slightly up at the test wall.
-SCHEDULE_PITCH = {"m4_grapple_hold": -10.0, "m4_grapple_jump": -10.0, "m4_grapple_fwd": -10.0,
+SCHEDULE_PITCH = {"m55_nomod_hold": -10.0, "m4_grapple_hold": -10.0, "m4_grapple_jump": -10.0, "m4_grapple_fwd": -10.0,
                   "m4_grapple_near": -10.0, "m4_grapple_far": -10.0, "m4_grapple_p0": 0.0, "m4_grapple_p20": -20.0,
                   "m4b_swing_side": -10.0, "m4b_swing_turn": -10.0, "m4b_swing_turn_w": -10.0, "m4b_swing_jump": -10.0,
                   "m4b_swing_turn_jump": -10.0, "m4b_swing_cross": -10.0, "m4b_swing_cross_w": -10.0,
@@ -246,6 +265,10 @@ SCHEDULE_PRE = {
                'if ( IsValid( pad ) ) pad.SetScriptName( "hsd_test_geo_m4" )\npre = " pad=" + IsValid( pad )\n',
     # view trials run on lane C after pad trials: remove a pad left from an earlier trial (M4b: one was run into)
     "m4b_view": _CLEAR_GEO + 'pre = " geo=cleared"\n',
+    # runs after the refill: remove the range-doubling dev mod from the grapple
+    "m55_nomod": 'entity gw = p.GetOffhandWeapon( OFFHAND_TACTICAL )\n'
+                 'if ( IsValid( gw ) && gw.HasMod( "infinite_abilities_grapple" ) ) gw.RemoveMod( "infinite_abilities_grapple" )\n'
+                 'pre = " grapple_mod=" + ( IsValid( gw ) && gw.HasMod( "infinite_abilities_grapple" ) )\n',
     "m4_lift_": 'thread SpaceElevator_PropDeploy( p, o + <120, 0, 0>, <0, 0, 0>, null )\npre = " lift=deployed"\n',
 }
 
@@ -274,6 +297,10 @@ SCHEDULE_ORIGIN.update({n: (-14100.0, 6350.0, 294.92) for n in ("m4b_swing_side"
 # P3: the longest clear lane of the field scan (y 6650, x -14925..-12550, m3/map/field_fine.json)
 SCHEDULE_ORIGIN.update({n: (-14900.0, 6650.0, 294.92) for n in ("m4_wraith_void", "m4_wraith_ctrl", "m4_loba_tele",
                                                                   "m4_loba_tele_still")})
+# M5.5 range check: horizontal distance from the start to the wall face (pitch 0, so it is also the aim-ray distance)
+SCHEDULE_ORIGIN.update({"m55_range_d%d" % d: (-13706.0 - d, 6500.0, 294.92) for d in (800, 840, 860, 900, 950, 1000, 1050, 1100, 1200)})
+SCHEDULE_ORIGIN.update({"m55_nomod_d%d" % d: (-13706.0 - d, 6500.0, 294.92) for d in (800, 810, 820, 830, 840, 860, 900)})
+SCHEDULE_ORIGIN["m55_nomod_hold"] = (-14100.0, 6500.0, 294.92)  # = LANE_A, the M4 m4_grapple_hold start
 # round 2 starts 450 u to -Y of the wall centre, running along +Y
 SCHEDULE_ORIGIN.update({n: (-14100.0, 6050.0, 294.92) for n in ("m4b_swing_cross", "m4b_swing_cross_w", "m4b_swing_cross_walk")})
 
