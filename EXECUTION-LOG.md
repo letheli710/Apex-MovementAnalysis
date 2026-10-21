@@ -214,6 +214,14 @@ Newest entries at the bottom. Problems are tagged **[ISSUE]** and also listed in
   - HUD normal / diagnostic (F3).
   - **[NOTE]** The pitch kick moves the on-screen crosshair a few pixels on hard landings; the crosshair still marks the true aim.
 - M5.5 part B dispatched: grapple states, ability entities, Movement Demo, build, guide and acceptance note.
+- **M5.5 part B** (HSD-Unity f9d1841; lead-verified):
+  - Tests: EditMode 262/262, PlayMode 1/1.
+  - Regression byte-identical; M4 replays 114/114.
+  - Build `HSD-Build\M55\HSD-Practice.exe` smoke: 6 demos SUCCESS, and 6 failure cases FAIL with the expected reasons.
+  - Grapple states and range display; ability entities with trigger volumes (F4) and launch arrows.
+  - F6 Movement Demo goes through the normal input path; its trajectory equals the recorded inputs fed to `SkillBody.Step`, 12/12 bit-identical.
+  - The acceptance note's requirement table was rewritten by the lead to match the user's six M5.5 requirements.
+- **M5.5 done.**
 
 ## Open issues
 

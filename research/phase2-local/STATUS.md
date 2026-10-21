@@ -9,6 +9,7 @@
 | M4 legend movement primitives | **done** | ≥ 3 primitive classes extracted and modelled | 7 classes in Unity, 99/99 tests, 38 R5 trials replayed ([M4-REPORT](m4/M4-REPORT.md)) |
 | M4b view control + grapple swing (user-approved add-on) | **done** (detach rule open, stop-loss) | per-usercmd yaw/pitch verified in MOVE-TRACE; swing/steer/detach/release momentum measured, or Unity swing smooth and controllable across anchors and speeds (stop-loss); pad re-jump | [m4/M4-REPORT.md](m4/M4-REPORT.md) §5 |
 | M5 Unity skill slots + playable build | **done** (lift / jets fail the reference accuracy; causes documented) | 2 configs, 3 presets of 3–4 skills, regression tests, Windows build + route notes | [m5/M5-REPORT.md](m5/M5-REPORT.md), [m5/PLAYTEST-GUIDE.md](m5/PLAYTEST-GUIDE.md); final: [FINAL-REPORT.md](FINAL-REPORT.md) |
+| M5.5 movement feedback & playability (user request after the first playtest) | **done** | physics-decoupled FPS camera + slide feedback, grapple states + range check, ability entities, one-key Movement Demo, HUD normal/diagnostic; simulation bit-identical with visuals on/off | [m55/ACCEPTANCE-M55.md](m55/ACCEPTANCE-M55.md), [m55/PLAYTEST-GUIDE-M55.md](m55/PLAYTEST-GUIDE-M55.md) |
 
 Rules in force: offline R5Flowstate and the Unity project only; no game files in git (raw logs stay local, `.gitignore`); no forged PASS; one process drives the game or the Unity editor at a time.
 
