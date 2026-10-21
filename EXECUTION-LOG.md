@@ -198,6 +198,13 @@ Newest entries at the bottom. Problems are tagged **[ISSUE]** and also listed in
   - Fun config: wall-run, flight, gravity switch.
   - Practice game: 5 stations, a 7-checkpoint time trial, HUD. Build at `HSD-Build\HSD-Practice.exe`, outside the repos.
 - **M5 done.** M5-REPORT.md and FINAL-REPORT.md (Chinese, answers the plan's 4 questions) written.
+- M5 merged (research #6, HSD-Unity #5). The user played the first build: the movement core stays, but actions are hard to perceive without first-person feedback. **M5.5 "Movement Feedback & Playability" started** (branches `phase2-local/m55-feedback`, HSD-Unity `m55/feedback`).
+- **Grapple range** (`m55/GRAPPLE-RANGE.md`):
+  - Unity's 850 is the R5 weapon config value (`grapple_maxLength` / `grapple_maxLengthVert`). The measured effective range at pitch 0 is 830–840 u: 830 attaches 3/3, 840 attaches 0/3.
+  - **[ISSUE]** `DevAbilities_RefillWeapon` always adds the dev mod `infinite_abilities_grapple`, which doubles the range. So every M4/M4b grapple trial ran with it, and attaches still happened at 1200 u with the mod.
+    - Impact: none found. All hooks were ≤ 705 u, and a mod-removed control gives the same pull.
+    - Fix: `m55_nomod` schedules remove the mod after the refill.
+- M5.5 part A (camera, slide feedback, HUD modes) dispatched to a Unity subagent.
 
 ## Open issues
 
