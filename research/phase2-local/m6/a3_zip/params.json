@@ -1,0 +1,224 @@
+{
+ "_doc": "M6-A3 per-usercmd zipline model for Unity (Source units, u/s). Labels: meas = measured here, fit = fitted here (residual given), src = source audit / census, unknown = not determined. See A3-ZIPLINE.md.",
+ "census": {
+  "ziplineSpeed": [
+   600.0,
+   "src+meas"
+  ],
+  "ziplineDetachSpeed": [
+   600.0,
+   "src"
+  ],
+  "ziplineMaxVerticalDetachSpeed": [
+   1500.0,
+   "src (not reached)"
+  ],
+  "jumpHeight": [
+   56.0,
+   "src"
+  ],
+  "gravity": [
+   750.12,
+   "meas"
+  ]
+ },
+ "attach": {
+  "input": [
+   "+use press edge (IN_USE 0x20), mounts on the press command itself",
+   "meas"
+  ],
+  "search_origin_raise": [
+   72.0,
+   "src+fit (Find points reproduce with this origin)"
+  ],
+  "find_radius": [
+   130.0,
+   "fit (|Q-P| of every pitch-0 Find point)"
+  ],
+  "find_point_rule": [
+   "argmin angle(eyeDir, Q-P) over rope points Q with |Q-P| <= radius (flat/sloped ropes; every Find point reproduced to 0.1 deg / 0.1 u)",
+   "fit"
+  ],
+  "find_point_rule_vertical": [
+   "rope point at origin.z + 80.1 (hang height), not the min-angle point",
+   "meas (1 geometry)"
+  ],
+  "cone_half_angle_deg_bracket": [
+   [
+    27.04,
+    40.74
+   ],
+   "fit (bracket)"
+  ],
+  "auto_attach_on_touch": [
+   false,
+   "meas (z0_nouse)"
+  ],
+  "air_attach": [
+   null,
+   "unknown (z7 never came within range)"
+  ],
+  "snap_dz_on_mount_cmd": [
+   22.0,
+   "meas (pop to standing / hang start)"
+  ],
+  "hang_below_rope_client": [
+   80.172,
+   "meas"
+  ],
+  "blend_table_b_of_k": [
+   {
+    "0": 0.0,
+    "1": 0.0165,
+    "2": 0.0495,
+    "3": 0.0966,
+    "4": 0.1567,
+    "5": 0.2266,
+    "6": 0.3033,
+    "7": 0.3837,
+    "8": 0.4647,
+    "9": 0.5434,
+    "10": 0.6178,
+    "11": 0.6857,
+    "12": 0.7463,
+    "13": 0.7984,
+    "14": 0.8423,
+    "15": 0.8784,
+    "16": 0.9073,
+    "17": 0.9296,
+    "18": 0.9467,
+    "19": 0.9594,
+    "20": 0.9687,
+    "21": 0.9753,
+    "22": 0.9798,
+    "23": 0.983,
+    "24": 0.9851,
+    "25": 0.9868,
+    "26": 0.9879,
+    "27": 0.9887,
+    "28": 0.9894,
+    "29": 0.9899,
+    "30": 0.9904,
+    "31": 0.9909,
+    "32": 0.9913,
+    "33": 0.9918,
+    "34": 0.9922,
+    "35": 0.9926,
+    "36": 0.993,
+    "37": 0.9934,
+    "38": 0.9937,
+    "39": 0.9941,
+    "40": 0.9945,
+    "41": 0.9948,
+    "42": 0.9951,
+    "43": 0.9955,
+    "44": 0.9958,
+    "45": 0.9961
+   },
+   "meas (position = p0 + b*(ropeRef - p0))"
+  ],
+  "blend_fit": [
+   {
+    "smoothstep_T_s": {
+     "param": 0.148,
+     "pos_rms_u": 3.568
+    },
+    "critdamp_w_per_s": {
+     "param": 25.9,
+     "pos_rms_u": 4.097
+    },
+    "exp_w_per_s": {
+     "param": 12.8,
+     "pos_rms_u": 10.702
+    }
+   },
+   "fit"
+  ],
+  "view_pitch_driven_to_rope_pitch": [
+   true,
+   "meas (90% after 22 cmds, -30 -> 0 and 0 -> -10.62)"
+  ],
+  "position_integration": [
+   "x_k = x_(k-1) + v_k * dt along the rope (same-cmd speed)",
+   "fit (tail 0.43 u vs 1.69 u)"
+  ]
+ },
+ "ride": {
+  "v_first_cmd": [
+   8.335,
+   "meas"
+  ],
+  "accel_state2_first_0p5s": [
+   600.01,
+   "meas"
+  ],
+  "accel_state3": [
+   400.01,
+   "meas"
+  ],
+  "state2_duration_s": [
+   0.5,
+   "meas (accel switch at k=60, dedi state 2->3 at the same cmd; a speed threshold 300 is not excluded)"
+  ],
+  "cap": [
+   600.0,
+   "meas (= ziplineSpeed)"
+  ],
+  "slope_effect": [
+   "none: same |v| profile along the rope on the uphill rope",
+   "meas (Z2 only, uphill)"
+  ],
+  "vertical": [
+   "same profile up the vertical rope",
+   "meas"
+  ]
+ },
+ "detach": {
+  "auto_rope": [
+   "v_out = d_end * 600 (clamp(v.d, ziplineSpeed, ziplineDetachSpeed))",
+   "meas+src, residual 0"
+  ],
+  "auto_rope_rule": [
+   "after the ride step, if (remaining to the end - v*dt) < 90 (= autoDetach 100 - 10) detach at the current position with v_out",
+   "fit (remaining after the detach cmd 90.1..94.8 u)"
+  ],
+  "auto_rope_stop_short_u": [
+   92.457,
+   "meas (distance to the rope end of origin+80 at the detach)"
+  ],
+  "auto_vertical": [
+   "v_out = vertical ride velocity (600, below the 1500 clamp) + 400 horizontal along the view yaw",
+   "meas (direction yaw vs approach ambiguous)"
+  ],
+  "jump_off": [
+   "v_out = h_rope * min(v_ride, 400) + z * 289.83 (= sqrt(2 g jumpHeight)); keys ignored on the jump cmd; the jump cmd itself does not translate",
+   "fit (2 ride speeds), residual in A3-ZIPLINE.md"
+  ],
+  "crouch_off": [
+   "v_out = h_rope * min(v_ride, 400), vz = 0",
+   "fit (1 ride speed)"
+  ],
+  "jump_off_view_pitch_law": [
+   null,
+   "unknown (view locked to the rope pitch while riding)"
+  ],
+  "post_exit_air_control": [
+   "standard air accel 500 u/s^2, wish cap 69 (M2), from the first post-exit cmd",
+   "meas"
+  ],
+  "client_dedi_offset": [
+   "client hangs 0.17 u lower and 0.23 u to -y of the dedi; carried into the exit",
+   "meas"
+  ]
+ },
+ "super_jump": {
+  "applies": [
+   false,
+   "meas: second jump K=1..12,40 frames after the jump-off is ignored (airborne, no grace)"
+  ]
+ },
+ "remount_budget": [
+  "3, +1 per 3 s, reset on landing (SDK bridge_zip_disc)",
+  "src; diag shows consume/reset only"
+ ]
+}

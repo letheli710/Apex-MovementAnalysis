@@ -318,6 +318,31 @@ SCHEDULES.update({
     "z6_vert": _Z_MOUNT + "wait 5.0s",
     "z7_air": "wait 72; down forward; tap jump; wait 0.25s; tap use; up forward; wait 2.0s",
 })
+# A3 round 2 (after m6/a3_zip): Super Jump the community way (use on the ground, jump M frames later, second jump K
+# frames after that); jump-off at other ride speeds; turning the view during the ride (direction: rope or view);
+# air grab from closer (ground range is 130 u) and with use held; duck held through the detach; vertical rope turn.
+SCHEDULES.update({"z5b_m%d_k%d" % (m, k): "wait 72; tap use; waitf %d; tap jump; waitf %d; tap jump; wait 2.0s" % (m - 1, k - 1)
+                  for m, k in ((1, 1), (1, 2), (1, 4), (3, 2), (6, 2))})
+SCHEDULES.update({"z8_jump_t%s" % str(t).replace(".", ""): _Z_MOUNT + "wait %.1fs; tap jump; wait 2.0s" % t
+                  for t in (0.2, 0.4, 1.0, 1.6)})
+SCHEDULES.update({
+    "z9_yaw45": "set cl_yawspeed 90; " + _Z_MOUNT + "wait 0.3s; down right; wait 0.5s; up right; wait 0.4s; tap jump; wait 2.0s",
+    "z9_yaw90": "set cl_yawspeed 90; " + _Z_MOUNT + "wait 0.2s; down right; wait 1.0s; up right; tap jump; wait 2.0s",
+    "z7b_air": "wait 72; tap jump; wait 0.15s; tap use; wait 2.0s",
+    "z7c_air_hold": "wait 72; tap jump; wait 0.1s; down use; wait 0.6s; up use; wait 1.5s",
+    "z3_duckhold": _Z_MOUNT + "wait 0.8s; down duck; wait 1.0s; up duck; wait 1.0s",
+    "z6_vert_turn": "set cl_yawspeed 180; " + _Z_MOUNT + "wait 0.3s; down right; wait 0.5s; up right; wait 4.0s",
+})
+# Pathfinder (kit, geometry m3,m6zip): g1 = grapple release by a second tactical press / by attack at the M4 hold pose;
+# g3 = grapple aimed at the middle of rope Z1 from 250 u (out of +use range), with and without a use press during the pull
+SCHEDULES.update({
+    "g1_rel_tac": "wait 72; tap offhand1; wait 0.6s; tap offhand1; wait 2.5s",
+    "g1_rel_attack": "wait 72; tap offhand1; wait 0.6s; tap attack; wait 2.5s",
+    "g1_hold": "wait 72; tap offhand1; wait 3.0s",
+    "g3_hook": "wait 72; tap offhand1; wait 3.0s",
+    "g3_hook_use": "wait 72; tap offhand1; wait 0.5s; tap use; wait 3.0s",
+})
+
 SCHEDULES.update({"z5_sj_k%d" % k: _Z_MOUNT + "wait 0.5s; tap jump; waitf %d; tap jump; wait 2.0s" % k
                   for k in (1, 2, 3, 4, 6, 8, 12, 40)})
 
@@ -327,7 +352,8 @@ KEYS = {"forward", "backward", "moveleft", "moveright", "jump", "duck", "speed",
 VIEW_CVARS = ("cl_yawspeed", "cl_pitchspeed")
 
 # View pitch per schedule (Source: + = down). Grapple trials aim slightly up at the test wall.
-SCHEDULE_PITCH = {"z2_jump_pu30": -30.0, "z2_jump_pd30": 30.0, "m55_nomod_hold": -10.0, "m4_grapple_hold": -10.0, "m4_grapple_jump": -10.0, "m4_grapple_fwd": -10.0,
+SCHEDULE_PITCH = {"g1_rel_tac": -10.0, "g1_rel_attack": -10.0, "g1_hold": -10.0, "g3_hook": -9.09, "g3_hook_use": -9.09,
+                  "z7b_air": -15.0, "z7c_air_hold": -15.0, "z2_jump_pu30": -30.0, "z2_jump_pd30": 30.0, "m55_nomod_hold": -10.0, "m4_grapple_hold": -10.0, "m4_grapple_jump": -10.0, "m4_grapple_fwd": -10.0,
                   "m4_grapple_near": -10.0, "m4_grapple_far": -10.0, "m4_grapple_p0": 0.0, "m4_grapple_p20": -20.0,
                   "m4b_swing_side": -10.0, "m4b_swing_turn": -10.0, "m4b_swing_turn_w": -10.0, "m4b_swing_jump": -10.0,
                   "m4b_swing_turn_jump": -10.0, "m4b_swing_cross": -10.0, "m4b_swing_cross_w": -10.0,
@@ -371,7 +397,7 @@ SCHEDULE_PRE["z_"] = _ZIP_RESET
 SCHEDULE_PRE["g3_"] = _ZIP_RESET
 
 # Facing so that the schedule's ground motion runs along +X (Source yaw: 0 = +X, 90 = +Y; right = (sin, -cos)).
-SCHEDULE_YAW = {"z7_air": 90.0, "e1_side": 90.0, "e1_back": 180.0, "e1_diag": 45.0,
+SCHEDULE_YAW = {"g3_hook": 36.87, "g3_hook_use": 36.87, "z7b_air": 90.0, "z7c_air_hold": 90.0, "z7_air": 90.0, "e1_side": 90.0, "e1_back": 180.0, "e1_diag": 45.0,
                 "m4b_swing_side": 20.0, "m4b_swing_turn": 20.0, "m4b_swing_turn_w": 20.0, "m4b_swing_jump": 20.0,
                 "m4b_swing_turn_jump": 20.0, "m4b_swing_cross": 90.0, "m4b_swing_cross_w": 90.0, "m4b_swing_cross_walk": 90.0}
 
@@ -382,7 +408,7 @@ LANE_B = (-14200.0, 5900.0, 294.92)
 # Lane C: y 6800 is flat from x -14825 to -12475 (m3/map/field_fine.json) and 81 u clear of the wall's bounds.
 LANE_C = (-14800.0, 6800.0, 294.92)
 SPAWN_PAD = (-11699.0, 512.0, 1577.046)  # visible firing-range floor (M0/M1)
-SCHEDULE_ORIGIN_PREFIX = {"a2_": LANE_A, "z": (-14550.0, 6800.0, 294.92), "a1_wb": LANE_A, "a1_": LANE_B, "m4b_view": LANE_C, "m4b_pad": LANE_C, "m4_valk": LANE_C, "m4_pounce": LANE_C, "m4_stim": LANE_C, "m4_ctrl": LANE_C, "m4_pad": LANE_C, "m4_lift": LANE_C,
+SCHEDULE_ORIGIN_PREFIX = {"g1_": LANE_A, "a2_": LANE_A, "z": (-14550.0, 6800.0, 294.92), "a1_wb": LANE_A, "a1_": LANE_B, "m4b_view": LANE_C, "m4b_pad": LANE_C, "m4_valk": LANE_C, "m4_pounce": LANE_C, "m4_stim": LANE_C, "m4_ctrl": LANE_C, "m4_pad": LANE_C, "m4_lift": LANE_C,
                           "m4_grapple": LANE_A, "x_pad_": SPAWN_PAD, "e8_hop350": LANE_C, "e3_": LANE_B, "e8_fast": LANE_C, "e8_slide": LANE_C, "e6_": LANE_A, "e7_": LANE_A,
                           "e8_drop": LANE_A}
 
@@ -392,7 +418,10 @@ _Z1 = (-14550.0, 6800.0, 294.92)
 SCHEDULE_ZIP_ORIGIN = {"z0_off40": (-14550.0, 6760.0, 294.92), "z0_off80": (-14550.0, 6720.0, 294.92),
                        "z0_off120": (-14550.0, 6680.0, 294.92), "z0_off160": (-14550.0, 6640.0, 294.92),
                        "z6_up": (-14450.0, 6350.0, 294.92), "z6_vert": (-14740.0, 6500.0, 294.92),
-                       "z7_air": (-14550.0, 6600.0, 294.92)}
+                       "z7_air": (-14550.0, 6600.0, 294.92),
+                       "z7b_air": (-14550.0, 6680.0, 294.92), "z7c_air_hold": (-14550.0, 6680.0, 294.92),
+                       "z6_vert_turn": (-14740.0, 6500.0, 294.92),
+                       "g3_hook": (-14000.0, 6650.0, 294.92), "g3_hook_use": (-14000.0, 6650.0, 294.92)}
 
 # Exact-name origins take precedence over prefixes (grapple distance variants on lane A).
 SCHEDULE_ORIGIN = {"m4_grapple_near": (-13950.0, 6500.0, 294.92), "m4_grapple_far": (-14400.0, 6500.0, 294.92)}
@@ -567,8 +596,7 @@ def get_schedule(name):
 # M6 client state logger: traversal / hang / zipline / grapple / phase / glide meter per frame while the trial label is set.
 # All eight getters exist on the client VM (probed live, M6); bools print true/false (list from m6/SOURCE-AUDIT.md A2).
 STATE_CLIENT = string.Template(r'''
-void function hsd_state_f()
-{
+void functionref() hsd_state_f = void function() {
 	entity p = GetLocalClientPlayer()
 	int w = 0
 	while ( GetConVarInt( "hsd_md_run" ) != $run && w < 2400 )
