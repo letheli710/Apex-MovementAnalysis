@@ -265,6 +265,16 @@ Newest entries at the bottom. Problems are tagged **[ISSUE]** and also listed in
   - Smoke: M5.5 route identical; demos 20/20 as expected (M5.5 12/12, M6 8/8).
   - 4 real-input chains with failure variants; M6 practice area F–I.
   - Build `HSD-Build\M6`; guide `m6/PLAYTEST-GUIDE-M6.md`; report `m6/M6-A-REPORT.md`.
+- **M6-B research done** (`m6/b_legends/M6-B-REPORT.md`; lead-verified):
+  - **Valkyrie:** fuel closed. Drain 1/s, activation cost 1, meter empties after 7 s of continuous hold, 3 s post effect, recharge 0.75/s after ~4.4 s; releases above 265.75 u/s get no cut or post effect. The M4 flight model holds.
+  - **Ash:** a frozen path at 0.918 of the aimed distance; lock 0.152 + 0.1017 × path frames; exit speed 0 (31/31); the entry portal is reusable.
+  - **Loba:**
+    - throw 1.21 s after the press;
+    - drop works ≥ 0.30 s after the throw (5/5);
+    - velocity 0 after teleport (15/15).
+  - **Alter: not triggerable** in this setup. The SDK placement never yields a usable spot; a retry with the 3 SDK levers on still produced none. Alter's conclusions are source-only.
+  - **[ISSUE]** First-run input mistakes: Ash needs offhand4 then attack; Loba's real throw delay is 1.21 s, so the t07–t12 drops came too early. Both are documented, not hidden.
+  - A Unity build of any legend waits for the user's decision.
 
 ## Open issues
 
