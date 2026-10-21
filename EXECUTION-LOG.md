@@ -178,6 +178,26 @@ Newest entries at the bottom. Problems are tagged **[ISSUE]** and also listed in
   - Loba: velocity zeroed at the teleport (6/6). Portal and Breach taken from source. Vantage and Ash dash skipped, with reasons in M4-REPORT §3.5.
   - **[ISSUE]** A game session was run while the swing subagent analysed, which caused fps rejects. Topped up with the machine idle.
 - **M4 done:** M4-REPORT.md written.
+- M4 merged (research #5, HSD-Unity #4). **M5 started.**
+- **M5 part A** (HSD-Unity `m5/skill-slots` b23916c; lead-verified):
+  - 144/144 tests; default motor identical (M2/M1 111/111, M3 90/90); 38 M4 replays reproduce byte for byte.
+  - Skill slots: 4 generic slots plus a base layer. All rules sit in one `SkillArbiter` (`m5/SKILL-RULES.md`).
+  - Speed caps 900 horizontal / 1100 up. At most one sustained (Driving) state, each with a timeout. Boosts don't stack: the largest counts, capped at ×1.4.
+  - Grapple switched to RF:
+    - At release, velocity error drops from 73–99 to 8–31 u/s and direction error from 9° to 0.4–2.5°.
+    - **[NOTE]** Pull-window position RMS gets worse (3.8–7.4 → 7.5–10.5 u). Causes: the start-of-pull burst isn't modelled, and one fit (A 541) serves all 62 trials, while these trials ramp at about 502. Reported, not tuned.
+  - 3 preset loadouts.
+  - **[NOTE]** The 60 Hz determinism test limit was corrected from half a command to a full command: spatial triggers fire at command starts. The rationale is in `m5/unity/regression.md`; this is test design, not a pass-forcing change.
+- **M5 part B dispatched:** reference and fun configs, a playable build with a practice map, the playtest guide.
+- **M5 part B** (HSD-Unity 8480b2d; lead-verified):
+  - Tests: EditMode 174/174, PlayMode 1/1.
+  - Regression: default motor identical; the M4 replays match part A 114/114.
+  - Reference-config evaluation: the rerun is byte-identical; the build smoke test passes.
+  - Reference config: 604/633 one-second windows pass (95.4 %). Every base-movement family passes; the redirect fix takes M3 lurch from 78 to 92.7 %.
+  - **[OPEN]** The gravity lift (78.4 %) and jets (83.3 %) families fail. Causes: one-command offsets, and the lift ejecting off the test plateau.
+  - Fun config: wall-run, flight, gravity switch.
+  - Practice game: 5 stations, a 7-checkpoint time trial, HUD. Build at `HSD-Build\HSD-Practice.exe`, outside the repos.
+- **M5 done.** M5-REPORT.md and FINAL-REPORT.md (Chinese, answers the plan's 4 questions) written.
 
 ## Open issues
 
