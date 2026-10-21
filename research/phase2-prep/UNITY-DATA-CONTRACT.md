@@ -69,6 +69,7 @@ A Unity trial is written by the Unity test harness in the same format. Both must
 | `in_sprint` | 0/1 | input | `IN_SPEED` (bit 17) held in the usercmd |
 | `buttons` | – | input | the usercmd's held `m_nButtons` mask (`in_buttons.h` bits), as an integer |
 | `cmd_fwd`, `cmd_side` | –1..1 | input | usercmd `forwardmove` / `sidemove` (+ = right) |
+| `movescale`, `maxspeed` | –, u/s | state (optional) | `m_cachedMoveScale` and `CMoveData` maxspeed of the step's last usercmd (MOVE-TRACE `msc=`, `ms=`). Optional: readers must accept trials without them |
 | `pressed`, `released` | – | input (may be empty) | `\|`-joined inputs that went down / up during the step (§4) |
 | `pos_x`, `pos_y`, `pos_z` | u | yes | position **after** the step |
 | `vel_x`, `vel_y`, `vel_z` | u/s | yes | velocity **after** the step |

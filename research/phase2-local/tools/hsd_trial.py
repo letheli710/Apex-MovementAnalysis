@@ -37,16 +37,47 @@ from agentlink import AgentLink, DEFAULT_GAME  # noqa: E402
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(HERE)))
 
-# Firing range spawn on mp_rr_canyonlands_staging_mu1; +X is clear for > 1000 u (T0).
-DEFAULT_ORIGIN = (-11699.0, 512.0, 1577.046)
+# Test field on mp_rr_canyonlands_staging_mu1 found by map_scan.py (m2/map/lanes_wide.json): flat floor at
+# z 294.92, about x -14800..-12800 by y 5600..7200, standing-hull clear along +X. Every schedule is run
+# with a yaw that makes its motion go along +X (SCHEDULE_YAW). The M1 runs used the spawn pad
+# (-11699, 512, 1577.046), which is clear for only about 1100 u.
+DEFAULT_ORIGIN = (-14750.0, 6500.0, 294.92)
 DEFAULT_YAW = 0.0
 
+# Frame counts assume 144 fps (fps_max in hsd_client.cfg): 72 = 0.5 s, 144 = 1 s, 288 = 2 s, 432 = 3 s.
+# On flat ground take-off -> landing is 109 usercmds and press -> take-off 1 (M1), so a jump pressed
+# 110 frames after the previous press lands on the very frame it is pressed.
 SCHEDULES = {
-    # M1 minimal loop: still 0.5 s -> forward 3 s -> release, stop 3 s -> one jump -> land 2 s  (144 fps frames)
+    # M1 minimal loop: still 0.5 s -> forward 3 s -> release, stop 3 s -> one jump -> land 2 s
     "basic": "wait 72; down forward; wait 432; up forward; wait 432; tap jump; wait 288",
+    # E1 ground: start / cruise / stop per input direction and stance
+    "e1_walk": "wait 72; down forward; wait 432; up forward; wait 288",
+    "e1_sprint": "wait 72; down speed; down forward; wait 432; up forward; up speed; wait 288",
+    "e1_crouch": "wait 72; down duck; wait 144; down forward; wait 432; up forward; wait 288; up duck; wait 72",
+    "e1_back": "wait 72; down backward; wait 432; up backward; wait 288",
+    "e1_side": "wait 72; down moveright; wait 432; up moveright; wait 288",
+    "e1_diag": "wait 72; down forward; down moveright; wait 432; up forward; up moveright; wait 288",
+    # E1 turning: sprint, then turn right at cl_yawspeed for 1 s while holding forward
+    "e1_turn": "wait 72; down speed; down forward; wait 288; down right; wait 144; up right; wait 144; up forward; up speed; wait 288",
+    # E2 air: sprint 2 s, jump, then (a) strafe right + turn right, (b) no input, (c) keep forward
+    "e2_strafe": "wait 72; down speed; down forward; wait 288; tap jump; wait 4; up forward; up speed; down moveright; down right; wait 100; up right; up moveright; wait 288",
+    "e2_noinput": "wait 72; down speed; down forward; wait 288; tap jump; wait 4; up forward; up speed; wait 288",
+    "e2_keepfwd": "wait 72; down speed; down forward; wait 288; tap jump; wait 288; up forward; up speed; wait 144",
+    # E4 jump: standing jump; hop chains with a fixed delay after landing (frames after the landing frame)
+    "e4_stand": "wait 72; tap jump; wait 288",
+    "e4_hop0": "wait 72; down speed; down forward; wait 144; tap jump; wait 109; tap jump; wait 109; tap jump; wait 109; tap jump; wait 109; tap jump; wait 110; up forward; up speed; wait 216",
+    "e4_hop3": "wait 72; down speed; down forward; wait 144; tap jump; wait 112; tap jump; wait 112; tap jump; wait 112; tap jump; wait 112; tap jump; wait 110; up forward; up speed; wait 216",
+    "e4_hop43": "wait 72; down speed; down forward; wait 144; tap jump; wait 152; tap jump; wait 152; tap jump; wait 152; tap jump; wait 152; tap jump; wait 110; up forward; up speed; wait 216",
+    # E5 slide: sprint 2 s then hold crouch; slide jump early (0.2 s) and late (0.6 s)
+    "e5_slide": "wait 72; down speed; down forward; wait 288; down duck; wait 432; up duck; up forward; up speed; wait 144",
+    "e5_slidejump02": "wait 72; down speed; down forward; wait 288; down duck; wait 29; tap jump; wait 288; up duck; up forward; up speed; wait 144",
+    "e5_slidejump06": "wait 72; down speed; down forward; wait 288; down duck; wait 86; tap jump; wait 288; up duck; up forward; up speed; wait 144",
 }
 
-KEYS = {"forward", "back", "moveleft", "moveright", "jump", "duck", "speed"}
+KEYS = {"forward", "backward", "moveleft", "moveright", "jump", "duck", "speed", "left", "right"}
+
+# Facing so that the schedule's ground motion runs along +X (Source yaw: 0 = +X, 90 = +Y; right = (sin, -cos)).
+SCHEDULE_YAW = {"e1_side": 90.0, "e1_back": 180.0, "e1_diag": 45.0}
 
 RESET_SERVER = string.Template(r'''
 entity p = GetPlayerArray()[0]
@@ -200,7 +231,11 @@ def main(argv):
     ap.add_argument("--trials", type=int, default=5)
     ap.add_argument("--run-base", type=int, default=11, help="run label of the first trial; +1 per trial")
     ap.add_argument("--batch-base", type=int, default=1, help="reset batch number of the first trial")
-    ap.add_argument("--schedule", default="basic", help=f"name ({', '.join(SCHEDULES)}) or a literal step list")
+    ap.add_argument("--schedule", default="basic",
+                    help=f"comma-separated names ({', '.join(SCHEDULES)}) or one literal step list; "
+                         "each schedule runs --trials times in the given order")
+    ap.add_argument("--no-census", action="store_true",
+                    help="skip the E0 census at the start (class vars + settings dump on both sides)")
     ap.add_argument("--origin", type=float, nargs=3, default=DEFAULT_ORIGIN)
     ap.add_argument("--yaw", type=float, default=DEFAULT_YAW)
     ap.add_argument("--settle-frames", type=int, default=30)
@@ -214,21 +249,36 @@ def main(argv):
     ap.add_argument("--out", default=os.path.join(REPO, "research", "phase2-local", "data"))
     a = ap.parse_args(argv)
 
-    steps = parse_schedule(SCHEDULES.get(a.schedule, a.schedule))
-    frames = schedule_frames(steps)
+    names = a.schedule.split(",") if all(n in SCHEDULES for n in a.schedule.split(",")) else [a.schedule]
+    scheds = {n: parse_schedule(SCHEDULES.get(n, n)) for n in names}
     ox, oy, oz = a.origin
     stamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    manifest = {"schema": "hsd-runner/1", "label": a.label, "created": stamp, "schedule": steps,
-                "schedule_frames": frames, "origin": list(a.origin), "yaw": a.yaw, "trials": []}
+    manifest = {"schema": "hsd-runner/2", "label": a.label, "created": stamp,
+                "schedules": {n: {"steps": st, "frames": schedule_frames(st)} for n, st in scheds.items()},
+                "origin": list(a.origin), "yaw": a.yaw, "census": not a.no_census, "trials": []}
 
     with AgentLink("server", a.game) as server, AgentLink("client", a.game) as client:
-        plan = [(90 + w, 900 + w, True) for w in range(a.warmup)] +                [(a.run_base + k, a.batch_base + k, False) for k in range(a.trials)]
-        for run, batch, warm in plan:
+        if not a.no_census:
+            # E0 census: client class vars (bridge_classvar_get) and both sides' settings dump.
+            for side, line in ((client, "exec user/hsd_e0_classvars"), (client, "hsd_md_dump_now 1"),
+                               (server, "hsd_md_dump_now 1")):
+                side.cmd(line)
+            time.sleep(2.0)
+        plan = [(names[0], 90 + w, 900 + w, True) for w in range(a.warmup)]
+        k = 0
+        for n in names:
+            for _ in range(a.trials):
+                plan.append((n, a.run_base + k, a.batch_base + k, False))
+                k += 1
+        for name, run, batch, warm in plan:
             trial = batch
+            steps = scheds[name]
+            frames = schedule_frames(steps)
             server.cmd(f"hsd_md_run {run}")
             client.cmd("hsd_md_run 0")           # the schedule thread sets the client label once settled
             since = client.info()["logSeq"]
-            reset = server.eval(RESET_SERVER.substitute(ox=ox, oy=oy, oz=oz, yaw=a.yaw, batch=batch, run=run))
+            yaw = SCHEDULE_YAW.get(name, a.yaw)
+            reset = server.eval(RESET_SERVER.substitute(ox=ox, oy=oy, oz=oz, yaw=yaw, batch=batch, run=run))
             sched = client.eval(SCHED_CLIENT.substitute(
                 steps=", ".join(json.dumps(s) for s in steps), ox=ox, oy=oy, oz=oz,
                 settle_frames=a.settle_frames, settle_timeout=a.settle_timeout, trial=trial, run=run))
@@ -236,11 +286,12 @@ def main(argv):
             server.cmd("hsd_md_run 0")
             client.cmd("hsd_md_run 0")
             ok, why, fps = check_pacing(lines, frames, a.fps, a.fps_tol)
-            manifest["trials"].append({"trial": trial, "run": run, "batch": batch, "reset": reset.get("reply", ""),
+            manifest["trials"].append({"trial": trial, "run": run, "batch": batch, "schedule": name, "yaw": yaw,
+                                       "schedule_frames": frames, "reset": reset.get("reply", ""),
                                        "scheduled": sched.get("reply", ""), "sched_lines": lines,
                                        "log_gap": gap, "measured_fps": fps, "ok": ok, "why": why, "warmup": warm})
             tag = "warm-up " if warm else ""
-            print(f"{tag}trial {trial} run r{run}: {'ok' if ok else 'FAILED (' + why + ')'} fps={fps}")
+            print(f"{tag}trial {trial} run r{run} {name}: {'ok' if ok else 'FAILED (' + why + ')'} fps={fps}")
             time.sleep(1.0)
 
     out = os.path.join(a.out, f"{stamp}_{a.label}")
