@@ -712,13 +712,76 @@ def build_params(rows, HS, anchor, fit_rt, SG, SGsum):
     return out
 
 
+FACE_X = -13704.5      # face line at climb height (round-1 contact origin x + 16 u hull half-width)
+LANE_A_X = -14100.0    # round-1 a2_* start x (tools/hsd_trial.py LANE_A)
+
+
+def round2_trial(T, fps):
+    """Round-2 (a2r_*) validity and outcome: did the trial reach the face at all?"""
+    cmds = T["cmds"]
+    js = edges(cmds, IN_JUMP)
+    j = js[0] if js else None
+    rel = next((i for i in range((j or 0) + 1, len(cmds)) if cmds[i]["fwd"] == 0 and cmds[i - 1]["fwd"] > 0), None)
+    k = contact_idx(cmds, j or 0)
+    t0 = cmds[j]["t"] if j is not None else None
+    land = None
+    if j is not None:
+        land = next((i for i in range(j + 1, len(cmds)) if cmds[i - 1]["ground"] == 0 and cmds[i]["ground"] == 1), None)
+    xmax = max(c["pox"] for c in cmds)
+    R = {"run": T["run"], "schedule": T["schedule"], "fps": T["fps"], "join": T["join"],
+         "start_x": cmds[0]["ox"], "jump_x": cmds[j]["ox"] if j is not None else None,
+         "jump_to_face": (FACE_X - cmds[j]["ox"]) if j is not None else None,
+         "max_x": xmax, "closest_gap_to_face": FACE_X - (xmax + 16.0),
+         "first_land_t": r(cmds[land]["t"] - t0) if land is not None and t0 else None,
+         "rel_t": r(cmds[rel]["t"] - t0) if rel is not None and t0 else None,
+         "contact": k is not None, "wr_frames": sum(1 for s in T["states"] if s.get("wr")),
+         "trav_frames": sum(1 for s in T["states"] if s.get("trav")), "hang_frames": sum(1 for s in T["states"] if s.get("hang")),
+         "state_lines": len(T["states"]), "sv_evt": sorted({e["evt"] for e in T["sv_evt"]})}
+    R["valid"] = bool(R["contact"] or R["wr_frames"] or R["trav_frames"])
+    return R
+
+
+def report_round2(rows, metas):
+    P("\n" + "=" * 100)
+    P("4c. ROUND 2 (a2r_* sessions): validity check")
+    P("=" * 100)
+    for m in metas:
+        P(f"  {m['session']}: label {m['label']} scored {m['scored']}/{m['trials_total']} trial start origins {m['trial_origins']}")
+    out = {"per_schedule": {}}
+    for sch in sorted({x["schedule"] for x in rows}):
+        xs = [x for x in rows if x["schedule"] == sch]
+        d = {"n": len(xs), "valid": sum(x["valid"] for x in xs), "start_x": st([x["start_x"] for x in xs]),
+             "jump_x": st([x["jump_x"] for x in xs]), "jump_to_face": st([x["jump_to_face"] for x in xs]),
+             "max_x": st([x["max_x"] for x in xs]), "closest_gap_to_face": st([x["closest_gap_to_face"] for x in xs]),
+             "first_land_t": st([x["first_land_t"] for x in xs]), "rel_t": st([x["rel_t"] for x in xs]),
+             "wr_frames": sum(x["wr_frames"] for x in xs), "trav_frames": sum(x["trav_frames"] for x in xs),
+             "sv_evt": sorted({e for x in xs for e in x["sv_evt"]})}
+        out["per_schedule"][sch] = d
+        P(f"  H{xs[0]['H']} {sch:<17} n={d['n']} reached the face {d['valid']}/{d['n']}; start x {fmt(d['start_x'], 1)}; jump x "
+          f"{fmt(d['jump_x'], 1)} ({fmt(d['jump_to_face'], 1)} u before the face; round 1: ~100); landed {fmt(d['first_land_t'])} s "
+          f"after the jump; W released {fmt(d['rel_t'])} s; max x {fmt(d['max_x'], 1)} (closest gap {fmt(d['closest_gap_to_face'], 1)} u); "
+          f"wr frames {d['wr_frames']} trav frames {d['trav_frames']}; dedi events {d['sv_evt']}")
+    nv = sum(x["valid"] for x in rows)
+    out["valid_trials"], out["n"] = nv, len(rows)
+    out["verdict"] = ("no round-2 trial touched the face: the a2r_* trials started at the runner default origin instead of "
+                      f"lane A (x {LANE_A_X}), so every release / press happened on the floor far from the rock" if nv == 0
+                      else f"{nv}/{len(rows)} trials reached the face")
+    P(f"  VERDICT: {out['verdict']}.")
+    out["params"] = [{"name": "round2_a2r_validity", "value": f"{nv}/{len(rows)} trials reached the face", "unit": "",
+                      "label": "meas", "n": len(rows), "spread": None,
+                      "note": "a2r_* schedules have no SCHEDULE_ORIGIN_PREFIX entry (only 'a2_' maps to lane A); no round-2 "
+                              "parameter could be measured; round-1 values stand"}]
+    out["trials"] = rows
+    return out
+
+
 def main(argv):
     ap = argparse.ArgumentParser()
     ap.add_argument("sessions", nargs="+")
     ap.add_argument("--json", default=None)
     ap.add_argument("--params", default=None)
     a = ap.parse_args(argv)
-    H_rows, SG_rows, sess_meta = [], [], []
+    H_rows, SG_rows, sess_meta, R2_rows = [], [], [], []
     for folder in a.sessions:
         S = L.load(folder)
         lab = S["runner"].get("label", S["folder"])
@@ -730,7 +793,15 @@ def main(argv):
                 "both_cvars": S["runner"].get("both_cvars"), "geometry_wall_z": S["runner"].get("geometry_wall_z"),
                 "mb_lines": {k: v for k, v in S["mb_tags"].items() if v}, "state_lines": sum(len(t["states"]) for t in S["trials"])}
         mh = re.search(r"_h(\d+)$", lab)
-        if mh:
+        if "_A2r_" in lab:                       # round-2 sessions (optional arguments; absent -> round-1 output unchanged)
+            meta["kind"], meta["H"] = "round2", int(mh.group(1)) if mh else None
+            origins = {tuple(t["origin"]) for t in S["runner"]["trials"]}
+            meta["trial_origins"] = sorted(origins)
+            for T in S["trials"]:
+                R = round2_trial(T, fps)
+                R["session"], R["H"] = S["folder"], meta["H"]
+                R2_rows.append(R)
+        elif mh:
             meta["kind"], meta["H"] = "height", int(mh.group(1))
             for T in S["trials"]:
                 if T["schedule"].startswith("a2_"):
@@ -1070,6 +1141,9 @@ def main(argv):
     for x in H_rows:
         x.pop("_T", None)
     params = build_params(main_rows, HS, anchor, fit_rt, SG_rows, SGsum)
+    if R2_rows:
+        res["round2"] = report_round2(R2_rows, [m for m in sess_meta if m.get("kind") == "round2"])
+        params.extend(res["round2"]["params"])
     P("\n" + "=" * 100)
     P("5. PARAMETERS (label: meas = read from usercmds, fit = formula fitted to usercmds, src = source/census, "
       "unknown, design-needed)")

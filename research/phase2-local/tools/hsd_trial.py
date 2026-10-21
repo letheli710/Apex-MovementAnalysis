@@ -425,7 +425,7 @@ LANE_B = (-14200.0, 5900.0, 294.92)
 # Lane C: y 6800 is flat from x -14825 to -12475 (m3/map/field_fine.json) and 81 u clear of the wall's bounds.
 LANE_C = (-14800.0, 6800.0, 294.92)
 SPAWN_PAD = (-11699.0, 512.0, 1577.046)  # visible firing-range floor (M0/M1)
-SCHEDULE_ORIGIN_PREFIX = {"g1_": LANE_A, "a2_": LANE_A, "z": (-14550.0, 6800.0, 294.92), "a1_wb": LANE_A, "a1_": LANE_B, "m4b_view": LANE_C, "m4b_pad": LANE_C, "m4_valk": LANE_C, "m4_pounce": LANE_C, "m4_stim": LANE_C, "m4_ctrl": LANE_C, "m4_pad": LANE_C, "m4_lift": LANE_C,
+SCHEDULE_ORIGIN_PREFIX = {"a2r_": LANE_A, "g1_": LANE_A, "a2_": LANE_A, "z": (-14550.0, 6800.0, 294.92), "a1_wb": LANE_A, "a1_": LANE_B, "m4b_view": LANE_C, "m4b_pad": LANE_C, "m4_valk": LANE_C, "m4_pounce": LANE_C, "m4_stim": LANE_C, "m4_ctrl": LANE_C, "m4_pad": LANE_C, "m4_lift": LANE_C,
                           "m4_grapple": LANE_A, "x_pad_": SPAWN_PAD, "e8_hop350": LANE_C, "e3_": LANE_B, "e8_fast": LANE_C, "e8_slide": LANE_C, "e6_": LANE_A, "e7_": LANE_A,
                           "e8_drop": LANE_A}
 
@@ -454,6 +454,11 @@ SCHEDULE_ORIGIN.update({"m55_nomod_d%d" % d: (-13706.0 - d, 6500.0, 294.92) for 
 SCHEDULE_ORIGIN["m55_nomod_hold"] = (-14100.0, 6500.0, 294.92)  # = LANE_A, the M4 m4_grapple_hold start
 # round 2 starts 450 u to -Y of the wall centre, running along +Y
 SCHEDULE_ORIGIN.update({n: (-14100.0, 6050.0, 294.92) for n in ("m4b_swing_cross", "m4b_swing_cross_w", "m4b_swing_cross_walk")})
+
+
+DEFAULT_ORIGIN_SCHEDULES = {"basic", "e1_walk", "e1_sprint", "e1_crouch", "e1_back", "e1_side", "e1_diag", "e1_turn",
+                            "e2_strafe", "e2_noinput", "e2_keepfwd", "e4_stand", "e4_hop0", "e4_hop3", "e4_hop43", "e5_slide",
+                            "e5_slidejump02", "e5_slidejump06"}
 
 
 def origin_for(name, default):
@@ -817,6 +822,11 @@ def main(argv):
     if names == [a.schedule]:
         counts = {a.schedule: a.trials}
     scheds = {n: parse_schedule(get_schedule(n) or n, a.fps) for n in names}
+    # Only these M1/M2 schedules run at --origin on purpose; any other schedule must map to an explicit start (an M6
+    # round-2 set once fell through to the default origin and never reached the test wall).
+    unmapped = [n for n in names if origin_for(n, None) is None and n not in DEFAULT_ORIGIN_SCHEDULES and " " not in n]
+    if unmapped:
+        raise SystemExit("no start position for: " + ", ".join(unmapped) + " (add SCHEDULE_ORIGIN / _PREFIX)")
     ox, oy, oz = a.origin
     stamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     manifest = {"schema": "hsd-runner/2", "label": a.label, "created": stamp,

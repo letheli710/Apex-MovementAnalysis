@@ -255,6 +255,10 @@ Newest entries at the bottom. Problems are tagged **[ISSUE]** and also listed in
   - Default motor identical; M4 replays 114/114.
   - M5.5 smoke identical.
 - **Unity A1/A2/A3 implementation** dispatched (practice-map M6 area, chain demos, build, Chinese guide). The A2 round-2 analysis is running.
+- **[ISSUE→fixed]** A2 round 2 (`M6_A2r_h232`, `M6_A2r_h180`, 50 trials) is invalid. The `a2r_*` names did not match the `a2_` origin prefix, so the trials started at the default origin and never reached the wall. The subagent's validity check caught it (0/50 at the face).
+  - The sessions stay on disk, marked invalid in `m6/a2_climb/A2-CLIMB.md` §8.
+  - Fix: `a2r_` is mapped to lane A, and the runner now refuses any non-legacy schedule without an explicit start position.
+  - Re-run as `M6_A2r2_*`.
 
 ## Open issues
 

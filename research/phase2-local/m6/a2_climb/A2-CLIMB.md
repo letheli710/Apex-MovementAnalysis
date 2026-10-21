@@ -17,6 +17,16 @@ py -3 a2_climb_analysis.py ../../data/20261021_153251_M6_A2b_h60 ../../data/2026
 
 The run takes about 10 s in one Python process.
 
+The round-2 sessions (§8) are optional extra arguments. Without them, the command above reproduces the round-1 outputs byte for byte; this was checked against the lead-verified files. The current `analysis_output.txt`, `results.json` and `params.json` come from the full command:
+
+```
+py -3 a2_climb_analysis.py <the 11 round-1 sessions above> \
+  ../../data/20261021_164822_M6_A2r_h232 ../../data/20261021_165145_M6_A2r_h180 \
+  --json results.json --params params.json > analysis_output.txt
+```
+
+The round-2 additions are output section 4c, the `round2` block in `results.json`, and one extra entry at the end of `params.json` (`round2_a2r_validity`).
+
 Labels: **[meas]** read directly from client usercmds; **[fit]** a formula fitted to usercmds; **[src]** source or census; **[unknown]** seen but not explained; **[design-needed]** the data cannot decide it, so it is a Unity design choice.
 
 ## 1. Data and method
@@ -275,3 +285,21 @@ HANG: not observed in S21 data -> [design-needed] (none in the native model)
 7. **High-vz contact** (r3343): gravity before the climb acceleration. Sweep the jump distance (60–110 u before the face).
 8. **Mantle reach lag** (quantised durations): a finer height sweep (H 130–175 in 5 u steps).
 9. The 9.46 u/s loss on the first exit usercmd at H90/H120 (both sides). Also the wall bounce on these heights (not re-tested), and a jump pressed in the slide-down phase.
+
+## 8. Round 2 (a2r_* sessions): invalid, nothing could be measured
+
+Sessions: `20261021_164822_M6_A2r_h232` (30 scored) and `20261021_165145_M6_A2r_h180` (20 scored). Both ran at 120 fps with the state log on, and the runner accepted every trial. The script checks them in output section 4c.
+
+- [meas] **No round-2 trial reached the rock: 0/50.** There is no wall contact, no `wr` frame, no `trav` frame, and no BEGIN_WALLRUN or MANTLE dedi event.
+- **Cause.** Every a2r_* trial started at the runner default origin, x −14750. Round 1 started at lane A, x −14100.
+  - In `tools/hsd_trial.py`, `SCHEDULE_ORIGIN_PREFIX` maps only `"a2_"` to lane A. `"a2r_"` does not match that prefix, so the schedules fell back to `DEFAULT_ORIGIN`.
+  - The sprint jump therefore happened about 753 u before the face instead of about 100 u. The player landed on the floor 0.758 s after the jump.
+  - Every W release (0.5 / 0.70 / 0.74 / 0.78 / 0.9 / 1.1 s) and every back, jump or back+jump press happened on flat floor 370–475 u short of the face.
+  - a2r_side, with W held for 2.0 s, got closest: a 240 u gap.
+- **What the data do show is only flat-floor behaviour**, already known from M2:
+  - releasing W at 299: −10.4 u/s per usercmd of ground deceleration;
+  - back press: −199.5 walk;
+  - jump pressed 0.35 s after the landing: post vz 204.2, below the 280.45 of a rested ground jump (M2 anti-multi-jump hold); horizontal 49 u/s.
+- **None of the round-2 questions is answered.** That covers the jump / back / back+jump from the attached slide (wall bounce or not), the detach clock (contact vs release), a sideways climb, back cancelling a mantle, and the mantle-cancel threshold.
+- **Effect on the model:** none. §6 and every parameter in `params.json` keep their round-1 values. The only new parameter entry is `round2_a2r_validity` = 0/50.
+- **Fix before rerunning.** Add `"a2r_": LANE_A` to `SCHEDULE_ORIGIN_PREFIX`, or rename the schedules to `a2_*`. Check that the runner trial `origin` is (−14100, 6500, 294.92), then rerun both sessions. The round-2 code path in the script will analyse them once contact occurs: it currently reports validity only, and the per-question measurements (§7 items 2–4) still need to be added for a valid rerun.
