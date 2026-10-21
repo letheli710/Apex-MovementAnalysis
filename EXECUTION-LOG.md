@@ -72,6 +72,26 @@ Newest entries at the bottom. Problems are tagged **[ISSUE]** and also listed in
   - The ground analysis re-run changed only a diagnostic field.
   - The lead's Unity re-run produced identical tables.
 - **M2 accepted** (A1–A5): `m2/M2-REPORT.md`, `m2/PARAMETER-TABLE.md`.
+- **M3 started** on branch `phase2-local/m3-tech`.
+  - Runner: fps-aware waits (`wait Xs`, `waitf N`); client `fps_max` per session; per-lane origins; `name*N` counts; legend pin verified live (`Agent_SetLegend` → Gibraltar, sprintAcceleration 100).
+  - The field has no vertical walls, so `test_geometry.py` spawns a wall-run rock the way the map editor does. Face at x -13706, about 232 u tall. One run gives climb, mantle and a 232 u drop.
+  - **[ISSUE→fixed]** A first spawn attempt used script `PrecacheModel` after level init. That raised an uncaught server script error, which shut the host game down. Fixed by using SDK `MapEdit_PrecacheModel` and wrapping every EVAL in try/catch.
+  - Lurch sweep (E3, 144 fps): full strength (about -44.5° heading change at 299 u/s) up to 25 frames after the jump press, fading linearly to 0 by about 70 frames. Back and W re-press give no lurch; walk speed gives -65°, slide speed (458) gives -37°.
+  - **[ISSUE→fixed]** The E8 lane C start was off the floor; it moved to y 6800.
+- Queued from the user (relayed): lower cosmetic graphics before the next game session to stabilise fps.
+  - Keep 1600×900. Turn vsync (`mat_vsync_mode`) and AA (`mat_antialias_mode`) off.
+  - Prefer launch args over editing `videoconfig.txt`; if it must be edited, back it up first.
+  - Verify with a short e1_walk/e2_noinput session.
+- E6/E7/E8 wall session (144 fps): 72/77 trials passed.
+  - E6 climb and wall bounces clean.
+  - E7: presses at f130–160 after the climb jump bounce off the wall; f163–166 mantle; f169+ are normal jumps on top. The mantle-boost trigger log shows presses only at traversal frac 0.04–0.09 (state 3, failed). A per-frame sweep is needed.
+- **Graphics/fps check (user request).** Launch ConVars `+mat_vsync_mode 0 +mat_antialias_mode 0` (videoconfig.txt untouched, 1600×900 kept).
+  - Result: **every trial at a steady 138.3 fps** (±0.15).
+  - Control A: the game's default vsync gives the same 138.3. The cap is external and present regardless of game settings; it looks like the G-Sync/Reflex-style cap on a 144 Hz display. Driver/system settings were not touched.
+  - Control B: vsync off + `fps_max 120` → 119.8–119.96 in 5/5 trials.
+  - **Decision:** from M3 on, the client runs at **120 fps** (below the external cap; stable). Frame rate is an experiment variable (60/120, plus the earlier 144 data).
+  - The vsync/AA-off launch ConVars stay as the default in `hsd_launch.ps1`.
+
 
 ## Open issues
 
@@ -84,5 +104,5 @@ Newest entries at the bottom. Problems are tagged **[ISSUE]** and also listed in
 | I5 | M0 | Weapon move scale (1.15 empty-handed) | fix the weapon state per run; measure a weapon-held condition in M2 |
 | I6 | M0 | Unity project: most of the existing work is uncommitted on `main` | **closed**: the old project is deprecated; M1+ uses a new project in the workspace |
 | I9 | M2 | Firing range assigns a random legend per session; class vars differ between legends | runner pins the legend (`--legend`); verify live at the next session |
-| I8 | M2 | Client frame rate can sit at ~138 fps or dip while the desktop is in use (cause unverified) | the per-trial fps check rejects such trials; re-run them; avoid heavy desktop use during sessions |
+| I8 | M2 | Client frame rate can sit at ~138 fps or dip while the desktop is in use | **mitigated in M3**: external ~138 cap confirmed (independent of game vsync); sessions now run at fps_max 120 (stable 119.9); the fps check stays |
 | I7 | M0 | The Unity batch run rewrote `ProjectSettings.asset`; delta unknown | **closed, won't fix**: the user says the old project is deprecated |
