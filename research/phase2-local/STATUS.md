@@ -10,6 +10,9 @@
 | M4b view control + grapple swing (user-approved add-on) | **done** (detach rule open, stop-loss) | per-usercmd yaw/pitch verified in MOVE-TRACE; swing/steer/detach/release momentum measured, or Unity swing smooth and controllable across anchors and speeds (stop-loss); pad re-jump | [m4/M4-REPORT.md](m4/M4-REPORT.md) §5 |
 | M5 Unity skill slots + playable build | **done** (lift / jets fail the reference accuracy; causes documented) | 2 configs, 3 presets of 3–4 skills, regression tests, Windows build + route notes | [m5/M5-REPORT.md](m5/M5-REPORT.md), [m5/PLAYTEST-GUIDE.md](m5/PLAYTEST-GUIDE.md); final: [FINAL-REPORT.md](FINAL-REPORT.md) |
 | M5.5 movement feedback & playability (user request after the first playtest) | **done** | physics-decoupled FPS camera + slide feedback, grapple states + range check, ability entities, one-key Movement Demo, HUD normal/diagnostic; simulation bit-identical with visuals on/off | [m55/ACCEPTANCE-M55.md](m55/ACCEPTANCE-M55.md), [m55/PLAYTEST-GUIDE-M55.md](m55/PLAYTEST-GUIDE-M55.md) |
+| M6-A general advanced movement (lurch/TS, climb/mantle/superglide, zipline, world) | **done** | 3 families playable, independent tests + regression, M5.5 unchanged, ≥ 3 real-input chains, Windows build + route | [m6/M6-A-REPORT.md](m6/M6-A-REPORT.md), [m6/PLAYTEST-GUIDE-M6.md](m6/PLAYTEST-GUIDE-M6.md) |
+| M6-B unique legend mobility (Alter, Loba, Ash, Valkyrie + grapple) | next | research conclusions, evidence classes, comparison; no full build without user OK | — |
+| M6-C combination playground | pending | natural combos, no stuck/over-speed/collision issues, free play, feedback entry | — |
 
 Rules in force: offline R5Flowstate and the Unity project only; no game files in git (raw logs stay local, `.gitignore`); no forged PASS; one process drives the game or the Unity editor at a time.
 

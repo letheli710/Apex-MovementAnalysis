@@ -259,6 +259,12 @@ Newest entries at the bottom. Problems are tagged **[ISSUE]** and also listed in
   - The sessions stay on disk, marked invalid in `m6/a2_climb/A2-CLIMB.md` §8.
   - Fix: `a2r_` is mapped to lane A, and the runner now refuses any non-legacy schedule without an explicit start position.
   - Re-run as `M6_A2r2_*`.
+- **M6-A done** (HSD-Unity `27898da`, `3bd822e`; lead-verified):
+  - Tests: EditMode 424/424, PlayMode 1/1.
+  - Default motor identical; M4 replays 114/114.
+  - Smoke: M5.5 route identical; demos 20/20 as expected (M5.5 12/12, M6 8/8).
+  - 4 real-input chains with failure variants; M6 practice area F–I.
+  - Build `HSD-Build\M6`; guide `m6/PLAYTEST-GUIDE-M6.md`; report `m6/M6-A-REPORT.md`.
 
 ## Open issues
 
