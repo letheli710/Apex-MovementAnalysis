@@ -213,12 +213,55 @@
  },
  "super_jump": {
   "applies": [
-   false,
-   "meas: second jump K=1..12,40 frames after the jump-off is ignored (airborne, no grace)"
+   true,
+   "meas (round 2): a second jump press after a zip jump-off applies when it comes soon after the mount lifted the player off the ground (applied at [3, 5, 8] cmds; never at >= 63 cmds in round 1); a released jump button between the presses is required"
+  ],
+  "impulse": [
+   "vz_post = vz_pre + 289.828 - 1.5 g dt (the ground-jump post-state rule), v_xy unchanged",
+   "fit (residual in A3-ZIPLINE.md)"
+  ],
+  "window_cmds_since_ground": [
+   [
+    8,
+    63
+   ],
+   "bracket [applied max, never-applied min]"
   ]
  },
  "remount_budget": [
   "3, +1 per 3 s, reset on landing (SDK bridge_zip_disc)",
   "src; diag shows consume/reset only"
+ ],
+ "view_on_ride": [
+  "yaw and pitch are pulled to the rope direction during the 0.5 s mount state (input ignored); free look afterwards; vertical rope: yaw free at once",
+  "meas (z9, z6_vert_turn)"
+ ],
+ "jump_off_direction": [
+  "along the rope, independent of the view yaw (tested to -63 deg)",
+  "meas (z9)"
+ ],
+ "jump_off_speed_law_round2": [
+  "h = min(v_ride, 400) confirmed for v_ride 0 .. 600",
+  "fit, residual 0 (round 1 + round 2)"
+ ],
+ "vertical_exit_push": [
+  "400 horizontal along the view yaw at the top",
+  "meas (z6_vert_turn)"
+ ],
+ "air_attach_round2": [
+  "held use 120 u from the rope: the client predicts a mount, the dedi never mounts and corrects the client; a tap: nothing on either side",
+  "meas (z7b/z7c)"
+ ],
+ "half_duck_parity": [
+  "duck held through the crouch-off: no hull step on either side; only the 0.17 u hang offset until landing",
+  "meas (z3_duckhold)"
+ ],
+ "grapple_zip_handoff": [
+  "while the grapple is active the client and dedi call Zipline_Use(grapple=1) every cmd; it mounts on the first cmd whose Find succeeds; entry speed = v_pre . rope_dir + 400*dt; during the 0.5 s mount state v = max(entry, rest-mount curve); afterwards identical to a rest mount; no use press needed",
+  "meas+fit (GRAPPLE-ZIP.md)"
+ ],
+ "grapple_release": [
+  "a second tactical press ends the pull; the instantaneous velocity is kept, then ordinary gravity with no drag; attack does not release",
+  "meas (GRAPPLE-ZIP.md)"
  ]
 }

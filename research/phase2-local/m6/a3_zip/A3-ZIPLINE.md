@@ -11,6 +11,20 @@ py -3 a3_zip_analysis.py ../../data/20261021_150043_M6_A3_zip > analysis_output.
 The script writes `results.json` (per-trial measurements, fit tables) and `params.json` (the Unity model with evidence
 labels) next to itself. You can pass several session folders, and `--json` / `--params` override the output paths.
 
+**Round 2 and the grapple session** (§9 and `GRAPPLE-ZIP.md`) are optional arguments. The files currently in this
+folder come from the extended command:
+
+```
+py -3 a3_zip_analysis.py ../../data/20261021_150043_M6_A3_zip \
+    --round2 ../../data/20261021_162442_M6_A3_zip2 --grapple ../../data/20261021_162814_M6_G_grapple > analysis_output.txt
+```
+
+- The round-1 command above still reproduces the round-1 outputs byte for byte (checked by md5).
+- The extended `analysis_output.txt` is the round-1 text followed by the ROUND 2 and GRAPPLE sections.
+- `results.json` gains the keys `round2` and `grapple`.
+- `params.json` gains new keys, and `super_jump` is replaced: round 2 overturns the round-1 "no Super Jump" result.
+  §4 is kept as the round-1 record.
+
 Evidence labels:
 - **[meas]**: measured here.
 - **[fit]**: fitted here; the residual is given.
@@ -213,7 +227,10 @@ dedi `[ZIP-JUMPOFF]` velocity (70/70), and the MT post-state equals the diag val
     - The duck was a 1-command tap released on the detach command, so the late-latch case (`bridge_halfduck_zip_parity
       0`) was **not exercised**. That needs duck held through and after the detach [open].
 
-## 4. Super Jump (Q4)
+## 4. Super Jump (Q4): round-1 record
+
+> **Superseded by §9.2.** Super Jump does exist. Here the second press came 63 or more commands after the player left
+> the ground, which is outside the window.
 
 | K (waitf) | second press after the jump-off | height above floor | applied? |
 |---|---|---|---|
@@ -294,7 +311,14 @@ JUMP-OFF (IN_JUMP press while attached, any state):
   held move keys ignored on this cmd; normal air control (500 u/s^2, wish cap 69) from the next cmd  [meas]
 CROUCH-OFF (IN_DUCK press while attached):
   origin unchanged; v_out = h_rope * min(v, 400), vz = 0                                     [fit, 1 speed]
-SUPER JUMP: a jump press while airborne after a jump-off does nothing (K = 1..41 cmds)       [meas]
+SUPER JUMP (round 2, §9.2): after a zip jump-off, a new jump press (button released between the presses) within the
+  window since the mount lifted the player off the ground (applied at 3..8 cmds, never at >= 63) applies a ground jump:
+  vz_post = vz_pre + 289.828 - 1.5 g dt, v_xy unchanged                                      [meas/fit, resid <= 0.01]
+VIEW (round 2): during the 0.5 s mount state yaw and pitch are driven to the rope direction and input is ignored;
+  free look from k = 61; on the vertical rope yaw is free at once                           [meas]
+JUMP-OFF DIRECTION (round 2): along the rope, never along the view (view yaw up to -63 deg)  [meas]
+VERTICAL TOP EXIT PUSH (round 2): 400 along the view yaw (heading - yaw = 0.000 at yaw -89.4) [meas]
+GRAPPLE -> ZIPLINE: see GRAPPLE-ZIP.md
 ```
 
 ## 8. Open questions and suggested follow-ups
@@ -322,3 +346,109 @@ SUPER JUMP: a jump press while airborne after a jump-off does nothing (K = 1..41
 11. **Client hang offset.** Why does the client hang 0.17 u lower and 0.23 u to −y than the dedi, with 4/95 exits
     showing no offset? It might come from ziplineViewOffset or a prediction correction; it is irrelevant for feel.
 12. **The 400 constant** (jump-off cap, crouch-off and the vertical-exit push): no source reference found; it is native.
+
+Round 2 (§9) settles items 1, 2 and 7 and part of 3, 8 and 10.
+
+## 9. Round 2 (`20261021_162442_M6_A3_zip2`)
+
+- **Session.** 76 trials, all ok; 1 warm-up skipped, which leaves 75 trials, 5 per schedule. Gibraltar, geometry
+  m6zip.
+- **The client `[HSD-STATE]` logger works this time.** It matches 28455/28455 HSD frames by time, and its `zip=` flag
+  flips on the mount command and off on the exit command.
+
+### 9.1 Jump-off law across ride speeds (z5b, z8, z9) — confirmed
+
+- **Result:** v_out = ĥ_rope·min(v_ride, 400) + ẑ·289.828, with residual **0.000 on all 55 round-2 exits**, on client
+  MT and dedi MT alike. That gives 125 manual exits over both rounds with residual 0.
+
+| schedule | ride v before the jump | v_out | dedi state |
+|---|---|---|---|
+| z5b M=1 | 0 | (0, 0, 289.828) | 2 |
+| z5b M=3 / M=6 | 13.3 / 28.3 | (13.3 / 28.3, 0, 289.828) | 2 |
+| z8_t02 / t04 | 123.4 / 243.4 | (123.4 / 243.4, 0, 289.828) | 2 |
+| z8_t10 / t16 | 503.4 / 600.0 | (400, 0, 289.828) | 3 |
+| z9_yaw45 / yaw90 | 583–585 | (400, 0, 289.828) | 3 |
+
+- Ride speeds now covered: 0, 13, 28, 123, 243, 303, 423, 503, 584 and 600 [fit].
+- The 400 cap is exactly a cap (min); there is no low clamp (v = 0 gives h = 0).
+
+### 9.2 Super Jump (z5b) — it exists
+
+| schedule | jump-off M cmds after the mount | 2nd press K after the jump-off | cmds off the ground | button released? | applied |
+|---|---|---|---|---|---|
+| z5b_m1_k1 | 1 | 1 | 2 | **no**: the schedule's up and down edges fall on the same frame, so jump stays held | 0/5 |
+| z5b_m1_k2 | 1 | 2 | 3 | yes | **5/5** |
+| z5b_m1_k4 | 1 | 4 | 5 | yes | **5/5** |
+| z5b_m3_k2 | 3 | 2 | 5 | yes | **5/5** |
+| z5b_m6_k2 | 6 | 2 | 8 | yes | **5/5** |
+
+- **The second jump is an ordinary jump impulse on top of the jump-off.**
+  - Rule: vz_post = vz_pre + 289.828 − 1.5·g·dt. This is the same post-state rule as a ground jump (0 → 280.44).
+  - dvz − gravity step = 286.705 (sd 0.005); residual vs the rule mean 0.002, max |0.007| [fit, 20 trials].
+  - v_xy is unchanged.
+  - Result: vz ≈ 564 instead of ≈ 283. The apex rises **218 u** above the jump-off point instead of 56.
+- **Window** [meas, bracket]. Applied when the second press comes 3–8 commands after the mount lifted the player off
+  the ground. Never applied at 63 or more commands (round 1, 40/40).
+  - The mount lifts the player off the ground on the use command (+22 u).
+  - The jump-off happened about 21 u above the floor, inside the blend.
+  - The window is consistent with a ground-jump grace (coyote) period counted from leaving the ground. It is also
+    consistent with a window counted from the mount, because both start on the same command. `jump_graceperiod` is
+    still unread.
+- **The jump-off itself never needs ground**, and the second press needs a fresh press edge.
+
+### 9.3 View during the ride and jump-off direction (z9, z6_vert_turn)
+
+- **Flat rope.** The view turn input (right, 90°/s) is ignored during the mount state.
+  - The yaw nudges at most 0.3–0.9° and is pulled back to the rope direction.
+  - From **k = 61** (the state 2→3 switch) the yaw turns freely at 90.0°/s.
+  - Final yaw: z9_yaw45 −27.0° (planned −45), z9_yaw90 −63.1° (planned −90).
+  - This is the same mechanism as the round-1 pitch pull (pitch → rope pitch).
+- **The jump-off follows the rope, not the view.** The heading is 0.000° (rope direction) with the view at −27° and
+  −63°, and |h| = 400 in 10/10 trials [meas].
+- **Vertical rope.**
+  - The yaw follows the input at once: from the first press at k = 37, at 180°/s.
+  - **The +400 top-exit push follows the view yaw**: heading − yaw = 0.000°, |h| = 400.0 and vz = 600 in 5/5 trials
+    (yaw −89.3 … −90.2) [meas].
+
+### 9.4 Air grab (z7b tap, z7c hold) — no real air mount
+
+The player started 120 u from Z1, facing it (yaw 90), pitch −15, and jumped.
+
+| | press | P → rope | rope.z − P.z | client | dedi |
+|---|---|---|---|---|---|
+| z7b tap | 19 cmds after the jump | 120.3 | −8.0 (rope below P) | no Find, no event | IN_USE seen, no event |
+| z7c hold | 13 cmds after the jump | 120.0 | +1.3 (rope above P) | **predicts a mount**: `[ZIPRAIL-USE] result=1` three times per trial, client cooldowns 0.1 → 0.2 → 1.0 | IN_USE on 72 cmds, **no Find / use event, never mounts** |
+
+- In z7c the client rides predicted for 11 and then 16 frames, and each time it is corrected back onto the dedi's
+  ballistic path: position jumps of 75.7 and 85–92 u.
+- MOVE-TRACE confirms it: the client gap is 6 commands, and the dedi rows over the same commands are plain air
+  movement.
+- Two conclusions:
+  1. The client's Find accepted P 1.3 u below the rope but not P 8 u above it [one contrast; hypothesis: the rope point
+     must lie above P].
+  2. **The dedi refuses an airborne mount at 120 u** even when the client accepts. Nothing in the dedi diag explains
+     it: no `ZIP-USEDISPATCH` line. Air mount is therefore client/dedi-divergent here and unusable [meas].
+- The client-side cooldown ladder 0.1 / 0.2 / 1.0 s is real: it appears as `cd=` in the client diag (§A3 audit item
+  answered).
+
+### 9.5 Duck held through the crouch-off (z3_duckhold) — no half-duck divergence
+
+- v_out = (400, 0, 0) at a ride speed of 423.4, residual 0.
+- With duck held for 1 s through and after the exit:
+  - no origin step larger than 2 u on either side (0 on client, 0 on dedi);
+  - dz (dedi − client) stays at the 0.17 hang offset in the air, then 0 (±0.016) after landing;
+  - both sides land on the same command.
+- The MT duck field goes 1 (in air) → 2 about 22 commands after landing → 3 on release → 0, identically on both
+  sides. The player does not complete a duck in the air after a zip crouch-off.
+- So with `bridge_halfduck_zip_parity 0` nothing diverges in this case [meas, 5/5].
+
+### 9.6 Updated open questions
+
+- The Super Jump window between 9 and 62 commands. Also: is it counted from leaving the ground or from the mount
+  (mount from a ledge without ground contact)?
+- Why the dedi refuses the air mount. Test a closer air mount (≤ 40 u) and log the dedi's `Zipline_Find` and Use
+  dispatch.
+- The client Find's vertical condition (rope above P?).
+- Downhill rope.
+- Mount with entry speed: partly answered by the grapple handoff (GRAPPLE-ZIP.md), where entry speed acts as a floor
+  during the mount state.

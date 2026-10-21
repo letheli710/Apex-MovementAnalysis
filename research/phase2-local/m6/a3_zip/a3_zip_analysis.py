@@ -38,7 +38,7 @@ ROPES = {
     "Z2": {"a": (-14500.0, 6350.0, 394.92), "b": (-12900.0, 6350.0, 694.92), "detach": 100.0, "vertical": False},
     "Z3": {"a": (-14700.0, 6500.0, 314.92), "b": (-14700.0, 6500.0, 1114.92), "detach": 0.0, "vertical": True},
 }
-SCHED_ROPE = {"z6_up": "Z2", "z6_vert": "Z3"}  # everything else uses Z1
+SCHED_ROPE = {"z6_up": "Z2", "z6_vert": "Z3", "z6_vert_turn": "Z3"}  # everything else uses Z1
 FLOOR_Z = 294.92
 EYE_RAISE = 72.0          # Zipline_Find search origin = origin + 72 (SOURCE-AUDIT A3, zipline_exit_parity.cpp:281)
 IN_USE, IN_JUMP, IN_DUCK = 0x20, 0x2, 0x4
@@ -674,6 +674,8 @@ def main():
     ap.add_argument("sessions", nargs="+")
     ap.add_argument("--json", default=None)
     ap.add_argument("--params", default=None)
+    ap.add_argument("--round2", nargs="*", default=[], help="M6-A3 round-2 session folder(s) (optional)")
+    ap.add_argument("--grapple", nargs="*", default=[], help="M6-G grapple session folder(s) (optional)")
     args = ap.parse_args()
     here = os.path.dirname(os.path.abspath(__file__))
     jpath = args.json or os.path.join(here, "results.json")
@@ -931,6 +933,10 @@ def main():
                "census": {k: census.get(k) for k in cvkeys}, "blend_fit": bl,
                "find": {"ok_dist": stats(ok_dist), "ok_angle": stats(ok_ang), "fail_min_angle_R130": stats(fail_ang)},
                "skipped": [x for S in sessions for x in S["skipped"]], "trials": [clean(r) for r in res]}
+    ext = None
+    if args.round2 or args.grapple:
+        ext = run_extensions(args.round2, args.grapple, g_meas)
+        results.update(ext["results"])
     with open(jpath, "w", encoding="utf-8") as fh:
         json.dump(results, fh, indent=1)
     a1all = [r["accel_phase1"]["mean"] for r in m_ok if r["accel_phase1"]]
@@ -977,10 +983,538 @@ def main():
         "super_jump": {"applies": [False, "meas: second jump K=1..12,40 frames after the jump-off is ignored (airborne, no grace)"]},
         "remount_budget": ["3, +1 per 3 s, reset on landing (SDK bridge_zip_disc)", "src; diag shows consume/reset only"],
     }
+    if ext:
+        params.update(ext["params"])
     with open(ppath, "w", encoding="utf-8") as fh:
         json.dump(params, fh, indent=1)
     P("\nwrote %s and %s" % (os.path.basename(jpath), os.path.basename(ppath)))
 
+
+
+# ============================================================================= round 2 + grapple (optional arguments)
+# Everything below runs only with --round2 / --grapple; the round-1 command line and its outputs are unchanged.
+STATE_RE = re.compile(r"\[HSD-STATE\]\s*(.*)")
+JUMP_V = 289.828
+
+
+def load_state(folder):
+    """Client [HSD-STATE] lines: run -> list of dicts sorted by t (zip / gr / trav / mant / hang / wr / ph / glide)."""
+    out = {}
+    for fn in sorted(glob.glob(os.path.join(folder, "platform", "logs", "client", "*", "script*.log"))):
+        with open(fn, encoding="utf-8", errors="replace") as fh:
+            for line in fh:
+                m = STATE_RE.search(line)
+                if not m:
+                    continue
+                kv = dict(re.findall(r"(\w+)=(\S+)", m.group(1)))
+                d = {"t": fnum(kv.get("t"))}
+                for k in ("trav", "mant", "hang", "wr", "zip", "gr", "ph"):
+                    d[k] = kv.get(k) == "true"
+                d["glide"] = fnum(kv.get("glide"))
+                out.setdefault("r%s" % kv.get("run"), []).append(d)
+    for k in out:
+        out[k].sort(key=lambda d: d["t"])
+    return out
+
+
+def attach_state(t, states):
+    ss = states.get("r%d" % t["run"], [])
+    j, n_ok = 0, 0
+    for f in t["frames"]:
+        while j < len(ss) - 1 and ss[j]["t"] < f["t"] - 0.004:
+            j += 1
+        if ss and abs(ss[j]["t"] - f["t"]) < 0.005:
+            f["st"] = ss[j]
+            n_ok += 1
+        else:
+            f["st"] = None
+    return n_ok
+
+
+def state_runs(fr, key):
+    """[(first, last)] frame index runs where state[key] is true."""
+    runs, a = [], None
+    for i, f in enumerate(fr):
+        on = bool(f.get("st") and f["st"][key])
+        if on and a is None:
+            a = i
+        if not on and a is not None:
+            runs.append((a, i - 1))
+            a = None
+    if a is not None:
+        runs.append((a, len(fr) - 1))
+    return runs
+
+
+def heading(v):
+    return math.degrees(math.atan2(v[1], v[0]))
+
+
+def angdiff(a, b):
+    return (a - b + 180.0) % 360.0 - 180.0
+
+
+def v_std_curve(fts, v1=8.333, a1=600.0, a2=400.0, k_switch=60, cap=600.0):
+    """Rest-mount ride speed for k = 0..len(fts)-1 (k = cmds after the mount cmd; fts[k] = frame time of cmd k)."""
+    out = [0.0]
+    for k in range(1, len(fts)):
+        v = v1 if k == 1 else out[-1] + (a1 if k <= k_switch else a2) * fts[k]
+        out.append(min(v, cap))
+    return out
+
+
+def s_or(x, key):
+    return x[key] if x else None
+
+
+def run_round2(folders, g):
+    out = {"sessions": [], "trials": []}
+    P("\n" + "=" * 100 + "\nROUND 2 (M6-A3 zip2)\n" + "=" * 100)
+    allt = []
+    for fo in folders:
+        S = load_session(fo)
+        states = load_state(fo)
+        out["sessions"].append(S["folder"])
+        n_st = sum(attach_state(t, states) for t in S["trials"])
+        n_fr = sum(len(t["frames"]) for t in S["trials"])
+        P("session %s  label=%s  legend=%s  trials used %d, skipped %s ; HSD-STATE matched to %d/%d frames" % (
+            S["folder"], S["runner"].get("label"), S["runner"].get("legend"), len(S["trials"]),
+            ["r%d %s (%s)" % (x["run"], x["schedule"], x["why"]) for x in S["skipped"]], n_st, n_fr))
+        allt.extend(S["trials"])
+    by = {}
+    for t in allt:
+        by.setdefault(t["schedule"], []).append(t)
+    rows = []
+    # ---------------------------------------------------------------- jump-off law over ride speeds (z5b, z8, z9)
+    P("\n[R2-1] Jump-off law v_out = h_rope * min(v_ride, 400) + z * 289.828 over new ride speeds")
+    P("%-14s %-6s %-6s %-9s %-26s %-26s %-9s %-7s %-8s" % ("schedule", "run", "state", "ride_v", "exit v cl (MT)", "exit v sv",
+                                                            "resid", "zip_fr", "mountlat"))
+    law = []
+    for sch in sorted(by):
+        if not (sch.startswith("z5b") or sch.startswith("z8") or sch.startswith("z9")):
+            continue
+        for t in by[sch]:
+            r = analyse_trial(t, g)
+            zr = state_runs(t["frames"], "zip")
+            r["zip_state_frames"] = sum(b - a + 1 for a, b in zr)
+            res_sv = None
+            if r.get("exit_v_sv") and r.get("exit_pred_min400"):
+                res_sv = rnd(norm(sub(tuple(r["exit_v_sv"]), tuple(r["exit_pred_min400"]))), 4)
+            r["exit_resid_min400_sv"] = res_sv
+            st_ = r.get("diag_jumpoff_sv") and r["diag_jumpoff_sv"]["state"]
+            P("%-14s r%-5d %-6s %-9s %-26s %-26s %-9s %-7s %-8s" % (sch, t["run"], st_, r.get("ride_v_before"), r.get("exit_v_cl"),
+                                                                    r.get("exit_v_sv"), r.get("exit_resid_min400_cl"),
+                                                                    r["zip_state_frames"], r.get("mount_latency_frames")))
+            if r.get("exit_resid_min400_cl") is not None:
+                law.append(r)
+            rows.append(r)
+    P("  residual |v_cl - pred| over %d round-2 exits: %s ; dedi: %s" % (len(law), stats([r["exit_resid_min400_cl"] for r in law]),
+                                                                       stats([r["exit_resid_min400_sv"] for r in law])))
+    P("  ride speeds covered (round 2): %s" % sorted(set(round(r["ride_v_before"], 1) for r in law)))
+    # ---------------------------------------------------------------- super jump the community way (z5b)
+    P("\n[R2-2] Super Jump: jump-off M cmds after the mount (still near the ground), second jump K cmds after it")
+    P("%-11s %-6s %-4s %-4s %-9s %-7s %-9s %-9s %-10s %-8s %-7s %-8s" % ("schedule", "run", "M", "K", "released", "dk_air",
+                                                                        "vz_pre", "vz_post", "dvz-grav", "resid", "dvxy", "apex+"))
+    sj = []
+    for sch in sorted(by):
+        if not sch.startswith("z5b"):
+            continue
+        for t in by[sch]:
+            fr = t["frames"]
+            je = edges_of(t, "jump")
+            ju = edges_of(t, "jump", "up")
+            iu = edge_index(fr, edges_of(t, "use")[0])
+            ij = [edge_index(fr, e) for e in je]
+            released = not (ju and len(je) > 1 and ju[0]["frame"] == je[1]["frame"])
+            i2 = ij[1]
+            f2, f1 = fr[i2], fr[i2 - 1]
+            dvz = f2["vz"] - (f1["vz"] - g * f2["ft"])
+            pred = JUMP_V - 0.5 * g * f2["ft"]
+            applied = dvz > 5
+            apex = max(f["oz"] for f in fr[ij[0]:]) - fr[ij[0]]["oz"]
+            row = {"schedule": sch, "run": t["run"], "M": ij[0] - iu, "K": i2 - ij[0], "released": released,
+                   "dk_air": i2 - iu, "vz_pre": rnd(f1["vz"], 3), "vz_post": rnd(f2["vz"], 3), "dvz_minus_grav": rnd(dvz, 3),
+                   "applied": applied, "resid_vs_jump": rnd(dvz - pred, 3) if applied else None,
+                   "dvxy": rnd(math.hypot(f2["vx"], f2["vy"]) - math.hypot(f1["vx"], f1["vy"]), 3),
+                   "apex_gain": rnd(apex, 2), "ground_before": f1["ground"], "jumpoff_v": rnd(vel(fr[ij[0]]), 3),
+                   "jumpoff_z_above_floor": rnd(fr[ij[0]]["oz"] - FLOOR_Z, 2)}
+            sj.append(row)
+            P("%-11s r%-5d %-4d %-4d %-9s %-7d %-9s %-9s %-10s %-8s %-7s %-8s" % (sch, t["run"], row["M"], row["K"], released,
+                                                                                  row["dk_air"], row["vz_pre"], row["vz_post"],
+                                                                                  row["dvz_minus_grav"], row["resid_vs_jump"],
+                                                                                  row["dvxy"], row["apex_gain"]))
+    ap_ = [r for r in sj if r["applied"]]
+    P("  applied %d/%d ; not applied (schedule, button released between presses): %s" % (
+        len(ap_), len(sj), sorted(set((r["schedule"], r["released"]) for r in sj if not r["applied"]))))
+    P("  applied: dvz - gravity step %s ; model vz_post = vz_pre + 289.828 - 1.5 g dt residual %s" % (
+        stats([r["dvz_minus_grav"] for r in ap_]), stats([r["resid_vs_jump"] for r in ap_])))
+    P("  cmds since the mount lifted the player off the ground, at the second press: applied %s ; round 1 (never applied)"
+      " had >= 63" % sorted(set(r["dk_air"] for r in ap_)))
+    P("  jump-off height above the floor %s ; apex gain above the jump-off point: applied %s vs not applied %s" % (
+        stats([r["jumpoff_z_above_floor"] for r in sj]), stats([r["apex_gain"] for r in ap_]),
+        stats([r["apex_gain"] for r in sj if not r["applied"]])))
+    out["super_jump"] = sj
+    # ---------------------------------------------------------------- view turn during the ride (z9) + vertical turn
+    P("\n[R2-3] View yaw during the ride and the exit direction")
+    vt = []
+    for sch in ("z9_yaw45", "z9_yaw90", "z6_vert_turn"):
+        for t in by.get(sch, []):
+            fr = t["frames"]
+            iu = edge_index(fr, edges_of(t, "use")[0])
+            ir = edge_index(fr, edges_of(t, "right")[0])
+            irr = edge_index(fr, edges_of(t, "right", "up")[0])
+            kfree = None
+            for i in range(ir, irr):
+                if abs(angdiff(fr[i]["yaw"], fr[i - 1]["yaw"])) >= 0.5 and abs(angdiff(fr[i + 1]["yaw"], fr[i]["yaw"])) >= 0.5:
+                    kfree = i
+                    break
+            rates = [abs(angdiff(fr[i]["yaw"], fr[i - 1]["yaw"])) / fr[i]["ft"] for i in range((kfree or ir) + 2, irr - 1)]
+            nudge = max((abs(fr[i]["yaw"]) for i in range(ir, kfree or irr)), default=None)
+            row = {"schedule": sch, "run": t["run"], "right_down_k": ir - iu, "free_turn_k": (kfree - iu) if kfree else None,
+                   "max_abs_yaw_before_free": rnd(nudge, 3), "turn_rate_deg_s": rnd(st.median(rates), 2) if rates else None,
+                   "yaw_end_turn": rnd(fr[irr]["yaw"], 3)}
+            g2 = mt_gap(t["cl"])
+            if g2:
+                c = t["cl"][g2[1]]
+                v = (c["vx"], c["vy"], c["vz"])
+                ie = next((i for i in range(iu + 1, len(fr)) if fr[i].get("st") and not fr[i]["st"]["zip"]
+                           and fr[i - 1].get("st") and fr[i - 1]["st"]["zip"]), None)
+                yaw_exit = fr[ie]["yaw"] if ie is not None else None
+                sv_ = t["sv"].get(g2[1])
+                row.update({"exit_v_cl": rnd(v, 3), "exit_v_sv": rnd((sv_["vx"], sv_["vy"], sv_["vz"]), 3) if sv_ else None,
+                            "exit_h_speed": rnd(math.hypot(v[0], v[1]), 3), "exit_heading": rnd(heading(v), 3),
+                            "yaw_at_exit": rnd(yaw_exit, 3),
+                            "heading_minus_yaw": rnd(angdiff(heading(v), yaw_exit), 3) if yaw_exit is not None else None,
+                            "heading_minus_rope": rnd(angdiff(heading(v), 0.0), 3)})
+            vt.append(row)
+            P("  %-13s r%d right@k%s free turn from k%s (max |yaw| before %s) rate %s deg/s yaw %s ; exit v %s |h| %s heading %s"
+              " yaw_exit %s (heading-yaw %s, heading-rope %s)" % (
+                  sch, t["run"], row["right_down_k"], row["free_turn_k"], row["max_abs_yaw_before_free"], row["turn_rate_deg_s"],
+                  row["yaw_end_turn"], row.get("exit_v_cl"), row.get("exit_h_speed"), row.get("exit_heading"), row.get("yaw_at_exit"),
+                  row.get("heading_minus_yaw"), row.get("heading_minus_rope")))
+    out["view_turn"] = vt
+    # ---------------------------------------------------------------- air grab (z7b tap, z7c hold)
+    P("\n[R2-4] Air grab (start 120 u from Z1 at y 6680, facing +Y, pitch -15)")
+    ag = []
+    for sch in ("z7b_air", "z7c_air_hold"):
+        for t in by.get(sch, []):
+            fr = t["frames"]
+            iu = edge_index(fr, edges_of(t, "use")[0])
+            pre = fr[iu - 1]
+            Pp = add(pos(pre), (0.0, 0.0, EYE_RAISE))
+            eye = eye_dir(pre["pitch"], pre["yaw"])
+            sP = max(0.0, min(rope_len("Z1"), rope_param("Z1", Pp)))
+            b = find_angle_min("Z1", Pp, eye, 130.0)
+            ucl = [d for d in t["diag"] if d["tag"] == "ZIPRAIL-USE" and d["side"] == "cl" and "result" in d["kv"]]
+            usv = [d for d in t["diag"] if d["tag"] == "ZIPRAIL-USE" and d["side"] == "sv" and "result" in d["kv"]]
+            zr = state_runs(fr, "zip")
+            jumps = [rnd(norm(sub(pos(fr[b_ + 1]), pos(fr[b_]))), 2) for a_, b_ in zr if b_ + 1 < len(fr)]
+            g2 = mt_gap(t["cl"])
+            sv_use = sum(1 for k in range(t["cmd_range"][0], t["cmd_range"][1] + 1) if k in t["sv"] and t["sv"][k]["buttons"] & IN_USE)
+            row = {"schedule": sch, "run": t["run"], "press_k_after_jump": iu - edge_index(fr, edges_of(t, "jump")[0]),
+                   "o_pre": rnd(pos(pre), 2), "v_pre": rnd(vel(pre), 2), "P_to_rope": rnd(norm(sub(rope_point("Z1", sP), Pp)), 2),
+                   "rope_minus_P_z": rnd(394.92 - Pp[2], 2), "min_angle_R130": rnd(b[0], 2) if b else None,
+                   "cl_use_events": [(d["cmd"], d["kv"].get("result"), d["kv"].get("cd")) for d in ucl],
+                   "sv_use_events": len(usv), "zip_state_runs": zr, "pos_jump_after_zip_run": jumps,
+                   "mt_cl_gap": list(g2) if g2 else None, "sv_cmds_with_IN_USE": sv_use}
+            ag.append(row)
+            P("  %-13s r%d press k+%d after the jump: o %s v %s P->rope %s rope-P z %s minAng %s | client use %s | dedi use events %d,"
+              " dedi cmds with IN_USE %d | zip-state runs %s, position jump after each %s, MT cl gap %s" % (
+                  sch, t["run"], row["press_k_after_jump"], row["o_pre"], row["v_pre"], row["P_to_rope"], row["rope_minus_P_z"],
+                  row["min_angle_R130"], row["cl_use_events"], row["sv_use_events"], sv_use, zr, jumps, row["mt_cl_gap"]))
+    out["air_grab"] = ag
+    # ---------------------------------------------------------------- duck held through the crouch-off
+    P("\n[R2-5] Crouch-off with duck held 1 s (half-duck parity)")
+    dh = []
+    for t in by.get("z3_duckhold", []):
+        r = analyse_trial(t, g)
+        k0 = mt_gap(t["cl"])[1]
+        dz_air, dz_gnd, steps, duckseq, prev = [], [], {"cl": 0, "sv": 0}, [], None
+        for k in range(k0, k0 + 150):
+            c, s_ = t["cl"].get(k), t["sv"].get(k)
+            if not (c and s_):
+                continue
+            (dz_gnd if c["ground"] == 1 and s_["ground"] == 1 else dz_air).append(s_["oz"] - c["oz"])
+            for side, rr in (("cl", c), ("sv", s_)):
+                if rr["poz"] is not None and rr["ground"] == 0 and rr["pvz"] is not None:
+                    if abs((rr["poz"] - rr["oz"]) - 0.5 * (rr["vz"] + rr["pvz"]) / 120.0) > 2.0:
+                        steps[side] += 1
+            key = (c["duck"], s_["duck"])
+            if key != prev:
+                duckseq.append((k - k0, key))
+            prev = key
+        row = {"run": t["run"], "exit_v_cl": r.get("exit_v_cl"), "ride_v": r.get("ride_v_before"),
+               "resid_min400": r.get("exit_resid_min400_cl"), "dz_air_sv_minus_cl": stats(dz_air),
+               "dz_ground_sv_minus_cl": stats(dz_gnd), "z_steps_gt2u": steps, "duck_field_seq": duckseq[:6],
+               "land_cmd_cl_sv": r.get("land_cmd_cl_sv"), "hsd_crouch_values": sorted(set(str(f["crouch"]) for f in t["frames"]))}
+        dh.append(row)
+        P("  r%d exit v %s (ride %s, resid %s) | dz sv-cl air %s ground [%s, %s] | z steps >2u %s | MT duck (cl,sv) %s | landing"
+          " cmd cl/sv %s | HSD crouch %s" % (t["run"], row["exit_v_cl"], row["ride_v"], row["resid_min400"], s_or(stats(dz_air), "mean"),
+                                             s_or(stats(dz_gnd), "min"), s_or(stats(dz_gnd), "max"), steps, duckseq[:5],
+                                             row["land_cmd_cl_sv"], row["hsd_crouch_values"]))
+    out["duck_hold"] = dh
+    out["jumpoff_rows"] = [{k: r.get(k) for k in ("schedule", "run", "ride_v_before", "exit_v_cl", "exit_v_sv", "exit_resid_min400_cl",
+                                                  "exit_resid_min400_sv", "diag_jumpoff_sv", "zip_state_frames", "exit_kind")} for r in rows]
+    out["n_trials"] = len(allt)
+    return out
+
+
+def run_grapple(folders, g):
+    out = {"sessions": []}
+    P("\n" + "=" * 100 + "\nGRAPPLE (M6-G: release, momentum, grapple -> zipline handoff)\n" + "=" * 100)
+    allt = []
+    for fo in folders:
+        S = load_session(fo)
+        states = load_state(fo)
+        out["sessions"].append(S["folder"])
+        n_st = sum(attach_state(t, states) for t in S["trials"])
+        P("session %s  label=%s  legend=%s  trials used %d, skipped %s ; HSD-STATE matched to %d/%d frames" % (
+            S["folder"], S["runner"].get("label"), S["runner"].get("legend"), len(S["trials"]),
+            ["r%d %s (%s)" % (x["run"], x["schedule"], x["why"]) for x in S["skipped"]], n_st,
+            sum(len(t["frames"]) for t in S["trials"])))
+        allt.extend(S["trials"])
+    by = {}
+    for t in allt:
+        by.setdefault(t["schedule"], []).append(t)
+    P("\n[G1] Grapple release (second tactical or attack 72 cmds after the grapple press) vs hold")
+
+    def base(t):
+        fr = t["frames"]
+        ip = edge_index(fr, edges_of(t, "offhand1")[0])
+        gr = state_runs(fr, "gr")
+        lift = next((i for i in range(ip, len(fr)) if fr[i]["ground"] == 0), None)
+        return fr, ip, gr, lift
+
+    hold_v = {}
+    for t in by.get("g1_hold", []):
+        fr, ip, gr, lift = base(t)
+        for i in range(ip, len(fr)):
+            hold_v.setdefault(i - ip, []).append(vel(fr[i]))
+    g1 = []
+    for sch in ("g1_rel_tac", "g1_rel_attack", "g1_hold"):
+        for t in by.get(sch, []):
+            fr, ip, gr, lift = base(t)
+            row = {"schedule": sch, "run": t["run"], "gr_runs_rel": [(a - ip, b - ip) for a, b in gr],
+                   "gr_frames": sum(b - a + 1 for a, b in gr), "liftoff_k": (lift - ip) if lift is not None else None}
+            sp = [norm(vel(f)) for f in fr]
+            kmax = max(range(ip, len(fr)), key=lambda i: sp[i])
+            row["max_speed"] = rnd(sp[kmax], 3)
+            row["max_speed_k"] = kmax - ip
+            stop = next((i for i in range(ip + 1, len(fr)) if sp[i - 1] - sp[i] > 150), None)
+            row["pull_stop_k"] = (stop - ip) if stop else None
+            row["pull_stop_o"] = rnd(pos(fr[stop]), 2) if stop else None
+            row["pull_stop_v_before_after"] = (rnd(vel(fr[stop - 1]), 3), rnd(vel(fr[stop]), 3)) if stop else None
+            first = edges_of(t, "offhand1")[0]["frame"]
+            sec = [e for e in t["edges"] if e["edge"] == "down" and e["key"] in ("offhand1", "attack") and e["frame"] != first]
+            if sec:
+                i2 = edge_index(fr, sec[0])
+                row["second_press_k"] = i2 - ip
+                rel = None
+                for i in range(i2, len(fr) - 6):
+                    if all(fr[j]["ground"] == 0 and math.hypot(fr[j]["vx"] - fr[j - 1]["vx"], fr[j]["vy"] - fr[j - 1]["vy"]) < 0.05
+                           for j in range(i, i + 6)):
+                        rel = i
+                        break
+                if rel is not None and stop is not None and rel >= stop:
+                    rel = None   # the pull ended at the wall, not at the press
+                row["release_k"] = (rel - ip) if rel is not None else None
+                row["release_latency_cmds"] = (rel - i2) if rel is not None else None
+                if rel is not None:
+                    vr = vel(fr[rel])
+                    row["release_v"] = rnd(vr, 3)
+                    hv = hold_v.get(rel - 1 - ip)
+                    if hv:
+                        hm = tuple(st.mean(v[c] for v in hv) for c in range(3))
+                        row["hold_v_same_k_minus1"] = rnd(hm, 3)
+                        row["release_minus_hold_h"] = rnd(math.hypot(vr[0], vr[1]) - math.hypot(hm[0], hm[1]), 3)
+                    land = next((i for i in range(rel, len(fr)) if fr[i]["ground"] == 1), None)
+                    seg = fr[rel:land] if land else fr[rel:]
+                    row["post_release_dvxy_total"] = rnd(math.hypot(seg[-1]["vx"], seg[-1]["vy"]) - math.hypot(seg[0]["vx"], seg[0]["vy"]), 4) if len(seg) > 1 else None
+                    gz = [(seg[j - 1]["vz"] - seg[j]["vz"]) / seg[j]["ft"] for j in range(1, len(seg))]
+                    row["post_release_gravity"] = rnd(st.median(gz), 2) if gz else None
+                    row["land_k"] = (land - ip) if land else None
+                    row["land_v"] = rnd(vel(fr[land - 1]), 3) if land else None
+                    row["gr_true_after_release_cmds"] = (gr[0][1] - rel) if gr else None
+            g1.append(row)
+            P("  %-13s r%d gr %s (%d fr) lift k%s max|v| %s @k%s pull stop k%s %s %s | 2nd press k%s release k%s (latency %s)"
+              " v_rel %s hold(k-1) %s d|v_h| %s | post: d|v_h| %s g %s land k%s v %s | gr flag true %s cmds after release" % (
+                  sch, t["run"], row["gr_runs_rel"], row["gr_frames"], row["liftoff_k"], row["max_speed"], row["max_speed_k"],
+                  row["pull_stop_k"], row["pull_stop_o"], row["pull_stop_v_before_after"], row.get("second_press_k"),
+                  row.get("release_k"), row.get("release_latency_cmds"), row.get("release_v"), row.get("hold_v_same_k_minus1"),
+                  row.get("release_minus_hold_h"), row.get("post_release_dvxy_total"), row.get("post_release_gravity"),
+                  row.get("land_k"), row.get("land_v"), row.get("gr_true_after_release_cmds")))
+    att = by.get("g1_rel_attack", [])
+    if att and hold_v:
+        dmax = 0.0
+        for t in att:
+            fr, ip, gr, lift = base(t)
+            for i in range(ip, min(len(fr), ip + 180)):
+                hv = hold_v.get(i - ip)
+                if hv:
+                    dmax = max(dmax, abs(norm(vel(fr[i])) - st.mean(norm(v) for v in hv)))
+        P("  attack vs hold: max | |v|_attack(k) - mean |v|_hold(k) | over the first 180 cmds = %.3f u/s" % dmax)
+        out["attack_vs_hold_max_dv"] = rnd(dmax, 3)
+    out["g1"] = g1
+    # ---------------------------------------------------------------- g3: grapple -> zipline handoff
+    P("\n[G3] Grapple aimed at the middle of Z1 from 250 u (yaw 36.87, pitch -9.09), with / without a use press")
+    g3 = []
+    d_hat = rope_dir("Z1")
+    for sch in ("g3_hook", "g3_hook_use"):
+        for t in by.get(sch, []):
+            fr = t["frames"]
+            ip = edge_index(fr, edges_of(t, "offhand1")[0])
+            gr = state_runs(fr, "gr")
+            zr = state_runs(fr, "zip")
+            ucl = [d for d in t["diag"] if d["tag"] == "ZIPRAIL-USE" and d["side"] == "cl" and "result" in d["kv"]]
+            usv = [d for d in t["diag"] if d["tag"] == "ZIPRAIL-USE" and d["side"] == "sv" and "result" in d["kv"]]
+            okc = next((d for d in ucl if d["kv"].get("result") == "1"), None)
+            oks = next((d for d in usv if d["kv"].get("result") == "1"), None)
+            g2 = mt_gap(t["cl"])
+            row = {"schedule": sch, "run": t["run"], "gr_runs_rel": [(a - ip, b - ip) for a, b in gr],
+                   "zip_runs_rel": [(a - ip, b - ip) for a, b in zr],
+                   "cl_attempts_fail": sum(1 for d in ucl if d["kv"].get("result") == "0"),
+                   "cl_fail_why": sorted(set((d["kv"].get("why"), d["kv"].get("wdf")) for d in ucl if d["kv"].get("result") == "0")),
+                   "sv_attempts_fail": sum(1 for d in usv if d["kv"].get("result") == "0"),
+                   "cl_first_attempt_cmd": ucl[0]["cmd"] if ucl else None, "cl_success_cmd": okc and okc["cmd"],
+                   "sv_success_cmd": oks and oks["cmd"], "grapple_flag": okc and okc["kv"].get("grapple"),
+                   "success_eq_first_missing_mt": (okc["cmd"] == g2[0] + 1) if (okc and g2) else None,
+                   "first_attempt_minus_mt_start": (ucl[0]["cmd"] - t["cmd_range"][0]) if ucl else None,
+                   "Q": rnd(oks["vec"].get("use"), 2) if oks else None}
+            if zr:
+                iz = zr[0][0]
+                pre = fr[iz - 1]
+                vpre = vel(pre)
+                row["mount_k_after_press"] = iz - ip
+                row["v_pre"] = rnd(vpre, 3)
+                row["speed_pre"] = rnd(norm(vpre), 3)
+                Pp = add(pos(pre), (0.0, 0.0, EYE_RAISE))
+                eye = eye_dir(pre["pitch"], pre["yaw"])
+                if oks:
+                    Q = oks["vec"]["use"]
+                    row["Q_minus_P_dist"] = rnd(norm(sub(Q, Pp)), 3)
+                    row["Q_angle_eye"] = rnd(math.degrees(math.acos(max(-1, min(1, dot(sub(Q, Pp), eye) / norm(sub(Q, Pp)))))), 3)
+                    row["v_pre_angle_to_Q"] = rnd(math.degrees(math.acos(max(-1, min(1, dot(unit(vpre), unit(sub(Q, pos(pre)))))))), 3)
+                    bp = find_angle_min("Z1", Pp, eye, 130.0, 8000)
+                    row["Q_pred_minangle"] = rnd(bp[1], 2) if bp else None
+                    row["Q_pred_minus_Q_x"] = rnd(bp[1][0] - Q[0], 2) if bp else None
+                    row["Q_pred_angle"] = rnd(bp[0], 3) if bp else None
+                    # designed aim point: the start view ray (yaw 36.87, pitch -9.09 = atan(40/250)) meets Z1 at x -13800
+                    aim = (-13800.0, 6800.0, 394.92)
+                    row["Q_minus_aim_x"] = rnd(Q[0] - aim[0], 2)
+                    row["dist_origin_to_aim_at_mount"] = rnd(norm(sub(aim, pos(pre))), 2)
+                    row["dist_P_to_aim_at_mount"] = rnd(norm(sub(aim, Pp)), 2)
+                first_ok, first_in_r = None, None
+                for i in range(ip, iz):
+                    f = fr[i]
+                    b = find_angle_min("Z1", add(pos(f), (0.0, 0.0, EYE_RAISE)), eye_dir(f["pitch"], f["yaw"]), 130.0, 1600)
+                    if b and first_in_r is None:
+                        first_in_r = (i, b[0])
+                    if b and b[0] < 40.7:
+                        first_ok = i
+                        break
+                row["first_frame_rope_within_130_k"] = (first_in_r[0] - ip, rnd(first_in_r[1], 2)) if first_in_r else None
+                row["first_frame_find_possible_k"] = (first_ok - ip) if first_ok is not None else None
+                row["mount_minus_first_possible_cmds"] = (iz - first_ok) if first_ok is not None else None
+                ride = fr[iz:]
+                sp = [norm(vel(f)) for f in ride]
+                e = sp[1]
+                row["entry_speed"] = rnd(e, 3)
+                row["entry_dir_dot_rope"] = rnd(dot(unit(vel(ride[1])), d_hat), 6)
+                row["proj_v_pre_on_rope"] = rnd(dot(vpre, d_hat), 3)
+                row["entry_minus_proj"] = rnd(e - dot(vpre, d_hat), 3)
+                row["entry_minus_proj_over_ft"] = rnd((e - dot(vpre, d_hat)) / ride[1]["ft"], 2)
+                row["mount_cmd_moves"] = rnd(norm(sub(pos(ride[0]), pos(pre))), 3)
+                vs = v_std_curve([f["ft"] for f in ride[:200]])
+                pred = [0.0]
+                for k in range(1, len(vs)):
+                    pred.append(max(e, vs[k]) if k <= 60 else min(600.0, pred[-1] + 400.0 * ride[k]["ft"]))
+                end = next((k for k in range(1, len(vs)) if ride[k].get("st") and not ride[k]["st"]["zip"]), len(vs))
+                row["state2_model_resid"] = stats([abs(sp[k] - pred[k]) for k in range(1, min(end, len(vs)))])
+                row["speed_k"] = {k: rnd(sp[k], 3) for k in (1, 30, 58, 59, 60, 61, 62, 100) if k < len(sp)}
+                if len(ride) > 40:
+                    row["yaw_pitch_k0_k40"] = (rnd((ride[0]["yaw"], ride[0]["pitch"]), 3), rnd((ride[40]["yaw"], ride[40]["pitch"]), 3))
+                row["view_90pct_k"] = next((k for k in range(len(ride)) if abs(ride[k]["yaw"]) <= 0.1 * abs(ride[0]["yaw"])), None)
+                steady = ride[60:end]
+                if steady:
+                    row["hang_below_rope"] = rnd(st.mean(394.92 - f["oz"] for f in steady), 3)
+                    row["lateral_y"] = rnd(st.mean(f["oy"] - 6800.0 for f in steady), 3)
+                row["dist_to_hang_line_k"] = {k: rnd(math.hypot(ride[k]["oy"] - 6799.77, ride[k]["oz"] - 314.75), 2)
+                                              for k in (0, 5, 10, 15, 20, 30, 40) if k < len(ride)}
+            if g2:
+                c = t["cl"][g2[1]]
+                ref = add((c["ox"], c["oy"], c["oz"]), (0.0, 0.0, 80.0))
+                row["exit_v_cl"] = rnd((c["vx"], c["vy"], c["vz"]), 3)
+                sv_ = t["sv"].get(g2[1])
+                row["exit_v_sv"] = rnd((sv_["vx"], sv_["vy"], sv_["vz"]), 3) if sv_ else None
+                row["exit_dist_to_end"] = rnd(rope_len("Z1") - rope_param("Z1", ref), 3)
+                row["zip_frames"] = sum(b - a + 1 for a, b in zr)
+            ue = edges_of(t, "use")
+            row["use_press_k"] = (edge_index(fr, ue[0]) - ip) if ue else None
+            g3.append(row)
+            P("  %-12s r%d gr %s zip %s | client attempts: first cmd %s (+%s after trial start), %d fails %s, success cmd %s"
+              " (= first missing MT: %s); dedi fails %d, success cmd %s | Q %s" % (
+                  sch, t["run"], row["gr_runs_rel"], row["zip_runs_rel"], row["cl_first_attempt_cmd"], row["first_attempt_minus_mt_start"],
+                  row["cl_attempts_fail"], row["cl_fail_why"], row["cl_success_cmd"], row["success_eq_first_missing_mt"],
+                  row["sv_attempts_fail"], row["sv_success_cmd"], row["Q"]))
+            P("      mount k%s (use press k%s) v_pre %s |v| %s ; |Q-P| %s angle %s (min-angle rule: angle %s, x - Q.x %s) ; v_pre angle"
+              " to Q %s ; rope first within 130 u at k%s ; Find first possible k%s (mount %s cmds later) ; mount cmd moves %s ;"
+              " Q.x - aim.x %s, |aim - origin| %s, |aim - P| %s" % (
+                  row.get("mount_k_after_press"), row["use_press_k"], row.get("v_pre"), row.get("speed_pre"), row.get("Q_minus_P_dist"),
+                  row.get("Q_angle_eye"), row.get("Q_pred_angle"), row.get("Q_pred_minus_Q_x"), row.get("v_pre_angle_to_Q"),
+                  row.get("first_frame_rope_within_130_k"), row.get("first_frame_find_possible_k"),
+                  row.get("mount_minus_first_possible_cmds"), row.get("mount_cmd_moves"), row.get("Q_minus_aim_x"),
+                  row.get("dist_origin_to_aim_at_mount"), row.get("dist_P_to_aim_at_mount")))
+            P("      entry |v| %s (dir.rope %s) vs v_pre.rope %s: diff %s (= %s u/s^2 x dt) ; state-2 model max(entry, rest curve)"
+              " |resid| %s ; speeds %s" % (row.get("entry_speed"), row.get("entry_dir_dot_rope"), row.get("proj_v_pre_on_rope"),
+                                          row.get("entry_minus_proj"), row.get("entry_minus_proj_over_ft"),
+                                          row.get("state2_model_resid"), row.get("speed_k")))
+            P("      view (yaw, pitch) k0 -> k40 %s (90%% at k%s) ; distance to the hang line %s ; hang %s lat %s ; exit v cl %s sv %s"
+              " dist_end %s ; zip frames %s" % (row.get("yaw_pitch_k0_k40"), row.get("view_90pct_k"), row.get("dist_to_hang_line_k"),
+                                                row.get("hang_below_rope"), row.get("lateral_y"), row.get("exit_v_cl"), row.get("exit_v_sv"),
+                                                row.get("exit_dist_to_end"), row.get("zip_frames")))
+    P("  summary: entry - v_pre.rope %s ; state-2 |resid| max %s ; mount k after the grapple press %s ; Q x %s ; |Q-P| %s" % (
+        stats([r.get("entry_minus_proj") for r in g3]),
+        max((r["state2_model_resid"]["max"] for r in g3 if r.get("state2_model_resid")), default=None),
+        stats([r.get("mount_k_after_press") for r in g3]), stats([r["Q"][0] for r in g3 if r.get("Q")]),
+        stats([r.get("Q_minus_P_dist") for r in g3])))
+    P("  Q.x - designed aim point x %s ; |aim - origin| at the mount %s" % (stats([r.get("Q_minus_aim_x") for r in g3]),
+                                                                         stats([r.get("dist_origin_to_aim_at_mount") for r in g3])))
+    out["g3"] = g3
+    return out
+
+
+def run_extensions(r2_folders, g_folders, g):
+    results, params = {}, {}
+    if r2_folders:
+        r2 = run_round2(r2_folders, g)
+        results["round2"] = r2
+        sj = [r for r in r2["super_jump"] if r["applied"]]
+        params["super_jump"] = {
+            "applies": [True, "meas (round 2): a second jump press after a zip jump-off applies when it comes soon after the mount"
+                              " lifted the player off the ground (applied at %s cmds; never at >= 63 cmds in round 1); a released"
+                              " jump button between the presses is required" % sorted(set(r["dk_air"] for r in sj))],
+            "impulse": ["vz_post = vz_pre + 289.828 - 1.5 g dt (the ground-jump post-state rule), v_xy unchanged", "fit (residual in A3-ZIPLINE.md)"],
+            "window_cmds_since_ground": [[max(r["dk_air"] for r in sj) if sj else None, 63], "bracket [applied max, never-applied min]"],
+        }
+        params["view_on_ride"] = ["yaw and pitch are pulled to the rope direction during the 0.5 s mount state (input ignored);"
+                                  " free look afterwards; vertical rope: yaw free at once", "meas (z9, z6_vert_turn)"]
+        params["jump_off_direction"] = ["along the rope, independent of the view yaw (tested to -63 deg)", "meas (z9)"]
+        params["jump_off_speed_law_round2"] = ["h = min(v_ride, 400) confirmed for v_ride 0 .. 600", "fit, residual 0 (round 1 + round 2)"]
+        params["vertical_exit_push"] = ["400 horizontal along the view yaw at the top", "meas (z6_vert_turn)"]
+        params["air_attach_round2"] = ["held use 120 u from the rope: the client predicts a mount, the dedi never mounts and corrects"
+                                       " the client; a tap: nothing on either side", "meas (z7b/z7c)"]
+        params["half_duck_parity"] = ["duck held through the crouch-off: no hull step on either side; only the 0.17 u hang offset"
+                                      " until landing", "meas (z3_duckhold)"]
+    if g_folders:
+        gg = run_grapple(g_folders, g)
+        results["grapple"] = gg
+        params["grapple_zip_handoff"] = [
+            "while the grapple is active the client and dedi call Zipline_Use(grapple=1) every cmd; it mounts on the first cmd whose"
+            " Find succeeds; entry speed = v_pre . rope_dir + 400*dt; during the 0.5 s mount state v = max(entry, rest-mount curve);"
+            " afterwards identical to a rest mount; no use press needed", "meas+fit (GRAPPLE-ZIP.md)"]
+        params["grapple_release"] = ["a second tactical press ends the pull; the instantaneous velocity is kept, then ordinary"
+                                     " gravity with no drag; attack does not release", "meas (GRAPPLE-ZIP.md)"]
+    return {"results": results, "params": params}
 
 if __name__ == "__main__":
     main()

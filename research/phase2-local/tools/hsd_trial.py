@@ -298,6 +298,23 @@ SCHEDULES.update({
     "a2_hop_back": _A2_RUN + "wait 0.9s; up forward; up speed; wait 1.5s; down backward; tap jump; wait 1.0s; up backward; wait 1.0s",
 })
 
+# A2 round 2 (after m6/a2_climb: no hang exists; W release on the wall = attached slide-down, release early in a
+# mantle = cancel). h232: actions while sliding attached, the detach clock, a sideways key while climbing.
+# h180: back during a mantle (W held) and W released at 0.70 / 0.74 / 0.78 s after the jump (cancel threshold).
+_A2_REL = _A2_RUN + "wait 0.9s; up forward; up speed; wait 0.2s; "
+SCHEDULES.update({
+    "a2r_rel_jump": _A2_REL + "tap jump; wait 2.0s",
+    "a2r_rel_back": _A2_REL + "down backward; wait 0.5s; up backward; wait 1.5s",
+    "a2r_rel_backjump": _A2_REL + "down backward; tap jump; wait 0.5s; up backward; wait 1.5s",
+    "a2r_rel_t05": _A2_RUN + "wait 0.5s; up forward; up speed; wait 2.5s",
+    "a2r_rel_t11": _A2_RUN + "wait 1.1s; up forward; up speed; wait 2.5s",
+    "a2r_side": _A2_RUN + "wait 0.5s; down moveright; wait 1.5s; up moveright; up forward; up speed; wait 1.5s",
+    "a2r_mant_back": _A2_RUN + "wait 0.75s; down backward; wait 0.5s; up backward; up forward; up speed; wait 1.5s",
+    "a2r_mrel_t070": _A2_RUN + "wait 0.70s; up forward; up speed; wait 2.0s",
+    "a2r_mrel_t074": _A2_RUN + "wait 0.74s; up forward; up speed; wait 2.0s",
+    "a2r_mrel_t078": _A2_RUN + "wait 0.78s; up forward; up speed; wait 2.0s",
+})
+
 # M6-A3 ziplines (geometry m6zip; m6/SOURCE-AUDIT.md E-Z). The player starts under the flat rope Z1 (100 u above the
 # floor) facing along it, mounts with +use, then rides / jumps off / crouches off. z5 = Super Jump: a second jump K
 # frames after the jump-off.
