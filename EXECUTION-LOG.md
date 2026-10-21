@@ -133,6 +133,18 @@ Newest entries at the bottom. Problems are tagged **[ISSUE]** and also listed in
   - Grapple: 0.2 s hop, pull from 0.402 s, about 557 u/s² toward the target up to 612 u/s; W held clamps horizontal speed to 483.
   - Horizon passive: airSpeed 80, airAcceleration 800, landSlowdownDuration 0.
   - **[ISSUE→fixed]** A lift from the previous trial was still alive in 5 trials (10 s lifetime; overlapping lifts). The analysis excluded them; lift schedules are now padded to more than 10 s between deployments and re-run.
+- **Lift/grapple extension** (lift2 + pathfinder2 sessions; subagent, lead-verified identical):
+  - Lift: 0 overlap in the padded trials; hover is 0.502 ± 0.003 s on every clean trial; model residuals unchanged (0.012 u/s per command).
+  - Grapple: the hook flies at about 2035 u/s, then a 0.2 s wind-up. The pull is a constant 499.8 ± 3.6 u/s² along the path with no terminal speed (474/612/804 u/s at release for 244/394/694 u).
+  - The earlier "+70 u above the hit" target was a fit artefact; the target is about the view-ray hit.
+  - **[OPEN]** Grapple detach rule unknown: release happens 34.3 ± 2.5 u from the face, but no single threshold fits. The constant-pull model was kept as the simpler one (stop-loss rule).
+- **Valkyrie / Revenant** (subagent, lead-verified identical):
+  - Jets: thrust and target-vz model with a startup boost, plus a horizontal taper between 300 and 600; fit rms 0.004 u/s per command.
+  - Jet release: vz ×0.4, then 0.45 g plus quadratic drag until about 50 u above the ground.
+  - Pounce: 0.9 s pull-out, then a 1.3 s charge. Velocity is replaced by (700 + 450·charge) along pitch + 35°. Flight is ballistic.
+  - **[OPEN]** Jet fuel drain was not observed.
+  - **[NOTE]** With W held after a jet release, the client mispredicts the slow fall and the dedi corrects it. The model follows the dedi.
+- Unity M4 primitives subagent dispatched (HSD-Unity branch `m4/ability-primitives`).
 
 ## Open issues
 

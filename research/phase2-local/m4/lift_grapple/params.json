@@ -1,0 +1,1096 @@
+{
+ "scope": "R5Flowstate S21 client / S3 dedi, 120 fps, sessions M4_horizon and M4_pathfinder; values computed by lift_grapple_analysis.py",
+ "gravity_lift": {
+  "radius": {
+   "value": 70,
+   "unit": "u",
+   "source": "script SPACEELEVATOR_TUNING_RADIUS (sh_space_elevator.gnut:51); touch radius incl. hull ~86 bracketed by data"
+  },
+  "entry_dist_bracket_client": {
+   "value": [
+    84.8437,
+    86.5089
+   ],
+   "unit": "u",
+   "source": "data: pre-origin distance of the first lifted cmd and of the cmd before",
+   "n": 25,
+   "spread": {
+    "sd": 0.7747,
+    "min": 83.5993,
+    "max": 85.864
+   }
+  },
+  "exit_dist_bracket_client": {
+   "value": [
+    88.2209,
+    89.6473
+   ],
+   "unit": "u",
+   "source": "data: last lifted cmd and the eject cmd (strafe trials)",
+   "n": 9,
+   "spread": {
+    "sd": 0.8735,
+    "min": 88.0244,
+    "max": 90.2219
+   }
+  },
+  "exit_dist_dedi": {
+   "value": 94.5502,
+   "unit": "u",
+   "source": "data: dedi eject cmd pre-origin distance",
+   "n": 9,
+   "spread": {
+    "sd": 4.9191,
+    "min": 87.3458,
+    "max": 98.7555
+   }
+  },
+  "lift_center_offset_x": {
+   "value": -14680.0192,
+   "unit": "u",
+   "source": "data: oscillation centre x (deploy point -14680)",
+   "n": 25,
+   "spread": {
+    "sd": 0.0467,
+    "min": -14680.102,
+    "max": -14679.9085
+   }
+  },
+  "height": {
+   "value": 1200,
+   "unit": "u",
+   "source": "script SPACEELEVATOR_TUNING_HEIGHT; hover band starts at frac 0.9 (data)",
+   "n": 16,
+   "spread": {
+    "sd": 0.0001,
+    "min": 0.9016,
+    "max": 0.902
+   }
+  },
+  "rise_speed": {
+   "value": 300.0,
+   "unit": "u/s",
+   "source": "data (post vz in lift, no input); script up_speed 300",
+   "n": 7342,
+   "spread": {
+    "sd": 0.0,
+    "min": 300.0,
+    "max": 300.0
+   }
+  },
+  "rise_speed_with_input": {
+   "value": 299.9937,
+   "unit": "u/s",
+   "source": "data",
+   "n": 1744,
+   "spread": {
+    "sd": 0.0019,
+    "min": 299.993,
+    "max": 300.0
+   }
+  },
+  "up_accel": {
+   "value": 100000,
+   "unit": "u/s^2",
+   "source": "script up_accel; vz reaches 300 on the first lifted cmd (data)"
+  },
+  "gravity_in_lift": {
+   "value": 0,
+   "unit": "u/s^2",
+   "source": "data: post vz = target exactly (gravity replaced, not added)"
+  },
+  "steer_speed": {
+   "value": 170,
+   "unit": "u/s",
+   "source": "script horizontal_speed; data plateau 170.01"
+  },
+  "steer_accel_entry": {
+   "value": 2000,
+   "unit": "u/s^2",
+   "source": "data entry ramp (residual below) = script horizontal_accel",
+   "n": 300,
+   "spread": {
+    "sd": 0.0068,
+    "min": 0.0,
+    "max": 0.024
+   },
+   "note": "residual u/s per cmd"
+  },
+  "steer_accel_strafe": {
+   "value": 2000,
+   "unit": "u/s^2",
+   "source": "data: strafe at the centre, single-lift trials (residual below)",
+   "n": 600,
+   "spread": {
+    "sd": 0.0024,
+    "min": 0.0,
+    "max": 0.024
+   },
+   "note": "residual u/s per cmd"
+  },
+  "overlap_entry_step": {
+   "value": 40.3974,
+   "unit": "u/s per cmd",
+   "source": "data: two live lift triggers (previous reset's lift) -> steering and hover timer applied twice",
+   "n": 5,
+   "spread": {
+    "sd": 0.7198,
+    "min": 40.007,
+    "max": 41.668
+   }
+  },
+  "overlap_hover_time": {
+   "value": 0.3084,
+   "unit": "s",
+   "source": "data: hover-eject time with two triggers",
+   "n": 4,
+   "spread": {
+    "sd": 0.0467,
+    "min": 0.25,
+    "max": 0.35
+   }
+  },
+  "single_entry_step": {
+   "value": 23.3455,
+   "unit": "u/s per cmd",
+   "source": "data: one trigger = (2000+800)*dt",
+   "n": 25,
+   "spread": {
+    "sd": 0.0505,
+    "min": 23.252,
+    "max": 23.562
+   }
+  },
+  "air_accel_after_lift": {
+   "value": 800,
+   "unit": "u/s^2",
+   "source": "Horizon airAcceleration (census); engine AirAccelerate runs after the lift force, cap airSpeed*msc = 92"
+  },
+  "tocenter_speed_outer": {
+   "value": 50,
+   "unit": "u/s",
+   "source": "script tocenter_speed at radius 70"
+  },
+  "tocenter_speed_inner": {
+   "value": 25,
+   "unit": "u/s",
+   "source": "0.5*tocenter_speed inside 20 u (dedi twin TG_TOCENTER_INNER); data",
+   "n": 2783,
+   "spread": {
+    "sd": 0.0094,
+    "min": -0.0463,
+    "max": 0.0515
+   },
+   "note": "error vs graph model, u/s"
+  },
+  "tocenter_inner_radius_fit": {
+   "value": 19.9821,
+   "unit": "u",
+   "source": "data (implied from speed vs distance)",
+   "n": 371,
+   "spread": {
+    "sd": 0.047,
+    "min": 19.894,
+    "max": 20.0998
+   }
+  },
+  "tocenter_accel": {
+   "value": 0,
+   "unit": "u/s^2",
+   "source": "script tocenter_accel 0 -> horizontal velocity SET (no smoothing), data shows the step"
+  },
+  "hover_frac": {
+   "value": 0.9017,
+   "unit": "-",
+   "source": "data",
+   "n": 16,
+   "spread": {
+    "sd": 0.0001,
+    "min": 0.9016,
+    "max": 0.902
+   }
+  },
+  "hover_vz_graph": {
+   "value": "0.5 -> -0.5 over frac 0.9..1.0",
+   "unit": "u/s",
+   "source": "dedi twin; data error below",
+   "n": 963,
+   "spread": {
+    "sd": 0.0003,
+    "min": -0.0006,
+    "max": 0.0004
+   }
+  },
+  "max_hover_time": {
+   "value": 0.5016,
+   "unit": "s",
+   "source": "data (script 0.5)",
+   "n": 16,
+   "spread": {
+    "sd": 0.0032,
+    "min": 0.4999,
+    "max": 0.5082
+   }
+  },
+  "eject_up": {
+   "value": 449.9969,
+   "unit": "u/s",
+   "source": "data (script 450), dwell >= 0.5 s",
+   "n": 25,
+   "spread": {
+    "sd": 0.0045,
+    "min": 449.9893,
+    "max": 450.0015
+   }
+  },
+  "eject_horizontal": {
+   "value": 400.0034,
+   "unit": "u/s",
+   "source": "data (script 400)",
+   "n": 25,
+   "spread": {
+    "sd": 0.0046,
+    "min": 400.0,
+    "max": 400.0098
+   }
+  },
+  "eject_dir_error": {
+   "value": -0.0038,
+   "unit": "deg",
+   "source": "data: flat view at the top; radial travel dir (>40 u) when leaving the side",
+   "n": 25,
+   "spread": {
+    "sd": 0.0218,
+    "min": -0.0649,
+    "max": 0.0515
+   }
+  },
+  "max_eject_time": {
+   "value": 0.5,
+   "unit": "s",
+   "source": "script; eject scales with min(dwell/0.5,1) (not exercised: all dwells > 0.5 s)"
+  },
+  "reentry_block": {
+   "value": 2.0,
+   "unit": "s",
+   "source": "dedi twin TG_EJECT_DEBOUNCE (not exercised)"
+  },
+  "jump_in_lift_effect": {
+   "value": 0.0,
+   "unit": "u/s",
+   "source": "data: max |dv| vs ride trial after the jump press",
+   "n": 6,
+   "spread": {
+    "sd": 0.0,
+    "min": 0.0,
+    "max": 0.0
+   }
+  },
+  "dedi_entry_lag": {
+   "value": 4.4,
+   "unit": "cmds",
+   "source": "data: dedi enters later than the client",
+   "n": 25,
+   "spread": {
+    "sd": 2.273,
+    "min": 0,
+    "max": 11
+   }
+  },
+  "dedi_eject_lag": {
+   "value": 1.24,
+   "unit": "cmds",
+   "source": "data",
+   "n": 25,
+   "spread": {
+    "sd": 2.4712,
+    "min": -1,
+    "max": 6
+   }
+  }
+ },
+ "grapple": {
+  "range": {
+   "value": 850,
+   "unit": "u",
+   "source": "PW:mp_ability_grapple.txt:47-50 (not exercised)"
+  },
+  "fire_to_hop": {
+   "value": 0.1997,
+   "unit": "s",
+   "source": "data",
+   "n": 15,
+   "spread": {
+    "sd": 0.0011,
+    "min": 0.1962,
+    "max": 0.2014
+   }
+  },
+  "hop_vz": {
+   "value": 200.0,
+   "unit": "u/s",
+   "source": "data: vz set to this on the hop cmd (pre-velocity of the hop cmd)",
+   "n": 15,
+   "spread": {
+    "sd": 0.0,
+    "min": 200.0,
+    "max": 200.0
+   }
+  },
+  "fire_to_pull": {
+   "value": 0.4017,
+   "unit": "s",
+   "source": "data",
+   "n": 15,
+   "spread": {
+    "sd": 0.0034,
+    "min": 0.3977,
+    "max": 0.4084
+   }
+  },
+  "initial_accel": {
+   "value": 1661.8217,
+   "unit": "u/s^2",
+   "source": "data, gravity removed",
+   "n": 40,
+   "spread": {
+    "sd": 1.7769,
+    "min": 1654.9482,
+    "max": 1664.3834
+   }
+  },
+  "initial_accel_cmds": {
+   "value": 4.0,
+   "unit": "cmds",
+   "source": "data",
+   "n": 10,
+   "spread": {
+    "sd": 0.0,
+    "min": 4,
+    "max": 4
+   }
+  },
+  "pull_speed_ramp": {
+   "value": 502.0598,
+   "unit": "u/s^2",
+   "source": "data: d|v|/dt, linear fit, no input",
+   "n": 10,
+   "spread": {
+    "sd": 0.4553,
+    "min": 501.1403,
+    "max": 502.5829
+   }
+  },
+  "pull_speed_ramp_W": {
+   "value": 415.494,
+   "unit": "u/s^2",
+   "source": "data: W held",
+   "n": 5,
+   "spread": {
+    "sd": 9.858,
+    "min": 397.8828,
+    "max": 420.4914
+   }
+  },
+  "pull_speed_ramp_W_precap": {
+   "value": 611.6782,
+   "unit": "u/s^2",
+   "source": "data: W held, before the horizontal cap",
+   "n": 5,
+   "spread": {
+    "sd": 0.3714,
+    "min": 611.1009,
+    "max": 612.0229
+   }
+  },
+  "m1_openloop_max_pos_err": {
+   "value": 23.3811,
+   "unit": "u",
+   "source": "M1 simulated over the steady pull (~0.95 s)",
+   "n": 10,
+   "spread": {
+    "sd": 2.254,
+    "min": 19.4124,
+    "max": 25.196
+   }
+  },
+  "m2_openloop_max_pos_err": {
+   "value": 6.9035,
+   "unit": "u",
+   "source": "M2 simulated over the steady pull",
+   "n": 10,
+   "spread": {
+    "sd": 0.3698,
+    "min": 6.2549,
+    "max": 7.3071
+   }
+  },
+  "W_horizontal_cap": {
+   "value": 483.0003,
+   "unit": "u/s",
+   "source": "data: = 420*msc",
+   "n": 5,
+   "spread": {
+    "sd": 0.0001,
+    "min": 483.0002,
+    "max": 483.0004
+   }
+  },
+  "pull_accel_M2": {
+   "value": 557.2644,
+   "unit": "u/s^2",
+   "source": "fit M2 (chosen): v' = v + dt (A r_hat - s g z), steady pull, no input",
+   "n": 10,
+   "spread": {
+    "sd": 1.9621,
+    "min": 553.0701,
+    "max": 559.296
+   }
+  },
+  "pull_gravity_scale_M2": {
+   "value": 0.1476,
+   "unit": "-",
+   "source": "fit M2",
+   "n": 10,
+   "spread": {
+    "sd": 0.0051,
+    "min": 0.137,
+    "max": 0.1532
+   }
+  },
+  "pull_target_z_M2": {
+   "value": 494.1603,
+   "unit": "u (abs, floor 294.92)",
+   "source": "fit M2, target x fixed at the wall face",
+   "n": 10,
+   "spread": {
+    "sd": 1.4227,
+    "min": 492.0653,
+    "max": 497.4847
+   }
+  },
+  "m2_rms": {
+   "value": 0.3976,
+   "unit": "u/s per cmd",
+   "source": "fit residual",
+   "n": 10,
+   "spread": {
+    "sd": 0.0168,
+    "min": 0.3688,
+    "max": 0.4159
+   }
+  },
+  "m1_turn_rate": {
+   "value": 0.7009,
+   "unit": "1/s",
+   "source": "fit M1 (no input trials)",
+   "n": 10,
+   "spread": {
+    "sd": 0.0202,
+    "min": 0.6686,
+    "max": 0.7204
+   }
+  },
+  "m1_anchor_z": {
+   "value": 484.6975,
+   "unit": "u",
+   "source": "fit M1 (anchor x fixed at the wall face)",
+   "n": 10,
+   "spread": {
+    "sd": 3.3043,
+    "min": 481.1273,
+    "max": 489.3143
+   }
+  },
+  "m1_rms": {
+   "value": 0.3548,
+   "unit": "u/s per cmd",
+   "source": "fit residual",
+   "n": 10,
+   "spread": {
+    "sd": 0.0315,
+    "min": 0.2986,
+    "max": 0.3828
+   }
+  },
+  "pull_time_to_wall": {
+   "value": 1.1245,
+   "unit": "s",
+   "source": "data (394 u start distance)",
+   "n": 10,
+   "spread": {
+    "sd": 0.0012,
+    "min": 1.1212,
+    "max": 1.1252
+   }
+  },
+  "speed_at_end": {
+   "value": 580.9771,
+   "unit": "u/s",
+   "source": "data",
+   "n": 15,
+   "spread": {
+    "sd": 44.8672,
+    "min": 518.1934,
+    "max": 612.3781
+   }
+  },
+  "detach_gap": {
+   "value": 35.9242,
+   "unit": "u",
+   "source": "data: wall face x - player origin x at the first ballistic cmd",
+   "n": 10,
+   "spread": {
+    "sd": 0.7587,
+    "min": 35.304,
+    "max": 37.774
+   }
+  },
+  "jump_effect": {
+   "value": 4.835,
+   "unit": "u/s",
+   "source": "data: max |dv| vs hold trial after the jump press",
+   "n": 5,
+   "spread": {
+    "sd": 1.4144,
+    "min": 1.521,
+    "max": 4.835
+   }
+  },
+  "hold_vs_hold_baseline": {
+   "value": 2.836,
+   "unit": "u/s",
+   "source": "data: same metric between hold trials",
+   "n": 4,
+   "spread": {
+    "sd": 0.4782,
+    "min": 1.824,
+    "max": 2.836
+   }
+  },
+  "detach_gap_W": {
+   "value": 27.7634,
+   "unit": "u",
+   "source": "data, W held",
+   "n": 5,
+   "spread": {
+    "sd": 1.066,
+    "min": 25.873,
+    "max": 28.413
+   }
+  },
+  "detach_time_to_face": {
+   "value": 0.0347,
+   "unit": "s",
+   "source": "data: (gap - 16) / vx at detach, no input",
+   "n": 10,
+   "spread": {
+    "sd": 0.0014,
+    "min": 0.0336,
+    "max": 0.038
+   }
+  },
+  "detach_time_to_face_W": {
+   "value": 0.0244,
+   "unit": "s",
+   "source": "data, W held",
+   "n": 5,
+   "spread": {
+    "sd": 0.0022,
+    "min": 0.0204,
+    "max": 0.0257
+   }
+  },
+  "impact_vz_after": {
+   "value": 192.6136,
+   "unit": "u/s",
+   "source": "data: vz on the wall-impact cmd (horizontal ~6 u/s)",
+   "n": 15,
+   "spread": {
+    "sd": 6.9519,
+    "min": 182.797,
+    "max": 199.285
+   }
+  },
+  "dedi_max_dv": {
+   "value": 0.208,
+   "unit": "u/s",
+   "source": "data: client vs dedi post velocity during the pull",
+   "n": 15,
+   "spread": {
+    "sd": 0.0561,
+    "min": 0.025,
+    "max": 0.208
+   }
+  },
+  "apex_z_after_impact": {
+   "value": 449.8303,
+   "unit": "u",
+   "source": "data, absolute z (floor 294.92)",
+   "n": 10,
+   "spread": {
+    "sd": 1.4289,
+    "min": 446.834,
+    "max": 451.527
+   }
+  }
+ },
+ "grapple_series": {
+  "hook_speed": {
+   "value": 2034.9,
+   "unit": "u/s",
+   "source": "fit t_hop = t0 + hook_len/speed over all distance/pitch trials; hook_len = horizontal face distance / cos(pitch)",
+   "note": "n = 25, t0 = 0.0043 s, rms 0.0020 s"
+  },
+  "attach_to_pull_windup": {
+   "value": 0.2005,
+   "unit": "s",
+   "source": "data: hop (attach) -> pull start, all conditions",
+   "n": 25,
+   "spread": {
+    "sd": 0.0017,
+    "min": 0.1999,
+    "max": 0.2083
+   }
+  },
+  "hold_t_hop": {
+   "value": 0.2,
+   "unit": "s",
+   "source": "data, face 394 u, pitch up 10 deg",
+   "n": 5,
+   "spread": {
+    "sd": 0.0,
+    "min": 0.1999,
+    "max": 0.2
+   }
+  },
+  "hold_pull_duration": {
+   "value": 1.1248,
+   "unit": "s",
+   "source": "data",
+   "n": 5,
+   "spread": {
+    "sd": 0.0002,
+    "min": 1.1246,
+    "max": 1.125
+   }
+  },
+  "hold_speed_at_detach": {
+   "value": 611.9777,
+   "unit": "u/s",
+   "source": "data",
+   "n": 5,
+   "spread": {
+    "sd": 0.5874,
+    "min": 610.9572,
+    "max": 612.3781
+   }
+  },
+  "hold_detach_gap": {
+   "value": 35.5618,
+   "unit": "u",
+   "source": "data: face x - origin x at the first ballistic cmd",
+   "n": 5,
+   "spread": {
+    "sd": 0.3175,
+    "min": 35.304,
+    "max": 36.107
+   }
+  },
+  "hold_speed_ramp": {
+   "value": 502.1292,
+   "unit": "u/s^2",
+   "source": "data: d|v|/dt, > 150 u from the face",
+   "n": 5,
+   "spread": {
+    "sd": 0.5549,
+    "min": 501.1647,
+    "max": 502.5393
+   }
+  },
+  "hold_free_target_H": {
+   "value": 129.2546,
+   "unit": "u",
+   "source": "per-trial F1 fit: target z - origin z at fire - view-ray rise",
+   "n": 5,
+   "spread": {
+    "sd": 1.0516,
+    "min": 127.6866,
+    "max": 130.4566
+   }
+  },
+  "near_t_hop": {
+   "value": 0.1249,
+   "unit": "s",
+   "source": "data, face 244 u, pitch up 10 deg",
+   "n": 5,
+   "spread": {
+    "sd": 0.0003,
+    "min": 0.1244,
+    "max": 0.125
+   }
+  },
+  "near_pull_duration": {
+   "value": 0.8502,
+   "unit": "s",
+   "source": "data",
+   "n": 5,
+   "spread": {
+    "sd": 0.0006,
+    "min": 0.8497,
+    "max": 0.8511
+   }
+  },
+  "near_speed_at_detach": {
+   "value": 473.5641,
+   "unit": "u/s",
+   "source": "data",
+   "n": 5,
+   "spread": {
+    "sd": 0.6578,
+    "min": 472.7738,
+    "max": 474.5746
+   }
+  },
+  "near_detach_gap": {
+   "value": 33.1248,
+   "unit": "u",
+   "source": "data: face x - origin x at the first ballistic cmd",
+   "n": 5,
+   "spread": {
+    "sd": 0.415,
+    "min": 32.474,
+    "max": 33.533
+   }
+  },
+  "near_speed_ramp": {
+   "value": 503.7835,
+   "unit": "u/s^2",
+   "source": "data: d|v|/dt, > 150 u from the face",
+   "n": 5,
+   "spread": {
+    "sd": 0.6616,
+    "min": 502.8885,
+    "max": 504.3291
+   }
+  },
+  "near_free_target_H": {
+   "value": 113.1216,
+   "unit": "u",
+   "source": "per-trial F1 fit: target z - origin z at fire - view-ray rise",
+   "n": 5,
+   "spread": {
+    "sd": 1.3546,
+    "min": 111.0466,
+    "max": 114.4895
+   }
+  },
+  "far_t_hop": {
+   "value": 0.35,
+   "unit": "s",
+   "source": "data, face 694 u, pitch up 10 deg",
+   "n": 5,
+   "spread": {
+    "sd": 0.0,
+    "min": 0.3499,
+    "max": 0.35
+   }
+  },
+  "far_pull_duration": {
+   "value": 1.5464,
+   "unit": "s",
+   "source": "data",
+   "n": 5,
+   "spread": {
+    "sd": 0.0043,
+    "min": 1.5416,
+    "max": 1.55
+   }
+  },
+  "far_speed_at_detach": {
+   "value": 804.4064,
+   "unit": "u/s",
+   "source": "data",
+   "n": 5,
+   "spread": {
+    "sd": 0.3268,
+    "min": 804.178,
+    "max": 804.9574
+   }
+  },
+  "far_detach_gap": {
+   "value": 37.6462,
+   "unit": "u",
+   "source": "data: face x - origin x at the first ballistic cmd",
+   "n": 5,
+   "spread": {
+    "sd": 2.7739,
+    "min": 34.809,
+    "max": 40.563
+   }
+  },
+  "far_speed_ramp": {
+   "value": 501.3272,
+   "unit": "u/s^2",
+   "source": "data: d|v|/dt, > 150 u from the face",
+   "n": 5,
+   "spread": {
+    "sd": 0.2557,
+    "min": 500.9954,
+    "max": 501.6418
+   }
+  },
+  "far_free_target_H": {
+   "value": 162.5461,
+   "unit": "u",
+   "source": "per-trial F1 fit: target z - origin z at fire - view-ray rise",
+   "n": 5,
+   "spread": {
+    "sd": 3.9889,
+    "min": 158.2385,
+    "max": 167.619
+   }
+  },
+  "p0_t_hop": {
+   "value": 0.1995,
+   "unit": "s",
+   "source": "data, face 394 u, pitch up 0 deg",
+   "n": 5,
+   "spread": {
+    "sd": 0.0011,
+    "min": 0.1976,
+    "max": 0.2002
+   }
+  },
+  "p0_pull_duration": {
+   "value": 1.0671,
+   "unit": "s",
+   "source": "data",
+   "n": 5,
+   "spread": {
+    "sd": 0.0007,
+    "min": 1.0659,
+    "max": 1.0675
+   }
+  },
+  "p0_speed_at_detach": {
+   "value": 729.6691,
+   "unit": "u/s",
+   "source": "data",
+   "n": 5,
+   "spread": {
+    "sd": 1.1508,
+    "min": 727.62,
+    "max": 730.2838
+   }
+  },
+  "p0_detach_gap": {
+   "value": 33.4956,
+   "unit": "u",
+   "source": "data: face x - origin x at the first ballistic cmd",
+   "n": 5,
+   "spread": {
+    "sd": 0.7433,
+    "min": 33.068,
+    "max": 34.814
+   }
+  },
+  "p0_speed_ramp": {
+   "value": 551.3511,
+   "unit": "u/s^2",
+   "source": "data: d|v|/dt, > 150 u from the face",
+   "n": 5,
+   "spread": {
+    "sd": 0.2723,
+    "min": 550.9452,
+    "max": 551.5819
+   }
+  },
+  "p0_free_target_H": {
+   "value": 48.9824,
+   "unit": "u",
+   "source": "per-trial F1 fit: target z - origin z at fire - view-ray rise",
+   "n": 5,
+   "spread": {
+    "sd": 1.1883,
+    "min": 47.5431,
+    "max": 50.1236
+   }
+  },
+  "p20_t_hop": {
+   "value": 0.2116,
+   "unit": "s",
+   "source": "data, face 394 u, pitch up 20 deg",
+   "n": 5,
+   "spread": {
+    "sd": 0.0037,
+    "min": 0.2085,
+    "max": 0.2167
+   }
+  },
+  "p20_pull_duration": {
+   "value": 1.1737,
+   "unit": "s",
+   "source": "data",
+   "n": 5,
+   "spread": {
+    "sd": 0.0034,
+    "min": 1.1676,
+    "max": 1.1759
+   }
+  },
+  "p20_speed_at_detach": {
+   "value": 633.6614,
+   "unit": "u/s",
+   "source": "data",
+   "n": 5,
+   "spread": {
+    "sd": 1.6306,
+    "min": 630.8968,
+    "max": 635.1014
+   }
+  },
+  "p20_detach_gap": {
+   "value": 31.762,
+   "unit": "u",
+   "source": "data: face x - origin x at the first ballistic cmd",
+   "n": 5,
+   "spread": {
+    "sd": 1.6568,
+    "min": 30.568,
+    "max": 34.645
+   }
+  },
+  "p20_speed_ramp": {
+   "value": 500.7277,
+   "unit": "u/s^2",
+   "source": "data: d|v|/dt, > 150 u from the face",
+   "n": 5,
+   "spread": {
+    "sd": 0.3351,
+    "min": 500.1939,
+    "max": 501.0145
+   }
+  },
+  "p20_free_target_H": {
+   "value": 85.7797,
+   "unit": "u",
+   "source": "per-trial F1 fit: target z - origin z at fire - view-ray rise",
+   "n": 5,
+   "spread": {
+    "sd": 1.341,
+    "min": 83.9243,
+    "max": 87.1318
+   }
+  },
+  "tangential_accel_up": {
+   "value": 499.79,
+   "unit": "u/s^2",
+   "source": "data: accel along the velocity while moving up (> 150 u from the face), all conditions"
+  },
+  "detach_gap_all": {
+   "value": 34.3181,
+   "unit": "u",
+   "source": "data, all no-input trials; no single static / look-ahead / 3D-distance threshold fits all",
+   "n": 25,
+   "spread": {
+    "sd": 2.5112,
+    "min": 30.568,
+    "max": 40.563
+   }
+  },
+  "global_F1": {
+   "value": {
+    "A": 518.282,
+    "s": 0.047,
+    "H": 51.066
+   },
+   "unit": "-",
+   "source": "one parameter set for all conditions; open-loop rms 12.92 u, one-step 1.650 u/s",
+   "note": "m4_grapple_hold: 5.5/20.9 u; m4_grapple_near: 3.8/12.5 u; m4_grapple_far: 8.9/30.1 u; m4_grapple_p0: 23.9/46.6 u; m4_grapple_p20: 11.7/28.3 u"
+  },
+  "global_R1": {
+   "value": {
+    "A": 509.688,
+    "s": 0.633,
+    "H": 59.375,
+    "D": 19.281
+   },
+   "unit": "-",
+   "source": "one parameter set for all conditions; open-loop rms 8.98 u, one-step 11.853 u/s",
+   "note": "m4_grapple_hold: 3.0/8.0 u; m4_grapple_near: 3.7/7.6 u; m4_grapple_far: 2.6/9.8 u; m4_grapple_p0: 17.5/44.6 u; m4_grapple_p20: 8.2/13.4 u"
+  }
+ },
+ "horizon_passive": {
+  "airSpeed": {
+   "value": "80",
+   "unit": "u/s",
+   "source": "census (others 60)"
+  },
+  "airAcceleration": {
+   "value": "800",
+   "unit": "u/s^2",
+   "source": "census (others 500); data: lift entry ramp +800*dt up to 92"
+  },
+  "landSlowdownDuration": {
+   "value": "0",
+   "unit": "s",
+   "source": "census (others 1)"
+  },
+  "jump_V": {
+   "value": 289.8217,
+   "unit": "u/s",
+   "source": "data e2_noinput (M2 289.823)",
+   "n": 5,
+   "spread": {
+    "sd": 0.0021,
+    "min": 289.8185,
+    "max": 289.8235
+   }
+  },
+  "jump_V_e4_stand": {
+   "value": 289.8275,
+   "unit": "u/s",
+   "source": "data e4_stand (M2 289.823)",
+   "n": 5,
+   "spread": {
+    "sd": 0.0044,
+    "min": 289.8222,
+    "max": 289.8335
+   }
+  },
+  "gravity": {
+   "value": 749.8679,
+   "unit": "u/s^2",
+   "source": "data (M2 750)",
+   "n": 870,
+   "spread": {
+    "sd": 0.248,
+    "min": 749.5105,
+    "max": 750.5402
+   }
+  },
+  "post_landing_decel": {
+   "value": 1249.9724,
+   "unit": "u/s^2",
+   "source": "data (M2 1250)",
+   "n": 25,
+   "spread": {
+    "sd": 0.4501,
+    "min": 1249.3506,
+    "max": 1250.7246
+   }
+  },
+  "hard_landing_decel": {
+   "value": 1249.9382,
+   "unit": "u/s^2",
+   "source": "data: after the lift eject, impact ~ -1300 u/s",
+   "n": 456,
+   "spread": {
+    "sd": 0.5303,
+    "min": 1249.1607,
+    "max": 1250.8207
+   }
+  }
+ }
+}

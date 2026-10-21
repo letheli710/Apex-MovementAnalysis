@@ -1,0 +1,138 @@
+== sessions
+  20261021_004109_M4_valkyrie: 12 trials used, parse errors 0, census True
+  20261021_011256_M4_valkyrie_rerun: 3 trials used, parse errors 0, census False
+  20261021_004416_M4_revenant: 6 trials used, parse errors 0, census True
+  20261021_011514_M4_revenant_rerun: 9 trials used, parse errors 0, census False
+  m4_pounce_c0       n=5 r1901 r1902 r1903 r1904 r1905
+  m4_pounce_c06      n=5 r1906 r2301 r2302 r2303 r2304
+  m4_pounce_c13      n=5 r2305 r2306 r2307 r2308 r2309
+  m4_valk_ctrl       n=5 r1801 r1802 r1803 r1804 r1805
+  m4_valk_jets       n=5 r1806 r1807 r1808 r1809 r1810
+  m4_valk_jets_fwd   n=5 r1814 r1815 r2201 r2202 r2203
+
+== join (frame after each command; jets trials: frame shows the NEXT pre-state)
+  r1801 m4_valk_ctrl      post=684 next-pre-only=0 neither=0
+  r1806 m4_valk_jets      post=442 next-pre-only=242 neither=0
+  r1807 m4_valk_jets      post=442 next-pre-only=242 neither=0
+  r1808 m4_valk_jets      post=442 next-pre-only=242 neither=0
+  r1809 m4_valk_jets      post=442 next-pre-only=242 neither=0
+  r1810 m4_valk_jets      post=442 next-pre-only=242 neither=0
+  r1814 m4_valk_jets_fwd  post=436 next-pre-only=247 neither=1
+  r1815 m4_valk_jets_fwd  post=436 next-pre-only=247 neither=1
+  r2201 m4_valk_jets_fwd  post=442 next-pre-only=242 neither=0
+  r2202 m4_valk_jets_fwd  post=442 next-pre-only=242 neither=0
+  r2203 m4_valk_jets_fwd  post=442 next-pre-only=242 neither=0
+
+== census ([CLASSVAR] at session start vs T0 smoke)
+  20261021_004109_M4_valkyrie: 58 keys, diffs {}, jet/glide keys in census list: [], SetGlideMeter first value: 8.0
+  20261021_004416_M4_revenant: 58 keys, diffs {'climbHeight': {'ref': '100', 'now': ['1250']}}, jet/glide keys in census list: [], SetGlideMeter first value: 3.5
+
+== Valkyrie control jumps
+  jump vz post 280.3876 (sd 0.1457, 280.1270..280.4540, n=5) | apex 54.79 (sd 0.02, 54.76..54.80, n=5) | air 0.7581 (sd 0.0004, 0.7574..0.7584, n=5) s | g 750.07 (sd 0.10, 749.93..750.22, n=5) | IN_DODGE in air: [False]
+
+== Valkyrie activation (first airborne +jump/IN_DODGE command)
+  r1806 m4_valk_jets      k=84  t after leave-ground 0.2083 s  vz 130.449  jet on that cmd: True  no jet before: True  vz scale on activation 1.00000
+  r1807 m4_valk_jets      k=84  t after leave-ground 0.2083 s  vz 130.423  jet on that cmd: True  no jet before: True  vz scale on activation 1.00000
+  r1808 m4_valk_jets      k=84  t after leave-ground 0.2083 s  vz 130.468  jet on that cmd: True  no jet before: True  vz scale on activation 1.00000
+  r1809 m4_valk_jets      k=84  t after leave-ground 0.2084 s  vz 130.429  jet on that cmd: True  no jet before: True  vz scale on activation 1.00000
+  r1810 m4_valk_jets      k=84  t after leave-ground 0.2084 s  vz 130.359  jet on that cmd: True  no jet before: True  vz scale on activation 1.00000
+  r1814 m4_valk_jets_fwd  k=84  t after leave-ground 0.2083 s  vz 130.494  jet on that cmd: True  no jet before: True  vz scale on activation 1.00000
+  r1815 m4_valk_jets_fwd  k=84  t after leave-ground 0.2085 s  vz 130.398  jet on that cmd: True  no jet before: True  vz scale on activation 1.00000
+  r2201 m4_valk_jets_fwd  k=84  t after leave-ground 0.2083 s  vz 130.451  jet on that cmd: True  no jet before: True  vz scale on activation 1.00000
+  r2202 m4_valk_jets_fwd  k=84  t after leave-ground 0.2083 s  vz 130.458  jet on that cmd: True  no jet before: True  vz scale on activation 1.00000
+  r2203 m4_valk_jets_fwd  k=84  t after leave-ground 0.2016 s  vz 135.507  jet on that cmd: True  no jet before: True  vz scale on activation 1.00000
+
+== Valkyrie jet flight model (SDK Jetpack_Apply math, constants fitted); 2400 jet commands
+  free fit: T=1.89983, H=1.69992, tu=0.27007, tfb=0.13999, strafe=1035.10450, s0=1.80019, R=0.49947, ts=299.98813, tf=600.14427
+  free fit rms: vz 0.00333 (all), vx 0.00281 (W trials)
+  alternative without strafe taper: tfb=0.06244 strafe=2118.00 rms vx 5.5596
+  strafe refitted with the other constants at round values: 1034.966 (rms vx 0.00332)
+  free    [1.89983, 1.69992, 0.27007, 0.13999, 1035.1045, 1.80019, 0.49947, 299.98813, 600.14427] | all: rms z 0.00333 max 0.01386, rms x 0.00198 max 0.01798 | no-W n=1200 rms z 0.00364 | W n=1200 rms z 0.00300 rms x 0.00281 | branch B cmds 248 | W over-limit cmds 0
+  rounded [1.9, 1.7, 0.27, 0.14, 1035, 1.8, 0.5, 300.0, 600.0] | all: rms z 0.00360 max 0.01797, rms x 0.00238 max 0.01582 | no-W n=1200 rms z 0.00394 | W n=1200 rms z 0.00323 rms x 0.00336 | branch B cmds 248 | W over-limit cmds 0
+  branch-B (decay at 0.4 s half-life above the thrust terminal) command span per trial (k from activation): {'r1806': (48, 69, 240), 'r1807': (48, 68, 240), 'r1808': (48, 68, 240), 'r1809': (48, 69, 240), 'r1810': (48, 69, 240), 'r1814': (45, 72, 240), 'r1815': (45, 72, 240), 'r2201': (45, 72, 240), 'r2202': (45, 72, 240), 'r2203': (45, 72, 240)}
+  vertical terminal (next pre-state, = speed on screen): no W 260.129, W 202.322 u/s
+  horizontal terminal with W (taper balance): 335.839 u/s
+  observed at k>230: vz no-W 260.398 (sd 0.053, 260.338..260.491, n=45), vz W 202.273 (sd 0.026, 202.210..202.313, n=45), vx W 335.970 (sd 0.104, 335.881..336.135, n=45)
+
+== Valkyrie parity during the hold
+  max |client - dedi| over held commands: 0.0009 (sd 0.0003, 0.0000..0.0010, n=10)
+
+== Valkyrie release, post effect, landing
+  r1806 m4_valk_jets      stop: client +1 cmd (x0.40000), dedi +0 cmd (x0.40000) vz_post 254.09 | dedi low-g cmds 251 mean 337.521 | client low-g 250 full-g 7 corrections 3
+      post effect end (dedi): 2.1000 s after stop, height first full-g 41.14, last low-g 46.26 | land vz -659.36 vh 0.000 -> 0.000 | movescale changes (cmd-release, value) [(-240, 1.0), (117, 1.15)]
+  r1807 m4_valk_jets      stop: client +1 cmd (x0.40000), dedi +0 cmd (x0.40000) vz_post 254.18 | dedi low-g cmds 255 mean 337.527 | client low-g 254 full-g 7 corrections 3
+      post effect end (dedi): 2.1333 s after stop, height first full-g 42.43, last low-g 47.55 | land vz -659.23 vh 0.000 -> 0.000 | movescale changes (cmd-release, value) [(-240, 1.0), (121, 1.15)]
+  r1808 m4_valk_jets      stop: client +1 cmd (x0.40000), dedi +0 cmd (x0.40000) vz_post 254.19 | dedi low-g cmds 255 mean 337.558 | client low-g 254 full-g 7 corrections 3
+      post effect end (dedi): 2.1333 s after stop, height first full-g 42.33, last low-g 47.45 | land vz -659.35 vh 0.000 -> 0.000 | movescale changes (cmd-release, value) [(-240, 1.0), (121, 1.15)]
+  r1809 m4_valk_jets      stop: client +1 cmd (x0.40000), dedi +0 cmd (x0.40000) vz_post 254.10 | dedi low-g cmds 254 mean 337.541 | client low-g 253 full-g 7 corrections 3
+      post effect end (dedi): 2.1250 s after stop, height first full-g 42.16, last low-g 47.27 | land vz -658.94 vh 0.000 -> 0.000 | movescale changes (cmd-release, value) [(-240, 1.0), (121, 1.15)]
+  r1810 m4_valk_jets      stop: client +1 cmd (x0.40000), dedi +0 cmd (x0.40000) vz_post 254.09 | dedi low-g cmds 252 mean 337.537 | client low-g 251 full-g 7 corrections 3
+      post effect end (dedi): 2.1083 s after stop, height first full-g 42.31, last low-g 47.77 | land vz -661.88 vh 0.000 -> 0.000 | movescale changes (cmd-release, value) [(-240, 1.0), (120, 1.15)]
+  r1814 m4_valk_jets_fwd  stop: client +1 cmd (x0.40000), dedi +0 cmd (x0.40000) vz_post 196.01 | dedi low-g cmds 223 mean 337.448 | client low-g 3 full-g 227 corrections 45
+      post effect end (dedi): 1.8667 s after stop, height first full-g 44.48, last low-g 49.04 | land vz -609.40 vh 311.656 -> 311.555 | movescale changes (cmd-release, value) [(-240, 1.0), (121, 1.15)]
+  r1815 m4_valk_jets_fwd  stop: client +1 cmd (x0.40000), dedi +0 cmd (x0.40000) vz_post 195.87 | dedi low-g cmds 223 mean 337.495 | client low-g 2 full-g 228 corrections 46
+      post effect end (dedi): 1.8667 s after stop, height first full-g 44.21, last low-g 48.78 | land vz -599.76 vh 311.692 -> 311.692 | movescale changes (cmd-release, value) [(-240, 1.0), (121, 1.15)]
+  r2201 m4_valk_jets_fwd  stop: client +1 cmd (x0.40000), dedi +0 cmd (x0.40000) vz_post 196.01 | dedi low-g cmds 223 mean 337.597 | client low-g 3 full-g 227 corrections 40
+      post effect end (dedi): 1.8667 s after stop, height first full-g 44.73, last low-g 49.29 | land vz -602.21 vh 311.667 -> 311.566 | movescale changes (cmd-release, value) [(-240, 1.0), (121, 1.15)]
+  r2202 m4_valk_jets_fwd  stop: client +1 cmd (x0.40000), dedi +0 cmd (x0.40000) vz_post 196.01 | dedi low-g cmds 223 mean 337.605 | client low-g 3 full-g 227 corrections 40
+      post effect end (dedi): 1.8667 s after stop, height first full-g 44.69, last low-g 49.26 | land vz -602.25 vh 311.667 -> 311.566 | movescale changes (cmd-release, value) [(-240, 1.0), (122, 1.15)]
+  r2203 m4_valk_jets_fwd  stop: client +1 cmd (x0.40000), dedi +0 cmd (x0.40000) vz_post 195.91 | dedi low-g cmds 223 mean 337.509 | client low-g 3 full-g 227 corrections 40
+      post effect end (dedi): 1.8667 s after stop, height first full-g 45.33, last low-g 49.90 | land vz -603.07 vh 311.824 -> 311.723 | movescale changes (cmd-release, value) [(-240, 1.0), (121, 1.15)]
+  vertical scale on stop (dedi): 0.40000 (sd 0.00000, 0.40000..0.40000, n=10); terminal(T) at stop check 265.75
+  dedi post-effect gravity: 337.534 (sd 0.046, 337.448..337.605, n=10) u/s^2 (= 0.45005 (sd 0.00006, 0.44993..0.45014, n=10) x 750)
+  drag constant  c=13.0923 (se 0.017) rms/cmd 0.00477 mean res fast 0.00642 slow -0.00585 n=1115
+  drag linear    c=0.0404847 (se 2.7e-05) rms/cmd 0.00241 mean res fast 0.00318 slow -0.00296 n=1115
+  drag quadratic c=0.000125012 (se 1.4e-08) rms/cmd 0.00041 mean res fast 0.00001 slow -0.00000 n=1115
+  client horizontal drag coefficient after release (all its airborne commands): 0.0001188 (sd 0.0000018, 0.0001168..0.0001201, n=5)
+  Octane landing factor at the landing vz: [1.0]
+
+== Revenant shadow pounce
+  r1901 m4_pounce_c0   hold 0.0083 s, press->launch 110 cmds 0.9165 s, release->launch 109, client-dedi launch cmd 0, ground 1, pitch 0.0
+      speed 702.875 elev 34.9999 deg vh0 575.762 vz0 403.152 | charge obs 0.00639, H-release 0.00000 (700.00), H-launch 0.01272 (705.73)
+      flight 130 cmds g_client 750.25 (sd 0.18, 749.52..750.54, n=128) g_dedi 750.25 (sd 0.18, 749.52..750.54, n=128) max|dvh|/cmd 0.0000 corrections [(9, 0.0, 31.24), (15, 0.0, -31.239)] | land vz -399.93 vh 575.762 -> 565.348 (1250.2 u/s^2) | charge msc [1.0] maxspeed [173.5], msc restored 6 cmds after landing
+  r1902 m4_pounce_c0   hold 0.0083 s, press->launch 110 cmds 0.9164 s, release->launch 109, client-dedi launch cmd 0, ground 1, pitch 0.0
+      speed 702.757 elev 34.9999 deg vh0 575.665 vz0 403.084 | charge obs 0.00613, H-release 0.00000 (700.00), H-launch 0.01265 (705.69)
+      flight 130 cmds g_client 750.16 (sd 0.25, 749.52..750.48, n=128) g_dedi 750.16 (sd 0.25, 749.52..750.48, n=128) max|dvh|/cmd 0.0000 corrections [(9, 0.0, 31.252), (15, 0.0, -31.252)] | land vz -400.03 vh 575.665 -> 565.247 (1250.7 u/s^2) | charge msc [1.0] maxspeed [173.5], msc restored 6 cmds after landing
+  r1903 m4_pounce_c0   hold 0.0084 s, press->launch 109 cmds 0.9094 s, release->launch 108, client-dedi launch cmd 0, ground 1, pitch 0.0
+      speed 700.086 elev 34.9999 deg vh0 573.478 vz0 401.552 | charge obs 0.00019, H-release 0.00000 (700.00), H-launch 0.00726 (703.27)
+      flight 129 cmds g_client 750.00 (sd 0.30, 749.46..750.58, n=127) g_dedi 750.00 (sd 0.30, 749.46..750.58, n=127) max|dvh|/cmd 0.0000 corrections [(10, -0.582, 30.956), (15, 0.0, -31.363)] | land vz -395.33 vh 573.478 -> 563.059 (1249.3 u/s^2) | charge msc [1.0] maxspeed [173.5], msc restored 13 cmds after landing
+  r1904 m4_pounce_c0   hold 0.0083 s, press->launch 109 cmds 0.9083 s, release->launch 108, client-dedi launch cmd 0, ground 1, pitch 0.0
+      speed 700.100 elev 34.9999 deg vh0 573.489 vz0 401.560 | charge obs 0.00022, H-release 0.00000 (700.00), H-launch 0.00639 (702.88)
+      flight 129 cmds g_client 750.13 (sd 0.30, 749.52..750.54, n=127) g_dedi 750.13 (sd 0.30, 749.52..750.54, n=127) max|dvh|/cmd 0.0000 corrections [(10, -0.002, 37.534), (16, 0.0, -37.536)] | land vz -395.39 vh 573.489 -> 563.068 (1249.5 u/s^2) | charge msc [1.0] maxspeed [173.5], msc restored 14 cmds after landing
+  r1905 m4_pounce_c0   hold 0.0083 s, press->launch 109 cmds 0.9083 s, release->launch 108, client-dedi launch cmd 0, ground 1, pitch 0.0
+      speed 700.355 elev 34.9999 deg vh0 573.698 vz0 401.707 | charge obs 0.00079, H-release 0.00000 (700.00), H-launch 0.00636 (702.86)
+      flight 129 cmds g_client 750.08 (sd 0.34, 749.52..750.42, n=127) g_dedi 750.08 (sd 0.34, 749.52..750.42, n=127) max|dvh|/cmd 0.0000 corrections [(10, 0.0, 31.255), (16, 0.0, -31.255)] | land vz -395.29 vh 573.698 -> 563.278 (1249.4 u/s^2) | charge msc [1.0] maxspeed [173.5], msc restored 13 cmds after landing
+  r1906 m4_pounce_c06  hold 0.6001 s, press->launch 110 cmds 0.9117 s, release->launch 38, client-dedi launch cmd 0, ground 1, pitch 0.0
+      speed 700.896 elev 35.0000 deg vh0 574.140 vz0 402.017 | charge obs 0.00199, H-release 0.00000 (700.00), H-launch 0.00904 (704.07)
+      flight 129 cmds g_client 749.97 (sd 0.30, 749.52..750.52, n=127) g_dedi 749.97 (sd 0.30, 749.52..750.52, n=127) max|dvh|/cmd 0.0000 corrections [(9, -0.361, 25.553), (14, 0.0, -25.806)] | land vz -397.64 vh 574.140 -> 563.606 (1249.6 u/s^2) | charge msc [1.0] maxspeed [173.5], msc restored 7 cmds after landing
+  r2301 m4_pounce_c06  hold 0.5998 s, press->launch 110 cmds 0.9163 s, release->launch 38, client-dedi launch cmd 0, ground 1, pitch 0.0
+      speed 702.857 elev 35.0000 deg vh0 575.747 vz0 403.142 | charge obs 0.00635, H-release 0.00000 (700.00), H-launch 0.01258 (705.66)
+      flight 130 cmds g_client 750.25 (sd 0.20, 749.52..750.42, n=128) g_dedi 750.25 (sd 0.19, 749.52..750.42, n=128) max|dvh|/cmd 0.0000 corrections [(9, 0.0, 31.249), (15, 0.0, -31.249)] | land vz -399.99 vh 575.747 -> 565.329 (1250.7 u/s^2) | charge msc [1.0] maxspeed [173.5], msc restored 6 cmds after landing
+  r2302 m4_pounce_c06  hold 0.6000 s, press->launch 110 cmds 0.9164 s, release->launch 38, client-dedi launch cmd 0, ground 1, pitch 0.0
+      speed 702.790 elev 34.9999 deg vh0 575.693 vz0 403.103 | charge obs 0.00620, H-release 0.00000 (700.00), H-launch 0.01258 (705.66)
+      flight 130 cmds g_client 750.24 (sd 0.16, 749.52..750.54, n=128) g_dedi 750.24 (sd 0.16, 749.52..750.54, n=128) max|dvh|/cmd 0.0000 corrections [(9, 0.0, 31.251), (15, 0.0, -31.251)] | land vz -400.02 vh 575.693 -> 565.276 (1250.5 u/s^2) | charge msc [1.0] maxspeed [173.5], msc restored 12 cmds after landing
+  r2303 m4_pounce_c06  hold 0.6000 s, press->launch 109 cmds 0.9082 s, release->launch 37, client-dedi launch cmd 0, ground 1, pitch 0.0
+      speed 700.643 elev 35.0001 deg vh0 573.932 vz0 401.873 | charge obs 0.00143, H-release 0.00000 (700.00), H-launch 0.00635 (702.86)
+      flight 129 cmds g_client 750.12 (sd 0.35, 749.52..750.54, n=127) g_dedi 750.12 (sd 0.35, 749.52..750.54, n=127) max|dvh|/cmd 0.0000 corrections [(10, 0.0, 31.259), (16, 0.0, -31.259)] | land vz -395.10 vh 573.932 -> 563.517 (1250.3 u/s^2) | charge msc [1.0] maxspeed [173.5], msc restored 8 cmds after landing
+  r2304 m4_pounce_c06  hold 0.5998 s, press->launch 109 cmds 0.9081 s, release->launch 37, client-dedi launch cmd -1, ground 1, pitch 0.0
+      speed 702.806 elev 34.9999 deg vh0 575.706 vz0 403.112 | charge obs 0.00624, H-release 0.00000 (700.00), H-launch 0.01268 (705.71)
+      flight 131 cmds g_client 750.08 (sd 0.31, 749.52..750.46, n=129) g_dedi 750.08 (sd 0.31, 749.52..750.46, n=128) max|dvh|/cmd 0.0000 corrections [(10, 1.871, 32.565), (16, 0.0, -25.004)] | land vz -400.92 vh 575.706 -> 564.916 (1250.3 u/s^2) | charge msc [1.0] maxspeed [173.5], msc restored 12 cmds after landing
+  r2305 m4_pounce_c13  hold 1.2992 s, press->launch 157 cmds 1.3076 s, release->launch 1, client-dedi launch cmd 0, ground 1, pitch 0.0
+      speed 838.410 elev 35.0000 deg vh0 686.785 vz0 480.893 | charge obs 0.30758, H-release 0.30709 (838.19), H-launch 0.31353 (841.09)
+      flight 155 cmds g_client 750.06 (sd 0.29, 749.46..750.48, n=153) g_dedi 750.06 (sd 0.29, 749.46..750.48, n=153) max|dvh|/cmd 0.0000 corrections [(11, -0.002, 37.646), (17, 0.0, -37.647)] | land vz -475.10 vh 686.785 -> 676.102 (1249.5 u/s^2) | charge msc [1.0] maxspeed [173.5], msc restored 6 cmds after landing
+  r2306 m4_pounce_c13  hold 1.3000 s, press->launch 157 cmds 1.3083 s, release->launch 1, client-dedi launch cmd 0, ground 1, pitch 0.0
+      speed 839.121 elev 34.9999 deg vh0 687.369 vz0 481.299 | charge obs 0.30916, H-release 0.30766 (838.45), H-launch 0.31408 (841.33)
+      flight 155 cmds g_client 750.12 (sd 0.34, 749.52..750.54, n=153) g_dedi 750.12 (sd 0.34, 749.52..750.54, n=153) max|dvh|/cmd 0.0000 corrections [(10, 0.0, 37.64), (16, 0.0, -37.641)] | land vz -478.20 vh 687.369 -> 676.951 (1250.7 u/s^2) | charge msc [1.0] maxspeed [173.5], msc restored 6 cmds after landing
+  r2307 m4_pounce_c13  hold 1.2999 s, press->launch 157 cmds 1.3082 s, release->launch 1, client-dedi launch cmd 0, ground 1, pitch 0.0
+      speed 839.322 elev 34.9999 deg vh0 687.533 vz0 481.415 | charge obs 0.30960, H-release 0.30762 (838.43), H-launch 0.31402 (841.31)
+      flight 155 cmds g_client 750.15 (sd 0.33, 749.52..750.54, n=153) g_dedi 750.15 (sd 0.34, 749.52..750.54, n=153) max|dvh|/cmd 0.0000 corrections [(10, 0.002, 37.653), (16, 0.0, -37.652)] | land vz -478.08 vh 687.533 -> 677.115 (1250.7 u/s^2) | charge msc [1.0] maxspeed [173.5], msc restored 6 cmds after landing
+  r2308 m4_pounce_c13  hold 1.3000 s, press->launch 157 cmds 1.3083 s, release->launch 1, client-dedi launch cmd 0, ground 1, pitch 0.0
+      speed 839.579 elev 34.9999 deg vh0 687.743 vz0 481.562 | charge obs 0.31017, H-release 0.30766 (838.45), H-launch 0.31407 (841.33)
+      flight 155 cmds g_client 750.13 (sd 0.35, 749.52..750.54, n=153) g_dedi 750.13 (sd 0.35, 749.52..750.54, n=153) max|dvh|/cmd 0.0000 corrections [(10, 0.002, 37.506), (16, 0.0, -37.504)] | land vz -477.94 vh 687.743 -> 677.326 (1250.5 u/s^2) | charge msc [1.0] maxspeed [173.5], msc restored 6 cmds after landing
+  r2309 m4_pounce_c13  hold 1.3000 s, press->launch 157 cmds 1.3083 s, release->launch 1, client-dedi launch cmd 0, ground 1, pitch 0.0
+      speed 839.156 elev 34.9999 deg vh0 687.397 vz0 481.319 | charge obs 0.30924, H-release 0.30769 (838.46), H-launch 0.31410 (841.34)
+      flight 155 cmds g_client 750.13 (sd 0.36, 749.52..750.54, n=153) g_dedi 750.13 (sd 0.36, 749.52..750.54, n=153) max|dvh|/cmd 0.0000 corrections [(10, 0.0, 31.255), (16, 0.0, -31.255)] | land vz -478.19 vh 687.397 -> 676.979 (1250.7 u/s^2) | charge msc [1.0] maxspeed [173.5], msc restored 6 cmds after landing
+  m4_pounce_c0   n=5 speed 701.235 (sd 1.448, 700.086..702.875, n=5) elev 34.9999 (sd 0.0000, 34.9999..34.9999, n=5) charge_obs 0.00274 (sd 0.00322, 0.00019..0.00639, n=5) | err H-release 1.235 (sd 1.448, 0.086..2.875, n=5) | err H-launch -2.851 (sd 0.245, -3.181..-2.507, n=5)
+  m4_pounce_c06  n=5 speed 701.998 (sd 1.126, 700.643..702.857, n=5) elev 35.0000 (sd 0.0001, 34.9999..35.0001, n=5) charge_obs 0.00444 (sd 0.00250, 0.00143..0.00635, n=5) | err H-release 1.998 (sd 1.126, 0.643..2.857, n=5) | err H-launch -2.792 (sd 0.353, -3.172..-2.213, n=5)
+  m4_pounce_c13  n=5 speed 839.118 (sd 0.435, 838.410..839.579, n=5) elev 34.9999 (sd 0.0001, 34.9999..35.0000, n=5) charge_obs 0.30915 (sd 0.00097, 0.30758..0.31017, n=5) | err H-release 0.723 (sd 0.337, 0.219..1.131, n=5) | err H-launch -2.164 (sd 0.342, -2.679..-1.753, n=5)
+  Octane landing factor at the landing vz: [1.0]
