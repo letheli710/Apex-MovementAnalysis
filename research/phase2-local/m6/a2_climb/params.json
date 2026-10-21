@@ -316,5 +316,86 @@
   "n": 50,
   "spread": null,
   "note": "a2r_* schedules have no SCHEDULE_ORIGIN_PREFIX entry (only 'a2_' maps to lane A); no round-2 parameter could be measured; round-1 values stand"
+ },
+ {
+  "name": "climb_detach_time_after_contact",
+  "value": 1.0005320000000002,
+  "unit": "s",
+  "label": "meas",
+  "n": 5,
+  "spread": 0.0003,
+  "note": "round 2b: release at tc 0.23 (t05) detaches at the same tc as round 1 (release tc 0.63): clock = contact, not release"
+ },
+ {
+  "name": "climb_jumpup_after_release",
+  "value": "5/5",
+  "unit": "",
+  "label": "meas",
+  "n": 5,
+  "spread": null,
+  "note": "W released 0.02 s before the end height: the jump-up still fires at the end height (no W -> post vx -68.5, no air accel)"
+ },
+ {
+  "name": "climb_release_accel_rising",
+  "value": "-320.0 + -727.1*tc",
+  "unit": "u/s^2",
+  "label": "fit",
+  "n": 345,
+  "spread": "rms 3.0",
+  "note": "replaces the round-1 constants (-789 / -820 were this line at tc 0.63-0.73); tc = time since contact"
+ },
+ {
+  "name": "climb_release_accel_falling",
+  "value": "72.0 + -806.0*tc",
+  "unit": "u/s^2",
+  "label": "fit",
+  "n": 435,
+  "spread": "rms 4.3",
+  "note": "replaces the round-1 constant -642; ~ -g*tc/1.0 s: attachment gravity ramps to g at the 1.0 s detach"
+ },
+ {
+  "name": "slide_jump_is_wall_bounce",
+  "value": 257.86466666666666,
+  "unit": "u/s outward",
+  "label": "meas",
+  "n": 6,
+  "spread": 0.0005,
+  "note": "jump from the attached slide = M3 wall bounce O+I = 257.87 (n-dir), vz kept (U 2.62); back+jump same"
+ },
+ {
+  "name": "slide_back_detach_delay",
+  "value": 0.06008599999999979,
+  "unit": "s",
+  "label": "meas",
+  "n": 5,
+  "spread": 0.0037,
+  "note": "back on the attached slide detaches early with the same -69.97 u/s kick"
+ },
+ {
+  "name": "climb_side_input_lateral_speed_at_end",
+  "value": -51.105000000000004,
+  "unit": "u/s",
+  "label": "meas",
+  "n": 5,
+  "spread": 0.304,
+  "note": "moveright held from 0.5 s after the jump (W held): drift along the face (accel -113 at first, easing), vertical profile and end height nearly unchanged (climb +1 usercmd, same end z); the mantle exit then goes along the input direction (W+D = 45 deg, |v| 299)"
+ },
+ {
+  "name": "mantle_cancel_reverse_vs_elapsed",
+  "value": "-0.007 + 1.053*elapsed",
+  "unit": "s",
+  "label": "fit",
+  "n": 20,
+  "spread": "rms 0.008",
+  "note": "the cancelled traversal takes about as long to back out as it had run; then snap to start, v = 0"
+ },
+ {
+  "name": "mantle_cancel_by_back_with_W_held",
+  "value": "5/5 aborted",
+  "unit": "",
+  "label": "meas",
+  "n": 5,
+  "spread": null,
+  "note": "back pressed with W still held (forward axis -> 0) cancels like a W release: the trigger is the forward axis, not the key"
  }
 ]

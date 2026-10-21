@@ -13,6 +13,9 @@ M6-A2 climb / ledge / mantle / superglide analysis
 20261021_161628_M6_A2_sg_on: label M6_A2_sg_on kind superglide H None fps 120.0 scored 30/31 warmup [90] rejected [] both_cvars {} wall_z 294.92 MB lines {'cl:TRIG': 30, 'cl:APPLY': 30, 'cl:CLIMB': 30, 'cl:AUTH': 61, 'sv:TRIG': 30, 'sv:APPLY': 30, 'sv:CLIMB': 30} state lines 21420
 20261021_164822_M6_A2r_h232: label M6_A2r_h232 kind round2 H 232 fps 120.0 scored 30/31 warmup [90] rejected [] both_cvars {} wall_z 294.92 MB lines {} state lines 17800
 20261021_165145_M6_A2r_h180: label M6_A2r_h180 kind round2 H 180 fps 120.0 scored 20/21 warmup [90] rejected [] both_cvars {} wall_z 242.92000000000002 MB lines {} state lines 10685
+20261021_170033_M6_A2r2_h232: label M6_A2r2_h232 kind round2b H 232 fps 120.0 scored 29/31 warmup [90] rejected [(4001, 'a2r_rel_jump', 'frame rate 112.91 outside 120.0 +/- 3%')] both_cvars {} wall_z 294.92 MB lines {'cl:AUTH': 5} state lines 17222
+20261021_170543_M6_A2r2_h232_topup: label M6_A2r2_h232_topup kind round2b H 232 fps 120.0 scored 2/3 warmup [90] rejected [] both_cvars {} wall_z 294.92 MB lines {} state lines 1156
+20261021_170353_M6_A2r2_h180: label M6_A2r2_h180 kind round2b H 180 fps 120.0 scored 20/21 warmup [90] rejected [] both_cvars {} wall_z 242.92000000000002 MB lines {'cl:AUTH': 21} state lines 10685
 join: trials with > 8 unjoined cmds or bad-state joins: none
 
 ====================================================================================================
@@ -1616,6 +1619,140 @@ ON  r3630 e7_mb_f204   class boost_state4         presses [0, 204] ducks [] pres
   VERDICT: no round-2 trial touched the face: the a2r_* trials started at the runner default origin instead of lane A (x -14100.0), so every release / press happened on the floor far from the rock.
 
 ====================================================================================================
+4d. ROUND 2b (valid a2r_* rerun, sessions *_A2r2_*)
+====================================================================================================
+  20261021_170033_M6_A2r2_h232: label M6_A2r2_h232 scored 29/31 rejected [(4001, 'a2r_rel_jump', 'frame rate 112.91 outside 120.0 +/- 3%')] trial origins [(-14100.0, 6500.0, 294.92)] state lines 17222
+  20261021_170543_M6_A2r2_h232_topup: label M6_A2r2_h232_topup scored 2/3 rejected [] trial origins [(-14100.0, 6500.0, 294.92)] state lines 1156
+  20261021_170353_M6_A2r2_h180: label M6_A2r2_h180 scored 20/21 rejected [] trial origins [(-14100.0, 6500.0, 294.92)] state lines 10685
+  contact reached in 51/51 trials
+  H232 r4002 a2r_rel_jump      climb_slide_fall               rel tc 0.633 out-kick tc 0.833 (kick dvx -257.87 dvz -0.51 z 428.69 post (-259.61, -0.41, -54.46))
+      press tc 0.833 (0.2 s after release) wr True z 428.69 pre (-1.75, -0.0, -53.96) post (-259.61, -0.41, -54.46) d_out 257.865 d_tan -0.402 U 2.62
+  H232 r4003 a2r_rel_jump      climb_slide_fall               rel tc 0.634 out-kick tc 0.834 (kick dvx -257.86 dvz -0.52 z 428.75 post (-259.59, -0.41, -53.91))
+      press tc 0.834 (0.2 s after release) wr True z 428.75 pre (-1.73, -0.0, -53.39) post (-259.59, -0.41, -53.91) d_out 257.864 d_tan -0.402 U 2.61
+  H232 r4004 a2r_rel_jump      climb_slide_fall               rel tc 0.633 out-kick tc 0.833 (kick dvx -257.87 dvz -0.51 z 428.69 post (-259.61, -0.41, -54.48))
+      press tc 0.833 (0.2 s after release) wr True z 428.69 pre (-1.75, -0.0, -53.97) post (-259.61, -0.41, -54.48) d_out 257.865 d_tan -0.402 U 2.62
+  H232 r4005 a2r_rel_jump      climb_slide_fall               rel tc 0.633 out-kick tc 0.833 (kick dvx -257.86 dvz -0.49 z 428.67 post (-259.62, -0.41, -54.59))
+      press tc 0.833 (0.2 s after release) wr True z 428.67 pre (-1.75, -0.0, -54.1) post (-259.62, -0.41, -54.59) d_out 257.864 d_tan -0.402 U 2.63
+  H232 r4006 a2r_rel_back      climb_slide_fall               rel tc 0.633 out-kick tc 0.9 (kick dvx -69.98 dvz -3.67 z 423.00 post (-73.75, -0.14, -120.12))
+      press tc 0.833 (0.2 s after release) wr True z 428.68 pre (-1.75, -0.0, -53.91) post (-1.99, -0.01, -61.55) d_out 0.247 d_tan -0.004 U -4.51 detach 0.067 s after the press (tc 0.9, dvx -69.98), vz accel while back -938.1 (sd 14.8, -958.6..-916.8, n=8)
+  H232 r4007 a2r_rel_back      climb_slide_fall               rel tc 0.633 out-kick tc 0.892 (kick dvx -69.98 dvz -3.64 z 423.98 post (-73.49, -0.14, -112.19))
+      press tc 0.833 (0.2 s after release) wr True z 428.72 pre (-1.75, -0.0, -54.03) post (-2.0, -0.01, -61.66) d_out 0.247 d_tan -0.004 U -4.51 detach 0.058 s after the press (tc 0.892, dvx -69.98), vz accel while back -934.9 (sd 13.5, -953.4..-916.1, n=7)
+  H232 r4008 a2r_rel_back      climb_slide_fall               rel tc 0.633 out-kick tc 0.892 (kick dvx -69.97 dvz -3.64 z 423.93 post (-73.49, -0.14, -112.29))
+      press tc 0.833 (0.2 s after release) wr True z 428.67 pre (-1.75, -0.0, -54.09) post (-2.0, -0.01, -61.73) d_out 0.248 d_tan -0.004 U -4.51 detach 0.058 s after the press (tc 0.892, dvx -69.97), vz accel while back -935.2 (sd 13.2, -954.0..-916.8, n=7)
+  H232 r4009 a2r_rel_back      climb_slide_fall               rel tc 0.633 out-kick tc 0.892 (kick dvx -69.97 dvz -3.65 z 423.89 post (-73.49, -0.14, -112.33))
+      press tc 0.833 (0.2 s after release) wr True z 428.65 pre (-1.75, -0.0, -54.12) post (-2.0, -0.01, -61.76) d_out 0.247 d_tan -0.004 U -4.52 detach 0.058 s after the press (tc 0.892, dvx -69.97), vz accel while back -935.7 (sd 13.4, -954.3..-917.2, n=7)
+  H232 r4010 a2r_rel_back      climb_slide_fall               rel tc 0.636 out-kick tc 0.898 (kick dvx -69.97 dvz -3.67 z 424.17 post (-73.49, -0.14, -112.14))
+      press tc 0.839 (0.203 s after release) wr True z 428.93 pre (-1.71, -0.0, -53.63) post (-1.95, -0.01, -61.32) d_out 0.245 d_tan -0.004 U -4.53 detach 0.059 s after the press (tc 0.898, dvx -69.97), vz accel while back -932.4 (sd 13.6, -951.3..-913.6, n=7)
+  H232 r4011 a2r_rel_backjump  climb_slide_fall               rel tc 0.633 out-kick tc 0.833 (kick dvx -257.87 dvz -0.51 z 428.68 post (-259.62, -0.12, -54.55))
+      press tc 0.833 (0.2 s after release) wr True z 428.68 pre (-1.75, -0.0, -54.04) post (-259.62, -0.12, -54.55) d_out 257.865 d_tan -0.118 U 2.62
+  H232 r4012 a2r_rel_backjump  climb_slide_fall               rel tc 0.633 out-kick tc 0.833 (kick dvx -257.87 dvz -0.49 z 428.66 post (-259.62, -0.12, -54.66))
+      press tc 0.833 (0.2 s after release) wr True z 428.66 pre (-1.75, -0.0, -54.17) post (-259.62, -0.12, -54.66) d_out 257.865 d_tan -0.118 U 2.63
+  H232 r4013 a2r_rel_backjump  climb_slide_fall               rel tc 0.634 out-kick tc 0.834 (kick dvx -257.87 dvz -0.52 z 428.69 post (-259.62, -0.12, -54.71))
+      press tc 0.834 (0.2 s after release) wr True z 428.69 pre (-1.75, -0.0, -54.2) post (-259.62, -0.12, -54.71) d_out 257.865 d_tan -0.118 U 2.61
+  H232 r4014 a2r_rel_backjump  climb_slide_fall               rel tc 0.629 out-kick tc 0.831 (kick dvx -257.87 dvz -0.55 z 428.31 post (-259.62, -0.12, -54.8))
+      press tc 0.831 (0.202 s after release) wr True z 428.31 pre (-1.76, -0.0, -54.26) post (-259.62, -0.12, -54.8) d_out 257.865 d_tan -0.118 U 2.59
+  H232 r4015 a2r_rel_backjump  climb_slide_fall               rel tc 0.634 out-kick tc 0.834 (kick dvx -257.87 dvz -0.51 z 428.69 post (-259.62, -0.12, -54.63))
+      press tc 0.834 (0.2 s after release) wr True z 428.69 pre (-1.75, -0.0, -54.12) post (-259.62, -0.12, -54.63) d_out 257.866 d_tan -0.118 U 2.61
+  H232 r4016 a2r_rel_t05       climb_slide_fall               rel tc 0.234 out-kick tc 1.001 (kick dvx -69.96 dvz -3.99 z 349.71 post (-78.28, -0.12, -260.79))
+  H232 r4017 a2r_rel_t05       climb_slide_fall               rel tc 0.234 out-kick tc 1.001 (kick dvx -69.96 dvz -3.99 z 349.60 post (-78.28, -0.12, -260.89))
+  H232 r4018 a2r_rel_t05       climb_slide_fall               rel tc 0.234 out-kick tc 1.0 (kick dvx -69.96 dvz -3.99 z 349.83 post (-78.27, -0.12, -260.49))
+  H232 r4019 a2r_rel_t05       climb_slide_fall               rel tc 0.233 out-kick tc 1.0 (kick dvx -69.96 dvz -3.99 z 349.84 post (-78.26, -0.12, -260.14))
+  H232 r4020 a2r_rel_t05       climb_slide_fall               rel tc 0.234 out-kick tc 1.001 (kick dvx -69.96 dvz -3.99 z 349.69 post (-78.28, -0.12, -260.91))
+  H232 r4021 a2r_rel_t11       climb_jumpup_fall              rel tc 0.833 out-kick tc 0.85 (jump-up dvx -69.96 dvz 201.05 z 442.03 post (-68.54, -0.11, 245.03))
+  H232 r4022 a2r_rel_t11       climb_jumpup_fall              rel tc 0.834 out-kick tc 0.851 (jump-up dvx -69.96 dvz 200.95 z 442.06 post (-68.54, -0.11, 244.91))
+  H232 r4023 a2r_rel_t11       climb_jumpup_fall              rel tc 0.841 out-kick tc 0.85 (jump-up dvx -69.96 dvz 199.98 z 442.32 post (-68.33, -0.11, 250.54))
+  H232 r4024 a2r_rel_t11       climb_jumpup_fall              rel tc 0.834 out-kick tc 0.85 (jump-up dvx -69.96 dvz 200.99 z 442.04 post (-68.54, -0.11, 244.96))
+  H232 r4025 a2r_rel_t11       climb_jumpup_fall              rel tc 0.833 out-kick tc 0.85 (jump-up dvx -69.96 dvz 201.09 z 442.02 post (-68.54, -0.11, 245.12))
+  H232 r4026 a2r_side          climb_jumpup_mantle            rel tc 1.159 out-kick tc 0.858 (jump-up dvx -67.02 dvz 203.32 z 442.12 post (-65.13, -54.03, 260.29))
+      side: moveright from tc 0.233; lateral accel first 0.1 s -113.3 (sd 1.6, -114.9..-109.8, n=12); vy at climb end -50.98; drift -18.19 u; climb final_jump dur 0.858 end z 442.12; final post (-65.13, -54.03, 260.29); mantle exit (211.43, -211.43, 0.0) dir -45.0 deg
+        vy/vz series (tc, vy, vz): [(0.233, -1.379, 167.693), (0.283, -7.098, 153.514), (0.333, -12.656, 140.36), (0.384, -17.74, 127.985), (0.433, -22.24, 117.439), (0.483, -26.293, 107.452), (0.533, -30.108, 97.996), (0.583, -33.275, 91.384), (0.633, -36.316, 82.502), (0.683, -39.923, 76.047), (0.733, -43.657, 69.735), (0.783, -46.995, 63.913), (0.833, -50.014, 58.622)]
+      trav start z 456.40 dur 0.591 completed True exit (211.4, -211.4, 0.0) input drop None s after start (ax_fwd None, in_fwd None) reverse None s peak z 532.84 x back 0.94
+  H232 r4027 a2r_side          climb_jumpup_mantle            rel tc 1.159 out-kick tc 0.859 (jump-up dvx -67.02 dvz 203.09 z 442.20 post (-65.09, -54.28, 259.96))
+      side: moveright from tc 0.234; lateral accel first 0.1 s -113.3 (sd 1.7, -114.9..-109.9, n=12); vy at climb end -51.22; drift -18.29 u; climb final_jump dur 0.859 end z 442.2; final post (-65.09, -54.28, 259.96); mantle exit (211.43, -211.43, 0.0) dir -45.0 deg
+        vy/vz series (tc, vy, vz): [(0.234, -1.379, 167.706), (0.284, -7.102, 153.499), (0.334, -12.693, 140.187), (0.384, -17.742, 127.857), (0.434, -22.232, 117.388), (0.484, -26.217, 107.337), (0.534, -29.922, 97.926), (0.584, -33.881, 91.055), (0.634, -36.606, 82.324), (0.684, -40.14, 75.914), (0.734, -43.887, 69.606), (0.784, -47.226, 63.795), (0.834, -50.251, 58.516)]
+      trav start z 458.28 dur 0.583 completed True exit (211.4, -211.4, 0.0) input drop None s after start (ax_fwd None, in_fwd None) reverse None s peak z 532.84 x back 0.97
+  H232 r4028 a2r_side          climb_jumpup_mantle            rel tc 1.149 out-kick tc 0.857 (jump-up dvx -67.01 dvz 203.01 z 442.22 post (-65.06, -53.78, 260.69))
+      side: moveright from tc 0.232; lateral accel first 0.1 s -113.4 (sd 1.6, -115.0..-110.0, n=12); vy at climb end -50.72; drift -18.09 u; climb final_jump dur 0.857 end z 442.22; final post (-65.06, -53.78, 260.69); mantle exit (211.43, -211.43, 0.0) dir -45.0 deg
+        vy/vz series (tc, vy, vz): [(0.232, -1.377, 167.617), (0.282, -7.098, 153.425), (0.333, -12.774, 140.011), (0.385, -18.009, 127.193), (0.436, -22.584, 116.417), (0.487, -26.557, 106.246), (0.538, -30.176, 96.727), (0.589, -33.932, 89.879), (0.639, -37.067, 80.939), (0.69, -40.074, 74.777), (0.74, -43.642, 68.565), (0.79, -46.902, 62.812), (0.84, -49.848, 57.608)]
+      trav start z 454.65 dur 0.599 completed True exit (211.4, -211.4, 0.0) input drop None s after start (ax_fwd None, in_fwd None) reverse None s peak z 532.84 x back 0.93
+  H232 r4029 a2r_side          climb_jumpup_mantle            rel tc 1.143 out-kick tc 0.859 (jump-up dvx -67.03 dvz 203.06 z 442.21 post (-65.11, -54.58, 259.9))
+      side: moveright from tc 0.234; lateral accel first 0.1 s -113.3 (sd 1.7, -114.9..-109.7, n=12); vy at climb end -51.54; drift -18.36 u; climb final_jump dur 0.859 end z 442.21; final post (-65.11, -54.58, 259.9); mantle exit (211.43, -211.43, 0.0) dir -45.0 deg
+        vy/vz series (tc, vy, vz): [(0.234, -1.379, 167.676), (0.284, -7.119, 153.441), (0.334, -12.665, 140.272), (0.384, -17.721, 127.922), (0.434, -22.227, 117.424), (0.484, -26.245, 107.429), (0.534, -30.013, 97.983), (0.584, -33.982, 91.105), (0.634, -36.718, 82.366), (0.684, -40.3, 75.934), (0.734, -44.075, 69.612), (0.784, -47.435, 63.793), (0.834, -50.556, 58.49)]
+      trav start z 454.60 dur 0.6 completed True exit (211.4, -211.4, 0.0) input drop None s after start (ax_fwd None, in_fwd None) reverse None s peak z 532.84 x back 0.93
+  H232 r4030 a2r_side          climb_jumpup_mantle            rel tc 1.159 out-kick tc 0.859 (jump-up dvx -67.02 dvz 202.86 z 442.26 post (-65.1, -54.12, 259.62))
+      side: moveright from tc 0.233; lateral accel first 0.1 s -113.2 (sd 1.7, -114.7..-109.7, n=12); vy at climb end -51.07; drift -18.18 u; climb final_jump dur 0.859 end z 442.26; final post (-65.1, -54.12, 259.62); mantle exit (211.43, -211.43, 0.0) dir -45.0 deg
+        vy/vz series (tc, vy, vz): [(0.233, -1.379, 167.727), (0.283, -7.101, 153.521), (0.334, -12.661, 140.313), (0.384, -17.723, 127.929), (0.434, -22.233, 117.388), (0.484, -26.29, 107.38), (0.534, -29.607, 98.051), (0.584, -33.257, 91.26), (0.634, -36.275, 82.387), (0.684, -39.862, 75.94), (0.734, -43.59, 69.63), (0.784, -46.969, 63.779), (0.834, -50.083, 58.421)]
+      trav start z 458.32 dur 0.583 completed True exit (211.4, -211.4, 0.0) input drop None s after start (ax_fwd None, in_fwd None) reverse None s peak z 532.84 x back 0.97
+  H232 r4081 a2r_rel_jump      climb_slide_fall               rel tc 0.633 out-kick tc 0.833 (kick dvx -257.87 dvz -0.50 z 428.66 post (-259.61, -0.41, -54.47))
+      press tc 0.833 (0.2 s after release) wr True z 428.66 pre (-1.75, -0.0, -53.97) post (-259.61, -0.41, -54.47) d_out 257.865 d_tan -0.402 U 2.62
+  H232 r4082 a2r_rel_jump      climb_slide_fall               rel tc 0.633 out-kick tc 0.833 (kick dvx -257.87 dvz -0.52 z 428.66 post (-259.61, -0.41, -54.5))
+      press tc 0.833 (0.2 s after release) wr True z 428.66 pre (-1.75, -0.0, -53.97) post (-259.61, -0.41, -54.5) d_out 257.865 d_tan -0.402 U 2.61
+  H180 r4041 a2r_mant_back     climb_mantle+mantle_aborted    rel tc 0.391 out-kick tc None
+      trav start z 400.89 dur 0.192 completed False exit (0.0, 0.0, 0.0) input drop 0.092 s after start (ax_fwd 0.5, in_fwd 1) reverse 0.1 s peak z 419.04 x back 8.45
+  H180 r4042 a2r_mant_back     climb_mantle+mantle_aborted    rel tc 0.417 out-kick tc None
+      trav start z 404.05 dur 0.148 completed False exit (0.0, 0.0, 0.0) input drop 0.067 s after start (ax_fwd 0.5, in_fwd 1) reverse 0.081 s peak z 415.52 x back 7.35
+  H180 r4043 a2r_mant_back     climb_mantle+mantle_aborted    rel tc 0.417 out-kick tc None
+      trav start z 404.08 dur 0.142 completed False exit (0.0, 0.0, 0.0) input drop 0.067 s after start (ax_fwd 0.5, in_fwd 1) reverse 0.075 s peak z 414.91 x back 7.35
+  H180 r4044 a2r_mant_back     climb_mantle+mantle_aborted    rel tc 0.408 out-kick tc None
+      trav start z 403.04 dur 0.158 completed False exit (0.0, 0.0, 0.0) input drop 0.075 s after start (ax_fwd 0.5, in_fwd 1) reverse 0.083 s peak z 416.15 x back 7.72
+  H180 r4045 a2r_mant_back     climb_mantle+mantle_aborted    rel tc 0.4 out-kick tc None
+      trav start z 401.99 dur 0.175 completed False exit (0.0, 0.0, 0.0) input drop 0.083 s after start (ax_fwd 0.5, in_fwd 1) reverse 0.092 s peak z 417.48 x back 8.07
+  H180 r4046 a2r_mrel_t070     climb_mantle+mantle_aborted    rel tc 0.4 out-kick tc None
+      trav start z 401.98 dur 0.058 completed False exit (0.0, 0.0, 0.0) input drop 0.033 s after start (ax_fwd 0.0, in_fwd 0) reverse 0.025 s peak z 405.43 x back 1.15
+  H180 r4047 a2r_mrel_t070     climb_mantle+mantle_aborted    rel tc 0.392 out-kick tc None
+      trav start z 400.93 dur 0.075 completed False exit (0.0, 0.0, 0.0) input drop 0.042 s after start (ax_fwd 0.0, in_fwd 0) reverse 0.033 s peak z 406.38 x back 1.44
+  H180 r4048 a2r_mrel_t070     climb_mantle+mantle_aborted    rel tc 0.408 out-kick tc None
+      trav start z 403.04 dur 0.042 completed False exit (0.0, 0.0, 0.0) input drop 0.025 s after start (ax_fwd 0.0, in_fwd 0) reverse 0.017 s peak z 404.66 x back 0.57
+  H180 r4049 a2r_mrel_t070     climb_mantle+mantle_aborted    rel tc 0.403 out-kick tc None
+      trav start z 402.65 dur 0.06 completed False exit (0.0, 0.0, 0.0) input drop 0.034 s after start (ax_fwd 0.0, in_fwd 0) reverse 0.026 s peak z 406.05 x back 1.44
+  H180 r4050 a2r_mrel_t070     climb_mantle+mantle_aborted    rel tc 0.4 out-kick tc None
+      trav start z 401.97 dur 0.058 completed False exit (0.0, 0.0, 0.0) input drop 0.033 s after start (ax_fwd 0.0, in_fwd 0) reverse 0.025 s peak z 405.4 x back 1.15
+  H180 r4051 a2r_mrel_t074     climb_mantle+mantle_aborted    rel tc 0.392 out-kick tc None
+      trav start z 400.93 dur 0.158 completed False exit (0.0, 0.0, 0.0) input drop 0.083 s after start (ax_fwd 0.0, in_fwd 0) reverse 0.075 s peak z 415.47 x back 6.17
+  H180 r4052 a2r_mrel_t074     climb_mantle+mantle_aborted    rel tc 0.417 out-kick tc None
+      trav start z 404.45 dur 0.108 completed False exit (0.0, 0.0, 0.0) input drop 0.058 s after start (ax_fwd 0.0, in_fwd 0) reverse 0.05 s peak z 412.01 x back 5.37
+  H180 r4053 a2r_mrel_t074     climb_mantle+mantle_aborted    rel tc 0.4 out-kick tc None
+      trav start z 401.92 dur 0.142 completed False exit (0.0, 0.0, 0.0) input drop 0.075 s after start (ax_fwd 0.0, in_fwd 0) reverse 0.067 s peak z 414.06 x back 5.74
+  H180 r4054 a2r_mrel_t074     climb_mantle+mantle_aborted    rel tc 0.4 out-kick tc None
+      trav start z 402.01 dur 0.142 completed False exit (0.0, 0.0, 0.0) input drop 0.075 s after start (ax_fwd 0.0, in_fwd 0) reverse 0.067 s peak z 414.09 x back 5.81
+  H180 r4055 a2r_mrel_t074     climb_mantle+mantle_aborted    rel tc 0.392 out-kick tc None
+      trav start z 400.91 dur 0.167 completed False exit (0.0, 0.0, 0.0) input drop 0.083 s after start (ax_fwd 0.0, in_fwd 0) reverse 0.083 s peak z 415.72 x back 6.16
+  H180 r4056 a2r_mrel_t078     climb_mantle+mantle_aborted    rel tc 0.395 out-kick tc None
+      trav start z 401.49 dur 0.252 completed False exit (0.0, 0.0, 0.0) input drop 0.127 s after start (ax_fwd 0.0, in_fwd 0) reverse 0.125 s peak z 422.68 x back 12.51
+  H180 r4057 a2r_mrel_t078     climb_mantle+mantle_aborted    rel tc 0.417 out-kick tc None
+      trav start z 404.09 dur 0.192 completed False exit (0.0, 0.0, 0.0) input drop 0.1 s after start (ax_fwd 0.0, in_fwd 0) reverse 0.092 s peak z 419.57 x back 10.84
+  H180 r4058 a2r_mrel_t078     climb_mantle+mantle_aborted    rel tc 0.408 out-kick tc None
+      trav start z 403.02 dur 0.208 completed False exit (0.0, 0.0, 0.0) input drop 0.108 s after start (ax_fwd 0.0, in_fwd 0) reverse 0.1 s peak z 421.07 x back 11.19
+  H180 r4059 a2r_mrel_t078     climb_mantle+mantle_aborted    rel tc 0.4 out-kick tc None
+      trav start z 402.02 dur 0.218 completed False exit (0.0, 0.0, 0.0) input drop 0.11 s after start (ax_fwd 0.0, in_fwd 0) reverse 0.108 s peak z 422.01 x back 10.62
+  H180 r4060 a2r_mrel_t078     climb_mantle+mantle_aborted    rel tc 0.408 out-kick tc None
+      trav start z 403.06 dur 0.208 completed False exit (0.0, 0.0, 0.0) input drop 0.108 s after start (ax_fwd 0.0, in_fwd 0) reverse 0.1 s peak z 421.07 x back 11.21
+
+  Detach clock (first outward kick on the wall, t since contact):
+    a2r_rel_back      n=5 release tc 0.634 (sd 0.001, 0.633..0.636, n=5)  first outward kick tc 0.895 (sd 0.004, 0.892..0.900, n=5)  kinds ['kick']  (kick on/after a press in 5)
+    a2r_rel_backjump  n=5 release tc 0.633 (sd 0.002, 0.629..0.634, n=5)  first outward kick tc 0.833 (sd 0.001, 0.831..0.834, n=5)  kinds ['kick']  (kick on/after a press in 5)
+    a2r_rel_jump      n=6 release tc 0.633 (sd 0.000, 0.633..0.634, n=6)  first outward kick tc 0.833 (sd 0.000, 0.833..0.834, n=6)  kinds ['kick']  (kick on/after a press in 6)
+    a2r_rel_t05       n=5 release tc 0.233 (sd 0.000, 0.233..0.234, n=5)  first outward kick tc 1.001 (sd 0.000, 1.000..1.001, n=5)  kinds ['kick']  (kick on/after a press in 0)
+    a2r_rel_t11       n=5 release tc 0.835 (sd 0.003, 0.833..0.841, n=5)  first outward kick tc 0.850 (sd 0.000, 0.850..0.851, n=5)  kinds ['jump-up']  (kick on/after a press in 0)
+    t05 (no press): detach 1.001 (sd 0.000, 1.000..1.001, n=5) s after contact = 0.767 (sd 0.000, 0.767..0.767, n=5) s after the release; round 1 (release tc 0.63): 1.003 after contact = 0.36 after release -> the clock runs from CONTACT
+    t11 (release at tc 0.835 (sd 0.003, 0.833..0.841, n=5)): final jump-up still fires in 5/5 at z 442.09 (sd 0.13, 442.02..442.32, n=5), dvz 200.81 (sd 0.47, 199.98..201.09, n=5), post vx -68.50 (sd 0.10, -68.54..-68.33, n=5)
+  vertical accel after the release, rising (vz > 5): a = -320.0 + -727.1*tc  (rms 3.0 u/s^2, n=345, tc 0.242..0.843)
+  vertical accel after the release, falling (vz < -5): a = 72.0 + -806.0*tc  (rms 4.3 u/s^2, n=435, tc 0.542..0.993)
+  a2r_rel_jump      n=6 on the wall 6/6, 0.200 (sd 0.000, 0.200..0.200, n=6) s after release: d_out 257.865 (sd 0.001, 257.864..257.865, n=6) d_tan -0.402 (sd 0.000, -0.402..-0.402, n=6) U 2.62 (sd 0.01, 2.61..2.63, n=6) pre vz -53.89 (sd 0.25, -54.10..-53.39, n=6) post vx -259.61 (sd 0.01, -259.62..-259.59, n=6)
+  a2r_rel_backjump  n=5 on the wall 5/5, 0.200 (sd 0.001, 0.200..0.202, n=5) s after release: d_out 257.865 (sd 0.000, 257.865..257.866, n=5) d_tan -0.118 (sd 0.000, -0.118..-0.118, n=5) U 2.61 (sd 0.01, 2.59..2.63, n=5) pre vz -54.16 (sd 0.08, -54.26..-54.04, n=5) post vx -259.62 (sd 0.00, -259.62..-259.62, n=5)
+  a2r_rel_back      n=5 on the wall 5/5, 0.201 (sd 0.002, 0.200..0.203, n=5) s after release: d_out 0.247 (sd 0.001, 0.245..0.248, n=5) d_tan -0.004 (sd 0.000, -0.004..-0.004, n=5) U -4.52 (sd 0.01, -4.53..-4.51, n=5) pre vz -53.96 (sd 0.20, -54.12..-53.63, n=5) post vx -1.99 (sd 0.02, -2.00..-1.95, n=5); detach 0.060 (sd 0.004, 0.058..0.067, n=5) s after the press, dvx -69.97 (sd 0.00, -69.98..-69.97, n=5), vz accel -935.3 (sd 2.0, -938.1..-932.4, n=5)
+    vs M3 wall bounce (no input, held 0.15/0.40 s): d_out 257.865, d_tan -0.40, U 4.7-5.3 -> same vector
+  side: n=5 lateral accel first 0.1 s -113.3 (sd 0.0, -113.4..-113.2, n=5); vy at climb end -51.11 (sd 0.30, -51.54..-50.72, n=5); drift -18.22 (sd 0.11, -18.36..-18.09, n=5) u; climb dur 0.858 (sd 0.001, 0.857..0.859, n=5) end z 442.20 (sd 0.05, 442.12..442.26, n=5); mantle exit dir -45.00 (sd 0.00, -45.00..-45.00, n=5) deg, |v| 299.00 (sd 0.00, 299.00..299.00, n=5)
+
+  Mantle cancel (H180): input drop = first traversal frame with forward axis < 1
+    a2r_mant_back   n=5 completed 0/5; input drop 0.077 (sd 0.011, 0.067..0.092, n=5) s after start = frac 0.127 (sd 0.016, 0.112..0.150, n=5); reverse 0.086 (sd 0.010, 0.075..0.100, n=5) s; ax_fwd at drop [0.5], in_fwd [1]
+    a2r_mrel_t070   n=5 completed 0/5; input drop 0.033 (sd 0.006, 0.025..0.042, n=5) s after start = frac 0.055 (sd 0.009, 0.042..0.068, n=5); reverse 0.025 (sd 0.006, 0.017..0.033, n=5) s; ax_fwd at drop [0.0], in_fwd [0]
+    a2r_mrel_t074   n=5 completed 0/5; input drop 0.075 (sd 0.010, 0.058..0.083, n=5) s after start = frac 0.124 (sd 0.015, 0.098..0.136, n=5); reverse 0.068 (sd 0.012, 0.050..0.083, n=5) s; ax_fwd at drop [0.0], in_fwd [0]
+    a2r_mrel_t078   n=5 completed 0/5; input drop 0.111 (sd 0.010, 0.100..0.127, n=5) s after start = frac 0.183 (sd 0.015, 0.168..0.208, n=5); reverse 0.105 (sd 0.013, 0.092..0.125, n=5) s; ax_fwd at drop [0.0], in_fwd [0]
+    reverse time vs elapsed time at the drop (aborted, round 2b): reverse = -0.007 + 1.053*elapsed (rms 0.008, n=20)
+    round 2b: aborted at fracs up to 0.208, completed min None -> the round-1 bracket (0.395, 0.685] is NOT narrowed (all round-2b drops came earlier than 0.395)
+
+====================================================================================================
 5. PARAMETERS (label: meas = read from usercmds, fit = formula fitted to usercmds, src = source/census, unknown, design-needed)
 ====================================================================================================
   [fit] climb_accel_phase = 488.5477 u/s^2  (n=40, spread 24.2483)  vz += a*dt until the speed line is reached
@@ -1653,3 +1790,12 @@ ON  r3630 e7_mb_f204   class boost_state4         presses [0, 204] ducks [] pres
   [meas] fsm_post_boost_lurch_dv = 0.0080 u/s  (n=5, spread 0.0081)  moveright press 0.19-0.22 s after the boost exit; the M3 lurch law predicts |dv| 207.8 -> suppressed (src: state 4 masks tap strafe)
   [design-needed] superglide_choice_for_unity = design-needed   (n=None, spread None)  native (460 + V 289.8, frame-order exploit) vs SDK FSM (388.7 / 367.4, 133 ms window) vs none
   [meas] round2_a2r_validity = 0/50 trials reached the face   (n=50, spread None)  a2r_* schedules have no SCHEDULE_ORIGIN_PREFIX entry (only 'a2_' maps to lane A); no round-2 parameter could be measured; round-1 values stand
+  [meas] climb_detach_time_after_contact = 1.0005 s  (n=5, spread 0.0003)  round 2b: release at tc 0.23 (t05) detaches at the same tc as round 1 (release tc 0.63): clock = contact, not release
+  [meas] climb_jumpup_after_release = 5/5   (n=5, spread None)  W released 0.02 s before the end height: the jump-up still fires at the end height (no W -> post vx -68.5, no air accel)
+  [fit] climb_release_accel_rising = -320.0 + -727.1*tc u/s^2  (n=345, spread rms 3.0)  replaces the round-1 constants (-789 / -820 were this line at tc 0.63-0.73); tc = time since contact
+  [fit] climb_release_accel_falling = 72.0 + -806.0*tc u/s^2  (n=435, spread rms 4.3)  replaces the round-1 constant -642; ~ -g*tc/1.0 s: attachment gravity ramps to g at the 1.0 s detach
+  [meas] slide_jump_is_wall_bounce = 257.8647 u/s outward  (n=6, spread 0.0005)  jump from the attached slide = M3 wall bounce O+I = 257.87 (n-dir), vz kept (U 2.62); back+jump same
+  [meas] slide_back_detach_delay = 0.0601 s  (n=5, spread 0.0037)  back on the attached slide detaches early with the same -69.97 u/s kick
+  [meas] climb_side_input_lateral_speed_at_end = -51.1050 u/s  (n=5, spread 0.304)  moveright held from 0.5 s after the jump (W held): drift along the face (accel -113 at first, easing), vertical profile and end height nearly unchanged (climb +1 usercmd, same end z); the mantle exit then goes along the input direction (W+D = 45 deg, |v| 299)
+  [fit] mantle_cancel_reverse_vs_elapsed = -0.007 + 1.053*elapsed s  (n=20, spread rms 0.008)  the cancelled traversal takes about as long to back out as it had run; then snap to start, v = 0
+  [meas] mantle_cancel_by_back_with_W_held = 5/5 aborted   (n=5, spread None)  back pressed with W still held (forward axis -> 0) cancels like a W release: the trigger is the forward axis, not the key

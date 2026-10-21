@@ -22,10 +22,16 @@ The round-2 sessions (§8) are optional extra arguments. Without them, the comma
 ```
 py -3 a2_climb_analysis.py <the 11 round-1 sessions above> \
   ../../data/20261021_164822_M6_A2r_h232 ../../data/20261021_165145_M6_A2r_h180 \
+  ../../data/20261021_170033_M6_A2r2_h232 ../../data/20261021_170543_M6_A2r2_h232_topup ../../data/20261021_170353_M6_A2r2_h180 \
   --json results.json --params params.json > analysis_output.txt
 ```
 
-The round-2 additions are output section 4c, the `round2` block in `results.json`, and one extra entry at the end of `params.json` (`round2_a2r_validity`).
+The later additions are:
+
+- output section 4c, the `round2` block in `results.json` and the `round2_a2r_validity` entry in `params.json`, from the invalid A2r sessions (§8);
+- output section 4d, the `round2b` block in `results.json` and 9 entries appended to `params.json`, from the valid A2r2 rerun (§9).
+
+The round-1 entries in `params.json` keep their values. Where a round-2b entry supersedes one of them, its note says so. The invalid A2r sessions feed no parameter.
 
 Labels: **[meas]** read directly from client usercmds; **[fit]** a formula fitted to usercmds; **[src]** source or census; **[unknown]** seen but not explained; **[design-needed]** the data cannot decide it, so it is a Unity design choice.
 
@@ -225,19 +231,32 @@ AIR -> CLIMB      when airborne, moving into a climbable face with W held, and !
   CLIMB -> MANTLE       if ledge_top - z <= ~80 u (check may lag 0-3 cmds) [fit]
   CLIMB -> JUMPUP       if z >= z_ref + 147.06 [meas]: vz += 208 - 584*dt; v_out = 68.1 - 500*dt (M3); climbUsed = true -> AIR
                         (AIR keeps checking the mantle reach; after the jump-up the trigger came at gap 72.8-78.3 u [meas])
-  CLIMB -> SLIDE        on W release [meas]: first cmd vz += -789*dt, then -820 u/s^2 while vz > 5, then -642 u/s^2,
-                        still attached; detach at contact + 1.00 s [meas; the clock is unknown: contact vs release + 0.36 s]
-                        with v += 70 outward -> AIR (climbUsed = true)
-  CLIMB -> WALL BOUNCE  on jump (M3 section 3, not re-tested here)
+  climb side input [meas, round 2b]: moveright (W held) adds a lateral speed along the face (-113 u/s^2 at first, easing;
+                        -51 u/s and 18 u of drift by the climb end); the vertical profile and end height are nearly unchanged
+                        (+1 usercmd); the jump-up keeps the lateral speed
+  CLIMB -> SLIDE        on W release, still attached (wr=true) [fit, round 2b; replaces the round-1 constants]:
+                        dvz/dt = -320 - 727*tc while vz > 5, and +72 - 806*tc while vz < -5 (tc = time since contact;
+                        rms 3-4 u/s^2; about g*tc: the attachment gravity ramps up to g at the 1.0 s detach)
+  any attached state (climb or slide): DETACH at tc = 1.000 s [meas, round 2b: the clock is CONTACT, not the release],
+                        v += 69.97 outward -> AIR (climbUsed = true). A W-held climb never gets there (jump-up at tc 0.85)
+  SLIDE + z >= z_ref + 147.06 -> JUMPUP still fires without W (W released 0.02 s earlier, 5/5) [meas], post out vx -68.5
+  SLIDE + back (no W) -> early DETACH 0.060 s after the press (the slide accelerates about -310 u/s^2 extra meanwhile),
+                        the same +69.97 kick [meas, round 2b]
+  CLIMB/SLIDE + jump -> WALL BOUNCE (M3 section 3) [meas, round 2b]: the same vector from the attached slide,
+                        dv_out = 257.865 along n with no stick (O + I), back+jump the same; vz is kept (U = +2.6, the
+                        falling slide speed stays); then normal air
   AIR touching the face with climbUsed: no climb, plain slide/fall [meas]
 
 AIR -> MANTLE     directly at contact when ledge_top - z <= reach (H90/H120) [meas]
 MANTLE (scripted traversal, no physics):
   T = 0.173 + 0.0055*(ledge_top - z_start) s [fit]; path: in ~22 u toward the face while rising slowly
   (first ~0.2 s), then mostly vertical to the ledge height, then forward to face + 6.4 u [meas, one rock]
-  exit: v = 299*moveDir if W held at the exit, else 0; vz = 0 [meas]
-  W released before frac ~0.4-0.69 of T -> CANCEL [meas bracket; Unity 0.5 = design-needed]:
-        play the path backwards 0.23 s, snap to the start position, v = 0 -> AIR
+  exit: v = 299*moveDir if W held at the exit, else 0; vz = 0 [meas]; moveDir is the input direction
+        (W+D -> 45 deg, (211.4, -211.4)) [meas, round 2b]
+  forward axis drops below 1 before frac ~0.4-0.69 of T -> CANCEL [meas bracket; Unity 0.5 = design-needed].
+        The trigger is the forward AXIS: a W release, or back pressed with W still held (axis 0.5 -> 0), cancels [meas, round 2b].
+        Back out for about as long as the traversal had run (reverse = 1.05*elapsed - 0.007 s, rms 0.008 [fit, round 2b];
+        round 1: 0.23 s for 0.23 s), then snap to the start position, v = 0 -> AIR
   jump pressed:
     SDK FSM variant (what the server runs by default) [src+meas]: latch; at the exit
         state 4 if pressed in the last 133 ms (camera gate): v_h = 1.3*299 = 388.7, vz = 367.4, ducked
@@ -264,8 +283,12 @@ HANG: not observed in S21 data -> [design-needed] (none in the native model)
 | exit speed | 299 (W held) / 0 (released) | meas |
 | mantle cancel window | frac (0.395, 0.685] | meas bracket; threshold unknown |
 | cancel reverse time | 0.228 s, then snap and drop | meas |
-| W-release slide | −789 (first usercmd), −820 rising, −642 falling u/s² | fit |
-| detach | 1.003 s after contact, +69.96 out | meas (clock ambiguous) |
+| W-release slide | −320 − 727·tc while rising, +72 − 806·tc while falling u/s² (round 2b; the round-1 constants −789/−820/−642 were this line at tc 0.63–0.73) | fit |
+| detach | contact + 1.000 s, +69.97 out; the clock is contact (round 2b) | meas |
+| back on the slide | early detach 0.060 s after the press, same kick | meas (round 2b) |
+| jump on the climb or slide | M3 wall bounce, dv_out 257.865, vz kept | meas (round 2b) |
+| side input while climbing | −51 u/s lateral at the climb end; mantle exit along the input direction | meas (round 2b) |
+| mantle cancel trigger | forward axis < 1 (release or back); reverse ≈ elapsed time | meas / fit (round 2b) |
 | native superglide | v_h 460, V 289.82 | meas; 460 = slide cap (M3) fit |
 | FSM boost | 388.7 / 367.41 | meas = src |
 | post-boost lurch | 0.008 (predicted 207.8) | meas |
@@ -274,7 +297,7 @@ HANG: not observed in S21 data -> [design-needed] (none in the native model)
 ## 7. Open questions and next run
 
 1. **Floor vs takeoff anchor** for the climb end and Z0. Jump from a raised step or a box in front of the rock, or start on a slope, so that the takeoff z differs from the floor under the face.
-2. **Detach clock.** Release W at 2–3 different times after contact (0.3 / 0.5 / 0.7 s).
+2. ~~Detach clock~~: answered in round 2b. It runs from contact (§9).
 3. **Hang, cancel and hop were not exercised.**
    - Every cancel, hop and back-hop press came after the player had landed (2.4 s after the jump).
    - Next run: press back / jump / back+jump 0.05–0.3 s after the W release, while still sliding on the wall (H300), and during the traversal (H180 and H232).
@@ -303,3 +326,58 @@ Sessions: `20261021_164822_M6_A2r_h232` (30 scored) and `20261021_165145_M6_A2r_
 - **None of the round-2 questions is answered.** That covers the jump / back / back+jump from the attached slide (wall bounce or not), the detach clock (contact vs release), a sideways climb, back cancelling a mantle, and the mantle-cancel threshold.
 - **Effect on the model:** none. §6 and every parameter in `params.json` keep their round-1 values. The only new parameter entry is `round2_a2r_validity` = 0/50.
 - **Fix before rerunning.** Add `"a2r_": LANE_A` to `SCHEDULE_ORIGIN_PREFIX`, or rename the schedules to `a2_*`. Check that the runner trial `origin` is (−14100, 6500, 294.92), then rerun both sessions. The round-2 code path in the script will analyse them once contact occurs: it currently reports validity only, and the per-question measurements (§7 items 2–4) still need to be added for a valid rerun.
+
+## 9. Round 2b (valid A2r2 rerun)
+
+Sessions: `20261021_170033_M6_A2r2_h232` (29 scored; r4001 failed the fps gate at 112.9), `20261021_170543_M6_A2r2_h232_topup` (2 scored) and `20261021_170353_M6_A2r2_h180` (20 scored).
+
+- Every trial started at lane A (−14100, 6500, 294.92) and all 51 reached the face. The script reports this in output section 4d.
+- The release and press times below are tc, the time since the contact usercmd. Contact is 0.275 s after the jump.
+
+**Actions from the attached slide (H232, W released at tc 0.633, press 0.20 s later, still `wr=true`).**
+
+| Action | n | Result |
+|---|---|---|
+| jump | 6 | [meas] **M3 wall bounce.** dv_out 257.865 (sd 0.001), d_tan −0.40, which is exactly M3's no-input O + I. vz is kept: U = dvz + g·dt/2 = +2.6, against 4.7–5.3 during an active climb, so the player leaves falling at about −54. Post (−259.6, −0.4, −54.5), then normal air. |
+| back + jump | 5 | the same: d_out 257.865, d_tan −0.12 |
+| back | 5 | no kick on the press usercmd (d_out 0.25). The slide accelerates down about 310 u/s² faster (−935 u/s²). **Early detach 0.060 s (sd 0.004) after the press** with the usual +69.97 outward kick |
+
+**Detach clock.** [meas] It runs from **contact**:
+
+| Release | Detach | Note |
+|---|---|---|
+| tc 0.233 (t05) | tc 1.000 (sd 0.0003) | 0.767 s after the release |
+| tc 0.633 (round 1) | tc 1.003 | 0.36 s after the release |
+
+- t11 released at tc 0.835, which is 0.02 s before the end height. **The final jump-up still fires**, 5/5: z 442.09, dvz +200.8, post vx −68.5. W is not needed for the jump-up, and with no W there is no air acceleration back toward the face.
+- **The slide accelerations follow a time ramp**, not constants. Over tc 0.24–0.99:
+  - while rising: a = −320 − 727·tc (rms 3.0 u/s², n = 345);
+  - while falling: a = +72 − 806·tc (rms 4.3, n = 435);
+  - there is a step at vz = 0.
+- The falling branch reaches about −g at tc = 1.0, when the detach comes. That reads as an attachment gravity that ramps up to g over the 1.0 s wall time. The round-1 constants (−789 / −820 / −642) were this line evaluated at tc 0.63–0.73.
+
+**Sideways key while climbing (H232, moveright held from tc 0.233 with W held, n = 5).** [meas]
+
+- Lateral speed along the face starts at −113 u/s² and eases off to **−51 u/s at the climb end**, with 18 u of drift.
+- The vertical profile is nearly unchanged. The climb ends 1 usercmd later (0.858 s) at the same z (442.2).
+- The jump-up keeps the lateral speed: (−65.1, −54.0, +260.3).
+- The mantle exit goes along the input direction: (211.43, −211.43) = 299 at −45°.
+- So there is no separate sideways climb: it is the normal climb plus lateral drift.
+
+**Back during the mantle (H180, back at 0.75 s after the jump, W still held).** [meas]
+
+- **Mantle cancelled, 5/5.** The forward axis went 1 → 0.5 → 0 (`in_fwd` stayed 1) about 0.077 s into the traversal.
+- The path backed out for 0.086 s, then snapped to the start position and dropped with v = 0.
+- The cancel trigger is therefore the forward axis, not releasing the W key.
+
+**Mantle-cancel threshold (H180, W released 0.70 / 0.74 / 0.78 s after the jump).**
+
+- [meas] Aborted 15/15. The input dropped 0.033 / 0.075 / 0.111 s into the traversal, which is frac 0.055 / 0.124 / 0.183. The traversal started at about 0.67 s after the jump, so all three release times fell early in it.
+- **The bracket is not narrowed.** It stays (0.395, 0.685] from round 1.
+- [fit] Across the 20 round-2b aborts: **reverse time = −0.007 + 1.053 × elapsed** (rms 0.008 s). Round 1's 0.23 s in and 0.23 s out sits on the same line. The back-out takes about as long as the traversal had run.
+
+**Still open after round 2b:**
+
+1. The cancel threshold inside frac (0.395, 0.685]. At H180 that needs releases about 0.92–1.08 s after the jump, which is 0.24–0.41 s into the traversal.
+2. A jump during the active climb with no input held was not re-tested against M3's U 4.7–5.3. The slide gives U 2.6.
+3. The side drift on its own, without W, and a side tap at the jump (the M3 moveright bounce vector) were not tested.

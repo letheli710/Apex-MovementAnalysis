@@ -775,13 +775,280 @@ def report_round2(rows, metas):
     return out
 
 
+# ----------------------------------------------------------------------------- round 2b (valid a2r_* rerun, labels *_A2r2_*)
+def _tc_series(cmds, k, fps):
+    """time since the start of the contact usercmd, at the start of each usercmd (index -> s)."""
+    out, t = {}, 0.0
+    for i in range(k, len(cmds)):
+        out[i] = t
+        t += dt_of(cmds[i], fps)
+    return out
+
+
+def round2b_trial(T, H, fps):
+    cmds = T["cmds"]
+    R = height_trial(T, H, fps)           # generic phases: contact, climb, traversal, release on the wall
+    R["notes"] = []
+    sch = T["schedule"]
+    js = edges(cmds, IN_JUMP)
+    j = js[0] if js else None
+    k = R["climb"]["contact_i"] if R.get("climb") else contact_idx(cmds, j or 0)
+    R["valid"] = k is not None
+    if k is None:
+        return R
+    tc = _tc_series(cmds, k, fps)
+    rel = next((i for i in range((j or 0) + 1, len(cmds)) if cmds[i]["fwd"] == 0 and cmds[i - 1]["fwd"] > 0), None)
+    R["rel_tc"] = tc.get(rel) if rel is not None else None
+    # first wall-detach usercmd (outward kick) after contact, and the final jump-up if any
+    det = next((i for i in range(k + 1, len(cmds)) if cmds[i]["pvx"] - cmds[i]["vx"] < -50 and cmds[i]["cmd"] - cmds[i - 1]["cmd"] == 1), None)
+    R["first_out_kick_tc"] = tc.get(det) if det is not None else None
+    if det is not None:
+        c = cmds[det]
+        R["first_out_kick"] = {"i": det, "dvx": c["pvx"] - c["vx"], "dvy": c["pvy"] - c["vy"], "dvz": c["pvz"] - c["vz"],
+                               "pre": (c["vx"], c["vy"], c["vz"]), "post": (c["pvx"], c["pvy"], c["pvz"]), "z": c["oz"],
+                               "buttons": c["buttons"], "jump_up": c["pvz"] - c["vz"] > 100}
+    # gravity ramp after the release: on-wall usercmds with no button except none, before any press / detach
+    ramp = []
+    if rel is not None and R.get("release_on_wall"):      # only releases while still climbing (not after a traversal)
+        stop = det if det is not None else len(cmds)
+        for i in range(rel + 1, stop):
+            c = cmds[i]
+            if c["buttons"] & (IN_JUMP | IN_BACK | IN_RIGHT | IN_FWD) or c["cmd"] - cmds[i - 1]["cmd"] != 1 or not c.get("dt"):
+                break
+            ramp.append((tc[i], c["vz"], c["oz"], (c["pvz"] - c["vz"]) / c["dt"]))
+    R["ramp"] = [tuple(r(v, 4) for v in p) for p in ramp]
+    # presses after the release (on the wall)
+    if rel is not None and sch in ("a2r_rel_jump", "a2r_rel_back", "a2r_rel_backjump"):
+        pj = edges(cmds, IN_JUMP, rel + 1)
+        pb = edges(cmds, IN_BACK, rel + 1)
+        p = (pj[0] if pj else None) if sch != "a2r_rel_back" else (pb[0] if pb else None)
+        if p is not None:
+            c = cmds[p]
+            cprev = cmds[p - 1]                    # state on the usercmd before the press (the press itself ends the wallrun)
+            s = state_at(T["states"], cprev["t"]) if cprev.get("t") else None
+            P_ = {"i": p, "tc": tc.get(p), "t_after_rel": tc.get(p) - tc.get(rel), "wr": s.get("wr") if s else None,
+                  "ground": c["ground"], "z": c["oz"], "pre": (c["vx"], c["vy"], c["vz"]), "post": (c["pvx"], c["pvy"], c["pvz"]),
+                  "fwd": c["fwd"], "side": c["sidemove"], "buttons": c["buttons"]}
+            dx, dy, dz = c["pvx"] - c["vx"], c["pvy"] - c["vy"], c["pvz"] - c["vz"]
+            P_.update(d_out=-dx, d_tan=dy, dvz=dz, U=dz + 0.5 * G * dt_of(c, fps))
+            nx = cmds[min(p + 1, len(cmds) - 1)]
+            P_["next_post"] = (nx["pvx"], nx["pvy"], nx["pvz"])
+            if sch == "a2r_rel_back":
+                d2 = next((i for i in range(p, len(cmds)) if cmds[i]["pvx"] - cmds[i]["vx"] < -50), None)
+                if d2 is not None:
+                    P_["detach_after_press"] = tc[d2] - tc[p]
+                    P_["detach_tc"] = tc[d2]
+                    P_["detach_dvx"] = cmds[d2]["pvx"] - cmds[d2]["vx"]
+                    P_["accel_while_back"] = st([(cmds[i]["pvz"] - cmds[i]["vz"]) / dt_of(cmds[i], fps) for i in range(p, d2)])
+            R["press"] = P_
+    # sideways key during the climb
+    if sch == "a2r_side":
+        sp = edges(cmds, IN_RIGHT, k)
+        if sp:
+            i0 = sp[0]
+            cl = R.get("climb") or {}
+            e = cl.get("end_i") or len(cmds)
+            ser = [(tc[i], cmds[i]["pvy"], cmds[i]["pvz"]) for i in range(i0, e) if cmds[i]["cmd"] - cmds[i - 1]["cmd"] == 1]
+            acc = [(cmds[i]["pvy"] - cmds[i]["vy"]) / dt_of(cmds[i], fps) for i in range(i0, min(i0 + 12, e))]
+            R["side"] = {"press_tc": tc[i0], "vy_series": [tuple(r(v, 3) for v in q) for q in ser[::6]],
+                         "vy_at_end": cmds[e - 1]["pvy"] if e < len(cmds) else None, "lat_accel_first_0p1s": st(acc),
+                         "climb_end_kind": cl.get("end_kind"), "climb_duration": cl.get("duration"), "climb_end_z": cl.get("end_pre_z"),
+                         "final_post": (cmds[e]["pvx"], cmds[e]["pvy"], cmds[e]["pvz"]) if e < len(cmds) else None,
+                         "lateral_drift_u": cmds[e - 1]["poy"] - cmds[i0]["oy"] if e < len(cmds) else None}
+            tv = R.get("trav")
+            if tv:
+                R["side"]["mantle_exit_pre"] = tv["exit_pre"]
+                R["side"]["mantle_exit_dir_deg"] = math.degrees(math.atan2(tv["exit_pre"][1], tv["exit_pre"][0]))
+    # mantle cancel: forward-axis drop inside the traversal, from the frames (no usercmds during the traversal)
+    tv = R.get("trav")
+    if tv and tv.get("t_last") and tv.get("t_first"):
+        fr = [f for f in T["frames"] if tv["t_last"] < f["t"] < tv["t_first"]]
+        drop = next((f for f in fr if f["ax_fwd"] < 1.0), None)
+        tv["t_axfwd_drop_rel_start"] = (drop["t"] - tv["t_last"]) if drop else None
+        tv["ax_fwd_at_drop"] = drop["ax_fwd"] if drop else None
+        tv["in_fwd_at_drop"] = drop["in_fwd"] if drop else None
+        if drop and not tv["completed"]:
+            tv["reverse_after_drop"] = tv["duration"] - tv["t_axfwd_drop_rel_start"]
+    return R
+
+
+def report_round2b(rows, metas, ledge180, fit_rt):
+    P("\n" + "=" * 100)
+    P("4d. ROUND 2b (valid a2r_* rerun, sessions *_A2r2_*)")
+    P("=" * 100)
+    for m in metas:
+        P(f"  {m['session']}: label {m['label']} scored {m['scored']}/{m['trials_total']} rejected {m['rejected']} "
+          f"trial origins {m['trial_origins']} state lines {m['state_lines']}")
+    out = {"params": []}
+
+    def add(name, value, unit, label, n=None, spread=None, note=""):
+        out["params"].append({"name": name, "value": value, "unit": unit, "label": label, "n": n,
+                              "spread": spread if spread is None or isinstance(spread, str) else round(spread, 4), "note": note})
+    P(f"  contact reached in {sum(1 for x in rows if x.get('valid'))}/{len(rows)} trials")
+    for x in rows:
+        tv, cl = x.get("trav"), x.get("climb")
+        s = f"  H{x['H']} r{x['run']} {x['schedule']:<17} {x['outcome']:<30} rel tc {r(x.get('rel_tc'))} out-kick tc {r(x.get('first_out_kick_tc'))}"
+        if x.get("first_out_kick"):
+            k = x["first_out_kick"]
+            s += (f" ({'jump-up' if k['jump_up'] else 'kick'} dvx {k['dvx']:.2f} dvz {k['dvz']:.2f} z {k['z']:.2f} "
+                  f"post {tuple(r(v, 2) for v in k['post'])})")
+        P(s)
+        if x.get("press"):
+            p = x["press"]
+            P(f"      press tc {r(p['tc'])} ({r(p['t_after_rel'])} s after release) wr {p['wr']} z {p['z']:.2f} pre "
+              f"{tuple(r(v, 2) for v in p['pre'])} post {tuple(r(v, 2) for v in p['post'])} d_out {p['d_out']:.3f} d_tan {p['d_tan']:.3f} "
+              f"U {p['U']:.2f}" + (f" detach {r(p.get('detach_after_press'))} s after the press (tc {r(p.get('detach_tc'))}, dvx "
+                                   f"{r(p.get('detach_dvx'), 2)}), vz accel while back {fmt(p.get('accel_while_back'), 1)}"
+                                   if 'detach_after_press' in p else ""))
+        if x.get("side"):
+            sd = x["side"]
+            P(f"      side: moveright from tc {r(sd['press_tc'])}; lateral accel first 0.1 s {fmt(sd['lat_accel_first_0p1s'], 1)}; vy at climb "
+              f"end {r(sd['vy_at_end'], 2)}; drift {r(sd['lateral_drift_u'], 2)} u; climb {sd['climb_end_kind']} dur {r(sd['climb_duration'])} "
+              f"end z {r(sd['climb_end_z'], 2)}; final post {tuple(r(v, 2) for v in sd['final_post']) if sd['final_post'] else None}; "
+              f"mantle exit {tuple(r(v, 2) for v in sd.get('mantle_exit_pre', ()))} dir {r(sd.get('mantle_exit_dir_deg'), 1)} deg")
+            P(f"        vy/vz series (tc, vy, vz): {sd['vy_series']}")
+        if tv:
+            P(f"      trav start z {tv['start_z']:.2f} dur {r(tv['duration'])} completed {tv['completed']} exit {tuple(r(v, 1) for v in tv['exit_pre'])} "
+              f"input drop {r(tv.get('t_axfwd_drop_rel_start'))} s after start (ax_fwd {tv.get('ax_fwd_at_drop')}, in_fwd "
+              f"{tv.get('in_fwd_at_drop')}) reverse {r(tv.get('reverse_after_drop'))} s peak z {r(tv.get('peak_z'), 2)} x back "
+              f"{r(tv.get('x_back_after_max'), 2)}")
+    # --- detach clock
+    rw = [x for x in rows if x.get("release_on_wall") and x["schedule"] in ("a2r_rel_t05", "a2r_rel_jump", "a2r_rel_back",
+                                                                             "a2r_rel_backjump")]
+    groups = {}
+    for x in rows:
+        if x["schedule"] in ("a2r_rel_t05", "a2r_rel_t11") or (x["schedule"] in ("a2r_rel_jump", "a2r_rel_back", "a2r_rel_backjump")):
+            groups.setdefault(x["schedule"], []).append(x)
+    P("\n  Detach clock (first outward kick on the wall, t since contact):")
+    clock = {}
+    for sch, xs in sorted(groups.items()):
+        rel = st([x.get("rel_tc") for x in xs])
+        kick = st([x.get("first_out_kick_tc") for x in xs])
+        kinds = sorted({("jump-up" if x["first_out_kick"]["jump_up"] else "kick") for x in xs if x.get("first_out_kick")})
+        bypress = sum(1 for x in xs if x.get("press") and x.get("first_out_kick") and x["first_out_kick"]["i"] >= x["press"]["i"])
+        clock[sch] = {"rel_tc": rel, "kick_tc": kick, "kinds": kinds, "kick_at_or_after_press": bypress}
+        P(f"    {sch:<17} n={len(xs)} release tc {fmt(rel)}  first outward kick tc {fmt(kick)}  kinds {kinds}  "
+          f"(kick on/after a press in {bypress})")
+    free = [x for x in rows if x["schedule"] == "a2r_rel_t05" and x.get("first_out_kick") and not x["first_out_kick"]["jump_up"]]
+    s05 = st([x["first_out_kick_tc"] for x in free])
+    s05r = st([x["first_out_kick_tc"] - x["rel_tc"] for x in free])
+    P(f"    t05 (no press): detach {fmt(s05)} s after contact = {fmt(s05r)} s after the release; round 1 (release tc 0.63): "
+      f"1.003 after contact = 0.36 after release -> the clock runs from CONTACT")
+    add("climb_detach_time_after_contact", s05.get("mean"), "s", "meas", s05.get("n"), s05.get("sd"),
+        "round 2b: release at tc 0.23 (t05) detaches at the same tc as round 1 (release tc 0.63): clock = contact, not release")
+    out["detach_clock"] = clock
+    t11 = groups.get("a2r_rel_t11", [])
+    ju = [x["first_out_kick"] for x in t11 if x.get("first_out_kick") and x["first_out_kick"]["jump_up"]]
+    if t11:
+        P(f"    t11 (release at tc {fmt(st([x.get('rel_tc') for x in t11]))}): final jump-up still fires in {len(ju)}/{len(t11)} at z "
+          f"{fmt(st([q['z'] for q in ju]), 2)}, dvz {fmt(st([q['dvz'] for q in ju]), 2)}, post vx {fmt(st([q['post'][0] for q in ju]), 2)}")
+        add("climb_jumpup_after_release", f"{len(ju)}/{len(t11)}", "", "meas", len(t11), None,
+            "W released 0.02 s before the end height: the jump-up still fires at the end height (no W -> post vx -68.5, no air accel)")
+    # --- gravity ramp after release
+    pts = [p for x in rows for p in x.get("ramp", [])]
+    rise = [p for p in pts if p[1] > 5]
+    fall = [p for p in pts if p[1] < -5]
+    ramp = {}
+    for lab_, ps in (("rising (vz > 5)", rise), ("falling (vz < -5)", fall)):
+        if len(ps) > 5:
+            m, b, rms = lin_fit([p[0] for p in ps], [p[3] for p in ps])
+            ramp[lab_] = {"a0": b, "slope": m, "rms": rms, "n": len(ps), "tc_range": (min(p[0] for p in ps), max(p[0] for p in ps))}
+            P(f"  vertical accel after the release, {lab_}: a = {b:.1f} + {m:.1f}*tc  (rms {rms:.1f} u/s^2, n={len(ps)}, tc "
+              f"{min(p[0] for p in ps):.3f}..{max(p[0] for p in ps):.3f})")
+    out["release_accel_fit"] = ramp
+    if "rising (vz > 5)" in ramp:
+        q = ramp["rising (vz > 5)"]
+        add("climb_release_accel_rising", f"{q['a0']:.1f} + {q['slope']:.1f}*tc", "u/s^2", "fit", q["n"], f"rms {q['rms']:.1f}",
+            "replaces the round-1 constants (-789 / -820 were this line at tc 0.63-0.73); tc = time since contact")
+    if "falling (vz < -5)" in ramp:
+        q = ramp["falling (vz < -5)"]
+        add("climb_release_accel_falling", f"{q['a0']:.1f} + {q['slope']:.1f}*tc", "u/s^2", "fit", q["n"], f"rms {q['rms']:.1f}",
+            "replaces the round-1 constant -642; ~ -g*tc/1.0 s: attachment gravity ramps to g at the 1.0 s detach")
+    # --- presses from the attached slide
+    for sch in ("a2r_rel_jump", "a2r_rel_backjump", "a2r_rel_back"):
+        ps = [x["press"] for x in rows if x["schedule"] == sch and x.get("press")]
+        if not ps:
+            continue
+        d = {"n": len(ps), "wr_at_press": sum(1 for p in ps if p["wr"]), "t_after_rel": st([p["t_after_rel"] for p in ps]),
+             "d_out": st([p["d_out"] for p in ps]), "d_tan": st([p["d_tan"] for p in ps]), "U": st([p["U"] for p in ps]),
+             "pre_vz": st([p["pre"][2] for p in ps]), "post_vx": st([p["post"][0] for p in ps])}
+        if sch == "a2r_rel_back":
+            d["detach_after_press"] = st([p.get("detach_after_press") for p in ps])
+            d["detach_dvx"] = st([p.get("detach_dvx") for p in ps])
+            d["accel_while_back"] = st([p["accel_while_back"].get("mean") for p in ps if p.get("accel_while_back")])
+        out[sch] = d
+        P(f"  {sch:<17} n={d['n']} on the wall {d['wr_at_press']}/{d['n']}, {fmt(d['t_after_rel'])} s after release: d_out {fmt(d['d_out'], 3)} "
+          f"d_tan {fmt(d['d_tan'], 3)} U {fmt(d['U'], 2)} pre vz {fmt(d['pre_vz'], 2)} post vx {fmt(d['post_vx'], 2)}"
+          + (f"; detach {fmt(d['detach_after_press'], 3)} s after the press, dvx {fmt(d['detach_dvx'], 2)}, vz accel "
+             f"{fmt(d['accel_while_back'], 1)}" if sch == "a2r_rel_back" else ""))
+    if "a2r_rel_jump" in out:
+        d = out["a2r_rel_jump"]
+        P(f"    vs M3 wall bounce (no input, held 0.15/0.40 s): d_out 257.865, d_tan -0.40, U 4.7-5.3 -> "
+          f"{'same vector' if abs(d['d_out']['mean'] - 257.865) < 0.1 else 'DIFFERENT'}")
+        add("slide_jump_is_wall_bounce", d["d_out"]["mean"], "u/s outward", "meas", d["n"], d["d_out"].get("sd"),
+            f"jump from the attached slide = M3 wall bounce O+I = 257.87 (n-dir), vz kept (U {d['U']['mean']:.2f}); back+jump same")
+    if "a2r_rel_back" in out:
+        d = out["a2r_rel_back"]
+        add("slide_back_detach_delay", d["detach_after_press"].get("mean"), "s", "meas", d["n"], d["detach_after_press"].get("sd"),
+            f"back on the attached slide detaches early with the same {d['detach_dvx'].get('mean', 0):.2f} u/s kick")
+    # --- side
+    sd = [x["side"] for x in rows if x.get("side")]
+    if sd:
+        P(f"  side: n={len(sd)} lateral accel first 0.1 s {fmt(st([s['lat_accel_first_0p1s'].get('mean') for s in sd]), 1)}; vy at climb end "
+          f"{fmt(st([s['vy_at_end'] for s in sd]), 2)}; drift {fmt(st([s['lateral_drift_u'] for s in sd]), 2)} u; climb dur "
+          f"{fmt(st([s['climb_duration'] for s in sd]))} end z {fmt(st([s['climb_end_z'] for s in sd]), 2)}; mantle exit dir "
+          f"{fmt(st([s.get('mantle_exit_dir_deg') for s in sd]), 2)} deg, |v| {fmt(st([math.hypot(*s['mantle_exit_pre'][:2]) for s in sd if s.get('mantle_exit_pre')]), 2)}")
+        out["side"] = {"n": len(sd), "vy_at_end": st([s["vy_at_end"] for s in sd]),
+                       "lat_accel": st([s["lat_accel_first_0p1s"].get("mean") for s in sd]),
+                       "climb_duration": st([s["climb_duration"] for s in sd]), "exit_dir": st([s.get("mantle_exit_dir_deg") for s in sd])}
+        add("climb_side_input_lateral_speed_at_end", out["side"]["vy_at_end"].get("mean"), "u/s", "meas", len(sd),
+            out["side"]["vy_at_end"].get("sd"), "moveright held from 0.5 s after the jump (W held): drift along the face (accel -113 at first, easing), vertical profile "
+            "and end height nearly unchanged (climb +1 usercmd, same end z); the mantle exit then goes along the input direction (W+D = 45 deg, |v| 299)")
+    # --- mantle cancel (H180)
+    mc = [x for x in rows if x.get("trav") and x["schedule"].startswith(("a2r_mrel", "a2r_mant_back"))]
+    if mc:
+        P("\n  Mantle cancel (H180): input drop = first traversal frame with forward axis < 1")
+        canc = []
+        for sch in sorted({x["schedule"] for x in mc}):
+            xs = [x for x in mc if x["schedule"] == sch]
+            fr_ = []
+            for x in xs:
+                tv = x["trav"]
+                exp = (fit_rt["intercept_s"] + fit_rt["slope_s_per_u"] * (ledge180 - tv["start_z"])) if fit_rt and ledge180 else T_TRAV_NORMAL
+                f = tv["t_axfwd_drop_rel_start"] / exp if tv.get("t_axfwd_drop_rel_start") is not None else None
+                tv["drop_frac"] = f
+                fr_.append(f)
+                canc.append((f, tv["completed"], tv.get("reverse_after_drop"), tv.get("t_axfwd_drop_rel_start")))
+            P(f"    {sch:<15} n={len(xs)} completed {sum(x['trav']['completed'] for x in xs)}/{len(xs)}; input drop "
+              f"{fmt(st([x['trav'].get('t_axfwd_drop_rel_start') for x in xs]))} s after start = frac {fmt(st(fr_))}; reverse "
+              f"{fmt(st([x['trav'].get('reverse_after_drop') for x in xs]))} s; ax_fwd at drop {sorted({x['trav'].get('ax_fwd_at_drop') for x in xs})}, "
+              f"in_fwd {sorted({x['trav'].get('in_fwd_at_drop') for x in xs})}")
+        ab = [c for c in canc if c[0] is not None and not c[1]]
+        co = [c for c in canc if c[0] is not None and c[1]]
+        m_, b_, rms_ = lin_fit([c[3] for c in ab], [c[2] for c in ab]) if len(ab) > 3 else (None, None, None)
+        if m_ is not None:
+            P(f"    reverse time vs elapsed time at the drop (aborted, round 2b): reverse = {b_:.3f} + {m_:.3f}*elapsed (rms {rms_:.3f}, n={len(ab)})")
+            add("mantle_cancel_reverse_vs_elapsed", f"{b_:.3f} + {m_:.3f}*elapsed", "s", "fit", len(ab), f"rms {rms_:.3f}",
+                "the cancelled traversal takes about as long to back out as it had run; then snap to start, v = 0")
+        out["mantle_cancel"] = {"aborted_max_frac": max(c[0] for c in ab) if ab else None,
+                                "completed_min_frac": min(c[0] for c in co) if co else None,
+                                "reverse_fit": (b_, m_, rms_), "n": len(canc)}
+        P(f"    round 2b: aborted at fracs up to {r(out['mantle_cancel']['aborted_max_frac'])}, completed min {out['mantle_cancel']['completed_min_frac']}"
+          f" -> the round-1 bracket (0.395, 0.685] is NOT narrowed (all round-2b drops came earlier than 0.395)")
+        mb = [x for x in mc if x["schedule"] == "a2r_mant_back"]
+        if mb:
+            add("mantle_cancel_by_back_with_W_held", f"{sum(not x['trav']['completed'] for x in mb)}/{len(mb)} aborted", "", "meas", len(mb),
+                None, "back pressed with W still held (forward axis -> 0) cancels like a W release: the trigger is the forward axis, not the key")
+    return out
+
+
 def main(argv):
     ap = argparse.ArgumentParser()
     ap.add_argument("sessions", nargs="+")
     ap.add_argument("--json", default=None)
     ap.add_argument("--params", default=None)
     a = ap.parse_args(argv)
-    H_rows, SG_rows, sess_meta, R2_rows = [], [], [], []
+    H_rows, SG_rows, sess_meta, R2_rows, R2b_rows = [], [], [], [], []
     for folder in a.sessions:
         S = L.load(folder)
         lab = S["runner"].get("label", S["folder"])
@@ -793,7 +1060,15 @@ def main(argv):
                 "both_cvars": S["runner"].get("both_cvars"), "geometry_wall_z": S["runner"].get("geometry_wall_z"),
                 "mb_lines": {k: v for k, v in S["mb_tags"].items() if v}, "state_lines": sum(len(t["states"]) for t in S["trials"])}
         mh = re.search(r"_h(\d+)$", lab)
-        if "_A2r_" in lab:                       # round-2 sessions (optional arguments; absent -> round-1 output unchanged)
+        if "_A2r2_" in lab:                      # round-2b: valid rerun of the a2r_* schedules (optional arguments)
+            mh2 = re.search(r"_h(\d+)", lab)
+            meta["kind"], meta["H"] = "round2b", int(mh2.group(1)) if mh2 else None
+            meta["trial_origins"] = sorted({tuple(t["origin"]) for t in S["runner"]["trials"]})
+            for T in S["trials"]:
+                R = round2b_trial(T, meta["H"], fps)
+                R["session"] = S["folder"]
+                R2b_rows.append(R)
+        elif "_A2r_" in lab:                       # round-2 sessions (optional arguments; absent -> round-1 output unchanged)
             meta["kind"], meta["H"] = "round2", int(mh.group(1)) if mh else None
             origins = {tuple(t["origin"]) for t in S["runner"]["trials"]}
             meta["trial_origins"] = sorted(origins)
@@ -1144,6 +1419,11 @@ def main(argv):
     if R2_rows:
         res["round2"] = report_round2(R2_rows, [m for m in sess_meta if m.get("kind") == "round2"])
         params.extend(res["round2"]["params"])
+    if R2b_rows:
+        ledge180 = HS.get("180", {}).get("a2_climb", {}).get("ledge_z", {}).get("mean")
+        res["round2b"] = report_round2b(R2b_rows, [m for m in sess_meta if m.get("kind") == "round2b"], ledge180, fit_rt)
+        res["round2b"]["trials"] = R2b_rows
+        params.extend(res["round2b"]["params"])
     P("\n" + "=" * 100)
     P("5. PARAMETERS (label: meas = read from usercmds, fit = formula fitted to usercmds, src = source/census, "
       "unknown, design-needed)")
