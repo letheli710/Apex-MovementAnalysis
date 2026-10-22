@@ -306,6 +306,20 @@ Newest entries at the bottom. Problems are tagged **[ISSUE]** and also listed in
   - 11 real-input demos with failure variants; fuzz extended with no stuck states and caps held.
   - **[ISSUE→fixed]** The agent's commit stored `M6CourseTests.cs` with CRLF plus a stray CR (stored as -text). The lead normalised it to LF; the real diff is +105/−19.
   - Status: numbers pass; hands-on feel not yet checked by a person. Docs: `m7/unity/M7A-UNITY.md`, `m7/PLAYTEST-GUIDE-M7A.md`.
+- **M8 plan received** (user, 2026-10-22; archived `m8/M8-PLAN.md` with the lead's audit). It runs as three parallel tracks under the single-instance rule:
+  - R: R5 measurements (pad double jump, lift gaps, SG coverage, slope; later lurch follow-ups);
+  - D: desk research (LS/RAS and techniques);
+  - U: Unity stages A → B → C.
+- **Track D done** (`m8/d_techniques/TECHNIQUES.md`). LS ≈ lurch strafe; RAS has no sourced definition. Every technique reduces to the measured lurch, so no new mechanism is justified. The lead spot-checked the cited numbers (TS −81.0°, SG 460) against the M6 files.
+- **M8-A done** (HSD-Unity `524610d`, merged as #12 → main `11e887f`; lead-verified by rerun):
+  - Tests: EditMode 848/848, PlayMode 1/1.
+  - Default motor identical: M2+M1 111, M1 first guess 111, M3 90.
+  - M4 replays 114/114 identical.
+  - Smoke on `HSD-Build\M8A`: demos 82/82 (70 older verdicts unchanged), M5.5 route final position unchanged, course lap 80.82 s.
+  - Jump arbitration: owners take the press; resource claims commit after launches. This fixes the M7-A pad + air-jump same-command spend.
+  - Slope slide [design] with an energy ledger.
+  - Zipline: end-zone mounts are refused; Fun air mounts get no lift.
+  - Status: numbers pass; hands-on feel not yet checked by a person.
 
 ## Open issues
 
