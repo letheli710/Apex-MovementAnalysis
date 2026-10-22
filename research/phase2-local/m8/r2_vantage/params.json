@@ -1,0 +1,458 @@
+[
+ {
+  "name": "jd_launch_speed",
+  "value": 943.077,
+  "sd": 0.0546,
+  "n": 40,
+  "unit": "u/s",
+  "class": "meas",
+  "note": "first drive usercmd; source speed 787 x jetdrive_initial_speed_mult 1.2 (SDK cvar)"
+ },
+ {
+  "name": "jd_d400_launch_elev",
+  "value": 27.71,
+  "sd": 0.0,
+  "n": 5,
+  "unit": "deg",
+  "class": "meas",
+  "note": ""
+ },
+ {
+  "name": "jd_d400_apex",
+  "value": 135.978,
+  "sd": 0.013,
+  "n": 5,
+  "unit": "u above floor",
+  "class": "meas",
+  "note": ""
+ },
+ {
+  "name": "jd_d400_target_cross_t",
+  "value": 0.525,
+  "sd": 0.0,
+  "n": 5,
+  "unit": "s",
+  "class": "meas",
+  "note": "launch -> passing the target along the start-target line"
+ },
+ {
+  "name": "jd_d400_mean_speed_to_target",
+  "value": 768.18,
+  "sd": 0.0447,
+  "n": 5,
+  "unit": "u/s",
+  "class": "meas",
+  "note": "3D start-target distance / cross_t"
+ },
+ {
+  "name": "jd_d400_closest_dist",
+  "value": 84.464,
+  "sd": 0.0167,
+  "n": 5,
+  "unit": "u",
+  "class": "meas",
+  "note": "closest approach to the drive target point"
+ },
+ {
+  "name": "jd_d400_land_past_target",
+  "value": 128.92,
+  "sd": 0.1304,
+  "n": 5,
+  "unit": "u",
+  "class": "meas",
+  "note": "first grounded usercmd, along the travel"
+ },
+ {
+  "name": "jd_d400_speed_profile",
+  "value": {
+   "0.0": 942.9,
+   "0.2": 942.9,
+   "0.4": 664.0,
+   "0.6": 454.7,
+   "0.8": 245.7,
+   "1.0": 81.7,
+   "1.2": 193.3,
+   "1.4": 343.0,
+   "1.6": 0.0,
+   "1.8": 0.0,
+   "2.0": 0.0,
+   "2.2": 0.0
+  },
+  "n": 5,
+  "unit": "|v| u/s at t s after launch",
+  "class": "meas",
+  "note": ""
+ },
+ {
+  "name": "jd_d800_launch_elev",
+  "value": 24.74,
+  "sd": 0.0,
+  "n": 5,
+  "unit": "deg",
+  "class": "meas",
+  "note": ""
+ },
+ {
+  "name": "jd_d800_apex",
+  "value": 151.32,
+  "sd": 0.0,
+  "n": 5,
+  "unit": "u above floor",
+  "class": "meas",
+  "note": ""
+ },
+ {
+  "name": "jd_d800_target_cross_t",
+  "value": 1.025,
+  "sd": 0.0,
+  "n": 5,
+  "unit": "s",
+  "class": "meas",
+  "note": "launch -> passing the target along the start-target line"
+ },
+ {
+  "name": "jd_d800_mean_speed_to_target",
+  "value": 782.14,
+  "sd": 0.0548,
+  "n": 5,
+  "unit": "u/s",
+  "class": "meas",
+  "note": "3D start-target distance / cross_t"
+ },
+ {
+  "name": "jd_d800_closest_dist",
+  "value": 4.226,
+  "sd": 0.0182,
+  "n": 5,
+  "unit": "u",
+  "class": "meas",
+  "note": "closest approach to the drive target point"
+ },
+ {
+  "name": "jd_d800_land_past_target",
+  "value": 66.34,
+  "sd": 0.0894,
+  "n": 5,
+  "unit": "u",
+  "class": "meas",
+  "note": "first grounded usercmd, along the travel"
+ },
+ {
+  "name": "jd_d800_speed_profile",
+  "value": {
+   "0.0": 943.1,
+   "0.2": 943.1,
+   "0.4": 874.5,
+   "0.6": 825.0,
+   "0.8": 744.4,
+   "1.0": 534.7,
+   "1.2": 325.0,
+   "1.4": 112.3,
+   "1.6": 0.0,
+   "1.8": 0.0,
+   "2.0": 0.0,
+   "2.2": 0.0
+  },
+  "n": 5,
+  "unit": "|v| u/s at t s after launch",
+  "class": "meas",
+  "note": ""
+ },
+ {
+  "name": "jd_d1200_launch_elev",
+  "value": 23.72,
+  "sd": 0.0,
+  "n": 5,
+  "unit": "deg",
+  "class": "meas",
+  "note": ""
+ },
+ {
+  "name": "jd_d1200_apex",
+  "value": 189.252,
+  "sd": 0.0045,
+  "n": 5,
+  "unit": "u above floor",
+  "class": "meas",
+  "note": ""
+ },
+ {
+  "name": "jd_d1200_target_cross_t",
+  "value": 1.5254,
+  "sd": 0.0036,
+  "n": 5,
+  "unit": "s",
+  "class": "meas",
+  "note": "launch -> passing the target along the start-target line"
+ },
+ {
+  "name": "jd_d1200_mean_speed_to_target",
+  "value": 787.38,
+  "sd": 1.8281,
+  "n": 5,
+  "unit": "u/s",
+  "class": "meas",
+  "note": "3D start-target distance / cross_t"
+ },
+ {
+  "name": "jd_d1200_closest_dist",
+  "value": 7.65,
+  "sd": 0.373,
+  "n": 5,
+  "unit": "u",
+  "class": "meas",
+  "note": "closest approach to the drive target point"
+ },
+ {
+  "name": "jd_d1200_land_past_target",
+  "value": 48.84,
+  "sd": 1.4588,
+  "n": 5,
+  "unit": "u",
+  "class": "meas",
+  "note": "first grounded usercmd, along the travel"
+ },
+ {
+  "name": "jd_d1200_speed_profile",
+  "value": {
+   "0.0": 943.1,
+   "0.2": 942.9,
+   "0.4": 897.0,
+   "0.6": 859.2,
+   "0.8": 829.9,
+   "1.0": 808.4,
+   "1.2": 794.8,
+   "1.4": 626.7,
+   "1.6": 418.0,
+   "1.8": 205.3,
+   "2.0": 64.0,
+   "2.2": 0.0
+  },
+  "n": 5,
+  "unit": "|v| u/s at t s after launch",
+  "class": "meas",
+  "note": ""
+ },
+ {
+  "name": "echo_send_launch_launch_elev",
+  "value": 26.67,
+  "sd": 0.9859,
+  "n": 5,
+  "unit": "deg",
+  "class": "meas",
+  "note": ""
+ },
+ {
+  "name": "echo_send_launch_apex",
+  "value": 337.682,
+  "sd": 0.1579,
+  "n": 5,
+  "unit": "u above floor",
+  "class": "meas",
+  "note": ""
+ },
+ {
+  "name": "echo_send_launch_target_cross_t",
+  "value": 2.4683,
+  "sd": 0.0069,
+  "n": 5,
+  "unit": "s",
+  "class": "meas",
+  "note": "launch -> passing the target along the start-target line"
+ },
+ {
+  "name": "echo_send_launch_mean_speed_to_target",
+  "value": 800.74,
+  "sd": 2.2534,
+  "n": 5,
+  "unit": "u/s",
+  "class": "meas",
+  "note": "3D start-target distance / cross_t"
+ },
+ {
+  "name": "echo_send_launch_closest_dist",
+  "value": 14.3,
+  "sd": 0.0949,
+  "n": 5,
+  "unit": "u",
+  "class": "meas",
+  "note": "closest approach to the drive target point"
+ },
+ {
+  "name": "echo_send_launch_land_past_target",
+  "value": 80.18,
+  "sd": 0.507,
+  "n": 5,
+  "unit": "u",
+  "class": "meas",
+  "note": "first grounded usercmd, along the travel"
+ },
+ {
+  "name": "echo_send_launch_speed_profile",
+  "value": {
+   "0.0": 943.5,
+   "0.2": 943.1,
+   "0.4": 913.4,
+   "0.6": 886.9,
+   "0.8": 864.1,
+   "1.0": 844.5,
+   "1.2": 827.9,
+   "1.4": 814.5,
+   "1.6": 803.8,
+   "1.8": 796.0,
+   "2.0": 790.7,
+   "2.2": 718.4
+  },
+  "n": 5,
+  "unit": "|v| u/s at t s after launch",
+  "class": "meas",
+  "note": ""
+ },
+ {
+  "name": "jd_double_jump",
+  "value": [
+   {
+    "t": 0.7583,
+    "dist": 178.3,
+    "applied": true,
+    "post_h": 506.55,
+    "post_vz": 390.87
+   },
+   {
+    "t": 0.7582,
+    "dist": 178.5,
+    "applied": true,
+    "post_h": 506.56,
+    "post_vz": 390.87
+   },
+   {
+    "t": 0.7583,
+    "dist": 178.3,
+    "applied": true,
+    "post_h": 506.55,
+    "post_vz": 390.87
+   },
+   {
+    "t": 0.8416,
+    "dist": 116.6,
+    "applied": true,
+    "post_h": 503.25,
+    "post_vz": 390.87
+   },
+   {
+    "t": 0.8417,
+    "dist": 116.6,
+    "applied": true,
+    "post_h": 503.24,
+    "post_vz": 390.87
+   },
+   {
+    "t": 0.8487,
+    "dist": 106.5,
+    "applied": true,
+    "post_h": 502.56,
+    "post_vz": 390.87
+   },
+   {
+    "t": 0.925,
+    "dist": 62.0,
+    "applied": true,
+    "post_h": 498.78,
+    "post_vz": 390.87
+   },
+   {
+    "t": 0.9249,
+    "dist": 62.0,
+    "applied": true,
+    "post_h": 498.78,
+    "post_vz": 390.87
+   },
+   {
+    "t": 0.9259,
+    "dist": 61.9,
+    "applied": true,
+    "post_h": 498.74,
+    "post_vz": 390.88
+   },
+   {
+    "t": 1.0083,
+    "dist": 15.1,
+    "applied": true,
+    "post_h": 492.87,
+    "post_vz": 390.87
+   },
+   {
+    "t": 1.0087,
+    "dist": 14.8,
+    "applied": true,
+    "post_h": 492.82,
+    "post_vz": 390.87
+   },
+   {
+    "t": 1.0084,
+    "dist": 14.9,
+    "applied": true,
+    "post_h": 492.85,
+    "post_vz": 390.88
+   }
+  ],
+  "n": 12,
+  "unit": "s / u / bool / u/s",
+  "class": "meas",
+  "note": "source EnableJetDriveDoubleJump(<512,0,394>, 0.5)"
+ },
+ {
+  "name": "jd_duck_scale_h",
+  "value": 0.8,
+  "sd": 0.0,
+  "n": 3,
+  "unit": "ratio",
+  "class": "meas",
+  "note": "post / pre horizontal speed on the crouch usercmd; SDK cvar jetdrive_duck_cancel_vel_frac 0.8"
+ },
+ {
+  "name": "jd_d800_mvy_land_lateral",
+  "value": 3.8,
+  "sd": 0.2739,
+  "n": 5,
+  "unit": "u",
+  "class": "meas",
+  "note": "landing offset from the start->target(t_land) line; target moved during the drive"
+ },
+ {
+  "name": "jd_d800_mvy_closest_dist",
+  "value": 1.738,
+  "sd": 0.3641,
+  "n": 5,
+  "unit": "u",
+  "class": "meas",
+  "note": "to the moving target point"
+ },
+ {
+  "name": "jd_d800_mvx_land_lateral",
+  "value": 0.0,
+  "sd": 0.0,
+  "n": 5,
+  "unit": "u",
+  "class": "meas",
+  "note": "landing offset from the start->target(t_land) line; target moved during the drive"
+ },
+ {
+  "name": "jd_d800_mvx_closest_dist",
+  "value": 10.428,
+  "sd": 0.054,
+  "n": 5,
+  "unit": "u",
+  "class": "meas",
+  "note": "to the moving target point"
+ },
+ {
+  "name": "jd_sv_cl_max_pos_diff",
+  "value": 3.068,
+  "sd": 4.6177,
+  "n": 45,
+  "unit": "u",
+  "class": "meas",
+  "note": "client vs dedi rows of the same usercmds during the flight"
+ }
+]
