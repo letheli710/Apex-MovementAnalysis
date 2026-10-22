@@ -390,6 +390,130 @@ SCHEDULES.update({
 SCHEDULES.update({"z5_sj_k%d" % k: _Z_MOUNT + "wait 0.5s; tap jump; waitf %d; tap jump; wait 2.0s" % k
                   for k in (1, 2, 3, 4, 6, 8, 12, 40)})
 
+# ---- M8 track R (m8/M8-PLAN.md). Octane pad double jump: the pad is spawned 300 u ahead on lane C (as M4); sprint in,
+# release W and sprint on the launch frame (waitair), then a jump press K frames after the launch.
+_M8P = "wait 72; down speed; down forward; waitair; up forward; up speed; "
+SCHEDULES.update({"m8_pad_dj_f%d" % k: _M8P + ("waitf %d; " % k if k else "") + "tap jump; wait 4.0s"
+                  for k in (0, 6, 12, 24, 60, 200, 300)})
+SCHEDULES.update({
+    "m8_pad_none": _M8P + "wait 4.5s",
+    "m8_pad_dj2": _M8P + "waitf 60; tap jump; wait 1.0s; tap jump; wait 3.5s",
+    # control without a pad (geometry cleared): a normal sprint jump, then a second press in the air
+    # round 2: grant threshold, early press then late press, jump-in (with the press held through the launch), input /
+    # view direction, lurch after the double jump (and its control), unused grant after landing, crouch and walk entry
+    "m8_pad_dj_f9": _M8P + "waitf 9; tap jump; wait 4.0s",
+    "m8_pad_dj_f15": _M8P + "waitf 15; tap jump; wait 4.0s",
+    "m8_pad_early_late": _M8P + "waitf 6; tap jump; waitf 53; tap jump; wait 4.0s",
+    "m8_pad_jumpin": "wait 72; down speed; down forward; waitf 117; tap jump; waitf 20; up forward; up speed; wait 0.5s; tap jump; wait 4.0s",
+    "m8_pad_jumpin_hold": "wait 72; down speed; down forward; waitf 117; down jump; waitf 20; up forward; up speed; wait 1.2s; up jump; "
+                          "wait 0.3s; tap jump; wait 3.5s",
+    "m8_pad_dj_right": _M8P + "waitf 60; down moveright; tap jump; wait 0.5s; up moveright; wait 3.5s",
+    "m8_pad_dj_back": _M8P + "waitf 60; down backward; tap jump; wait 0.5s; up backward; wait 3.5s",
+    "m8_pad_dj_view": "set cl_yawspeed 90; " + _M8P + "down right; wait 1.0s; up right; waitf 2; tap jump; wait 3.5s",
+    "m8_pad_dj_viewfwd": "set cl_yawspeed 90; " + _M8P + "down right; wait 1.0s; up right; waitf 2; down forward; tap jump; wait 0.3s; "
+                         "up forward; wait 3.2s",
+    "m8_pad_dj_lurch": _M8P + "waitf 60; tap jump; waitf 2; tap moveright; wait 3.5s",
+    "m8_pad_lurch": _M8P + "waitf 62; tap moveright; wait 3.5s",
+    "m8_pad_land_jump": _M8P + "waitland; waitf 12; tap jump; wait 0.3s; tap jump; wait 2.0s",
+    "m8_padc_dj": "wait 72; down duck; wait 0.5s; down forward; waitair; up forward; up duck; waitf 60; tap jump; wait 4.0s",
+    "m8_padw_dj": "wait 72; down forward; waitair; up forward; waitf 60; tap jump; wait 4.0s",
+    # round 3: the vertical rule between the add and floor branches (presses at 1.0 / 1.3 / 1.45 s), and the horizontal
+    # rule with a key already held (pressed at 0.55 s, outside the launch lurch window; the DJ cmd has no new key edge)
+    "m8_pad_dj_f120": _M8P + "waitf 120; tap jump; wait 3.5s",
+    "m8_pad_dj_f156": _M8P + "waitf 156; tap jump; wait 3.5s",
+    "m8_pad_dj_f174": _M8P + "waitf 174; tap jump; wait 3.5s",
+    "m8_pad_djh_right": _M8P + "waitf 66; down moveright; waitf 24; tap jump; wait 0.5s; up moveright; wait 3.0s",
+    "m8_pad_djh_back": _M8P + "waitf 66; down backward; waitf 24; tap jump; wait 0.5s; up backward; wait 3.0s",
+    "m8_pad_djh_fwd": _M8P + "waitf 66; down forward; waitf 24; tap jump; wait 0.5s; up forward; wait 3.0s",
+    "m8_pad_djh_diag": _M8P + "waitf 66; down forward; down moveright; waitf 24; tap jump; wait 0.5s; up forward; up moveright; wait 3.0s",
+    "m8_padc_djh_right": "wait 72; down duck; wait 0.5s; down forward; waitair; up forward; up duck; waitf 66; down moveright; waitf 24; "
+                         "tap jump; wait 0.5s; up moveright; wait 3.0s",
+    # round 4: vertical branch boundary (pre vz between ~350 and ~410), presses 128..140 frames after the launch
+    **{"m8_pad_dj_f%d" % k: _M8P + "waitf %d; tap jump; wait 3.5s" % k for k in range(128, 141, 2)},
+    "m8_djctrl": "wait 72; down speed; down forward; wait 1.0s; tap jump; waitf 1; up forward; up speed; wait 0.3s; tap jump; wait 2.0s",
+})
+
+# M8 item 5 (lead add-on): lurch follow-ups on lane B, from the M6-A1 sprint jump (W and sprint released on the command after
+# the jump). a) reverse chain: press edges every g frames rotating the wish W -> W+D -> D -> S+D -> S (mirror with A);
+# b) a key held from before the jump plus a new press; c) tap strafe at 720 / 1440 deg/s; e) slide-jump (350) entry.
+def _m8_chain(side, g):
+    combo = lambda a, b: "down %s; down %s; waitf 1; up %s; up %s" % (a, b, a, b)  # noqa: E731
+    steps = ["tap forward", combo("forward", side), "tap " + side, combo("backward", side), "tap backward"]
+    return "; ".join(s + "; waitf %d" % (g - 1) for s in steps)
+
+
+_M8J_HOLD = "wait 72; down speed; down forward; wait 1.0s; "
+SCHEDULES.update({"m8_lurch_chain_%s_g%d" % (s[4], g): _A1_JUMP + "waitf 2; " + _m8_chain(s, g) + "; wait 1.0s"
+                  for s in ("moveright", "moveleft") for g in (6, 10, 12)})
+SCHEDULES.update({
+    "m8_lurch_holdA_W": _M8J_HOLD + "down moveleft; waitf 2; tap jump; waitf 1; up forward; up speed; waitf 10; tap forward; "
+                        "wait 1.0s; up moveleft; wait 0.3s",
+    "m8_lurch_W_only": _A1_JUMP + "waitf 11; tap forward; wait 1.3s",
+    "m8_lurch_holdA_D": _M8J_HOLD + "down moveleft; waitf 2; tap jump; waitf 1; up forward; up speed; waitf 10; tap moveright; "
+                        "wait 1.0s; up moveleft; wait 0.3s",
+    "m8_lurch_D_only": _A1_JUMP + "waitf 11; tap moveright; wait 1.3s",
+    "m8_lurch_ts_720": "set cl_yawspeed 720; " + _A1_JUMP + "waitf 2; down right; " + _a1_taps("forward", 15, 2) + "; up right; wait 1.2s",
+    "m8_lurch_ts_1440": "set cl_yawspeed 1440; " + _A1_JUMP + "waitf 2; down right; " + _a1_taps("forward", 15, 2) + "; up right; wait 1.2s",
+    "m8_lurch_turn_720": "set cl_yawspeed 720; " + _A1_JUMP + "waitf 2; down right; waitf 30; up right; wait 1.2s",
+    "m8_lurch_turn_1440": "set cl_yawspeed 1440; " + _A1_JUMP + "waitf 2; down right; waitf 30; up right; wait 1.2s",
+    "m8_lurch_sj_d_k2": "wait 72; down speed; down forward; wait 2.0s; down duck; wait 86; tap jump; waitf 1; up duck; up forward; "
+                        "up speed; waitf 1; tap moveright; wait 1.2s",
+    "m8_lurch_spr_d_k2": _A1_JUMP + "waitf 1; tap moveright; wait 1.2s",
+})
+# d) walk off the 232 u rock (geometry m3; flat top z 532.80 from x -13700 to -13500, probed) with no jump: W released when
+# airborne, then a D press K frames later
+SCHEDULES.update({"m8_lurch_ledge_k%d" % k: "wait 72; down forward; waitair; up forward; waitf %d; tap moveright; wait 1.5s" % k
+                  for k in (2, 12, 24, 48)})
+SCHEDULES["m8_lurch_ledge_none"] = "wait 72; down forward; waitair; up forward; wait 1.5s"
+
+# M8 R4 slope slide (time-boxed): the spawn-side hillside found by the M8 probe (y 550: flat 1580.03 to x -10575, then a
+# planar 29.4 deg ramp to x -10375 and a 30-41 deg hillside down to x -9500, z 897). Start on the flat top facing +X.
+SCHEDULES.update({
+    "m8_slope_slide": "wait 72; down speed; down forward; wait 1.0s; down duck; wait 3.0s; up duck; up forward; up speed; wait 1.0s",
+    "m8_slope_slide_now": "wait 72; down speed; down forward; wait 1.0s; down duck; up forward; up speed; wait 3.0s; up duck; wait 1.0s",
+    "m8_slope_run": "wait 72; down speed; down forward; wait 4.0s; up forward; up speed; wait 1.0s",
+})
+
+# M8 Horizon gravity lift (deployed 120 u ahead on lane C, as M4). Times count from the lift entry (waitair). Every trial
+# lasts >= 11 s so the previous lift (10 s lifetime) is gone before the next reset (M4 overlap artefact).
+_M8L = "wait 72; down forward; waitair; up forward; "
+SCHEDULES.update({
+    "m8_lift_ride": _M8L + "wait 11.0s",
+    "m8_lift_through": "wait 72; down forward; wait 3.0s; up forward; wait 8.5s",
+    "m8_lift_top_w": _M8L + "wait 3.7s; down forward; wait 1.5s; up forward; wait 6.0s",
+    "m8_lift_top_jump": _M8L + "wait 3.8s; tap jump; wait 7.2s",
+    "m8_lift_ej_jump": _M8L + "wait 4.4s; tap jump; wait 6.6s",
+    "m8_lift_ej_strafe": _M8L + "wait 4.4s; down moveright; wait 1.0s; up moveright; wait 5.6s",
+    "m8_lift_ej_back": _M8L + "wait 4.4s; down backward; wait 1.5s; up backward; wait 5.1s",
+    "m8_lift_land_w": _M8L + "wait 1.0s; waitland; down forward; wait 2.0s; up forward; wait 3.0s",
+    "m8_liftoff80_w": "wait 72; down forward; wait 3.0s; up forward; wait 8.5s",
+    "m8_liftoff83_w": "wait 72; down forward; wait 3.0s; up forward; wait 8.5s",
+})
+SCHEDULES.update({"m8_lift_side_t%02d" % int(t * 10): _M8L + "wait %.1fs; down moveright; wait 1.0s; up moveright; wait %.1fs"
+                  % (t, 10.0 - t) for t in (0.5, 1.5, 3.0)})
+
+# M8 superglide coverage (geometry h<H>, lane A rock, native code: --both-cvar mantle_boost_enabled=0). waittrav = the client
+# sees the traversal start; the press comes K frames later. m8_sg_<approach>_<var>_k<K>: approach spr (sprint jump as A2),
+# walk (walk jump), slide (slide jump), ang (sprint at 30 deg to the face normal), wd (view 45 deg, W+D, motion normal to the
+# face); var sg = jump then crouch on the next frame, mb = jump only, none = no press.
+_M8SG_APP = {
+    "spr": "wait 72; down speed; down forward; wait 1.2s; tap jump; waittrav; ",
+    "walk": "wait 72; down forward; wait 1.65s; tap jump; waittrav; ",
+    "slide": "wait 72; down speed; down forward; wait 1.05s; down duck; wait 0.25s; tap jump; up duck; waittrav; ",
+    "ang": "wait 72; down speed; down forward; wait 1.4s; tap jump; waittrav; ",
+    "wd": "wait 72; down speed; down forward; down moveright; wait 1.2s; tap jump; waittrav; ",
+}
+_M8SG_VAR = {"sg": "tap jump; tap duck; ", "mb": "tap jump; ", "none": ""}
+
+
+def _m8_sg(name):
+    m = re.fullmatch(r"m8_sg_(spr|walk|slide|ang|wd)_(sg|mb|none)_k(\d+)", name)
+    if not m:
+        return None
+    k = int(m.group(3))
+    tail = "wait 1.5s; up forward; up speed; " + ("up moveright; " if m.group(1) == "wd" else "") + "wait 1.0s"
+    return _M8SG_APP[m.group(1)] + ("waitf %d; " % k if k else "") + _M8SG_VAR[m.group(2)] + tail
+
 KEYS = {"forward", "backward", "moveleft", "moveright", "jump", "duck", "speed", "left", "right", "lookup", "lookdown",
         "offhand1", "offhand4", "use", "attack"}
 # Client cvars a schedule may change with 'set' (constant-rate view turns, M4b).
@@ -417,6 +541,14 @@ SCHEDULE_PRE = {
                  'if ( IsValid( gw ) && gw.HasMod( "infinite_abilities_grapple" ) ) gw.RemoveMod( "infinite_abilities_grapple" )\n'
                  'pre = " grapple_mod=" + ( IsValid( gw ) && gw.HasMod( "infinite_abilities_grapple" ) )\n',
     "m4_lift_": 'thread SpaceElevator_PropDeploy( p, o + <120, 0, 0>, <0, 0, 0>, null )\npre = " lift=deployed"\n',
+    # M8: pad double jump (pad 300 u ahead, as M4) and its no-pad control
+    "m8_pad": _CLEAR_GEO + 'entity pad = JumpPad_CreateAtLocation( o + <300, 0, 0>, <0, 0, 0>, p, true )\n'
+              'if ( IsValid( pad ) ) pad.SetScriptName( "hsd_test_geo_m4" )\npre = " pad=" + IsValid( pad )\n',
+    "m8_djctrl": _CLEAR_GEO + 'pre = " geo=cleared"\n',
+    # lift offset sideways by 80 / 83 u so a W-held walk crosses only a chord of the trigger (dwell < 0.5 s)
+    "m8_liftoff80": 'thread SpaceElevator_PropDeploy( p, o + <120, 80, 0>, <0, 0, 0>, null )\npre = " lift=deployed_y80"\n',
+    "m8_liftoff83": 'thread SpaceElevator_PropDeploy( p, o + <120, 83, 0>, <0, 0, 0>, null )\npre = " lift=deployed_y83"\n',
+    "m8_lift": 'thread SpaceElevator_PropDeploy( p, o + <120, 0, 0>, <0, 0, 0>, null )\npre = " lift=deployed"\n',
 }
 
 # M6-A3 ropes on the clear lanes (m6/SOURCE-AUDIT.md E-Z): Z1 flat 1600 u on lane C 100 u above the floor, Z2 uphill
@@ -446,6 +578,9 @@ SCHEDULE_YAW = {"g3_hook": 36.87, "g3_hook_use": 36.87, "z7b_air": 90.0, "z7c_ai
                 "m4b_swing_side": 20.0, "m4b_swing_turn": 20.0, "m4b_swing_turn_w": 20.0, "m4b_swing_jump": 20.0,
                 "m4b_swing_turn_jump": 20.0, "m4b_swing_cross": 90.0, "m4b_swing_cross_w": 90.0, "m4b_swing_cross_walk": 90.0}
 
+# M8 superglide approaches with a turned view (prefix of 9 characters)
+M8_YAW_PREFIX = {"m8_sg_ang": 30.0, "m8_sg_wd_": 45.0}
+
 # Start positions per schedule prefix (M3). Lane A faces the test wall (test_geometry.py: rock face at
 # x ~ -13706, y 6380..6620, top ~ +232 u); lane B is the open part of the field at y 5900.
 LANE_A = (-14100.0, 6500.0, 294.92)
@@ -453,7 +588,7 @@ LANE_B = (-14200.0, 5900.0, 294.92)
 # Lane C: y 6800 is flat from x -14825 to -12475 (m3/map/field_fine.json) and 81 u clear of the wall's bounds.
 LANE_C = (-14800.0, 6800.0, 294.92)
 SPAWN_PAD = (-11699.0, 512.0, 1577.046)  # visible firing-range floor (M0/M1)
-SCHEDULE_ORIGIN_PREFIX = {"b_alter_stand": (-13856.0, 6500.0, 294.92), "bp_alter": (-13856.0, 6500.0, 294.92), "bp_ash": (-14900.0, 6650.0, 294.92), "b_alter_": (-14306.0, 6500.0, 294.92),
+SCHEDULE_ORIGIN_PREFIX = {"m8_slope": (-10900.0, 550.0, 1580.03), "m8_lurch_ledge": (-13640.0, 6500.0, 532.80), "m8_lurch_sj": LANE_C, "m8_lurch": LANE_B, "m8_sg_ang": (-14100.0, 6272.0, 294.92), "m8_sg_slide": (-14200.0, 6500.0, 294.92), "m8_sg_": LANE_A, "m8_pad": LANE_C, "m8_djctrl": LANE_C, "m8_lift": LANE_C, "b_alter_stand": (-13856.0, 6500.0, 294.92), "bp_alter": (-13856.0, 6500.0, 294.92), "bp_ash": (-14900.0, 6650.0, 294.92), "b_alter_": (-14306.0, 6500.0, 294.92),
                           "b_loba_": (-14900.0, 6650.0, 294.92), "b_ash_": (-14900.0, 6650.0, 294.92), "b_valk_": LANE_C, "a2r_": LANE_A, "g1_": LANE_A, "a2_": LANE_A, "z": (-14550.0, 6800.0, 294.92), "a1_wb": LANE_A, "a1_": LANE_B, "m4b_view": LANE_C, "m4b_pad": LANE_C, "m4_valk": LANE_C, "m4_pounce": LANE_C, "m4_stim": LANE_C, "m4_ctrl": LANE_C, "m4_pad": LANE_C, "m4_lift": LANE_C,
                           "m4_grapple": LANE_A, "x_pad_": SPAWN_PAD, "e8_hop350": LANE_C, "e3_": LANE_B, "e8_fast": LANE_C, "e8_slide": LANE_C, "e6_": LANE_A, "e7_": LANE_A,
                           "e8_drop": LANE_A}
@@ -582,6 +717,18 @@ void functionref() f = void function() : ( steps ) {
 			printt( "[HSD-SCHED] ver=1 trial=$trial run=$run edge=" + verb + " frame=" + ( FrameCount() - f0 ) + " fc=" + FrameCount() + " pt=" + PlatformTime() + " t=" + Time() + " waited=" + g )
 			continue
 		}
+		if ( verb == "waittrav" )
+		{
+			// M8: wait until the client-predicted traversal (mantle) has started
+			int g = 0
+			while ( !p.IsTraversing() && g < 1200 )
+			{
+				WaitFrame()
+				g++
+			}
+			printt( "[HSD-SCHED] ver=1 trial=$trial run=$run edge=waittrav frame=" + ( FrameCount() - f0 ) + " fc=" + FrameCount() + " pt=" + PlatformTime() + " t=" + Time() + " waited=" + g )
+			continue
+		}
 		if ( verb == "set" )
 		{
 			printt( "[HSD-SCHED] ver=1 trial=$trial run=$run edge=set cvar=" + parts[1] + " value=" + parts[2] + " frame=" + ( FrameCount() - f0 ) + " fc=" + FrameCount() + " pt=" + PlatformTime() + " t=" + Time() )
@@ -636,6 +783,8 @@ def get_schedule(name):
                 "mbl": "tap jump; waitf 29; tap moveright"}[m.group(1)]
         return ("wait 72; down speed; down forward; wait 1.2s; tap jump; waitf %d; %s; wait 1.5s; up forward; up speed; wait 1.0s"
                 % (k - 1, tail))
+    if name.startswith("m8_sg_"):
+        return _m8_sg(name)
     m = re.fullmatch(r"e3_right_k(\d+)", name)
     if m:
         k = int(m.group(1))
@@ -730,7 +879,7 @@ def parse_schedule(spec, fps=144.0):
             steps.append(f"wait {n}")
             continue
         steps.append(s)
-        if verb in ("waitair", "waitland"):
+        if verb in ("waitair", "waitland", "waittrav"):
             continue
         if verb in ("down", "up", "tap"):
             if arg not in KEYS:
@@ -749,7 +898,7 @@ def parse_schedule(spec, fps=144.0):
 
 
 def has_state_waits(steps):
-    return any(s in ("waitair", "waitland") for s in steps)
+    return any(s in ("waitair", "waitland", "waittrav") for s in steps)
 
 
 def schedule_frames(steps):
@@ -757,7 +906,7 @@ def schedule_frames(steps):
     n = 0
     for s in steps:
         verb, _, arg = s.partition(" ")
-        n += int(arg) if verb == "wait" else (1 if verb == "tap" else 0) if verb != "waitair" and verb != "waitland" else 0
+        n += int(arg) if verb == "wait" else (1 if verb == "tap" else 0) if verb not in ("waitair", "waitland", "waittrav") else 0
     return n
 
 
@@ -945,7 +1094,7 @@ def main(argv):
             server.cmd(f"hsd_md_run {run}")
             client.cmd("hsd_md_run 0")           # the schedule thread sets the client label once settled
             since = client.info()["logSeq"]
-            yaw = SCHEDULE_YAW.get(name, a.yaw)
+            yaw = SCHEDULE_YAW.get(name, M8_YAW_PREFIX.get(name[:9], a.yaw))
             ox, oy, oz = origin_for(name, tuple(a.origin))
             pitch = SCHEDULE_PITCH.get(name, 0.0)
             pre = next((code for prefix, code in SCHEDULE_PRE.items() if name.startswith(prefix)), "")  # prefix may be a tuple
@@ -959,7 +1108,15 @@ def main(argv):
             sched = client.eval(SCHED_CLIENT.substitute(
                 steps=", ".join(json.dumps(s) for s in steps), ox=ox, oy=oy, oz=oz,
                 settle_frames=a.settle_frames, settle_timeout=a.settle_timeout, trial=trial, run=run))
-            lines, gap = wait_for_end(client, since, trial, timeout=(frames + a.settle_timeout) / a.fps * 3 + 30)
+            try:
+                lines, gap = wait_for_end(client, since, trial, timeout=(frames + a.settle_timeout) / a.fps * 3 + 30)
+            except TimeoutError as err:   # M8: keep the manifest of the trials already run, then stop the session
+                print(f"trial {trial} run r{run} {name}: FAILED ({err}); stopping the session")
+                manifest["trials"].append({"trial": trial, "run": run, "batch": batch, "schedule": name, "yaw": yaw,
+                                           "origin": [ox, oy, oz], "schedule_frames": frames, "reset": reset.get("reply", ""),
+                                           "scheduled": sched.get("reply", ""), "sched_lines": [], "log_gap": None,
+                                           "measured_fps": None, "ok": False, "why": "timeout: " + str(err), "warmup": warm})
+                break
             server.cmd("hsd_md_run 0")
             client.cmd("hsd_md_run 0")
             for cv, val in view_cvars.items():

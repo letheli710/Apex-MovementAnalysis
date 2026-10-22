@@ -1,0 +1,137 @@
+[
+ {
+  "name": "dj_grant_dedi_refused_latest",
+  "value": 0.1083,
+  "unit": "s after the launch usercmd start",
+  "class": "meas",
+  "n": 22,
+  "note": "first press after a ground pad launch; dedi (authoritative) MOVE-TRACE"
+ },
+ {
+  "name": "dj_grant_dedi_accepted_earliest",
+  "value": 0.1084,
+  "unit": "s",
+  "class": "meas",
+  "n": 133,
+  "note": "presses at 0.108 s: 3/5 accepted; at 0.133 s 5/5; source note says 0.1 s [src]"
+ },
+ {
+  "name": "dj_client_mispredicted_refusals",
+  "value": 4,
+  "unit": "count (client refused, dedi accepted)",
+  "class": "meas",
+  "n": 155,
+  "note": "times 0.1333, 0.1334, 0.1334, 0.1333"
+ },
+ {
+  "name": "dj_vz_add",
+  "value": 201.813,
+  "unit": "u/s engine (pad slow-mo: world = 0.8 x engine)",
+  "class": "meas",
+  "n": 106,
+  "note": "post vz + gravity step - pre vz; sd 0.051"
+ },
+ {
+  "name": "dj_vz_floor",
+  "value": 409.251,
+  "unit": "u/s engine",
+  "class": "meas",
+  "n": 38,
+  "note": "post vz + gravity step when pre vz is low; sd 0.005"
+ },
+ {
+  "name": "dj_vz_branch_boundary",
+  "value": [
+   357.353,
+   360.037
+  ],
+  "unit": "u/s engine pre vz bracket (floor at or below, add at or above)",
+  "class": "meas",
+  "n": 144,
+  "note": "discontinuous: not max(vz + add, floor)"
+ },
+ {
+  "name": "dj_horizontal_no_input",
+  "value": 0.0,
+  "unit": "u/s change",
+  "class": "meas",
+  "n": 100,
+  "note": "view direction irrelevant without a move key"
+ },
+ {
+  "name": "dj_horizontal_held_key_rule",
+  "value": 240.0,
+  "unit": "u/s: v_h' = v_h - 240*v_hat + 240*wish_hat (then AirAccelerate)",
+  "class": "fit",
+  "n": 25,
+  "note": "max error 0.0154 u/s over fwd/back/right/diag and two launch speeds"
+ },
+ {
+  "name": "dj_horizontal_new_edge_same_cmd",
+  "value": {
+   "right_a": 264.11,
+   "right_b": 272.09,
+   "back_net": 449.3
+  },
+  "unit": "u/s",
+  "class": "meas",
+  "n": 19,
+  "note": "key pressed on the DJ usercmd itself: not explained by the held-key rule plus the lurch model (open)"
+ },
+ {
+  "name": "dj_once_per_launch",
+  "value": 0,
+  "unit": "DJ count on the second air press",
+  "class": "meas",
+  "n": 5,
+  "note": ""
+ },
+ {
+  "name": "dj_early_press_does_not_consume",
+  "value": 5,
+  "unit": "later DJ after a refused early press",
+  "class": "meas",
+  "n": 5,
+  "note": ""
+ },
+ {
+  "name": "dj_held_jump_no_trigger",
+  "value": 0,
+  "unit": "DJ while the jump key is held through the launch",
+  "class": "meas",
+  "n": 5,
+  "note": "a new press after release then DJs: 5/5"
+ },
+ {
+  "name": "dj_after_landing_dedi",
+  "value": 0,
+  "unit": "dedi DJ on an air press after landing + ground jump (unused grant)",
+  "class": "meas",
+  "n": 5,
+  "note": "client predicted a DJ in 5 (corrected by the dedi)"
+ },
+ {
+  "name": "dj_normal_jump_control",
+  "value": 0,
+  "unit": "DJ after a normal jump",
+  "class": "meas",
+  "n": 5,
+  "note": ""
+ },
+ {
+  "name": "dj_landing_f0_err",
+  "value": 0.00055,
+  "unit": "max |f0 obs - M4 law|",
+  "class": "meas",
+  "n": 135,
+  "note": "landings after a DJ (impacts to |vz| 1336)"
+ },
+ {
+  "name": "dj_lurch_after",
+  "value": 212.55,
+  "unit": "|dv| u/s of a moveright edge 0.025 s after the DJ",
+  "class": "meas",
+  "n": 5,
+  "note": "control without DJ at the same time: 3.868 (pad-launch window over); the DJ re-anchors the lurch window"
+ }
+]
