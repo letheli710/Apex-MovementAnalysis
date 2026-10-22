@@ -23,6 +23,23 @@
 - **Unity 能复用的部件**：`TeleportAbility` 的速度清零模式、`ProbeGround`。缺的是投射物和落点校验。
 - **开发成本估计**：中。
 
+**研究进度**：游戏内实测已做两轮（M4 一轮，M6-B 一轮），分析脚本和报告都已完成。Unity 里只有 M5 做的一个简化版传送（速度清零，传送距离是设计值），没有投射物、提前落地和落点校验。
+
+**数据与文件位置**（相对本仓库根目录）：
+
+| 内容 | 位置 |
+|---|---|
+| M6-B 游戏会话（25 次：提前落地时间 0.7 / 0.9 / 1.2 / 1.5 s 各 5 次，冲刺抛掷 5 次） | `research/phase2-local/data/20261021_180124_M6B_loba/`（`runner.json`、`report/rows.csv`、`report/census.csv`） |
+| M4 游戏会话（12 次：冲刺和站立抛掷各 6 次） | `research/phase2-local/data/20261021_031416_M4_loba/` |
+| M6-B 分析脚本与输出 | `research/phase2-local/m6/b_legends/`：`m6b_analysis.py`、`analysis_output.txt`、`results.json`、`params.json` |
+| M6-B 结论 | `research/phase2-local/m6/b_legends/M6-B-REPORT.md` 第 2 节 |
+| M4 结论与脚本 | `research/phase2-local/m4/p3_transitions/`：`P3-TRANSITIONS.md`、`p3_analysis.py` |
+| 源码调查 | `research/phase2-local/m6/SOURCE-AUDIT.md`（M6-B → Loba） |
+| 实验调度（可直接重跑） | `research/phase2-local/tools/hsd_trial.py`：`b_loba_*`、`m4_loba_*` |
+| Unity 简化版 | HSD-Unity：`Assets/HSD/R5Replay/Runtime/Abilities/TransitionAbilities.cs`（`TeleportAbility`，Loba 模式） |
+
+原始游戏日志（`platform/` 子目录）只保存在本机对应会话文件夹里，不上传 git。
+
 ## Alter：Void Passage（虚空通道，穿墙传送门）
 
 **搁置原因**：
@@ -43,6 +60,23 @@
 - **没解决的问题**：放置在哪一步被拒绝；换成更薄的墙，或者用地图自带的墙面，能否放出来；实际的出口速度和传送后状态。
 - **Unity 能复用的部件**：`TeleportAbility`、`ResolveTeleport`、发射类冲量。缺的是墙厚查询和成对的传送门。
 - **开发成本估计**：中到大。
+
+**研究进度**：源码调查已完成。游戏实测尝试了三次（正式一次、按键方式试验一次、打开 SDK 开关一次），都没能放出传送门，所以没有任何速度或状态的实测数据，只有放置失败的诊断日志。Unity 里完全没有实现。
+
+**数据与文件位置**（相对本仓库根目录）：
+
+| 内容 | 位置 |
+|---|---|
+| 正式会话（15 次：冲刺、走路、站立各 5 次，均未成功） | `research/phase2-local/data/20261021_175730_M6B_alter/` |
+| 按键方式试验（6 次：长按 1.2 s、按住加攻击、点按加攻击） | `research/phase2-local/data/20261021_181108_M6B_pilot_alter/` |
+| 打开 3 个 SDK 开关后的重试（13 次，仅作诊断） | `research/phase2-local/data/20261021_185338_M6B_alter_sdkfix/` |
+| SDK 放置诊断日志（`[OPL-SRV]` 行：入口修正失败、深度不足、出口 2538 u） | 上面各会话的 `platform/logs/server/` 下（只在本机，不上传 git） |
+| 分析脚本与结论 | `research/phase2-local/m6/b_legends/`：`m6b_analysis.py`；`M6-B-REPORT.md` 第 1 节（含第二次重试的说明） |
+| 源码调查（出口速度、门寿命、厚度上限等，带文件行号） | `research/phase2-local/m6/SOURCE-AUDIT.md`（M6-B → Alter） |
+| 相关源码 | `research-src/s21-platform/scripts/vscripts/weapons/mp_ability_phase_door.nut`；SDK 放置 `research-src/s21-r5sdk/src/game/server/vscript_server_placement.cpp`（开关约在第 2936–2946 行） |
+| 实验调度（可直接重跑） | `research/phase2-local/tools/hsd_trial.py`：`b_alter_*`、`bp_alter_*`；SDK 开关用 `--both-cvar` 传入 |
+
+`research-src` 是本机固定版本的源码克隆，和本仓库在同一个工作区目录下，不在本仓库里。
 
 ## 重启条件
 
