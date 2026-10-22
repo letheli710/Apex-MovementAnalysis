@@ -1,0 +1,811 @@
+M9 R Revenant (R5Flowstate S21 client + S3 dedi + SDK, local offline)
+====================================================================================================
+
+1. Sessions
+  20261022_141811_M9R_revR1 legend=revenant scored=130 fps=[119.22, 119.98] excluded=none
+  20261022_143232_M9R_revR2 legend=revenant scored=110 fps=[118.64, 119.99] excluded=[(14311, 'm9r_bigwall_climb', 'no start/end edge (settle timeout?)'), (14312, 'm9r_bigwall_climb', 'no start/end edge (settle timeout?)'), (14313, 'm9r_bigwall_climb', 'no start/end edge (settle timeout?)'), (14314, 'm9r_bigwall_climb', 'no start/end edge (settle timeout?)'), (14315, 'm9r_bigwall_climb', 'no start/end edge (settle timeout?)')]
+
+2. Per schedule (launch vector = post v + g dt/2 on the launch usercmd; model = script formula)
+
+  m9r_air  n=5 launched=5 view=[0.0, 0.0]
+    model: c 0.0 pitch used 0.0 -> launch pitch -35.0 speed 700.0 vec [573.406, 0.0, 401.504]
+    hold                     0.008 (sd 0.000, 0.007..0.008, n=5)
+    t_launch_after_press     0.917 (sd 0.003, 0.916..0.922, n=5)
+    t_launch_after_release   0.910 (sd 0.003, 0.908..0.915, n=5)
+    pre_speed_h              0.000 (sd 0.000, 0.000..0.000, n=5)
+    launch_speed             701.120 (sd 0.628, 700.729..702.235, n=5)
+    launch_elev              35.000 (sd 0.000, 35.000..35.000, n=5)
+    model_err_speed          1.120 (sd 0.628, 0.729..2.235, n=5)
+    model_err_vec            1.120 (sd 0.628, 0.729..2.235, n=5)
+    air_time                 0.872 (sd 0.459, 0.050..1.083, n=5)
+    land_vh_before           573.942 (sd 0.633, 573.410..574.950, n=5)
+    land_vh_first            450.778 (sd 251.993, 0.000..564.530, n=5)
+    land_vh_0.10s            459.554 (sd 65.024, 427.500..575.610, n=5)
+    land_vh_0.25s            309.566 (sd 148.789, 240.010..575.610, n=5)
+    land_vh_0.50s            115.122 (sd 257.421, 0.000..575.610, n=5)
+
+  m9r_cancel_attack  n=5 launched=5 view=[0.0, 0.0]
+    model: c 0.4677 pitch used 0.0 -> launch pitch -35.0 speed 910.462 vec [745.806, 0.0, 522.219]
+    hold                     1.508 (sd 0.000, 1.507..1.508, n=5)
+    t_launch_after_press     1.525 (sd 0.000, 1.524..1.525, n=5)
+    t_launch_after_release   0.017 (sd 0.000, 0.017..0.017, n=5)
+    pre_speed_h              0.000 (sd 0.000, 0.000..0.000, n=5)
+    launch_speed             911.491 (sd 0.381, 911.045..912.047, n=5)
+    launch_elev              35.000 (sd 0.000, 35.000..35.000, n=5)
+    model_err_speed          1.098 (sd 0.365, 0.583..1.585, n=5)
+    model_err_vec            1.099 (sd 0.365, 0.584..1.586, n=5)
+    air_time                 1.400 (sd 0.000, 1.400..1.400, n=5)
+    land_vh_before           746.650 (sd 0.308, 746.290..747.100, n=5)
+    land_vh_first            736.236 (sd 0.319, 735.870..736.710, n=5)
+    land_vh_0.10s            605.020 (sd 5.532, 600.750..611.350, n=5)
+    land_vh_0.25s            417.438 (sd 5.564, 413.080..423.840, n=5)
+    land_vh_0.50s            103.354 (sd 4.172, 100.660..110.530, n=5)
+
+  m9r_cancel_jump  n=5 launched=5 view=[0.0, 0.0]
+    model: c 0.4677 pitch used 0.0 -> launch pitch -35.0 speed 910.462 vec [745.806, 0.0, 522.219]
+    hold                     1.507 (sd 0.002, 1.503..1.508, n=5)
+    t_launch_after_press     1.524 (sd 0.002, 1.520..1.525, n=5)
+    t_launch_after_release   0.017 (sd 0.000, 0.017..0.018, n=5)
+    pre_speed_h              0.000 (sd 0.000, 0.000..0.000, n=5)
+    launch_speed             911.455 (sd 0.937, 909.808..912.111, n=5)
+    launch_elev              35.000 (sd 0.000, 35.000..35.000, n=5)
+    model_err_speed          1.339 (sd 0.226, 1.077..1.649, n=5)
+    model_err_vec            1.340 (sd 0.226, 1.077..1.650, n=5)
+    air_time                 1.500 (sd 0.001, 1.498..1.500, n=5)
+    land_vh_before           746.618 (sd 0.767, 745.270..747.160, n=5)
+    land_vh_first            736.206 (sd 0.771, 734.850..736.740, n=5)
+    land_vh_0.10s            602.838 (sd 4.754, 599.410..611.230, n=5)
+    land_vh_0.25s            417.316 (sd 5.986, 411.830..424.100, n=5)
+    land_vh_0.50s            102.646 (sd 4.793, 99.160..111.100, n=5)
+
+  m9r_cancel_zoom  n=5 launched=5 view=[0.0, 0.0]
+    model: c 0.4679 pitch used 0.0 -> launch pitch -35.0 speed 910.565 vec [745.891, 0.0, 522.279]
+    hold                     1.508 (sd 0.000, 1.508..1.509, n=5)
+    t_launch_after_press     1.525 (sd 0.000, 1.525..1.525, n=5)
+    t_launch_after_release   0.017 (sd 0.000, 0.017..0.017, n=5)
+    pre_speed_h              0.000 (sd 0.000, 0.000..0.000, n=5)
+    launch_speed             911.536 (sd 0.159, 911.347..911.702, n=5)
+    launch_elev              35.000 (sd 0.000, 35.000..35.000, n=5)
+    model_err_speed          0.984 (sd 0.144, 0.747..1.137, n=5)
+    model_err_vec            0.984 (sd 0.144, 0.747..1.137, n=5)
+    air_time                 1.400 (sd 0.000, 1.400..1.400, n=5)
+    land_vh_before           746.686 (sd 0.129, 746.530..746.820, n=5)
+    land_vh_first            736.266 (sd 0.129, 736.110..736.400, n=5)
+    land_vh_0.10s            605.002 (sd 5.737, 600.700..611.380, n=5)
+    land_vh_0.25s            421.650 (sd 4.736, 413.180..423.860, n=5)
+    land_vh_0.50s            107.018 (sd 5.700, 100.630..111.300, n=5)
+
+  m9r_climb_back  n=5 launched=0 view=None
+    r14301 wr [[647.057, 647.657]] climb {'dur': 0.6, 'z0': 50.44, 'z1': 149.39} trav None side None presses [{"key": "jump", "t": 646.782, "wr_at": false, "ground": 1, "z": 0.0, "pre_v": [299.0, 0.0, 0.0], "post_v": [299.0, 0.0, 0.0], "v_0.1s": [299.09, 0.0, 205.47]}, {"key": "backward", "t": 647.59, "wr_at": true, "ground": 1, "z": 147.55, "pre_v": [0.92, 0.04, 221.23], "post_v": [0.92, 0.04, 221.06], "v_0.1s": [-70.18, -1.36, -39.29]}]
+    r14302 wr [[652.958, 653.556]] climb {'dur': 0.598, 'z0': 51.19, 'z1': 150.75} trav None side None presses [{"key": "jump", "t": 652.682, "wr_at": false, "ground": 1, "z": 0.0, "pre_v": [299.0, 0.0, 0.0], "post_v": [299.0, 0.0, 0.0], "v_0.1s": [299.09, 0.0, 205.58]}, {"key": "backward", "t": 653.497, "wr_at": true, "ground": 1, "z": 148.89, "pre_v": [0.92, 0.04, 221.11], "post_v": [0.92, 0.04, 220.94], "v_0.1s": [-70.17, -1.48, -39.51]}]
+    r14303 wr [[658.857, 659.457]] climb {'dur': 0.6, 'z0': 50.46, 'z1': 149.36} trav None side None presses [{"key": "jump", "t": 658.582, "wr_at": false, "ground": 1, "z": 0.0, "pre_v": [299.0, 0.0, 0.0], "post_v": [299.0, 0.0, 0.0], "v_0.1s": [299.09, 0.0, 205.57]}, {"key": "backward", "t": 659.39, "wr_at": true, "ground": 1, "z": 147.52, "pre_v": [0.92, 0.04, 221.23], "post_v": [0.92, 0.04, 221.06], "v_0.1s": [-70.18, -1.36, -39.3]}]
+    r14304 wr [[664.75, 665.356]] climb {'dur': 0.606, 'z0': 49.84, 'z1': 153.19} trav None side None presses [{"key": "jump", "t": 664.482, "wr_at": false, "ground": 1, "z": 0.0, "pre_v": [299.0, 0.0, 0.0], "post_v": [299.0, 0.0, 0.0], "v_0.1s": [299.09, 0.0, 205.68]}, {"key": "backward", "t": 665.297, "wr_at": true, "ground": 1, "z": 151.34, "pre_v": [0.92, 0.04, 220.82], "post_v": [0.92, 0.04, 220.65], "v_0.1s": [-70.18, -1.24, -39.6]}]
+    r14305 wr [[670.657, 671.249]] climb {'dur': 0.592, 'z0': 51.2, 'z1': 149.33} trav None side None presses [{"key": "jump", "t": 670.382, "wr_at": false, "ground": 1, "z": 0.01, "pre_v": [299.0, 0.0, 0.0], "post_v": [299.01, 0.0, 280.44], "v_0.1s": [299.09, 0.0, 199.16]}, {"key": "backward", "t": 671.19, "wr_at": true, "ground": 1, "z": 147.5, "pre_v": [0.92, 0.04, 221.23], "post_v": [0.92, 0.04, 221.06], "v_0.1s": [-70.04, -1.38, -31.79]}]
+
+  m9r_climb_d  n=5 launched=0 view=None
+    r14296 wr [[611.257, 612.932]] climb {'dur': 1.675, 'z0': 50.44, 'z1': 378.41} trav None side {'vy_mean': -160.68, 'dy': -148.33, 'wr_during': 121, 'vz_mean': 215.19} presses [{"key": "jump", "t": 610.982, "wr_at": false, "ground": 1, "z": 0.0, "pre_v": [299.0, 0.0, 0.0], "post_v": [299.0, 0.0, 0.0], "v_0.1s": [299.09, 0.0, 205.38]}]
+    r14297 wr [[618.407, 620.082]] climb {'dur': 1.675, 'z0': 50.44, 'z1': 378.4} trav None side {'vy_mean': -160.54, 'dy': -148.4, 'wr_during': 121, 'vz_mean': 215.09} presses [{"key": "jump", "t": 618.132, "wr_at": false, "ground": 1, "z": 0.0, "pre_v": [299.0, 0.0, 0.0], "post_v": [299.0, 0.0, 0.0], "v_0.1s": [299.08, 0.0, 211.51]}]
+    r14298 wr [[625.557, 627.257]] climb {'dur': 1.7, 'z0': 50.44, 'z1': 380.56} trav None side {'vy_mean': -160.64, 'dy': -148.34, 'wr_during': 121, 'vz_mean': 215.19} presses [{"key": "jump", "t": 625.282, "wr_at": false, "ground": 1, "z": 0.0, "pre_v": [299.0, 0.0, 0.0], "post_v": [299.0, 0.0, 0.0], "v_0.1s": [299.09, 0.0, 205.44]}]
+    r14299 wr [[632.707, 634.374]] climb {'dur': 1.667, 'z0': 50.45, 'z1': 378.24} trav None side {'vy_mean': -161.73, 'dy': -150.85, 'wr_during': 121, 'vz_mean': 215.11} presses [{"key": "jump", "t": 632.432, "wr_at": false, "ground": 1, "z": 0.01, "pre_v": [299.0, 0.0, 0.0], "post_v": [299.01, 0.0, 280.44], "v_0.1s": [299.09, 0.0, 199.12]}]
+    r14300 wr [[639.857, 641.545]] climb {'dur': 1.688, 'z0': 50.45, 'z1': 381.5} trav None side {'vy_mean': -160.63, 'dy': -148.28, 'wr_during': 121, 'vz_mean': 215.2} presses [{"key": "jump", "t": 639.582, "wr_at": false, "ground": 1, "z": 0.0, "pre_v": [299.0, 0.0, 0.0], "post_v": [299.0, 0.0, 0.0], "v_0.1s": [299.09, 0.0, 205.47]}]
+
+  m9r_climb_jump  n=5 launched=0 view=None
+    r14306 wr [[676.557, 677.09], [677.982, 678.132]] climb {'dur': 0.533, 'z0': 50.45, 'z1': 147.91} trav None side None presses [{"key": "jump", "t": 676.282, "wr_at": false, "ground": 1, "z": 0.0, "pre_v": [299.0, 0.0, 0.0], "post_v": [299.0, 0.0, 0.0], "v_0.1s": [299.09, 0.0, 205.4]}, {"key": "jump", "t": 677.09, "wr_at": true, "ground": 1, "z": 147.55, "pre_v": [0.92, 0.04, 221.23], "post_v": [0.92, 0.04, 221.06], "v_0.1s": [17.18, -1.74, 136.02]}]
+    r14307 wr [[683.46, 683.997], [684.891, 685.032]] climb {'dur': 0.537, 'z0': 51.05, 'z1': 148.68} trav None side None presses [{"key": "jump", "t": 683.187, "wr_at": false, "ground": 1, "z": 0.01, "pre_v": [299.0, 0.0, 0.0], "post_v": [299.01, 0.0, 280.26], "v_0.1s": [299.09, 0.0, 201.73]}, {"key": "jump", "t": 683.997, "wr_at": true, "ground": 1, "z": 148.68, "pre_v": [0.92, 0.04, 221.11], "post_v": [0.92, 0.04, 220.94], "v_0.1s": [16.38, -1.76, 137.15]}]
+    r14308 wr [[690.607, 691.14], [692.032, 692.182]] climb {'dur': 0.533, 'z0': 50.45, 'z1': 147.83} trav None side None presses [{"key": "jump", "t": 690.332, "wr_at": false, "ground": 1, "z": 0.0, "pre_v": [299.0, 0.0, 0.0], "post_v": [299.0, 0.0, 0.0], "v_0.1s": [299.09, 0.0, 205.38]}, {"key": "jump", "t": 691.14, "wr_at": true, "ground": 1, "z": 147.47, "pre_v": [0.92, 0.04, 221.24], "post_v": [0.92, 0.04, 221.07], "v_0.1s": [17.24, -1.74, 135.94]}]
+    r14309 wr [[697.507, 698.04], [698.932, 699.082]] climb {'dur': 0.533, 'z0': 50.44, 'z1': 147.52} trav None side None presses [{"key": "jump", "t": 697.232, "wr_at": false, "ground": 1, "z": 0.01, "pre_v": [299.0, 0.0, 0.0], "post_v": [299.01, 0.0, 280.44], "v_0.1s": [299.09, 0.0, 205.37]}, {"key": "jump", "t": 698.04, "wr_at": true, "ground": 1, "z": 147.52, "pre_v": [0.92, 0.04, 221.23], "post_v": [0.92, 0.04, 221.06], "v_0.1s": [17.23, -1.74, 135.94]}]
+    r14310 wr [[704.657, 705.19], [706.084, 706.229]] climb {'dur': 0.533, 'z0': 50.45, 'z1': 147.86} trav None side None presses [{"key": "jump", "t": 704.382, "wr_at": false, "ground": 1, "z": 0.01, "pre_v": [299.0, 0.0, 0.0], "post_v": [299.01, 0.0, 280.44], "v_0.1s": [299.09, 0.0, 199.12]}, {"key": "jump", "t": 705.19, "wr_at": true, "ground": 1, "z": 147.5, "pre_v": [0.92, 0.04, 221.23], "post_v": [0.92, 0.04, 221.06], "v_0.1s": [13.07, -1.74, 142.18]}]
+
+  m9r_ledge_p45  n=5 launched=5 view=[45.0, 180.0]
+    model: c 0.0 pitch used 45.0 -> launch pitch 10.0 speed 700.0 vec [-689.365, 0.0, -121.554]
+    hold                     0.008 (sd 0.000, 0.008..0.009, n=5)
+    t_launch_after_press     0.922 (sd 0.005, 0.917..0.926, n=5)
+    t_launch_after_release   0.914 (sd 0.005, 0.909..0.918, n=5)
+    pre_speed_h              0.000 (sd 0.000, 0.000..0.000, n=5)
+    launch_speed             691.087 (sd 1.480, 689.456..692.224, n=5)
+    launch_elev              0.261 (sd 0.004, 0.259..0.269, n=5)
+    model_err_speed          -8.913 (sd 1.480, -10.544..-7.776, n=5)
+    model_err_vec            124.721 (sd 0.065, 124.674..124.834, n=5)
+    air_time                 0.017 (sd 0.000, 0.017..0.017, n=5)
+    land_vh_before           680.588 (sd 1.406, 679.050..681.760, n=5)
+    land_vh_first            670.092 (sd 1.353, 668.630..671.340, n=5)
+    land_vh_0.10s            684.610 (sd 13.894, 659.870..692.170, n=5)
+    land_vh_0.25s            653.378 (sd 6.502, 647.800..660.920, n=5)
+    land_vh_0.50s            653.378 (sd 6.502, 647.800..660.920, n=5)
+
+  m9r_ledge_p70  n=5 launched=5 view=[69.999, 180.0]
+    model: c 0.0 pitch used 70.0 -> launch pitch 34.999 speed 700.0 vec [-573.413, 0.0, -401.493]
+    hold                     0.008 (sd 0.000, 0.008..0.008, n=5)
+    t_launch_after_press     0.920 (sd 0.004, 0.917..0.925, n=5)
+    t_launch_after_release   0.912 (sd 0.004, 0.909..0.917, n=5)
+    pre_speed_h              0.000 (sd 0.000, 0.000..0.000, n=5)
+    launch_speed             574.402 (sd 1.212, 573.488..575.738, n=5)
+    launch_elev              0.311 (sd 0.000, 0.310..0.311, n=5)
+    model_err_speed          -125.598 (sd 1.212, -126.512..-124.262, n=5)
+    model_err_vec            404.613 (sd 0.007, 404.606..404.620, n=5)
+    air_time                 0.017 (sd 0.000, 0.017..0.017, n=5)
+    land_vh_before           564.002 (sd 1.203, 563.090..565.330, n=5)
+    land_vh_first            553.608 (sd 1.189, 552.690..554.920, n=5)
+    land_vh_0.10s            574.392 (sd 1.212, 573.480..575.730, n=5)
+    land_vh_0.25s            526.568 (sd 6.862, 521.490..534.090, n=5)
+    land_vh_0.50s            526.568 (sd 6.862, 521.490..534.090, n=5)
+
+  m9r_lurch_ctrl  n=5 launched=5 view=[0.0, 0.0]
+    model: c 0.0 pitch used 0.0 -> launch pitch -35.0 speed 700.0 vec [573.406, 0.0, 401.504]
+    hold                     0.008 (sd 0.000, 0.008..0.008, n=5)
+    t_launch_after_press     0.917 (sd 0.001, 0.916..0.918, n=5)
+    t_launch_after_release   0.909 (sd 0.001, 0.908..0.910, n=5)
+    pre_speed_h              0.000 (sd 0.000, 0.000..0.000, n=5)
+    launch_speed             700.722 (sd 0.302, 700.243..701.077, n=5)
+    launch_elev              35.000 (sd 0.000, 35.000..35.000, n=5)
+    model_err_speed          0.722 (sd 0.302, 0.243..1.077, n=5)
+    model_err_vec            0.722 (sd 0.302, 0.243..1.077, n=5)
+    air_time                 0.666 (sd 0.570, 0.042..1.094, n=5)
+    land_vh_before           574.050 (sd 0.959, 573.440..575.720, n=5)
+    land_vh_first            338.228 (sd 308.760, 0.000..565.030, n=5)
+    land_vh_0.10s            487.636 (sd 79.874, 427.240..575.730, n=5)
+    land_vh_0.25s            377.006 (sd 180.867, 240.090..575.730, n=5)
+    land_vh_0.50s            230.038 (sd 314.993, 0.000..575.730, n=5)
+    lurch |dv_h|             0.000 (sd 0.000, 0.000..0.000, n=5)
+
+  m9r_lurch_k3  n=5 launched=5 view=[0.0, 0.0]
+    model: c 0.0 pitch used 0.0 -> launch pitch -35.0 speed 700.0 vec [573.406, 0.0, 401.504]
+    hold                     0.008 (sd 0.000, 0.008..0.009, n=5)
+    t_launch_after_press     0.918 (sd 0.004, 0.917..0.925, n=5)
+    t_launch_after_release   0.910 (sd 0.004, 0.908..0.917, n=5)
+    pre_speed_h              0.000 (sd 0.000, 0.000..0.000, n=5)
+    launch_speed             701.050 (sd 0.977, 700.300..702.731, n=5)
+    launch_elev              35.000 (sd 0.000, 35.000..35.000, n=5)
+    model_err_speed          1.050 (sd 0.977, 0.300..2.731, n=5)
+    model_err_vec            1.050 (sd 0.977, 0.301..2.732, n=5)
+    air_time                 0.666 (sd 0.570, 0.042..1.089, n=5)
+    land_vh_before           574.526 (sd 0.912, 573.670..575.620, n=5)
+    land_vh_first            342.840 (sd 303.471, 10.380..565.070, n=5)
+    land_vh_0.10s            491.144 (sd 77.124, 429.470..575.670, n=5)
+    land_vh_0.25s            378.544 (sd 179.872, 241.860..575.670, n=5)
+    land_vh_0.50s            230.220 (sd 315.242, 0.000..575.670, n=5)
+    lurch |dv_h|             4.166 (sd 0.005, 4.157..4.170, n=5)
+
+  m9r_lurch_k36  n=5 launched=5 view=[0.0, 0.0]
+    model: c 0.0 pitch used 0.0 -> launch pitch -35.0 speed 700.0 vec [573.406, 0.0, 401.504]
+    hold                     0.008 (sd 0.000, 0.008..0.008, n=5)
+    t_launch_after_press     0.917 (sd 0.001, 0.917..0.918, n=5)
+    t_launch_after_release   0.909 (sd 0.001, 0.909..0.910, n=5)
+    pre_speed_h              0.000 (sd 0.000, 0.000..0.000, n=5)
+    launch_speed             700.714 (sd 0.233, 700.344..700.899, n=5)
+    launch_elev              35.000 (sd 0.000, 35.000..35.000, n=5)
+    model_err_speed          0.714 (sd 0.233, 0.344..0.899, n=5)
+    model_err_vec            0.714 (sd 0.234, 0.344..0.899, n=5)
+    air_time                 0.875 (sd 0.466, 0.042..1.092, n=5)
+    land_vh_before           574.648 (sd 1.008, 573.570..575.780, n=5)
+    land_vh_first            451.486 (sd 252.390, 0.000..565.360, n=5)
+    land_vh_0.10s            460.328 (sd 64.645, 427.670..575.600, n=5)
+    land_vh_0.25s            308.186 (sd 149.492, 240.080..575.600, n=5)
+    land_vh_0.50s            115.122 (sd 257.421, 0.000..575.610, n=5)
+    lurch |dv_h|             4.196 (sd 0.064, 4.167..4.311, n=5)
+
+  m9r_p0_cfull_sl  n=5 launched=5 view=[0.0, 0.0]
+    model: c 1.0 pitch used 0.0 -> launch pitch -35.0 speed 1150.0 vec [942.025, 0.0, 659.613]
+    hold                     2.307 (sd 0.015, 2.300..2.334, n=5)
+    t_launch_after_press     2.323 (sd 0.015, 2.317..2.350, n=5)
+    t_launch_after_release   0.017 (sd 0.000, 0.016..0.017, n=5)
+    pre_speed_h              0.000 (sd 0.000, 0.000..0.000, n=5)
+    launch_speed             1150.000 (sd 0.001, 1149.999..1150.001, n=5)
+    launch_elev              35.000 (sd 0.000, 35.000..35.000, n=5)
+    model_err_speed          -0.000 (sd 0.001, -0.001..0.001, n=5)
+    model_err_vec            0.002 (sd 0.001, 0.001..0.002, n=5)
+    air_time                 1.742 (sd 0.002, 1.741..1.745, n=5)
+    land_vh_before           942.020 (sd 0.000, 942.020..942.020, n=5)
+    land_vh_first            931.792 (sd 0.396, 931.610..932.500, n=5)
+    land_vh_0.10s            886.872 (sd 4.645, 879.570..890.060, n=5)
+    land_vh_0.25s            886.872 (sd 4.645, 879.570..890.060, n=5)
+    land_vh_0.50s            886.872 (sd 4.645, 879.570..890.060, n=5)
+
+  m9r_p0_cfull_sp  n=5 launched=5 view=[0.0, 0.0]
+    model: c 1.0 pitch used 0.0 -> launch pitch -35.0 speed 1150.0 vec [942.025, 0.0, 659.613]
+    hold                     2.300 (sd 0.001, 2.300..2.302, n=5)
+    t_launch_after_press     2.317 (sd 0.001, 2.317..2.319, n=5)
+    t_launch_after_release   0.017 (sd 0.000, 0.017..0.017, n=5)
+    pre_speed_h              260.000 (sd 0.000, 260.000..260.000, n=5)
+    launch_speed             1150.000 (sd 0.001, 1149.998..1150.001, n=5)
+    launch_elev              34.999 (sd 0.001, 34.999..35.000, n=5)
+    model_err_speed          -0.000 (sd 0.001, -0.002..0.001, n=5)
+    model_err_vec            0.010 (sd 0.002, 0.008..0.011, n=5)
+    air_time                 2.408 (sd 0.001, 2.406..2.409, n=5)
+    land_vh_before           151.508 (sd 1.487, 150.600..154.100, n=5)
+    land_vh_first            141.102 (sd 1.477, 140.220..143.680, n=5)
+    land_vh_0.10s            7.216 (sd 3.332, 5.000..12.540, n=5)
+    land_vh_0.25s            0.000 (sd 0.000, 0.000..0.000, n=5)
+    land_vh_0.50s            0.000 (sd 0.000, 0.000..0.000, n=5)
+
+  m9r_p0_cfull_st  n=5 launched=5 view=[0.0, 0.0]
+    model: c 1.0 pitch used 0.0 -> launch pitch -35.0 speed 1150.0 vec [942.025, 0.0, 659.613]
+    hold                     2.303 (sd 0.004, 2.300..2.308, n=5)
+    t_launch_after_press     2.320 (sd 0.004, 2.317..2.325, n=5)
+    t_launch_after_release   0.017 (sd 0.000, 0.017..0.017, n=5)
+    pre_speed_h              0.000 (sd 0.000, 0.000..0.000, n=5)
+    launch_speed             1150.000 (sd 0.001, 1149.999..1150.001, n=5)
+    launch_elev              35.000 (sd 0.000, 35.000..35.000, n=5)
+    model_err_speed          0.000 (sd 0.001, -0.001..0.001, n=5)
+    model_err_vec            0.001 (sd 0.001, 0.000..0.002, n=5)
+    air_time                 1.767 (sd 0.001, 1.767..1.769, n=5)
+    land_vh_before           942.020 (sd 0.000, 942.020..942.020, n=5)
+    land_vh_first            931.610 (sd 0.007, 931.600..931.620, n=5)
+    land_vh_0.10s            802.388 (sd 5.676, 796.160..806.550, n=5)
+    land_vh_0.25s            612.782 (sd 5.708, 608.570..619.080, n=5)
+    land_vh_0.50s            298.062 (sd 4.561, 295.940..306.220, n=5)
+
+  m9r_p0_cmid_st  n=5 launched=5 view=[0.0, 0.0]
+    model: c 0.5038 pitch used 0.0 -> launch pitch -35.0 speed 926.731 vec [759.133, 0.0, 531.551]
+    hold                     1.552 (sd 0.003, 1.550..1.557, n=5)
+    t_launch_after_press     1.569 (sd 0.003, 1.567..1.573, n=5)
+    t_launch_after_release   0.017 (sd 0.000, 0.017..0.017, n=5)
+    pre_speed_h              0.000 (sd 0.000, 0.000..0.000, n=5)
+    launch_speed             927.092 (sd 0.857, 926.324..928.384, n=5)
+    launch_elev              35.000 (sd 0.000, 35.000..35.000, n=5)
+    model_err_speed          1.261 (sd 0.364, 0.813..1.615, n=5)
+    model_err_vec            1.261 (sd 0.364, 0.813..1.615, n=5)
+    air_time                 1.426 (sd 0.002, 1.425..1.429, n=5)
+    land_vh_before           759.428 (sd 0.705, 758.800..760.490, n=5)
+    land_vh_first            749.008 (sd 0.705, 748.380..750.070, n=5)
+    land_vh_0.10s            616.294 (sd 4.703, 612.910..624.300, n=5)
+    land_vh_0.25s            430.668 (sd 5.160, 425.520..436.700, n=5)
+    land_vh_0.50s            116.036 (sd 4.265, 112.660..123.280, n=5)
+
+  m9r_p0_ctap_sl  n=5 launched=5 view=[0.0, 0.0]
+    model: c 0.0 pitch used 0.0 -> launch pitch -35.0 speed 700.0 vec [573.406, 0.0, 401.504]
+    hold                     0.008 (sd 0.000, 0.008..0.009, n=5)
+    t_launch_after_press     0.921 (sd 0.004, 0.917..0.925, n=5)
+    t_launch_after_release   0.912 (sd 0.004, 0.909..0.917, n=5)
+    pre_speed_h              235.202 (sd 0.762, 234.430..236.030, n=5)
+    launch_speed             701.386 (sd 1.397, 700.042..702.874, n=5)
+    launch_elev              35.000 (sd 0.000, 35.000..35.000, n=5)
+    model_err_speed          1.386 (sd 1.397, 0.042..2.874, n=5)
+    model_err_vec            1.386 (sd 1.397, 0.042..2.874, n=5)
+    air_time                 1.037 (sd 0.004, 1.033..1.042, n=5)
+    land_vh_before           574.542 (sd 1.145, 573.440..575.760, n=5)
+    land_vh_first            564.142 (sd 1.152, 563.060..565.360, n=5)
+    land_vh_0.10s            431.252 (sd 5.171, 427.850..440.380, n=5)
+    land_vh_0.25s            247.914 (sd 5.615, 240.920..253.200, n=5)
+    land_vh_0.50s            0.000 (sd 0.000, 0.000..0.000, n=5)
+
+  m9r_p0_ctap_sp  n=5 launched=5 view=[0.0, 0.0]
+    model: c 0.0 pitch used 0.0 -> launch pitch -35.0 speed 700.0 vec [573.406, 0.0, 401.504]
+    hold                     0.008 (sd 0.000, 0.008..0.009, n=5)
+    t_launch_after_press     0.920 (sd 0.005, 0.917..0.925, n=5)
+    t_launch_after_release   0.912 (sd 0.005, 0.908..0.917, n=5)
+    pre_speed_h              260.000 (sd 0.000, 260.000..260.000, n=5)
+    launch_speed             701.128 (sd 1.487, 699.999..702.788, n=5)
+    launch_elev              34.999 (sd 0.000, 34.999..34.999, n=5)
+    model_err_speed          1.128 (sd 1.487, -0.001..2.788, n=5)
+    model_err_vec            1.131 (sd 1.484, 0.012..2.788, n=5)
+    air_time                 1.081 (sd 0.004, 1.075..1.084, n=5)
+    land_vh_before           574.388 (sd 1.216, 573.460..575.750, n=5)
+    land_vh_first            563.970 (sd 1.216, 563.040..565.380, n=5)
+    land_vh_0.10s            432.614 (sd 5.573, 427.750..439.000, n=5)
+    land_vh_0.25s            247.288 (sd 5.271, 240.500..251.470, n=5)
+    land_vh_0.50s            0.000 (sd 0.000, 0.000..0.000, n=5)
+
+  m9r_p0_ctap_st  n=5 launched=5 view=[0.0, 0.0]
+    model: c 0.0 pitch used 0.0 -> launch pitch -35.0 speed 700.0 vec [573.406, 0.0, 401.504]
+    hold                     0.008 (sd 0.000, 0.008..0.009, n=5)
+    t_launch_after_press     0.917 (sd 0.000, 0.917..0.917, n=5)
+    t_launch_after_release   0.908 (sd 0.000, 0.908..0.909, n=5)
+    pre_speed_h              0.000 (sd 0.000, 0.000..0.000, n=5)
+    launch_speed             700.834 (sd 0.072, 700.730..700.902, n=5)
+    launch_elev              35.000 (sd 0.000, 35.000..35.000, n=5)
+    model_err_speed          0.834 (sd 0.072, 0.730..0.902, n=5)
+    model_err_vec            0.834 (sd 0.072, 0.730..0.902, n=5)
+    air_time                 1.085 (sd 0.009, 1.075..1.092, n=5)
+    land_vh_before           574.870 (sd 1.033, 573.510..575.640, n=5)
+    land_vh_first            564.448 (sd 1.031, 563.090..565.220, n=5)
+    land_vh_0.10s            435.214 (sd 6.077, 427.610..440.140, n=5)
+    land_vh_0.25s            245.544 (sd 5.742, 240.020..252.560, n=5)
+    land_vh_0.50s            0.000 (sd 0.000, 0.000..0.000, n=5)
+
+  m9r_p10_cfull_st  n=5 launched=5 view=[9.998, 0.0]
+    model: c 1.0 pitch used 10.0 -> launch pitch -25.002 speed 1150.0 vec [1042.237, 0.0, 486.047]
+    hold                     2.300 (sd 0.000, 2.300..2.300, n=5)
+    t_launch_after_press     2.317 (sd 0.000, 2.317..2.317, n=5)
+    t_launch_after_release   0.017 (sd 0.000, 0.017..0.017, n=5)
+    pre_speed_h              0.000 (sd 0.000, 0.000..0.000, n=5)
+    launch_speed             1149.999 (sd 0.001, 1149.999..1150.001, n=5)
+    launch_elev              25.002 (sd 0.000, 25.002..25.003, n=5)
+    model_err_speed          -0.001 (sd 0.001, -0.001..0.001, n=5)
+    model_err_vec            0.009 (sd 0.001, 0.008..0.011, n=5)
+    air_time                 1.307 (sd 0.003, 1.302..1.308, n=5)
+    land_vh_before           1042.230 (sd 0.000, 1042.230..1042.230, n=5)
+    land_vh_first            1031.730 (sd 0.182, 1031.410..1031.840, n=5)
+    land_vh_0.10s            903.768 (sd 4.362, 896.580..906.910, n=5)
+    land_vh_0.25s            715.760 (sd 4.695, 709.180..719.720, n=5)
+    land_vh_0.50s            405.266 (sd 3.946, 398.370..407.560, n=5)
+
+  m9r_p20_cfull_st  n=5 launched=5 view=[19.995, 0.0]
+    model: c 1.0 pitch used 20.0 -> launch pitch -15.005 speed 1150.0 vec [1110.789, 0.0, 297.739]
+    hold                     2.300 (sd 0.000, 2.300..2.301, n=5)
+    t_launch_after_press     2.317 (sd 0.000, 2.316..2.317, n=5)
+    t_launch_after_release   0.016 (sd 0.000, 0.016..0.017, n=5)
+    pre_speed_h              0.000 (sd 0.000, 0.000..0.000, n=5)
+    launch_speed             1149.999 (sd 0.001, 1149.999..1150.000, n=5)
+    launch_elev              15.005 (sd 0.000, 15.005..15.005, n=5)
+    model_err_speed          -0.001 (sd 0.001, -0.001..-0.000, n=5)
+    model_err_vec            0.003 (sd 0.002, 0.001..0.004, n=5)
+    air_time                 0.800 (sd 0.000, 0.800..0.800, n=5)
+    land_vh_before           1110.790 (sd 0.000, 1110.790..1110.790, n=5)
+    land_vh_first            1100.288 (sd 0.196, 1099.940..1100.410, n=5)
+    land_vh_0.10s            968.616 (sd 5.072, 964.840..975.210, n=5)
+    land_vh_0.25s            779.414 (sd 4.507, 777.160..787.470, n=5)
+    land_vh_0.50s            467.324 (sd 4.502, 464.160..474.730, n=5)
+
+  m9r_p20_cmid_st  n=5 launched=5 view=[19.995, 0.0]
+    model: c 0.5 pitch used 20.0 -> launch pitch -15.005 speed 925.0 vec [893.46, 0.0, 239.486]
+    hold                     1.550 (sd 0.000, 1.550..1.550, n=5)
+    t_launch_after_press     1.566 (sd 0.000, 1.566..1.567, n=5)
+    t_launch_after_release   0.016 (sd 0.000, 0.016..0.017, n=5)
+    pre_speed_h              0.000 (sd 0.000, 0.000..0.000, n=5)
+    launch_speed             926.177 (sd 0.381, 925.717..926.635, n=5)
+    launch_elev              15.005 (sd 0.000, 15.005..15.005, n=5)
+    model_err_speed          1.177 (sd 0.381, 0.717..1.635, n=5)
+    model_err_vec            1.177 (sd 0.381, 0.717..1.636, n=5)
+    air_time                 0.642 (sd 0.000, 0.641..0.642, n=5)
+    land_vh_before           894.598 (sd 0.370, 894.150..895.050, n=5)
+    land_vh_first            884.162 (sd 0.379, 883.720..884.630, n=5)
+    land_vh_0.10s            752.682 (sd 5.445, 748.160..758.920, n=5)
+    land_vh_0.25s            567.008 (sd 5.526, 560.440..571.510, n=5)
+    land_vh_0.50s            256.158 (sd 4.167, 248.760..258.630, n=5)
+
+  m9r_p20_ctap_st  n=5 launched=5 view=[19.995, 0.0]
+    model: c 0.0 pitch used 20.0 -> launch pitch -15.005 speed 700.0 vec [676.132, 0.0, 181.232]
+    hold                     0.008 (sd 0.000, 0.008..0.009, n=5)
+    t_launch_after_press     0.917 (sd 0.000, 0.916..0.917, n=5)
+    t_launch_after_release   0.908 (sd 0.000, 0.908..0.909, n=5)
+    pre_speed_h              0.000 (sd 0.000, 0.000..0.000, n=5)
+    launch_speed             700.677 (sd 0.226, 700.444..700.918, n=5)
+    launch_elev              15.005 (sd 0.000, 15.005..15.005, n=5)
+    model_err_speed          0.677 (sd 0.226, 0.444..0.918, n=5)
+    model_err_vec            0.677 (sd 0.227, 0.444..0.919, n=5)
+    air_time                 0.483 (sd 0.001, 0.481..0.483, n=5)
+    land_vh_before           676.378 (sd 0.204, 676.210..676.730, n=5)
+    land_vh_first            665.932 (sd 0.231, 665.680..666.310, n=5)
+    land_vh_0.10s            535.888 (sd 5.067, 530.470..540.780, n=5)
+    land_vh_0.25s            348.132 (sd 5.164, 342.600..353.290, n=5)
+    land_vh_0.50s            38.322 (sd 4.850, 29.670..40.970, n=5)
+
+  m9r_p25_cfull_st  n=5 launched=5 view=[24.999, 0.0]
+    model: c 1.0 pitch used 15.0 -> launch pitch -20.0 speed 1150.0 vec [1080.647, 0.0, 393.323]
+    hold                     2.300 (sd 0.000, 2.300..2.301, n=5)
+    t_launch_after_press     2.317 (sd 0.001, 2.317..2.318, n=5)
+    t_launch_after_release   0.017 (sd 0.000, 0.017..0.017, n=5)
+    pre_speed_h              0.000 (sd 0.000, 0.000..0.000, n=5)
+    launch_speed             1149.999 (sd 0.000, 1149.999..1150.000, n=5)
+    launch_elev              20.000 (sd 0.000, 20.000..20.000, n=5)
+    model_err_speed          -0.001 (sd 0.000, -0.001..-0.000, n=5)
+    model_err_vec            0.002 (sd 0.000, 0.001..0.002, n=5)
+    air_time                 1.058 (sd 0.001, 1.056..1.058, n=5)
+    land_vh_before           1080.650 (sd 0.000, 1080.650..1080.650, n=5)
+    land_vh_first            1070.238 (sd 0.074, 1070.120..1070.320, n=5)
+    land_vh_0.10s            936.842 (sd 4.059, 934.900..944.100, n=5)
+    land_vh_0.25s            751.446 (sd 5.079, 747.530..758.050, n=5)
+    land_vh_0.50s            441.176 (sd 5.072, 435.550..445.920, n=5)
+
+  m9r_p45_cfull_st  n=5 launched=5 view=[45.0, 0.0]
+    model: c 1.0 pitch used 15.0 -> launch pitch -20.0 speed 1150.0 vec [1080.647, 0.0, 393.323]
+    hold                     2.300 (sd 0.000, 2.300..2.300, n=5)
+    t_launch_after_press     2.317 (sd 0.000, 2.316..2.317, n=5)
+    t_launch_after_release   0.017 (sd 0.000, 0.016..0.017, n=5)
+    pre_speed_h              0.000 (sd 0.000, 0.000..0.000, n=5)
+    launch_speed             1149.999 (sd 0.000, 1149.999..1149.999, n=5)
+    launch_elev              20.000 (sd 0.000, 20.000..20.000, n=5)
+    model_err_speed          -0.001 (sd 0.000, -0.001..-0.001, n=5)
+    model_err_vec            0.002 (sd 0.001, 0.001..0.002, n=5)
+    air_time                 1.052 (sd 0.004, 1.050..1.058, n=5)
+    land_vh_before           1080.650 (sd 0.000, 1080.650..1080.650, n=5)
+    land_vh_first            1070.228 (sd 0.008, 1070.220..1070.240, n=5)
+    land_vh_0.10s            934.756 (sd 0.117, 934.640..934.950, n=5)
+    land_vh_0.25s            749.238 (sd 4.910, 746.890..758.020, n=5)
+    land_vh_0.50s            440.584 (sd 5.777, 434.150..445.600, n=5)
+
+  m9r_p45_cmid_st  n=5 launched=5 view=[45.0, 0.0]
+    model: c 0.5 pitch used 15.0 -> launch pitch -20.0 speed 925.0 vec [869.216, 0.0, 316.369]
+    hold                     1.551 (sd 0.003, 1.550..1.557, n=5)
+    t_launch_after_press     1.568 (sd 0.003, 1.567..1.573, n=5)
+    t_launch_after_release   0.017 (sd 0.000, 0.016..0.017, n=5)
+    pre_speed_h              0.000 (sd 0.000, 0.000..0.000, n=5)
+    launch_speed             926.895 (sd 0.768, 926.349..928.252, n=5)
+    launch_elev              20.000 (sd 0.000, 20.000..20.000, n=5)
+    model_err_speed          1.410 (sd 0.347, 0.829..1.656, n=5)
+    model_err_vec            1.410 (sd 0.347, 0.829..1.656, n=5)
+    air_time                 0.851 (sd 0.001, 0.850..0.852, n=5)
+    land_vh_before           870.996 (sd 0.722, 870.480..872.270, n=5)
+    land_vh_first            860.504 (sd 0.547, 860.070..861.460, n=5)
+    land_vh_0.10s            728.168 (sd 4.435, 724.810..733.030, n=5)
+    land_vh_0.25s            540.542 (sd 4.747, 537.060..547.800, n=5)
+    land_vh_0.50s            226.338 (sd 2.146, 224.240..228.910, n=5)
+
+  m9r_p45_ctap_st  n=5 launched=5 view=[45.0, 0.0]
+    model: c 0.0 pitch used 15.0 -> launch pitch -20.0 speed 700.0 vec [657.785, 0.0, 239.414]
+    hold                     0.008 (sd 0.000, 0.008..0.009, n=5)
+    t_launch_after_press     0.916 (sd 0.000, 0.915..0.917, n=5)
+    t_launch_after_release   0.908 (sd 0.001, 0.907..0.909, n=5)
+    pre_speed_h              0.000 (sd 0.000, 0.000..0.000, n=5)
+    launch_speed             700.541 (sd 0.281, 700.159..700.918, n=5)
+    launch_elev              20.000 (sd 0.000, 20.000..20.000, n=5)
+    model_err_speed          0.541 (sd 0.281, 0.159..0.918, n=5)
+    model_err_vec            0.541 (sd 0.281, 0.159..0.918, n=5)
+    air_time                 0.522 (sd 0.268, 0.042..0.642, n=5)
+    land_vh_before           658.018 (sd 0.175, 657.840..658.300, n=5)
+    land_vh_first            518.090 (sd 289.621, 0.000..647.880, n=5)
+    land_vh_0.10s            543.312 (sd 64.177, 511.920..657.840, n=5)
+    land_vh_0.25s            395.196 (sd 146.913, 324.270..657.840, n=5)
+    land_vh_0.50s            144.978 (sd 286.746, 11.420..657.840, n=5)
+
+  m9r_p70_cfull_st  n=5 launched=5 view=[69.999, 0.0]
+    model: c 1.0 pitch used 15.0 -> launch pitch -20.0 speed 1150.0 vec [1080.647, 0.0, 393.323]
+    hold                     2.310 (sd 0.021, 2.300..2.348, n=5)
+    t_launch_after_press     2.326 (sd 0.021, 2.317..2.365, n=5)
+    t_launch_after_release   0.017 (sd 0.000, 0.017..0.017, n=5)
+    pre_speed_h              0.000 (sd 0.000, 0.000..0.000, n=5)
+    launch_speed             1149.999 (sd 0.001, 1149.999..1150.000, n=5)
+    launch_elev              20.000 (sd 0.000, 20.000..20.000, n=5)
+    model_err_speed          -0.001 (sd 0.001, -0.001..-0.000, n=5)
+    model_err_vec            0.002 (sd 0.000, 0.001..0.002, n=5)
+    air_time                 1.054 (sd 0.004, 1.050..1.058, n=5)
+    land_vh_before           1080.650 (sd 0.000, 1080.650..1080.650, n=5)
+    land_vh_first            1070.232 (sd 0.016, 1070.220..1070.260, n=5)
+    land_vh_0.10s            936.824 (sd 4.561, 934.650..944.980, n=5)
+    land_vh_0.25s            753.494 (sd 5.592, 747.140..757.900, n=5)
+    land_vh_0.50s            438.800 (sd 6.247, 434.000..445.780, n=5)
+
+  m9r_p70_cmid_st  n=5 launched=5 view=[69.999, 0.0]
+    model: c 0.5 pitch used 15.0 -> launch pitch -20.0 speed 925.0 vec [869.216, 0.0, 316.369]
+    hold                     1.551 (sd 0.002, 1.550..1.554, n=5)
+    t_launch_after_press     1.568 (sd 0.002, 1.567..1.571, n=5)
+    t_launch_after_release   0.017 (sd 0.000, 0.017..0.017, n=5)
+    pre_speed_h              0.000 (sd 0.000, 0.000..0.000, n=5)
+    launch_speed             926.257 (sd 0.670, 925.738..927.427, n=5)
+    launch_elev              20.000 (sd 0.000, 20.000..20.000, n=5)
+    model_err_speed          0.980 (sd 0.152, 0.738..1.150, n=5)
+    model_err_vec            0.980 (sd 0.151, 0.738..1.149, n=5)
+    air_time                 0.851 (sd 0.002, 0.850..0.854, n=5)
+    land_vh_before           870.400 (sd 0.631, 869.910..871.500, n=5)
+    land_vh_first            859.972 (sd 0.630, 859.480..861.070, n=5)
+    land_vh_0.10s            726.568 (sd 4.492, 724.050..734.540, n=5)
+    land_vh_0.25s            538.464 (sd 3.502, 536.340..544.650, n=5)
+    land_vh_0.50s            226.992 (sd 4.301, 223.790..234.190, n=5)
+
+  m9r_p70_ctap_st  n=5 launched=5 view=[69.999, 0.0]
+    model: c 0.0 pitch used 15.0 -> launch pitch -20.0 speed 700.0 vec [657.785, 0.0, 239.414]
+    hold                     0.008 (sd 0.000, 0.008..0.008, n=5)
+    t_launch_after_press     0.916 (sd 0.000, 0.916..0.916, n=5)
+    t_launch_after_release   0.908 (sd 0.000, 0.908..0.908, n=5)
+    pre_speed_h              0.000 (sd 0.000, 0.000..0.000, n=5)
+    launch_speed             700.925 (sd 0.023, 700.898..700.961, n=5)
+    launch_elev              20.000 (sd 0.000, 20.000..20.000, n=5)
+    model_err_speed          0.925 (sd 0.023, 0.898..0.961, n=5)
+    model_err_vec            0.925 (sd 0.023, 0.898..0.961, n=5)
+    air_time                 0.403 (sd 0.330, 0.042..0.650, n=5)
+    land_vh_before           658.792 (sd 0.917, 657.960..660.350, n=5)
+    land_vh_first            389.074 (sd 355.175, 0.000..649.920, n=5)
+    land_vh_0.10s            573.970 (sd 78.967, 512.000..660.390, n=5)
+    land_vh_0.25s            465.436 (sd 177.948, 334.450..660.390, n=5)
+    land_vh_0.50s            277.832 (sd 349.205, 21.890..660.390, n=5)
+
+  m9r_pm15_cfull_st  n=5 launched=5 view=[-14.996, 0.0]
+    model: c 1.0 pitch used -15.0 -> launch pitch -49.996 speed 1150.0 vec [739.267, 0.0, 880.9]
+    hold                     2.300 (sd 0.000, 2.300..2.301, n=5)
+    t_launch_after_press     2.317 (sd 0.000, 2.317..2.317, n=5)
+    t_launch_after_release   0.017 (sd 0.000, 0.016..0.017, n=5)
+    pre_speed_h              0.000 (sd 0.000, 0.000..0.000, n=5)
+    launch_speed             1149.999 (sd 0.001, 1149.998..1149.999, n=5)
+    launch_elev              49.996 (sd 0.000, 49.996..49.996, n=5)
+    model_err_speed          -0.001 (sd 0.001, -0.002..-0.001, n=5)
+    model_err_vec            0.005 (sd 0.001, 0.005..0.006, n=5)
+    air_time                 2.358 (sd 0.001, 2.357..2.358, n=5)
+    land_vh_before           420.084 (sd 0.931, 419.280..421.110, n=5)
+    land_vh_first            409.674 (sd 0.904, 408.910..410.720, n=5)
+    land_vh_0.10s            276.254 (sd 4.829, 273.560..284.790, n=5)
+    land_vh_0.25s            92.922 (sd 6.023, 86.360..98.380, n=5)
+    land_vh_0.50s            0.000 (sd 0.000, 0.000..0.000, n=5)
+
+  m9r_pm30_cfull_sl  n=5 launched=5 view=[-29.998, 0.0]
+    model: c 1.0 pitch used -30.0 -> launch pitch -56.922 speed 1031.049 vec [562.724, 0.0, 863.946]
+    hold                     2.303 (sd 0.004, 2.300..2.309, n=5)
+    t_launch_after_press     2.320 (sd 0.004, 2.317..2.325, n=5)
+    t_launch_after_release   0.017 (sd 0.000, 0.016..0.017, n=5)
+    pre_speed_h              0.000 (sd 0.000, 0.000..0.000, n=5)
+    launch_speed             1031.047 (sd 0.002, 1031.046..1031.049, n=5)
+    launch_elev              56.922 (sd 0.000, 56.922..56.922, n=5)
+    model_err_speed          -0.002 (sd 0.002, -0.003..-0.000, n=5)
+    model_err_vec            0.003 (sd 0.000, 0.002..0.003, n=5)
+    air_time                 2.300 (sd 0.000, 2.299..2.300, n=5)
+    land_vh_before           354.410 (sd 0.441, 353.930..355.130, n=5)
+    land_vh_first            343.984 (sd 0.418, 343.520..344.660, n=5)
+    land_vh_0.10s            210.636 (sd 4.774, 208.240..219.170, n=5)
+    land_vh_0.25s            29.322 (sd 4.479, 21.310..31.420, n=5)
+    land_vh_0.50s            0.000 (sd 0.000, 0.000..0.000, n=5)
+
+  m9r_pm30_cfull_sp  n=5 launched=5 view=[-29.998, 0.0]
+    model: c 1.0 pitch used -30.0 -> launch pitch -56.922 speed 1031.049 vec [562.724, 0.0, 863.946]
+    hold                     2.300 (sd 0.000, 2.300..2.300, n=5)
+    t_launch_after_press     2.317 (sd 0.000, 2.317..2.317, n=5)
+    t_launch_after_release   0.017 (sd 0.000, 0.017..0.017, n=5)
+    pre_speed_h              260.000 (sd 0.000, 260.000..260.000, n=5)
+    launch_speed             1031.046 (sd 0.000, 1031.046..1031.047, n=5)
+    launch_elev              56.921 (sd 0.000, 56.921..56.921, n=5)
+    model_err_speed          -0.003 (sd 0.000, -0.003..-0.002, n=5)
+    model_err_vec            0.013 (sd 0.001, 0.013..0.014, n=5)
+    air_time                 2.317 (sd 0.000, 2.317..2.317, n=5)
+    land_vh_before           337.232 (sd 0.148, 337.010..337.360, n=5)
+    land_vh_first            326.834 (sd 0.154, 326.600..326.980, n=5)
+    land_vh_0.10s            193.638 (sd 4.525, 191.400..201.730, n=5)
+    land_vh_0.25s            14.560 (sd 0.167, 14.370..14.800, n=5)
+    land_vh_0.50s            0.000 (sd 0.000, 0.000..0.000, n=5)
+
+  m9r_pm30_cfull_st  n=5 launched=5 view=[-29.998, 0.0]
+    model: c 1.0 pitch used -30.0 -> launch pitch -56.922 speed 1031.049 vec [562.724, 0.0, 863.946]
+    hold                     2.300 (sd 0.000, 2.300..2.300, n=5)
+    t_launch_after_press     2.317 (sd 0.000, 2.317..2.317, n=5)
+    t_launch_after_release   0.017 (sd 0.000, 0.017..0.017, n=5)
+    pre_speed_h              0.000 (sd 0.000, 0.000..0.000, n=5)
+    launch_speed             1031.048 (sd 0.001, 1031.046..1031.049, n=5)
+    launch_elev              56.922 (sd 0.000, 56.922..56.922, n=5)
+    model_err_speed          -0.001 (sd 0.001, -0.003..-0.000, n=5)
+    model_err_vec            0.003 (sd 0.000, 0.002..0.003, n=5)
+    air_time                 2.313 (sd 0.004, 2.308..2.317, n=5)
+    land_vh_before           338.776 (sd 3.921, 335.380..343.080, n=5)
+    land_vh_first            328.364 (sd 3.916, 324.960..332.660, n=5)
+    land_vh_0.10s            197.246 (sd 7.154, 190.260..207.590, n=5)
+    land_vh_0.25s            11.760 (sd 8.447, 2.750..19.980, n=5)
+    land_vh_0.50s            0.000 (sd 0.000, 0.000..0.000, n=5)
+
+  m9r_pm30_cmid_st  n=5 launched=5 view=[-29.998, 0.0]
+    model: c 0.5052 pitch used -30.0 -> launch pitch -56.922 speed 831.401 vec [453.76, 0.0, 696.656]
+    hold                     1.551 (sd 0.003, 1.550..1.557, n=5)
+    t_launch_after_press     1.568 (sd 0.003, 1.565..1.573, n=5)
+    t_launch_after_release   0.016 (sd 0.001, 0.015..0.017, n=5)
+    pre_speed_h              0.000 (sd 0.000, 0.000..0.000, n=5)
+    launch_speed             830.469 (sd 0.843, 829.651..831.856, n=5)
+    launch_elev              56.922 (sd 0.000, 56.922..56.922, n=5)
+    model_err_speed          0.731 (sd 0.365, 0.329..1.118, n=5)
+    model_err_vec            0.732 (sd 0.365, 0.330..1.119, n=5)
+    air_time                 1.866 (sd 0.004, 1.858..1.868, n=5)
+    land_vh_before           431.528 (sd 1.998, 430.160..434.980, n=5)
+    land_vh_first            421.110 (sd 1.997, 419.750..424.560, n=5)
+    land_vh_0.10s            291.926 (sd 7.078, 284.310..299.550, n=5)
+    land_vh_0.25s            104.330 (sd 6.790, 96.910..111.780, n=5)
+    land_vh_0.50s            0.000 (sd 0.000, 0.000..0.000, n=5)
+
+  m9r_pm30_ctap_sl  n=5 launched=5 view=[-29.998, 0.0]
+    model: c 0.0 pitch used -30.0 -> launch pitch -56.922 speed 627.595 vec [342.527, 0.0, 525.88]
+    hold                     0.008 (sd 0.001, 0.008..0.009, n=5)
+    t_launch_after_press     0.919 (sd 0.004, 0.917..0.925, n=5)
+    t_launch_after_release   0.911 (sd 0.004, 0.908..0.917, n=5)
+    pre_speed_h              235.594 (sd 0.680, 234.440..236.030, n=5)
+    launch_speed             628.318 (sd 1.099, 627.593..630.153, n=5)
+    launch_elev              56.922 (sd 0.000, 56.922..56.922, n=5)
+    model_err_speed          0.723 (sd 1.099, -0.002..2.558, n=5)
+    model_err_vec            0.724 (sd 1.099, 0.002..2.559, n=5)
+    air_time                 1.383 (sd 0.002, 1.380..1.383, n=5)
+    land_vh_before           342.922 (sd 0.597, 342.530..343.920, n=5)
+    land_vh_first            332.510 (sd 0.610, 332.110..333.530, n=5)
+    land_vh_0.10s            199.266 (sd 4.576, 196.750..207.380, n=5)
+    land_vh_0.25s            15.942 (sd 5.287, 9.460..20.110, n=5)
+    land_vh_0.50s            0.000 (sd 0.000, 0.000..0.000, n=5)
+
+  m9r_pm30_ctap_sp  n=5 launched=5 view=[-29.998, 0.0]
+    model: c 0.0 pitch used -30.0 -> launch pitch -56.922 speed 627.595 vec [342.527, 0.0, 525.88]
+    hold                     0.008 (sd 0.000, 0.008..0.009, n=5)
+    t_launch_after_press     0.917 (sd 0.000, 0.917..0.917, n=5)
+    t_launch_after_release   0.909 (sd 0.000, 0.908..0.909, n=5)
+    pre_speed_h              260.000 (sd 0.000, 260.000..260.000, n=5)
+    launch_speed             627.651 (sd 0.041, 627.596..627.706, n=5)
+    launch_elev              56.921 (sd 0.000, 56.921..56.921, n=5)
+    model_err_speed          0.056 (sd 0.041, 0.001..0.111, n=5)
+    model_err_vec            0.060 (sd 0.038, 0.012..0.113, n=5)
+    air_time                 1.408 (sd 0.000, 1.408..1.409, n=5)
+    land_vh_before           342.690 (sd 0.022, 342.660..342.720, n=5)
+    land_vh_first            332.272 (sd 0.026, 332.240..332.310, n=5)
+    land_vh_0.10s            199.052 (sd 4.672, 196.920..207.410, n=5)
+    land_vh_0.25s            17.938 (sd 4.587, 9.740..20.260, n=5)
+    land_vh_0.50s            0.000 (sd 0.000, 0.000..0.000, n=5)
+
+  m9r_pm30_ctap_st  n=5 launched=5 view=[-29.998, 0.0]
+    model: c 0.0 pitch used -30.0 -> launch pitch -56.922 speed 627.595 vec [342.527, 0.0, 525.88]
+    hold                     0.008 (sd 0.000, 0.008..0.008, n=5)
+    t_launch_after_press     0.921 (sd 0.004, 0.917..0.925, n=5)
+    t_launch_after_release   0.913 (sd 0.004, 0.908..0.917, n=5)
+    pre_speed_h              0.000 (sd 0.000, 0.000..0.000, n=5)
+    launch_speed             629.183 (sd 1.265, 627.773..630.142, n=5)
+    launch_elev              56.922 (sd 0.000, 56.922..56.922, n=5)
+    model_err_speed          1.588 (sd 1.265, 0.178..2.547, n=5)
+    model_err_vec            1.589 (sd 1.265, 0.179..2.548, n=5)
+    air_time                 1.415 (sd 0.007, 1.408..1.426, n=5)
+    land_vh_before           343.372 (sd 0.674, 342.620..343.900, n=5)
+    land_vh_first            332.956 (sd 0.668, 332.210..333.480, n=5)
+    land_vh_0.10s            205.850 (sd 5.097, 196.780..208.480, n=5)
+    land_vh_0.25s            16.214 (sd 5.853, 9.240..20.980, n=5)
+    land_vh_0.50s            0.000 (sd 0.000, 0.000..0.000, n=5)
+
+  m9r_rel05  n=5 launched=5 view=[0.0, 0.0]
+    model: c 0.0 pitch used 0.0 -> launch pitch -35.0 speed 700.0 vec [573.406, 0.0, 401.504]
+    hold                     0.500 (sd 0.000, 0.500..0.501, n=5)
+    t_launch_after_press     0.917 (sd 0.000, 0.917..0.918, n=5)
+    t_launch_after_release   0.417 (sd 0.000, 0.417..0.417, n=5)
+    pre_speed_h              0.000 (sd 0.000, 0.000..0.000, n=5)
+    launch_speed             700.328 (sd 0.221, 700.100..700.642, n=5)
+    launch_elev              35.000 (sd 0.000, 35.000..35.000, n=5)
+    model_err_speed          0.328 (sd 0.221, 0.100..0.642, n=5)
+    model_err_vec            0.328 (sd 0.221, 0.101..0.642, n=5)
+    air_time                 1.075 (sd 0.000, 1.074..1.075, n=5)
+    land_vh_before           573.518 (sd 0.089, 573.420..573.660, n=5)
+    land_vh_first            562.996 (sd 0.254, 562.570..563.240, n=5)
+    land_vh_0.10s            434.652 (sd 4.891, 427.680..438.230, n=5)
+    land_vh_0.25s            247.494 (sd 4.650, 240.150..250.740, n=5)
+    land_vh_0.50s            0.000 (sd 0.000, 0.000..0.000, n=5)
+
+  m9r_ts_h10  n=5 launched=5 view=[0.0, 0.0]
+    model: c 0.0831 pitch used 0.0 -> launch pitch -35.0 speed 737.385 vec [604.03, 0.0, 422.946]
+    hold                     1.008 (sd 0.000, 1.008..1.009, n=5)
+    t_launch_after_press     1.025 (sd 0.000, 1.025..1.025, n=5)
+    t_launch_after_release   0.017 (sd 0.000, 0.016..0.017, n=5)
+    pre_speed_h              4.170 (sd 0.000, 4.170..4.170, n=5)
+    launch_speed             738.506 (sd 0.089, 738.347..738.559, n=5)
+    launch_elev              34.999 (sd 0.000, 34.999..34.999, n=5)
+    model_err_speed          1.052 (sd 0.156, 0.818..1.174, n=5)
+    model_err_vec            4.301 (sd 0.037, 4.247..4.330, n=5)
+    air_time                 1.825 (sd 0.000, 1.825..1.825, n=5)
+    land_vh_before           443.102 (sd 11.973, 436.960..464.500, n=5)
+    land_vh_first            432.684 (sd 11.972, 426.550..454.080, n=5)
+    land_vh_0.10s            299.322 (sd 11.694, 291.220..318.550, n=5)
+    land_vh_0.25s            111.756 (sd 11.684, 103.750..130.880, n=5)
+    heading/speed ratio/yaw after the launch: [{"0.10": [-78.56, 0.887, -37.5], "0.25": [-97.63, 0.9432, -58.6], "0.40": [-97.63, 0.9432, -58.6]}, {"0.10": [-79.38, 0.9162, -37.5], "0.25": [-97.59, 0.9432, -58.6], "0.40": [-97.59, 0.9432, -58.6]}, {"0.10": [-76.95, 0.887, -35.6], "0.25": [-95.13, 0.9432, -56.1], "0.40": [-95.13, 0.9432, -56.1]}, {"0.10": [-78.56, 0.887, -37.5], "0.25": [-97.61, 0.9432, -58.6], "0.40": [-97.61, 0.9432, -58.6]}, {"0.10": [-79.39, 0.9162, -37.5], "0.25": [-97.6, 0.9433, -58.6], "0.40": [-97.6, 0.9433, -58.6]}]
+    max |dv_h| on a W edge: 182.014 (sd 0.001, 182.013..182.014, n=5) (W edges in the air [10, 10, 10, 10, 10])
+
+  m9r_ts_h25  n=5 launched=5 view=[0.0, 0.0]
+    model: c 1.0 pitch used 0.0 -> launch pitch -35.0 speed 1150.0 vec [942.025, 0.0, 659.613]
+    hold                     2.510 (sd 0.002, 2.508..2.512, n=5)
+    t_launch_after_press     2.527 (sd 0.002, 2.525..2.529, n=5)
+    t_launch_after_release   0.017 (sd 0.000, 0.016..0.017, n=5)
+    pre_speed_h              4.170 (sd 0.000, 4.170..4.170, n=5)
+    launch_speed             1150.007 (sd 0.001, 1150.007..1150.009, n=5)
+    launch_elev              35.000 (sd 0.000, 35.000..35.000, n=5)
+    model_err_speed          0.007 (sd 0.001, 0.007..0.009, n=5)
+    model_err_vec            4.169 (sd 0.002, 4.167..4.172, n=5)
+    air_time                 2.225 (n=1)
+    land_vh_before           0.000 (n=1)
+    land_vh_first            0.000 (n=1)
+    contact_after_launch     2.216 (n=1)
+    contact_z                -370.140 (n=1)
+    heading/speed ratio/yaw after the launch: [{"0.10": [-73.15, 0.8546, -35.6], "0.25": [-95.31, 0.8897, -56.1], "0.40": [-95.31, 0.8897, -56.1]}, {"0.10": [-60.52, 0.8529, -35.7], "0.25": [-99.27, 0.8868, -60.2], "0.40": [-99.27, 0.8868, -60.2]}, {"0.10": [-61.62, 0.8266, -35.5], "0.25": [-95.21, 0.89, -56.0], "0.40": [-95.21, 0.89, -56.0]}, {"0.10": [-61.65, 0.8229, -37.5], "0.25": [-97.72, 0.89, -58.6], "0.40": [-97.72, 0.89, -58.6]}, {"0.10": [-73.17, 0.8516, -37.5], "0.25": [-97.68, 0.89, -58.5], "0.40": [-97.68, 0.89, -58.5]}]
+    max |dv_h| on a W edge: 182.014 (sd 0.000, 182.013..182.014, n=5) (W edges in the air [10, 10, 10, 10, 10])
+
+  m9r_turn_h10  n=5 launched=5 view=[0.0, 0.0]
+    model: c 0.0831 pitch used 0.0 -> launch pitch -35.0 speed 737.385 vec [604.03, 0.0, 422.946]
+    hold                     1.008 (sd 0.001, 1.008..1.009, n=5)
+    t_launch_after_press     1.025 (sd 0.000, 1.025..1.025, n=5)
+    t_launch_after_release   0.017 (sd 0.000, 0.016..0.017, n=5)
+    pre_speed_h              4.170 (sd 0.000, 4.170..4.170, n=5)
+    launch_speed             738.377 (sd 0.244, 738.031..738.590, n=5)
+    launch_elev              34.999 (sd 0.000, 34.999..34.999, n=5)
+    model_err_speed          0.854 (sd 0.186, 0.646..1.153, n=5)
+    model_err_vec            4.258 (sd 0.041, 4.219..4.327, n=5)
+    air_time                 1.143 (sd 0.003, 1.141..1.148, n=5)
+    land_vh_before           569.694 (sd 0.194, 569.400..569.880, n=5)
+    land_vh_first            559.240 (sd 0.214, 558.980..559.450, n=5)
+    land_vh_0.10s            427.128 (sd 4.735, 423.770..434.190, n=5)
+    land_vh_0.25s            239.712 (sd 4.893, 236.150..246.440, n=5)
+    land_vh_0.50s            0.000 (sd 0.000, 0.000..0.000, n=5)
+    heading/speed ratio/yaw after the launch: [{"0.10": [-2.93, 0.9781, -34.6], "0.25": [-6.98, 0.9418, -58.6], "0.40": [-6.98, 0.9418, -58.6]}, {"0.10": [-3.67, 0.9738, -37.5], "0.25": [-6.98, 0.9419, -58.5], "0.40": [-6.98, 0.9419, -58.5]}, {"0.10": [-3.27, 0.9742, -37.5], "0.25": [-6.98, 0.9419, -58.5], "0.40": [-6.98, 0.9419, -58.5]}, {"0.10": [-2.93, 0.9781, -34.5], "0.25": [-6.98, 0.9419, -58.5], "0.40": [-6.98, 0.9419, -58.5]}, {"0.10": [-3.68, 0.9738, -37.5], "0.25": [-6.98, 0.9418, -58.6], "0.40": [-6.98, 0.9418, -58.6]}]
+    max |dv_h| on a W edge: 0.000 (sd 0.000, 0.000..0.000, n=5) (W edges in the air [0, 0, 0, 0, 0])
+
+  m9r_turn_h25  n=5 launched=5 view=[0.0, 0.0]
+    model: c 1.0 pitch used 0.0 -> launch pitch -35.0 speed 1150.0 vec [942.025, 0.0, 659.613]
+    hold                     2.509 (sd 0.002, 2.508..2.513, n=5)
+    t_launch_after_press     2.526 (sd 0.002, 2.525..2.530, n=5)
+    t_launch_after_release   0.017 (sd 0.000, 0.016..0.017, n=5)
+    pre_speed_h              4.188 (sd 0.035, 4.170..4.250, n=5)
+    launch_speed             1150.009 (sd 0.001, 1150.008..1150.009, n=5)
+    launch_elev              35.000 (sd 0.000, 35.000..35.000, n=5)
+    model_err_speed          0.009 (sd 0.001, 0.008..0.009, n=5)
+    model_err_vec            4.188 (sd 0.038, 4.168..4.255, n=5)
+    air_time                 1.330 (sd 0.005, 1.325..1.335, n=5)
+    land_vh_before           862.270 (sd 1.530, 861.140..864.580, n=5)
+    land_vh_first            822.776 (sd 2.115, 820.730..826.330, n=5)
+    land_vh_0.10s            765.236 (sd 3.091, 762.520..769.510, n=5)
+    land_vh_0.25s            747.466 (sd 9.035, 739.670..759.700, n=5)
+    land_vh_0.50s            747.466 (sd 9.035, 739.670..759.700, n=5)
+    climb_after_launch       1.330 (sd 0.005, 1.325..1.335, n=5)
+    heading/speed ratio/yaw after the launch: [{"0.10": [-1.99, 0.984, -36.5], "0.25": [-4.31, 0.9626, -57.1], "0.40": [-4.31, 0.9626, -57.1]}, {"0.10": [-2.12, 0.9851, -34.6], "0.25": [-4.38, 0.9608, -58.6], "0.40": [-4.38, 0.9608, -58.6]}, {"0.10": [-2.33, 0.9826, -37.5], "0.25": [-4.38, 0.9609, -58.5], "0.40": [-4.38, 0.9609, -58.5]}, {"0.10": [-2.08, 0.983, -37.5], "0.25": [-4.38, 0.9609, -58.5], "0.40": [-4.38, 0.9609, -58.5]}, {"0.10": [-1.94, 0.9848, -35.5], "0.25": [-4.25, 0.9639, -56.0], "0.40": [-4.25, 0.9639, -56.0]}]
+    max |dv_h| on a W edge: 0.000 (sd 0.000, 0.000..0.000, n=5) (W edges in the air [0, 0, 0, 0, 0])
+
+  m9r_wall_bounce_ctrl  n=5 launched=0 view=None
+    r14281 wr [[535.082, 535.507]] climb {'dur': 0.425, 'z0': 49.57, 'z1': 49.57} trav None side None presses [{"key": "jump", "t": 534.582, "wr_at": false, "ground": 1, "z": 0.0, "pre_v": [199.53, 0.0, 0.0], "post_v": [199.53, 0.0, 0.0], "v_0.1s": [199.66, 0.0, 205.48]}, {"key": "jump", "t": 534.94, "wr_at": false, "ground": 0, "z": 54.35, "pre_v": [199.78, 0.0, 24.3], "post_v": [199.78, 0.0, 18.05], "v_0.1s": [199.78, 0.0, -63.13]}]
+    r14282 wr [[540.232, 540.64]] climb {'dur': 0.408, 'z0': 48.83, 'z1': 48.83} trav None side None presses [{"key": "jump", "t": 539.732, "wr_at": false, "ground": 1, "z": 0.01, "pre_v": [199.53, 0.0, 0.0], "post_v": [199.54, 0.0, 280.44], "v_0.1s": [199.66, 0.0, 199.12]}, {"key": "jump", "t": 540.09, "wr_at": false, "ground": 0, "z": 54.36, "pre_v": [199.78, 0.0, 23.91], "post_v": [199.78, 0.0, 17.67], "v_0.1s": [199.78, 0.0, -57.3]}]
+    r14283 wr [[545.382, 545.782]] climb {'dur': 0.4, 'z0': 48.87, 'z1': 48.87} trav None side None presses [{"key": "jump", "t": 544.882, "wr_at": false, "ground": 1, "z": 0.0, "pre_v": [199.53, 0.0, 0.0], "post_v": [199.53, 0.0, 0.0], "v_0.1s": [199.66, 0.0, 205.47]}, {"key": "jump", "t": 545.24, "wr_at": false, "ground": 0, "z": 54.35, "pre_v": [199.78, 0.0, 24.19], "post_v": [199.78, 0.0, 17.96], "v_0.1s": [199.78, 0.0, -63.21]}]
+    r14284 wr [[550.532, 550.949]] climb {'dur': 0.417, 'z0': 49.56, 'z1': 49.56} trav None side None presses [{"key": "jump", "t": 550.032, "wr_at": false, "ground": 1, "z": 0.0, "pre_v": [199.53, 0.0, 0.0], "post_v": [199.53, 0.0, 0.0], "v_0.1s": [199.66, 0.0, 205.42]}, {"key": "jump", "t": 550.39, "wr_at": false, "ground": 0, "z": 54.35, "pre_v": [199.78, 0.0, 24.14], "post_v": [199.78, 0.0, 17.89], "v_0.1s": [199.78, 0.0, -63.23]}]
+    r14285 wr [[555.682, 556.082]] climb {'dur': 0.4, 'z0': 49.54, 'z1': 49.54} trav None side None presses [{"key": "jump", "t": 555.182, "wr_at": false, "ground": 1, "z": 0.0, "pre_v": [199.53, 0.0, 0.0], "post_v": [199.53, 0.0, 0.0], "v_0.1s": [199.66, 0.0, 205.48]}, {"key": "jump", "t": 555.54, "wr_at": false, "ground": 0, "z": 54.35, "pre_v": [199.78, 0.0, 24.2], "post_v": [199.78, 0.0, 17.95], "v_0.1s": [199.78, 0.0, -57.17]}]
+
+  m9r_wall_bounce_lock  n=5 launched=5 view=[0.0, 0.0]
+    model: c 0.0 pitch used 0.0 -> launch pitch -35.0 speed 700.0 vec [573.406, 0.0, 401.504]
+    hold                     0.008 (sd 0.000, 0.008..0.008, n=5)
+    t_launch_after_press     0.918 (sd 0.004, 0.915..0.925, n=5)
+    t_launch_after_release   0.910 (sd 0.004, 0.907..0.917, n=5)
+    pre_speed_h              0.000 (sd 0.000, 0.000..0.000, n=5)
+    launch_speed             700.847 (sd 1.125, 700.001..702.788, n=5)
+    launch_elev              35.000 (sd 0.000, 35.000..35.000, n=5)
+    model_err_speed          0.847 (sd 1.125, 0.001..2.788, n=5)
+    model_err_vec            0.847 (sd 1.125, 0.001..2.788, n=5)
+    air_time                 0.849 (sd 0.024, 0.833..0.892, n=5)
+    land_vh_before           27.348 (sd 0.053, 27.290..27.390, n=5)
+    land_vh_first            1.388 (sd 0.683, 1.020..2.600, n=5)
+    land_vh_0.10s            1.424 (sd 0.103, 1.340..1.600, n=5)
+    land_vh_0.25s            47.274 (sd 28.553, 0.000..71.770, n=5)
+    land_vh_0.50s            0.000 (sd 0.000, 0.000..0.000, n=5)
+    contact_after_launch     0.261 (sd 0.006, 0.255..0.268, n=5)
+    contact_z                81.322 (sd 0.779, 80.030..82.010, n=5)
+    climb_after_launch       0.849 (sd 0.024, 0.833..0.891, n=5)
+    jump press {"t_after_launch": 0.3916, "pre_v": [1.98, -27.3, 120.93], "post_v": [1.98, -27.3, 114.67], "ground": 0, "wr_at_press": false}
+    jump press {"t_after_launch": 0.3882, "pre_v": [2.03, -27.31, 124.02], "post_v": [2.03, -27.31, 117.65], "ground": 0, "wr_at_press": false}
+    jump press {"t_after_launch": 0.3834, "pre_v": [1.98, -27.31, 121.6], "post_v": [1.98, -27.31, 115.35], "ground": 0, "wr_at_press": false}
+    jump press {"t_after_launch": 0.3831, "pre_v": [2.01, -27.21, 121.24], "post_v": [2.01, -27.21, 114.86], "ground": 0, "wr_at_press": false}
+    jump press {"t_after_launch": 0.3917, "pre_v": [2.0, -27.2, 113.8], "post_v": [2.0, -27.2, 107.55], "ground": 0, "wr_at_press": false}
+
+  m9r_wall_full_d300  n=5 launched=5 view=[0.0, 0.0]
+    model: c 1.0 pitch used 0.0 -> launch pitch -35.0 speed 1150.0 vec [942.025, 0.0, 659.613]
+    hold                     2.301 (sd 0.003, 2.300..2.307, n=5)
+    t_launch_after_press     2.318 (sd 0.003, 2.316..2.324, n=5)
+    t_launch_after_release   0.017 (sd 0.000, 0.016..0.017, n=5)
+    pre_speed_h              0.000 (sd 0.000, 0.000..0.000, n=5)
+    launch_speed             1149.999 (sd 0.001, 1149.999..1150.001, n=5)
+    launch_elev              35.000 (sd 0.000, 35.000..35.000, n=5)
+    model_err_speed          -0.001 (sd 0.001, -0.001..0.001, n=5)
+    model_err_vec            0.001 (sd 0.001, 0.001..0.002, n=5)
+    air_time                 0.860 (sd 0.026, 0.842..0.892, n=5)
+    land_vh_before           2.512 (sd 0.522, 1.930..2.900, n=5)
+    land_vh_first            0.872 (sd 0.634, 0.100..1.340, n=5)
+    land_vh_0.10s            2.010 (sd 0.630, 1.480..2.880, n=5)
+    land_vh_0.25s            5.558 (sd 0.563, 5.080..6.240, n=5)
+    land_vh_0.50s            11.560 (sd 0.555, 11.020..12.190, n=5)
+    contact_after_launch     0.317 (sd 0.000, 0.317..0.318, n=5)
+    contact_z                175.736 (sd 0.397, 175.110..176.120, n=5)
+    climb_after_launch       0.860 (sd 0.026, 0.841..0.892, n=5)
+
+  m9r_wall_tap_d150  n=5 launched=5 view=[0.0, 0.0]
+    model: c 0.0 pitch used 0.0 -> launch pitch -35.0 speed 700.0 vec [573.406, 0.0, 401.504]
+    hold                     0.008 (sd 0.000, 0.008..0.008, n=5)
+    t_launch_after_press     0.917 (sd 0.000, 0.916..0.917, n=5)
+    t_launch_after_release   0.909 (sd 0.000, 0.908..0.909, n=5)
+    pre_speed_h              0.000 (sd 0.000, 0.000..0.000, n=5)
+    launch_speed             700.699 (sd 0.343, 700.179..700.972, n=5)
+    launch_elev              35.000 (sd 0.000, 35.000..35.000, n=5)
+    model_err_speed          0.699 (sd 0.343, 0.179..0.972, n=5)
+    model_err_vec            0.699 (sd 0.343, 0.179..0.972, n=5)
+    air_time                 0.702 (sd 0.370, 0.042..0.892, n=5)
+    land_vh_before           136.682 (sd 244.580, 27.290..574.200, n=5)
+    land_vh_first            0.900 (sd 0.517, 0.000..1.240, n=5)
+    land_vh_0.10s            116.348 (sd 256.774, 1.410..575.680, n=5)
+    land_vh_0.25s            25.880 (sd 25.516, 0.000..51.040, n=5)
+    land_vh_0.50s            5.474 (sd 12.240, 0.000..27.370, n=5)
+    contact_after_launch     0.260 (sd 0.004, 0.258..0.267, n=5)
+    contact_z                81.426 (sd 0.177, 81.300..81.730, n=5)
+    climb_after_launch       0.861 (sd 0.027, 0.841..0.892, n=5)
+
+  m9r_wall_w_d150  n=5 launched=5 view=[0.0, 0.0]
+    model: c 0.0 pitch used 0.0 -> launch pitch -35.0 speed 700.0 vec [573.406, 0.0, 401.504]
+    hold                     0.008 (sd 0.001, 0.008..0.009, n=5)
+    t_launch_after_press     0.917 (sd 0.001, 0.916..0.919, n=5)
+    t_launch_after_release   0.909 (sd 0.001, 0.908..0.910, n=5)
+    pre_speed_h              0.000 (sd 0.000, 0.000..0.000, n=5)
+    launch_speed             700.625 (sd 0.324, 700.244..700.929, n=5)
+    launch_elev              35.000 (sd 0.000, 35.000..35.000, n=5)
+    model_err_speed          0.625 (sd 0.324, 0.244..0.929, n=5)
+    model_err_vec            0.625 (sd 0.324, 0.244..0.929, n=5)
+    air_time                 0.678 (sd 0.356, 0.042..0.842, n=5)
+    land_vh_before           147.512 (sd 238.509, 40.450..574.170, n=5)
+    land_vh_first            0.102 (sd 0.057, 0.000..0.130, n=5)
+    land_vh_0.10s            115.240 (sd 257.411, 0.110..575.710, n=5)
+    land_vh_0.25s            5.908 (sd 12.450, 0.320..28.180, n=5)
+    land_vh_0.50s            7.510 (sd 14.870, 0.840..34.110, n=5)
+    contact_after_launch     0.260 (sd 0.004, 0.258..0.267, n=5)
+    contact_z                81.468 (sd 0.183, 81.290..81.680, n=5)
+    climb_after_launch       0.837 (sd 0.009, 0.821..0.842, n=5)

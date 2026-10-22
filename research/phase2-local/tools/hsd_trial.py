@@ -31,6 +31,7 @@ import argparse
 import re
 import datetime
 import json
+import math
 import os
 import string
 import sys
@@ -572,7 +573,7 @@ def _r2_jd_pre(d, move=""):
 
 
 KEYS = {"forward", "backward", "moveleft", "moveright", "jump", "duck", "speed", "left", "right", "lookup", "lookdown",
-        "offhand1", "offhand4", "use", "attack"}
+        "offhand1", "offhand4", "use", "attack", "zoom"}
 # Client cvars a schedule may change with 'set' (constant-rate view turns, M4b).
 VIEW_CVARS = ("cl_yawspeed", "cl_pitchspeed")
 
@@ -702,12 +703,423 @@ SCHEDULE_ORIGIN["m55_nomod_hold"] = (-14100.0, 6500.0, 294.92)  # = LANE_A, the 
 SCHEDULE_ORIGIN.update({n: (-14100.0, 6050.0, 294.92) for n in ("m4b_swing_cross", "m4b_swing_cross_w", "m4b_swing_cross_walk")})
 
 
+# ---- M9 track R (m9/M9-PLAN.md) ① zipline A1: mid-rope / end mounts, direction, air mounts, re-mounts.
+# Geometry m9zip: four flat ropes (rope height above the field floor 100 / 130 / 170 / 80; 130 = the HSD-Unity map ropes) and
+# one sloped rope (60 -> 260 u, start = low end), 300 u apart so only one rope is within the 130 u Find radius. m9zipv: one
+# vertical rope 84 u in front of the lane-A rock face (geometry m3, top 232 u), floor+20 .. floor+900.
+FLOOR_Z = 294.92
+M9_ROPES = {  # name: (y, x0, h0 above the floor, x1, h1)
+    "r100": (6800.0, -14600.0, 100.0, -13000.0, 100.0),
+    "r130": (6500.0, -14600.0, 130.0, -13000.0, 130.0),
+    "sl": (6200.0, -14600.0, 60.0, -13000.0, 260.0),
+    "r170": (5900.0, -14400.0, 170.0, -12900.0, 170.0),
+    "r80": (5600.0, -14000.0, 80.0, -13000.0, 80.0),
+    # added after session zipA (track D spec R-16: rope 200 / 240 u above the origin); session zipA ran without them
+    "r200": (7100.0, -13450.0, 200.0, -12450.0, 200.0),
+    "r240": (7300.0, -13150.0, 240.0, -12150.0, 240.0),
+}
+M9_VROPE = (-13790.0, 6500.0, 20.0, 900.0)  # x, y, bottom / top above the floor
+M9_ZIP_SERVER = r'''
+string out = ""
+try
+{
+	foreach ( entity e in GetEntArrayByScriptName( "hsd_zip" ) ) e.Destroy()
+	array<entity> all
+%s
+	foreach ( entity e in all ) e.SetScriptName( "hsd_zip" )
+	out = "zip_ents=" + all.len()
+}
+catch ( err ) { out = "error=" + string( err ) }
+AgentLink_Reply( out )
+'''
+M9_ZIP_LINES = "\n".join("\tall.extend( CreateZipline( <%.2f, %.2f, %.2f>, <%.2f, %.2f, %.2f>, false, 100 ) )"
+                         % (x0, y, FLOOR_Z + h0, x1, y, FLOOR_Z + h1) for (y, x0, h0, x1, h1) in M9_ROPES.values())
+M9_ZIPV_LINES = "\tall.extend( CreateZipline( <%.2f, %.2f, %.2f>, <%.2f, %.2f, %.2f> ) )" % (
+    M9_VROPE[0], M9_VROPE[1], FLOOR_Z + M9_VROPE[2], M9_VROPE[0], M9_VROPE[1], FLOOR_Z + M9_VROPE[3])
+M9_EYE = 60.0  # standing eye height used to aim at the rope ('to' views)
+
+
+def _m9_pos_x(rope, pos):
+    y, x0, h0, x1, h1 = M9_ROPES[rope]
+    L = x1 - x0
+    if pos.startswith("s"):
+        return x0 + float(pos[1:])
+    if pos.startswith("e"):
+        return x1 - float(pos[1:])
+    if pos.startswith("b"):
+        return x0 - float(pos[1:])
+    if pos.startswith("p"):
+        return x0 + L * float(pos[1:]) / 100.0
+    raise ValueError(pos)
+
+
+def _m9_rope_h(rope, x):
+    y, x0, h0, x1, h1 = M9_ROPES[rope]
+    f = min(1.0, max(0.0, (x - x0) / (x1 - x0)))
+    return h0 + f * (h1 - h0)
+
+
+def _m9_view(rope, x, lat, view):
+    """(yaw, pitch) for a standing-mount view name. Offsets are toward -Y, so 'toward the rope' is yaw 90."""
+    h = _m9_rope_h(rope, x)
+    if view == "fx":
+        return 0.0, 0.0
+    if view == "bx":
+        return 180.0, 0.0
+    if view == "aw":
+        return 270.0, 0.0
+    if view == "tp":
+        return 90.0, 0.0
+    if view == "up":
+        return 0.0, -89.0
+    m = re.fullmatch(r"y(\d+)", view)
+    if m:
+        return float(m.group(1)), 0.0
+    m = re.fullmatch(r"y(\d+)u(\d+)", view)     # yaw Y, looking up by U deg
+    if m:
+        return float(m.group(1)), -float(m.group(2))
+    m = re.fullmatch(r"fp(\d+)", view)          # along +X, looking up by N deg
+    if m:
+        return 0.0, -float(m.group(1))
+    m = re.fullmatch(r"to(\d*)", view)            # yaw N (default 90), pitch so the eye ray meets the rope line
+    if m:
+        yaw = float(m.group(1) or 90)
+        dist = lat / max(1e-6, math.sin(math.radians(yaw)))
+        return yaw, -math.degrees(math.atan2(h - M9_EYE, dist))
+    raise ValueError(view)
+
+
+_M9_STAND = "wait 72; tap use; wait 2.5s"
+M9_STAND_RE = re.compile(r"m9z_(r100|r130|sl|r170|r80|r200|r240)_([sepb]\d+)_l(\d+)_(\w+)")
+
+
+def _m9_stand_setup(name):
+    m = M9_STAND_RE.fullmatch(name)
+    if not m:
+        return None
+    rope, pos, lat, view = m.group(1), m.group(2), float(m.group(3)), m.group(4)
+    x = _m9_pos_x(rope, pos)
+    y = M9_ROPES[rope][0] - lat
+    yaw, pitch = _m9_view(rope, x, lat, view)
+    return (x, y, FLOOR_Z), yaw, round(pitch, 3)
+
+
+# dynamic zipline schedules: name -> (rope, pos, lat, view, steps)
+_M9ZD = {
+    # turn 180 deg during the ride (after the 0.5 s mount state): does the ride direction follow the view?
+    "m9zd_turn180": ("r130", "p25", 0, "fx", "set cl_yawspeed 360; wait 72; tap use; wait 0.7s; down right; wait 0.5s; up right; wait 2.0s"),
+    # dismount mid-rope (crouch / jump), land, then use again from the ground under the rope
+    "m9zd_drop_remount": ("r130", "p25", 0, "fx", "wait 72; tap use; wait 0.8s; tap duck; waitland; waitf 6; tap use; wait 2.0s"),
+    "m9zd_jump_remount": ("r130", "p25", 0, "fx", "wait 72; tap use; wait 0.8s; tap jump; waitland; waitf 6; tap use; wait 2.0s"),
+    # air mounts under / beside the rope (standing jump, use at the apex or rising; use held; jump toward the rope from 80 u)
+    "m9zd_air_apex": ("r130", "p50", 0, "fx", "wait 72; tap jump; wait 0.38s; tap use; wait 2.0s"),
+    "m9zd_air_rise": ("r130", "p50", 0, "fx", "wait 72; tap jump; wait 0.12s; tap use; wait 2.0s"),
+    "m9zd_air_apex100": ("r100", "p50", 0, "fx", "wait 72; tap jump; wait 0.38s; tap use; wait 2.0s"),
+    "m9zd_air_hold": ("r130", "p50", 0, "fx", "wait 72; tap jump; waitf 6; down use; wait 0.8s; up use; wait 1.5s"),
+    "m9zd_air_l80": ("r130", "p50", 80, "to", "wait 72; down forward; tap jump; wait 0.3s; tap use; wait 0.3s; up forward; wait 1.5s"),
+    # jump-off then an air re-mount K frames later; use spam after the jump-off
+    "m9zd_jo_remount_k12": ("r130", "p25", 0, "fx", "wait 72; tap use; wait 0.8s; tap jump; waitf 12; tap use; wait 2.0s"),
+    "m9zd_jo_remount_k30": ("r130", "p25", 0, "fx", "wait 72; tap use; wait 0.8s; tap jump; waitf 30; tap use; wait 2.0s"),
+    "m9zd_jo_remount_k46": ("r130", "p25", 0, "fx", "wait 72; tap use; wait 0.8s; tap jump; waitf 46; tap use; wait 2.0s"),
+    "m9zd_jo_spam": ("r130", "p25", 0, "fx", "wait 72; tap use; wait 0.8s; tap jump; waitf 3; "
+                     + "; ".join(["tap use; waitf 3"] * 36) + "; wait 1.5s"),
+    # jump-off then use while falling back below the rope height (P = origin + 72 below the rope 0.744..0.917 s after the
+    # jump-off from the r130 hang), and 2 frames after it (P still below the rope)
+    "m9zd_jo_remount_k2": ("r130", "p25", 0, "fx", "wait 72; tap use; wait 0.8s; tap jump; waitf 2; tap use; wait 2.0s"),
+    "m9zd_jo_remount_k96": ("r130", "p25", 0, "fx", "wait 72; tap use; wait 0.8s; tap jump; waitf 96; tap use; wait 2.0s"),
+    "m9zd_jo_remount_k104": ("r130", "p25", 0, "fx", "wait 72; tap use; wait 0.8s; tap jump; waitf 104; tap use; wait 2.0s"),
+    # crouch-off (drop) then an air re-mount K frames later (P stays below the rope while falling)
+    "m9zd_drop_air_k4": ("r130", "p25", 0, "fx", "wait 72; tap use; wait 0.8s; tap duck; waitf 4; tap use; wait 2.0s"),
+    "m9zd_drop_air_k12": ("r130", "p25", 0, "fx", "wait 72; tap use; wait 0.8s; tap duck; waitf 12; tap use; wait 2.0s"),
+    "m9zd_drop_air_k24": ("r130", "p25", 0, "fx", "wait 72; tap use; wait 0.8s; tap duck; waitf 24; tap use; wait 2.0s"),
+    # standing jump under r100 (rope 28 u above P on the ground, 28 u below P at the apex), use at t after the jump press
+    **{"m9zd_r100_jair_t%02d" % int(round(t * 100)): ("r100", "p50", 0, "fx", "wait 72; tap jump; wait %.2fs; tap use; wait 2.0s" % t)
+       for t in (0.05, 0.12, 0.2, 0.38, 0.6, 0.7)},
+    # re-mount budget: ground mount, then crouch-off + air re-mount 4 frames later, four times (r170: hang 90 u above the floor)
+    "m9zd_budget_chain": ("r170", "p25", 0, "up", "wait 72; tap use; " + "; ".join(["wait 0.6s; tap duck; waitf 4; tap use"] * 4)
+                          + "; wait 1.5s"),
+    # super jump from a mid-rope mount (M6 z5b_m3_k2 timing)
+    "m9zd_superjump": ("r100", "p50", 0, "fx", "wait 72; tap use; waitf 2; tap jump; waitf 1; tap jump; wait 2.0s"),
+    # lurch after a jump-off (D press 3 frames after the jump-off) and its control
+    "m9zd_jo_lurch": ("r130", "p25", 0, "fx", "wait 72; tap use; wait 0.8s; tap jump; waitf 3; tap moveright; wait 1.5s"),
+    "m9zd_jo_ctrl": ("r130", "p25", 0, "fx", "wait 72; tap use; wait 0.8s; tap jump; wait 1.5s"),
+    # entry speed: sprint / slide along the rope, then use
+    "m9zd_sprint_mount": ("r130", "s50", 0, "fx", "wait 72; down speed; down forward; wait 1.45s; tap use; up forward; up speed; wait 2.0s"),
+    "m9zd_slide_mount": ("r130", "s50", 0, "fx", "wait 72; down speed; down forward; wait 1.2s; down duck; wait 0.25s; tap use; up duck; "
+                         "up forward; up speed; wait 2.0s"),
+}
+# track D specs: R-12 carry (sprint across the rope along +Y, use, jump on the next usercmd / 2 later / no jump), R-13 super
+# jump second press K = 12..30 after a jump-off at M = 1, R-14 air interact from a standing jump at lateral 20 / 40 / 80 u with
+# the view 0 / 45 / 80 deg off the direction to the rope (use at the apex, where origin + 72 is 2 u below the r130 rope)
+_M9ZD.update({
+    "m9zd_carry_j1": ("r130", "p50", 220, "to", "wait 72; down speed; down forward; wait 0.9s; tap use; tap jump; up forward; up speed; wait 2.0s"),
+    "m9zd_carry_j3": ("r130", "p50", 220, "to", "wait 72; down speed; down forward; wait 0.9s; tap use; waitf 1; tap jump; up forward; up speed; wait 2.0s"),
+    "m9zd_carry_ride": ("r130", "p50", 220, "to", "wait 72; down speed; down forward; wait 0.9s; tap use; up forward; up speed; wait 2.0s"),
+})
+_M9ZD.update({"m9zd_sj_k%d" % k: ("r100", "p50", 0, "fx", "wait 72; tap use; waitf 0; tap jump; waitf %d; tap jump; wait 2.0s" % (k - 1))
+              for k in (12, 18, 24, 30)})
+_M9ZD.update({"m9zd_air_l%d_a%d" % (l, ang): ("r130", "p50", l, "y%d" % (90 - ang), "wait 72; tap jump; wait 0.38s; tap use; wait 2.0s")
+              for l in (20, 40, 80) for ang in (0, 45, 80)})
+# after session zipB1 (re-mount refused for ~0.33 s after any detach, regardless of height): lockout bracket from a crouch-off
+# off r170 (hang 90 u above the floor, airborne ~0.49 s), and the re-grab budget with jump-offs and re-grabs 0.42 s later
+_M9ZD.update({"m9zd_lock_t%02d" % int(round(t * 100)): ("r170", "p25", 0, "up", "wait 72; tap use; wait 0.6s; tap duck; wait %.2fs; tap use; wait 2.0s" % t)
+              for t in (0.25, 0.30, 0.35, 0.40)})
+# budget_jo ran into the rope end on its 4th re-grab; jo2: shorter rides (0.3 s), five re-grabs from p10
+_M9ZD["m9zd_budget_jo2"] = ("r130", "p10", 0, "fx", "wait 72; tap use; " + "; ".join(["wait 0.3s; tap jump; wait 0.42s; tap use"] * 5) + "; wait 1.5s")
+_M9ZD["m9zd_budget_jo"] = ("r130", "p10", 0, "fx", "wait 72; tap use; " + "; ".join(["wait 0.6s; tap jump; wait 0.42s; tap use"] * 4) + "; wait 1.5s")
+# after session zipB2: the carry run never mounted (view too flat at the press) -> view pitch -65 (the rope 58 u above P,
+# ~16 u lateral at the press); slide 0/5 -> crouch-standing control and a slide with crouch released one frame before use
+_M9ZD.update({
+    "m9zd_carry2_j1": ("r130", "p50", 220, "fp65", "wait 72; down speed; down forward; wait 0.9s; tap use; tap jump; up forward; up speed; wait 2.0s"),
+    "m9zd_carry2_j3": ("r130", "p50", 220, "fp65", "wait 72; down speed; down forward; wait 0.9s; tap use; waitf 1; tap jump; up forward; up speed; wait 2.0s"),
+    "m9zd_carry2_ride": ("r130", "p50", 220, "fp65", "wait 72; down speed; down forward; wait 0.9s; tap use; up forward; up speed; wait 2.0s"),
+    "m9zd_crouch_mount": ("r130", "p25", 0, "fx", "wait 72; down duck; wait 0.5s; tap use; wait 0.3s; up duck; wait 2.0s"),
+    "m9zd_slide_rel_mount": ("r130", "s50", 0, "fx", "wait 72; down speed; down forward; wait 1.2s; down duck; wait 0.25s; up duck; tap use; "
+                             "up forward; up speed; wait 2.0s"),
+})
+# carry2 used the wrong view (fp65 = along +X); carry3: yaw 90 (running across the rope), 65 deg up. Crouched mounts with the
+# view 45 deg up (separates a crouch block from the lower search point of the crouched hull)
+_M9ZD.update({
+    "m9zd_carry3_j1": ("r130", "p50", 220, "y90u65", "wait 72; down speed; down forward; wait 0.9s; tap use; tap jump; up forward; up speed; wait 2.0s"),
+    "m9zd_carry3_j3": ("r130", "p50", 220, "y90u65", "wait 72; down speed; down forward; wait 0.9s; tap use; waitf 1; tap jump; up forward; up speed; wait 2.0s"),
+    "m9zd_carry3_ride": ("r130", "p50", 220, "y90u65", "wait 72; down speed; down forward; wait 0.9s; tap use; up forward; up speed; wait 2.0s"),
+    "m9zd_crouch_mount_up": ("r130", "p25", 0, "y0u45", "wait 72; down duck; wait 0.5s; tap use; wait 0.3s; up duck; wait 2.0s"),
+    "m9zd_slide_mount_up": ("r130", "s50", 0, "y0u45", "wait 72; down speed; down forward; wait 1.2s; down duck; wait 0.25s; tap use; up duck; "
+                            "up forward; up speed; wait 2.0s"),
+})
+for _n, (_rope, _pos, _lat, _view, _steps) in _M9ZD.items():
+    SCHEDULES[_n] = _steps
+    _x = _m9_pos_x(_rope, _pos)
+    SCHEDULE_ORIGIN[_n] = (_x, M9_ROPES[_rope][0] - _lat, FLOOR_Z)
+    _yw, _pt = _m9_view(_rope, _x, _lat, _view)
+    SCHEDULE_YAW[_n] = _yw
+    SCHEDULE_PITCH[_n] = round(_pt, 3)
+
+# vertical rope (geometry m3,m9zipv): floor start 70 u in front of the rope facing it (+X); ledge start on the rock top
+# 110 u behind the rope facing it (yaw 180)
+M9_V_FLOOR = (-13860.0, 6500.0, FLOOR_Z)
+M9_V_LEDGE = (-13680.0, 6500.0, 532.80)
+_M9ZV = {  # name: (start, yaw, pitch, steps)
+    "m9zv_floor_p0": (M9_V_FLOOR, 0.0, 0.0, "wait 72; tap use; wait 3.0s"),
+    "m9zv_floor_dn": (M9_V_FLOOR, 0.0, 60.0, "wait 72; tap use; wait 3.0s"),
+    "m9zv_ledge_p0": (M9_V_LEDGE, 180.0, 0.0, "wait 72; tap use; wait 3.0s"),
+    "m9zv_ledge_up": (M9_V_LEDGE, 180.0, -30.0, "wait 72; tap use; wait 3.0s"),
+    "m9zv_ledge_dn": (M9_V_LEDGE, 180.0, 30.0, "wait 72; tap use; wait 3.0s"),
+    "m9zv_ledge_turn": (M9_V_LEDGE, 180.0, -30.0, "set cl_pitchspeed 180; wait 72; tap use; wait 0.4s; down lookdown; wait 0.5s; "
+                        "up lookdown; wait 2.5s"),
+    "m9zv_ledge_turn_up": (M9_V_LEDGE, 180.0, 30.0, "set cl_pitchspeed 180; wait 72; tap use; wait 0.4s; down lookup; wait 0.5s; "
+                           "up lookup; wait 2.5s"),
+    "m9zv_floor_air": (M9_V_FLOOR, 0.0, 0.0, "wait 72; tap jump; wait 0.38s; tap use; wait 3.0s"),
+    "m9zv_ledge_air": (M9_V_LEDGE, 180.0, 0.0, "wait 72; down forward; tap jump; wait 0.3s; tap use; up forward; wait 3.0s"),
+    "m9zv_jumpoff": (M9_V_FLOOR, 0.0, 0.0, "wait 72; tap use; wait 0.8s; tap jump; wait 2.0s"),
+    "m9zv_jo_remount": (M9_V_FLOOR, 0.0, 0.0, "wait 72; tap use; wait 0.8s; tap jump; waitf 12; tap use; wait 2.0s"),
+}
+for _n, (_o, _yw, _pt, _steps) in _M9ZV.items():
+    SCHEDULES[_n] = _steps
+    SCHEDULE_ORIGIN[_n] = _o
+    SCHEDULE_YAW[_n] = _yw
+    SCHEDULE_PITCH[_n] = _pt
+SCHEDULE_PRE["m9z"] = _ZIP_RESET   # m9z_, m9zd_, m9zv_
+
+# ---- M9 track R ② Revenant (legend revenant --kit). Pounce grid on lane C (pitch: Source convention, + = down; m30 = 30 up):
+# m9r_p<pitch>_c<tap|mid|full>_<st|sp|sl>: tap = 1-frame press (launch at the 0.9 s pull-out end), mid = 1.55 s hold
+# (c = 0.5), full = 2.3 s hold (c = 1); st = standing, sp = sprinting (W + sprint held through the launch), sl = sliding
+# (sprint 1 s, crouch, then the press while sliding, crouch held).
+_M9R_CHARGE = {"tap": "tap offhand1", "mid": "down offhand1; wait 1.55s; up offhand1", "full": "down offhand1; wait 2.3s; up offhand1"}
+_M9R_START = {
+    "st": "wait 72; %s; wait 3.0s",
+    "sp": "wait 72; down speed; down forward; wait 1.0s; %s; wait 1.0s; up forward; up speed; wait 2.0s",
+    "sl": "wait 72; down speed; down forward; wait 1.0s; down duck; wait 0.1s; up forward; up speed; %s; wait 1.0s; up duck; wait 2.0s",
+}
+_M9R_PITCH = {"m30": -30.0, "0": 0.0, "20": 20.0, "45": 45.0, "70": 70.0}
+for _p, _pv in _M9R_PITCH.items():
+    for _c, _cs in _M9R_CHARGE.items():
+        for _st, _ss in _M9R_START.items():
+            _n = "m9r_p%s_c%s_%s" % (_p, _c, _st)
+            SCHEDULES[_n] = _ss % _cs
+            SCHEDULE_ORIGIN[_n] = LANE_C
+            SCHEDULE_PITCH[_n] = _pv
+# track D R-19 extra pitches (full charge, standing) and R-18 pounce tap strafe: hold tactical 1.0 / 2.5 s, jump edge while
+# holding, release on the next frame, D held, then W edges every 2 frames x 10 while turning right at 360 deg/s (and controls)
+for _p, _pv in (("m15", -15.0), ("10", 10.0), ("25", 25.0)):
+    _n = "m9r_p%s_cfull_st" % _p
+    SCHEDULES[_n] = _M9R_START["st"] % _M9R_CHARGE["full"]
+    SCHEDULE_ORIGIN[_n] = LANE_C
+    SCHEDULE_PITCH[_n] = _pv
+_M9R_TS = "set cl_yawspeed 360; wait 72; down offhand1; wait %.1fs; tap jump; up offhand1; down moveright; waitf 2; down right; %s; up right; up moveright; wait 2.0s"
+for _h in (1.0, 2.5):
+    for _v, _taps in (("ts", "; ".join(["tap forward; waitf 1"] * 10)), ("turn", "waitf 20")):
+        _n = "m9r_%s_h%02d" % (_v, int(_h * 10))
+        SCHEDULES[_n] = _M9R_TS % (_h, _taps)
+        SCHEDULE_ORIGIN[_n] = LANE_C
+# pull-out / cancel / air press / lurch after the launch (lane C, pitch 0)
+_M9R_LANEC = {
+    "m9r_rel05": "wait 72; down offhand1; wait 0.5s; up offhand1; wait 3.0s",
+    "m9r_cancel_zoom": "wait 72; down offhand1; wait 1.2s; tap zoom; wait 0.3s; up offhand1; wait 3.0s",
+    "m9r_cancel_attack": "wait 72; down offhand1; wait 1.2s; tap attack; wait 0.3s; up offhand1; wait 3.0s",
+    "m9r_cancel_jump": "wait 72; down offhand1; wait 1.2s; tap jump; wait 0.3s; up offhand1; wait 3.0s",
+    "m9r_air": "wait 72; tap jump; waitf 10; tap offhand1; wait 3.0s",
+    "m9r_lurch_k3": "wait 72; tap offhand1; waitair; waitf 3; tap moveright; wait 2.5s",
+    "m9r_lurch_k36": "wait 72; tap offhand1; waitair; waitf 36; tap moveright; wait 2.5s",
+    "m9r_lurch_ctrl": "wait 72; tap offhand1; waitair; wait 2.5s",
+}
+for _n, _s in _M9R_LANEC.items():
+    SCHEDULES[_n] = _s
+    SCHEDULE_ORIGIN[_n] = LANE_C
+# pounce into the lane-A face (geometry m3 / h<H>): tap from 150 u (pitch 0), full charge from 300 u; a jump press at the
+# face inside the 0.75 s climb lock (wall bounce?) and its no-pounce control (jump into the face, then jump)
+_M9R_FACE = {
+    "m9r_wall_tap_d150": ((-13878.0, 6500.0, FLOOR_Z), 0.0, "wait 72; tap offhand1; wait 3.0s"),
+    "m9r_wall_full_d300": ((-14028.0, 6500.0, FLOOR_Z), 0.0, "wait 72; down offhand1; wait 2.3s; up offhand1; wait 3.0s"),
+    "m9r_wall_w_d150": ((-13878.0, 6500.0, FLOOR_Z), 0.0, "wait 72; tap offhand1; wait 0.95s; down forward; wait 4.0s; up forward; wait 1.0s"),
+    "m9r_wall_bounce_lock": ((-13878.0, 6500.0, FLOOR_Z), 0.0, "wait 72; tap offhand1; waitair; wait 0.38s; tap jump; wait 2.5s"),
+    "m9r_wall_bounce_ctrl": ((-13878.0, 6500.0, FLOOR_Z), 0.0, "wait 72; down forward; wait 0.3s; tap jump; wait 0.35s; up forward; "
+                             "tap jump; wait 2.5s"),
+    # ledge pounce looking down past the rock edge (ground-check trace misses): rock top, facing -X
+    "m9r_ledge_p45": ((-13690.0, 6500.0, 780.80), 45.0, "wait 72; tap offhand1; wait 3.0s"),
+    "m9r_ledge_p70": ((-13690.0, 6500.0, 780.80), 70.0, "wait 72; tap offhand1; wait 3.0s"),
+    # climb on the h480 rock: sideways key while climbing, back key, jump while climbing (W held)
+    "m9r_climb_d": (LANE_A, 0.0, "wait 72; down speed; down forward; wait 1.2s; tap jump; wait 0.5s; down moveright; wait 1.0s; up moveright; "
+                    "wait 1.0s; up forward; up speed; wait 1.5s"),
+    "m9r_climb_back": (LANE_A, 0.0, "wait 72; down speed; down forward; wait 1.2s; tap jump; wait 0.8s; up forward; up speed; down backward; "
+                       "wait 0.5s; up backward; wait 1.5s"),
+    "m9r_climb_jump": (LANE_A, 0.0, "wait 72; down speed; down forward; wait 1.2s; tap jump; wait 0.8s; tap jump; wait 2.0s; up forward; "
+                       "up speed; wait 1.0s"),
+    # the tall world face found by the M9 read-only scan (face x -8437 facing -X, ground 2462.6; smooth >= 2360 u by traces):
+    # walk-jump into it as m8r2_jumpin_ctrl and hold W 12 s
+    "m9r_bigwall_climb": ((-8609.0, 8375.0, 2462.6), 0.0, "wait 72; down forward; wait 0.3s; tap jump; wait 12.0s; up forward; wait 2.0s"),
+}
+for _n, (_o, _pt, _s) in _M9R_FACE.items():
+    SCHEDULES[_n] = _s
+    SCHEDULE_ORIGIN[_n] = _o
+    SCHEDULE_PITCH[_n] = _pt
+    if _n.startswith("m9r_ledge"):
+        SCHEDULE_YAW[_n] = 180.0  # geometry h480 (rock top z 780.80)
+
+
+# ---- M9 track R ③ D1 re-checks.
+# Uphill slide on the M8 hillside (y ~550 profile from the M8 slope session: z 692.8 at x -9141, rising to 1580 at x -10595);
+# start low, facing up the slope (-X)
+M9D_HILL = (-9141.0, 501.0, 692.80)
+for _n, _s in {"m9d_up_slide": "wait 72; down speed; down forward; wait 1.0s; down duck; wait 2.0s; up duck; up forward; up speed; wait 1.0s",
+               "m9d_up_run": "wait 72; down speed; down forward; wait 3.0s; up forward; up speed; wait 1.0s",
+               "m9d_up_slide_now": "wait 72; down speed; down forward; wait 0.5s; down duck; wait 2.5s; up duck; up forward; up speed; wait 1.0s"}.items():
+    SCHEDULES[_n] = _s
+    SCHEDULE_ORIGIN[_n] = M9D_HILL
+    SCHEDULE_YAW[_n] = 180.0
+# SG approach (geometry h120, lane A face x -13706): a slide G s before an ordinary sprint jump (approach speed 299, boost state
+# varies), the M8 slide-jump approach again, and track-D R-7a/b sideways (W released, D held during the pull) / backward
+# (S held, view 30 deg up during the pull) superglides. The press is K = 61 frames after the traversal start (H120 window).
+_M9SG_TAIL = "waittrav; waitf 61; tap jump; tap duck; wait 1.5s; up forward; up speed; wait 1.0s"
+for _g, _x in ((0.5, -14190.0), (1.0, -14340.0), (2.0, -14640.0)):
+    _n = "m9d_sg_gap%02d" % int(_g * 10)
+    SCHEDULES[_n] = ("wait 72; down speed; down forward; wait 0.6s; down duck; wait 0.25s; up duck; wait %.1fs; tap jump; " % _g) + _M9SG_TAIL
+    SCHEDULE_ORIGIN[_n] = (_x, 6500.0, FLOOR_Z)
+SCHEDULES["m9d_sg_slidejump"] = "wait 72; down speed; down forward; wait 1.05s; down duck; wait 0.25s; tap jump; up duck; " + _M9SG_TAIL
+SCHEDULE_ORIGIN["m9d_sg_slidejump"] = (-14200.0, 6500.0, FLOOR_Z)
+SCHEDULES["m9d_sg_spr"] = "wait 72; down speed; down forward; wait 1.2s; tap jump; " + _M9SG_TAIL
+SCHEDULE_ORIGIN["m9d_sg_spr"] = LANE_A
+SCHEDULES["m9d_sg_side"] = ("wait 72; down speed; down forward; wait 1.2s; tap jump; waittrav; waitf 20; up forward; down moveright; waitf 41; "
+                            "tap jump; tap duck; wait 1.5s; up moveright; up speed; wait 1.0s")
+SCHEDULE_ORIGIN["m9d_sg_side"] = LANE_A
+SCHEDULES["m9d_sg_back"] = ("set cl_pitchspeed 300; wait 72; down speed; down forward; wait 1.2s; tap jump; waittrav; waitf 10; down lookup; waitf 12; "
+                            "up lookup; up forward; down backward; waitf 39; tap jump; tap duck; wait 1.5s; up backward; up speed; wait 1.0s")
+SCHEDULE_ORIGIN["m9d_sg_back"] = LANE_A
+# reverse chain (W -> W+D -> D -> S+D -> S, one edge every g frames) at walk / sprint / slide-jump entries (lane B / C)
+_M9_ENTRY = {
+    "walk": ("wait 72; down forward; wait 1.0s; tap jump; waitf 1; up forward; waitf 2; ", LANE_B),
+    "spr": (_A1_JUMP + "waitf 2; ", LANE_B),
+    "sj": ("wait 72; down speed; down forward; wait 2.0s; down duck; wait 86; tap jump; waitf 1; up duck; up forward; up speed; waitf 2; ", LANE_C),
+}
+for _e, (_pre, _o) in _M9_ENTRY.items():
+    for _g in (4, 6):
+        _n = "m9d_chain_%s_g%d" % (_e, _g)
+        SCHEDULES[_n] = _pre + _m8_chain("moveright", _g) + "; wait 1.0s"
+        SCHEDULE_ORIGIN[_n] = _o
+# R-5 OG Ras from a walk jump, camera fixed: (i) A, S, D edges; (ii) D, D+S, S edges; spacing 4 / 6 / 10; crouch held from the
+# last edge (jump slide on landing)
+for _g in (4, 6, 10):
+    _i = "tap moveleft; waitf %d; tap backward; waitf %d; tap moveright; waitf %d" % (_g - 1, _g - 1, _g - 1)
+    _ii = ("tap moveright; waitf %d; down moveright; down backward; waitf 1; up moveright; up backward; waitf %d; tap backward; waitf %d"
+           % (_g - 1, _g - 1, _g - 1))
+    for _v, _seq in (("i", _i), ("ii", _ii)):
+        _n = "m9d_ras_%s_g%d" % (_v, _g)
+        SCHEDULES[_n] = "wait 72; down forward; wait 1.0s; tap jump; waitf 1; up forward; waitf 2; " + _seq + "; down duck; wait 1.2s; up duck; wait 0.3s"
+        SCHEDULE_ORIGIN[_n] = LANE_B
+# R-4 momentum shift: slide jump, A, S, D edges at +6 / +12 / +18 frames while the view turns left ~90 deg over ~18 frames
+SCHEDULES["m9d_mshift"] = ("set cl_yawspeed 300; wait 72; down speed; down forward; wait 2.0s; down duck; wait 86; tap jump; waitf 1; up duck; up forward; "
+                           "up speed; down left; waitf 4; tap moveleft; waitf 5; tap backward; waitf 5; tap moveright; waitf 22; up left; wait 1.0s")
+SCHEDULE_ORIGIN["m9d_mshift"] = LANE_C
+# R-1 lurch combos (a: A+W held from before the jump, D edge at 0.10 s; b: W+S held, D edge at 0.10 s) and R-2 (A+D held, D
+# released 2 frames after the jump, A kept, turn left 90 deg/s 0.5 s)
+SCHEDULES["m9d_r1a"] = "wait 72; down speed; down forward; down moveleft; wait 1.0s; tap jump; waitf 11; tap moveright; wait 1.2s; up moveleft; up forward; up speed"
+SCHEDULES["m9d_r1b"] = "wait 72; down speed; down forward; wait 1.0s; down backward; tap jump; waitf 11; tap moveright; wait 1.2s; up backward; up forward; up speed"
+SCHEDULES["m9d_r2"] = ("set cl_yawspeed 90; wait 72; down speed; down forward; wait 1.0s; down moveleft; down moveright; tap jump; waitf 1; up moveright; "
+                       "down left; wait 0.5s; up left; wait 0.7s; up moveleft; up forward; up speed")
+for _n in ("m9d_r1a", "m9d_r1b", "m9d_r2"):
+    SCHEDULE_ORIGIN[_n] = LANE_B
+# Octane pad: chain right after the pad launch (pad 300 u ahead on lane C, as M8)
+for _g in (4, 6):
+    SCHEDULES["m8_pad_chain_g%d" % _g] = _M8P + "waitf 2; " + _m8_chain("moveright", _g) + "; wait 3.0s"
+
+
+# ---- M9 track R ④ Vantage (legend vantage --kit). Real tactical on lane C: every trial first recalls Echo at the reset
+# (ClientCallback_VantageCompanion_Recall, server-global) and waits 3 s for it to perch; the M8 Echo position logger runs at
+# 10 Hz. Tap = send Echo along the aim; hold = launch (mp_ability_companion_launch.nut CheckForHoldInput_Thread).
+_M9V_PRE = 'ClientCallback_VantageCompanion_Recall( p )\n' + _R2_ECHO_LOG.replace("Time() - t0 < 9.0", "Time() - t0 < 14.0")
+_M9V_W = "wait 72; wait 3.0s; "
+_M9V = {
+    "m9v_send_p0": (LANE_C, 0.0, 0.0, _M9V_W + "tap offhand1; wait 4.0s"),
+    "m9v_send_pd10": (LANE_C, 0.0, 10.0, _M9V_W + "tap offhand1; wait 4.0s"),
+    "m9v_send_pu20": (LANE_C, 0.0, -20.0, _M9V_W + "tap offhand1; wait 4.0s"),
+    "m9v_hold_perched": (LANE_C, 0.0, 0.0, _M9V_W + "down offhand1; wait 1.0s; up offhand1; wait 4.0s"),
+    "m9v_launch_h03": (LANE_C, 0.0, 0.0, _M9V_W + "tap offhand1; wait 2.5s; down offhand1; wait 0.3s; up offhand1; wait 5.0s"),
+    "m9v_launch_h06": (LANE_C, 0.0, 0.0, _M9V_W + "tap offhand1; wait 2.5s; down offhand1; wait 0.6s; up offhand1; wait 5.0s"),
+    "m9v_launch_h10": (LANE_C, 0.0, 0.0, _M9V_W + "tap offhand1; wait 2.5s; down offhand1; wait 1.0s; up offhand1; wait 5.0s"),
+    "m9v_launch_h20": (LANE_C, 0.0, 0.0, _M9V_W + "tap offhand1; wait 2.5s; down offhand1; wait 2.0s; up offhand1; wait 5.0s"),
+    # track D R-20: view turned 50 / 70 deg away from Echo before the hold (60 deg on-screen gate in the S21 script)
+    "m9v_off50": (LANE_C, 0.0, 0.0, "set cl_yawspeed 100; " + _M9V_W + "tap offhand1; wait 2.0s; down left; wait 0.5s; up left; wait 0.3s; "
+                  "down offhand1; wait 1.0s; up offhand1; wait 4.0s"),
+    "m9v_off70": (LANE_C, 0.0, 0.0, "set cl_yawspeed 100; " + _M9V_W + "tap offhand1; wait 2.0s; down left; wait 0.7s; up left; wait 0.3s; "
+                  "down offhand1; wait 1.0s; up offhand1; wait 4.0s"),
+    # LOS: send Echo along y 6820 (north of the lane-A rock, geometry m3), then step right (-Y) behind the rock so the eye -> Echo
+    # line crosses it; control: stay
+    "m9v_los_block": ((-13900.0, 6820.0, FLOOR_Z), 0.0, 0.0, _M9V_W + "tap offhand1; wait 2.0s; down moveright; wait 1.0s; up moveright; wait 0.5s; "
+                      "down offhand1; wait 1.0s; up offhand1; wait 4.0s"),
+    "m9v_los_clear": ((-13900.0, 6820.0, FLOOR_Z), 0.0, 0.0, _M9V_W + "tap offhand1; wait 2.0s; wait 1.5s; down offhand1; wait 1.0s; up offhand1; wait 4.0s"),
+    # distance: send, walk back 3 s (Echo beyond the 40 m base range), hold; control without the walk
+    "m9v_far": ((-14300.0, 6800.0, FLOOR_Z), 0.0, 0.0, _M9V_W + "tap offhand1; wait 2.0s; down backward; wait 3.0s; up backward; "
+                "down offhand1; wait 1.0s; up offhand1; wait 5.0s"),
+    "m9v_far_ctrl": ((-14300.0, 6800.0, FLOOR_Z), 0.0, 0.0, _M9V_W + "tap offhand1; wait 2.0s; wait 3.0s; down offhand1; wait 1.0s; up offhand1; wait 5.0s"),
+}
+for _n, (_o, _yw, _pt, _s) in _M9V.items():
+    SCHEDULES[_n] = _s
+    SCHEDULE_ORIGIN[_n] = _o
+    SCHEDULE_YAW[_n] = _yw
+    SCHEDULE_PITCH[_n] = _pt
+# jet-drive shortcut (M8 _r2_jd_pre, mover 800 u ahead on lane C): end double-jump window edges, lurch after the end jump,
+# and a drive into the lane-A rock (mover 900 u ahead behind the face, geometry m3)
+_M9VJ = {"m9v_jd_dj%d" % k: (800, LANE_C, _R2JD + "waitf %d; tap jump; wait 4.0s" % k) for k in (70, 80, 100, 130, 145, 160)}
+_M9VJ["m9v_jd_dj100_lurch"] = (800, LANE_C, _R2JD + "waitf 100; tap jump; waitf 3; tap moveright; wait 4.0s")
+_M9VJ["m9v_jd_wall"] = (900, LANE_A, _R2JD + "wait 4.0s")
+_jd_pre = {}
+for _n, (_d, _o, _s) in _M9VJ.items():
+    SCHEDULES[_n] = _s
+    SCHEDULE_ORIGIN[_n] = _o
+    _jd_pre[_n] = _r2_jd_pre(_d)
+SCHEDULE_PRE = {**_jd_pre, **SCHEDULE_PRE}
+SCHEDULE_PRE["m9v_"] = _M9V_PRE
+
+
 DEFAULT_ORIGIN_SCHEDULES = {"basic", "e1_walk", "e1_sprint", "e1_crouch", "e1_back", "e1_side", "e1_diag", "e1_turn",
                             "e2_strafe", "e2_noinput", "e2_keepfwd", "e4_stand", "e4_hop0", "e4_hop3", "e4_hop43", "e5_slide",
                             "e5_slidejump02", "e5_slidejump06"}
 
 
 def origin_for(name, default):
+    st = _m9_stand_setup(name)
+    if st:
+        return st[0]
     if name in SCHEDULE_ORIGIN:
         return SCHEDULE_ORIGIN[name]
     if name in SCHEDULE_ZIP_ORIGIN:
@@ -853,6 +1265,8 @@ def get_schedule(name):
     N is in exact frames at the session's frame rate."""
     if name in SCHEDULES:
         return SCHEDULES[name]
+    if M9_STAND_RE.fullmatch(name):
+        return _M9_STAND
     # M6-A2 variants: sc = crouch on the same frame as the jump, cf = crouch one frame before the jump (jump still at N),
     # mbl = jump at N then a moveright press 30 frames later (lurch after a mantle boost)
     m = re.fullmatch(r"e7_(mb|sg|sc|cf|mbl)_f(\d+)", name)
@@ -1052,6 +1466,8 @@ def main(argv):
     ap.add_argument("--state-log", action="store_true", help="M6: client [HSD-STATE] logger thread per trial")
     ap.add_argument("--both-cvar", action="append", default=[],
                     help="NAME=VALUE set on the dedi and client consoles for the session, restored afterwards")
+    ap.add_argument("--server-cvar", action="append", default=[],
+                    help="NAME=VALUE set on the dedi console only for the session (M9: bridge_zip_mount_diag=1), restored afterwards")
     ap.add_argument("--m6-census", action="store_true",
                     help="also exec user/hsd_m6_classvars (client) and the M6 cvar finds on both consoles")
     ap.add_argument("--kit", action="store_true",
@@ -1141,6 +1557,17 @@ def main(argv):
             if "prop=" not in r.get("reply", "") or "invalid" in r.get("reply", ""):
                 raise SystemExit("test wall could not be spawned")
             time.sleep(2.0)
+        for gname, lines in (("m9zip", M9_ZIP_LINES), ("m9zipv", M9_ZIPV_LINES)):
+            if gname in geos:
+                if "m6zip" in geos or ("m9zip" in geos and "m9zipv" in geos):
+                    raise SystemExit("one rope geometry per session (each clears hsd_zip)")
+                r = server.eval(M9_ZIP_SERVER % lines, check=False)
+                manifest["geometry_zip"] = gname + " " + r.get("reply", "")
+                manifest["geometry_ropes"] = M9_ROPES if gname == "m9zip" else {"vertical": M9_VROPE}
+                print("ziplines:", manifest["geometry_zip"])
+                if "zip_ents=" not in manifest["geometry_zip"]:
+                    raise SystemExit("ziplines could not be spawned")
+                time.sleep(1.0)
         if "m6zip" in geos:
             r = server.eval(ZIP_SERVER, check=False)
             manifest["geometry_zip"] = r.get("reply", "")
@@ -1156,6 +1583,12 @@ def main(argv):
                 restore.append((side, name, old))
                 side.cmd(f"{name} {val}")
         manifest["both_cvars"] = {nv.partition("=")[0]: nv.partition("=")[2] for nv in a.both_cvar}
+        for nv in a.server_cvar:
+            name, _, val = nv.partition("=")
+            old = server.eval(f'AgentLink_Reply( GetConVarString( "{name}" ) )', check=False).get("reply", "")
+            restore.append((server, name, old))
+            server.cmd(f"{name} {val}")
+        manifest["server_cvars"] = {nv.partition("=")[0]: nv.partition("=")[2] for nv in a.server_cvar}
         if a.legend:
             r = server.eval('Agent_SetLegend( "me", "%s" )' % a.legend.replace('"', ''))
             manifest["legend_reply"] = r.get("reply", "")
@@ -1198,6 +1631,9 @@ def main(argv):
             yaw = SCHEDULE_YAW.get(name, M8_YAW_PREFIX.get(name[:9], a.yaw))
             ox, oy, oz = origin_for(name, tuple(a.origin))
             pitch = SCHEDULE_PITCH.get(name, 0.0)
+            m9st = _m9_stand_setup(name)
+            if m9st:
+                yaw, pitch = m9st[1], m9st[2]
             pre = next((code for prefix, code in SCHEDULE_PRE.items() if name.startswith(prefix)), "")  # prefix may be a tuple
             reset = server.eval(RESET_SERVER.substitute(ox=ox, oy=oy, oz=oz, yaw=yaw, pitch=pitch, batch=batch, run=run,
                                                          refill=REFILL if a.kit else "", pre=pre))

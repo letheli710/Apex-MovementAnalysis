@@ -1,0 +1,240 @@
+M9 R Vantage (R5Flowstate S21 client + S3 dedi + SDK, local offline)
+====================================================================================================
+
+1. Sessions
+  20261022_151514_M9R_vantage legend=vantage scored=105 fps=[117.99, 120.09] excluded=[(16033, 'm9v_launch_h10', 'schedule ran 1442 frames, planned 1441'), (16043, 'm9v_off50', 'frame rate 112.33 outside 120.0 +/- 3%'), (16067, 'm9v_far_ctrl', 'schedule ran 1742 frames, planned 1741'), (16071, 'm9v_jd_dj70', 'frame rate 114.02 outside 120.0 +/- 3%'), (16072, 'm9v_jd_dj70', 'frame rate 103.96 outside 120.0 +/- 3%')] server lines={'jd': 40, 'echo': 9979, 'resets': 111}
+
+2. Per schedule
+
+  m9v_far  n=5 launched=5
+    hold_s                   1.00 (sd 0.00, 1.00..1.00, n=5)
+    t_launch_after_hold      1.82 (sd 0.00, 1.82..1.83, n=5)
+    t_launch_after_release   0.82 (sd 0.00, 0.82..0.82, n=5)
+    launch_speed             943.49 (sd 0.06, 943.38..943.52, n=5)
+    echo_dist                2405.44 (sd 0.40, 2405.00..2406.10, n=5)
+    echo_dist_h              2388.84 (sd 0.40, 2388.40..2389.50, n=5)
+    echo_z_above_floor       246.00 (sd 0.00, 246.00..246.00, n=5)
+    echo_settle_t            9.93 (sd 0.03, 9.90..9.95, n=5)
+    view_to_echo_deg         0.00 (sd 0.00, -0.00..-0.00, n=5)
+    view_to_echo_3d_deg      5.30 (sd 0.00, 5.30..5.30, n=5)
+
+  m9v_far_ctrl  n=4 launched=4
+    hold_s                   1.00 (sd 0.00, 1.00..1.00, n=4)
+    t_launch_after_hold      1.82 (sd 0.00, 1.82..1.83, n=4)
+    t_launch_after_release   0.82 (sd 0.00, 0.82..0.83, n=4)
+    launch_speed             943.73 (sd 0.01, 943.72..943.74, n=4)
+    echo_dist                1969.40 (sd 0.00, 1969.40..1969.40, n=4)
+    echo_dist_h              1968.50 (sd 0.00, 1968.50..1968.50, n=4)
+    echo_z_above_floor       60.00 (sd 0.00, 60.00..60.00, n=4)
+    echo_settle_t            6.49 (sd 0.02, 6.45..6.50, n=4)
+    view_to_echo_deg         0.00 (sd 0.00, 0.00..0.00, n=4)
+    view_to_echo_3d_deg      0.00 (sd 0.00, 0.00..0.00, n=4)
+
+  m9v_hold_perched  n=5 launched=5
+    hold_s                   1.00 (sd 0.00, 1.00..1.00, n=5)
+    t_launch_after_hold      1.66 (sd 0.01, 1.65..1.67, n=5)
+    t_launch_after_release   0.66 (sd 0.01, 0.65..0.67, n=5)
+    launch_speed             943.51 (sd 0.00, 943.50..943.51, n=5)
+    echo_dist                1185.20 (sd 73.67, 1089.20..1239.20, n=5)
+    echo_dist_h              1171.58 (sd 73.92, 1074.90..1225.80, n=5)
+    echo_z_above_floor       178.28 (sd 4.63, 171.80..181.60, n=5)
+    view_to_echo_deg         0.16 (sd 0.13, 0.10..0.40, n=5)
+    view_to_echo_3d_deg      5.80 (sd 0.17, 5.70..6.10, n=5)
+
+  m9v_jd_dj100  n=5 launched=5
+    target_dist0             801.70 (sd 0.00, 801.70..801.70, n=5)
+    min_speed                503.14 (sd 0.09, 503.10..503.30, n=5)
+    min_speed_t              1.36 (sd 0.00, 1.36..1.37, n=5)
+    jump {"t_after_liftoff": 0.8416, "applied": true, "pre_v": [662.5, 0.0, -254.1], "post_v": [503.3, 0.0, 390.9], "dist_to_target": 117.5, "along_past_target": -103.3}
+    jump {"t_after_liftoff": 0.8419, "applied": true, "pre_v": [660.8, 0.0, -257.6], "post_v": [503.1, 0.0, 390.9], "dist_to_target": 114.3, "along_past_target": -100.3}
+    jump {"t_after_liftoff": 0.8328, "applied": false, "pre_v": [671.5, 0.0, -254.2], "post_v": [661.2, 0.0, -256.5], "dist_to_target": 121.1, "along_past_target": -106.7}
+    jump {"t_after_liftoff": 0.8329, "applied": false, "pre_v": [671.3, 0.0, -254.3], "post_v": [661.0, 0.0, -256.6], "dist_to_target": 121.0, "along_past_target": -106.6}
+    jump {"t_after_liftoff": 0.8333, "applied": false, "pre_v": [671.4, 0.0, -254.3], "post_v": [661.0, 0.0, -256.6], "dist_to_target": 121.0, "along_past_target": -106.6}
+    control |dv_h| 3 cmds after the jump 0.000 (sd 0.000, 0.000..0.000, n=5)
+
+  m9v_jd_dj100_lurch  n=5 launched=5
+    target_dist0             801.70 (sd 0.00, 801.70..801.70, n=5)
+    min_speed                503.06 (sd 0.15, 502.80..503.20, n=5)
+    min_speed_t              1.36 (sd 0.00, 1.36..1.36, n=5)
+    jump {"t_after_liftoff": 0.8328, "applied": false, "pre_v": [671.0, 0.0, -255.5], "post_v": [660.7, 0.0, -257.8], "dist_to_target": 119.9, "along_past_target": -105.6}
+    jump {"t_after_liftoff": 0.834, "applied": false, "pre_v": [670.9, 0.0, -255.1], "post_v": [660.6, 0.0, -257.5], "dist_to_target": 120.2, "along_past_target": -105.8}
+    jump {"t_after_liftoff": 0.8416, "applied": true, "pre_v": [650.9, 0.0, -259.0], "post_v": [502.7, 0.0, 390.9], "dist_to_target": 109.2, "along_past_target": -95.5}
+    jump {"t_after_liftoff": 0.8332, "applied": false, "pre_v": [671.5, 0.0, -254.2], "post_v": [661.2, 0.0, -256.5], "dist_to_target": 121.1, "along_past_target": -106.7}
+    jump {"t_after_liftoff": 0.8334, "applied": false, "pre_v": [671.5, 0.0, -254.4], "post_v": [661.1, 0.0, -256.7], "dist_to_target": 120.9, "along_past_target": -106.5}
+    lurch |dv_h| 0.836 (sd 1.870, 0.000..4.182, n=5)
+
+  m9v_jd_dj130  n=5 launched=5
+    target_dist0             801.70 (sd 0.00, 801.70..801.70, n=5)
+    min_speed                443.28 (sd 7.71, 429.50..446.90, n=5)
+    min_speed_t              1.09 (sd 0.00, 1.08..1.09, n=5)
+    jump {"t_after_liftoff": 1.0833, "applied": false, "pre_v": [363.8, 0.0, -274.3], "post_v": [353.8, 0.0, -273.0], "dist_to_target": 24.2, "along_past_target": 21.8}
+    jump {"t_after_liftoff": 1.0836, "applied": false, "pre_v": [363.8, 0.0, -274.2], "post_v": [353.8, 0.0, -272.8], "dist_to_target": 24.0, "along_past_target": 21.6}
+    jump {"t_after_liftoff": 1.084, "applied": false, "pre_v": [363.7, 0.0, -273.8], "post_v": [353.6, 0.0, -272.4], "dist_to_target": 23.6, "along_past_target": 21.2}
+    jump {"t_after_liftoff": 1.0994, "applied": true, "pre_v": [334.8, 0.0, -269.1], "post_v": [483.3, 0.0, 390.9], "dist_to_target": 33.2, "along_past_target": 28.9}
+    jump {"t_after_liftoff": 1.0839, "applied": false, "pre_v": [363.7, 0.0, -274.2], "post_v": [353.8, 0.0, -272.9], "dist_to_target": 24.2, "along_past_target": 21.7}
+    control |dv_h| 3 cmds after the jump 0.000 (sd 0.000, 0.000..0.000, n=5)
+
+  m9v_jd_dj145  n=5 launched=5
+    target_dist0             801.70 (sd 0.00, 801.70..801.70, n=5)
+    min_speed                312.06 (sd 7.80, 298.10..315.60, n=5)
+    min_speed_t              1.21 (sd 0.00, 1.21..1.22, n=5)
+    jump {"t_after_liftoff": 1.2168, "applied": true, "pre_v": [210.9, 0.0, -234.8], "post_v": [468.9, 0.0, 390.9], "dist_to_target": 74.2, "along_past_target": 59.4}
+    jump {"t_after_liftoff": 1.2172, "applied": true, "pre_v": [210.8, 0.0, -234.9], "post_v": [468.9, 0.0, 390.9], "dist_to_target": 74.6, "along_past_target": 59.7}
+    jump {"t_after_liftoff": 1.2168, "applied": true, "pre_v": [210.9, 0.0, -234.8], "post_v": [468.9, 0.0, 390.9], "dist_to_target": 74.1, "along_past_target": 59.3}
+    jump {"t_after_liftoff": 1.2152, "applied": false, "pre_v": [202.7, 0.0, -230.3], "post_v": [193.9, 0.0, -226.4], "dist_to_target": 73.8, "along_past_target": 58.8}
+    jump {"t_after_liftoff": 1.2168, "applied": true, "pre_v": [210.8, 0.0, -234.5], "post_v": [468.9, 0.0, 390.9], "dist_to_target": 73.8, "along_past_target": 59.1}
+    control |dv_h| 3 cmds after the jump 0.000 (sd 0.000, 0.000..0.000, n=5)
+
+  m9v_jd_dj160  n=5 launched=5
+    target_dist0             801.70 (sd 0.00, 801.70..801.70, n=5)
+    min_speed                185.66 (sd 1.77, 184.40..188.50, n=5)
+    min_speed_t              1.23 (sd 0.00, 1.22..1.23, n=5)
+    jump {"t_after_liftoff": 1.3756, "applied": false, "pre_v": [141.0, 0.0, 0.0], "post_v": [132.2, 0.0, 0.0], "dist_to_target": 106.7, "along_past_target": 94.2}
+    jump {"t_after_liftoff": 1.3337, "applied": false, "pre_v": [190.3, 0.0, 0.0], "post_v": [181.5, 0.0, 0.0], "dist_to_target": 99.8, "along_past_target": 86.0}
+    jump {"t_after_liftoff": 1.333, "applied": false, "pre_v": [190.4, 0.0, 0.0], "post_v": [181.7, 0.0, 0.0], "dist_to_target": 99.3, "along_past_target": 85.6}
+    jump {"t_after_liftoff": 1.3415, "applied": true, "pre_v": [174.9, 0.0, 0.0], "post_v": [412.0, 0.0, 546.5], "dist_to_target": 102.8, "along_past_target": 89.4}
+    jump {"t_after_liftoff": 1.3336, "applied": false, "pre_v": [190.4, 0.0, 0.0], "post_v": [181.6, 0.0, 0.0], "dist_to_target": 99.6, "along_past_target": 85.8}
+    control |dv_h| 3 cmds after the jump 0.000 (sd 0.000, 0.000..0.000, n=5)
+
+  m9v_jd_dj70  n=3 launched=3
+    target_dist0             801.70 (sd 0.00, 801.70..801.70, n=3)
+    min_speed                176.70 (sd 2.08, 174.30..177.90, n=3)
+    min_speed_t              1.24 (sd 0.00, 1.24..1.25, n=3)
+    jump {"t_after_liftoff": 0.5955, "applied": false, "pre_v": [826.2, 0.0, -50.4], "post_v": [823.9, 0.0, -60.0], "dist_to_target": 308.8, "along_past_target": -292.5}
+    jump {"t_after_liftoff": 0.5834, "applied": false, "pre_v": [829.2, 0.0, -37.2], "post_v": [827.0, 0.0, -46.8], "dist_to_target": 318.0, "along_past_target": -302.0}
+    jump {"t_after_liftoff": 0.5834, "applied": false, "pre_v": [829.3, 0.0, -37.0], "post_v": [827.1, 0.0, -46.6], "dist_to_target": 318.1, "along_past_target": -302.1}
+    control |dv_h| 3 cmds after the jump 2.484 (sd 0.116, 2.417..2.618, n=3)
+
+  m9v_jd_dj80  n=5 launched=5
+    target_dist0             801.70 (sd 0.00, 801.70..801.70, n=5)
+    min_speed                178.00 (sd 0.16, 177.80..178.20, n=5)
+    min_speed_t              1.24 (sd 0.00, 1.24..1.24, n=5)
+    jump {"t_after_liftoff": 0.6667, "applied": false, "pre_v": [804.1, 0.0, -130.9], "post_v": [801.2, 0.0, -140.0], "dist_to_target": 251.8, "along_past_target": -234.2}
+    jump {"t_after_liftoff": 0.6752, "applied": false, "pre_v": [801.2, 0.0, -140.2], "post_v": [798.2, 0.0, -149.2], "dist_to_target": 245.1, "along_past_target": -227.4}
+    jump {"t_after_liftoff": 0.6747, "applied": false, "pre_v": [801.2, 0.0, -140.0], "post_v": [798.3, 0.0, -149.0], "dist_to_target": 245.3, "along_past_target": -227.6}
+    jump {"t_after_liftoff": 0.6666, "applied": false, "pre_v": [804.2, 0.0, -130.8], "post_v": [801.3, 0.0, -139.9], "dist_to_target": 251.9, "along_past_target": -234.3}
+    jump {"t_after_liftoff": 0.6666, "applied": false, "pre_v": [804.1, 0.0, -130.8], "post_v": [801.2, 0.0, -140.0], "dist_to_target": 251.9, "along_past_target": -234.3}
+    control |dv_h| 3 cmds after the jump 3.108 (sd 0.033, 3.080..3.148, n=5)
+
+  m9v_jd_wall  n=5 launched=5
+    target_dist0             901.40 (sd 0.00, 901.40..901.40, n=5)
+    min_speed                123.32 (sd 0.31, 122.80..123.60, n=5)
+    min_speed_t              0.53 (sd 0.01, 0.52..0.54, n=5)
+    min speed positions [[-13718.4, 6500.9, 196.0], [-13718.4, 6500.9, 195.9], [-13718.3, 6500.9, 196.2], [-13718.3, 6500.9, 196.5], [-13718.4, 6500.9, 196.0]]
+
+  m9v_launch_h03  n=5 launched=3
+    hold_s                   0.30 (sd 0.00, 0.30..0.30, n=5)
+    t_launch_after_hold      1.82 (sd 0.01, 1.81..1.83, n=3)
+    t_launch_after_release   1.52 (sd 0.01, 1.51..1.53, n=3)
+    launch_speed             943.48 (sd 0.06, 943.42..943.52, n=3)
+    echo_dist                1983.90 (sd 0.00, 1983.90..1983.90, n=5)
+    echo_dist_h              1968.50 (sd 0.00, 1968.50..1968.50, n=5)
+    echo_z_above_floor       246.20 (sd 0.00, 246.20..246.20, n=5)
+    echo_settle_t            6.37 (sd 0.03, 6.35..6.40, n=5)
+    view_to_echo_deg         0.00 (sd 0.00, 0.00..0.00, n=5)
+    view_to_echo_3d_deg      5.40 (sd 0.00, 5.40..5.40, n=5)
+
+  m9v_launch_h06  n=5 launched=5
+    hold_s                   0.60 (sd 0.00, 0.60..0.60, n=5)
+    t_launch_after_hold      1.82 (sd 0.00, 1.82..1.83, n=5)
+    t_launch_after_release   1.22 (sd 0.00, 1.22..1.23, n=5)
+    launch_speed             943.51 (sd 0.00, 943.51..943.52, n=5)
+    echo_dist                1983.90 (sd 0.00, 1983.90..1983.90, n=5)
+    echo_dist_h              1968.50 (sd 0.00, 1968.50..1968.50, n=5)
+    echo_z_above_floor       246.20 (sd 0.00, 246.20..246.20, n=5)
+    echo_settle_t            6.42 (sd 0.04, 6.40..6.50, n=5)
+    view_to_echo_deg         0.00 (sd 0.00, 0.00..0.00, n=5)
+    view_to_echo_3d_deg      5.40 (sd 0.00, 5.40..5.40, n=5)
+
+  m9v_launch_h10  n=4 launched=4
+    hold_s                   1.00 (sd 0.00, 1.00..1.01, n=4)
+    t_launch_after_hold      1.83 (sd 0.01, 1.81..1.84, n=4)
+    t_launch_after_release   0.82 (sd 0.01, 0.81..0.84, n=4)
+    launch_speed             943.51 (sd 0.00, 943.51..943.51, n=4)
+    echo_dist                1983.90 (sd 0.00, 1983.90..1983.90, n=4)
+    echo_dist_h              1968.50 (sd 0.00, 1968.50..1968.50, n=4)
+    echo_z_above_floor       246.20 (sd 0.00, 246.20..246.20, n=4)
+    echo_settle_t            6.40 (sd 0.04, 6.35..6.45, n=4)
+    view_to_echo_deg         0.00 (sd 0.00, 0.00..0.00, n=4)
+    view_to_echo_3d_deg      5.40 (sd 0.00, 5.40..5.40, n=4)
+
+  m9v_launch_h20  n=5 launched=5
+    hold_s                   2.00 (sd 0.00, 2.00..2.00, n=5)
+    t_launch_after_hold      1.81 (sd 0.00, 1.81..1.81, n=5)
+    t_launch_after_release   -0.19 (sd 0.00, -0.19..-0.19, n=5)
+    launch_speed             943.51 (sd 0.00, 943.51..943.51, n=5)
+    echo_dist                1983.90 (sd 0.00, 1983.90..1983.90, n=5)
+    echo_dist_h              1968.50 (sd 0.00, 1968.50..1968.50, n=5)
+    echo_z_above_floor       246.20 (sd 0.00, 246.20..246.20, n=5)
+    echo_settle_t            6.37 (sd 0.03, 6.35..6.40, n=5)
+    view_to_echo_deg         0.00 (sd 0.00, 0.00..0.00, n=5)
+    view_to_echo_3d_deg      5.40 (sd 0.00, 5.40..5.40, n=5)
+
+  m9v_los_block  n=5 launched=0
+    hold_s                   1.00 (sd 0.00, 1.00..1.00, n=5)
+    echo_dist                1980.18 (sd 0.08, 1980.10..1980.30, n=5)
+    echo_dist_h              1979.24 (sd 0.09, 1979.20..1979.40, n=5)
+    echo_z_above_floor       60.00 (sd 0.00, 60.00..60.00, n=5)
+    echo_settle_t            6.47 (sd 0.03, 6.45..6.50, n=5)
+    view_to_echo_deg         6.00 (sd 0.00, 6.00..6.00, n=5)
+    view_to_echo_3d_deg      6.00 (sd 0.00, 6.00..6.00, n=5)
+
+  m9v_los_clear  n=5 launched=5
+    hold_s                   1.00 (sd 0.00, 1.00..1.00, n=5)
+    t_launch_after_hold      1.82 (sd 0.01, 1.82..1.83, n=5)
+    t_launch_after_release   0.82 (sd 0.01, 0.82..0.83, n=5)
+    launch_speed             943.73 (sd 0.01, 943.71..943.74, n=5)
+    echo_dist                1969.40 (sd 0.00, 1969.40..1969.40, n=5)
+    echo_dist_h              1968.50 (sd 0.00, 1968.50..1968.50, n=5)
+    echo_z_above_floor       60.00 (sd 0.00, 60.00..60.00, n=5)
+    echo_settle_t            6.48 (sd 0.03, 6.45..6.50, n=5)
+    view_to_echo_deg         0.00 (sd 0.00, 0.00..0.00, n=5)
+    view_to_echo_3d_deg      0.00 (sd 0.00, 0.00..0.00, n=5)
+
+  m9v_off50  n=4 launched=4
+    hold_s                   1.00 (sd 0.00, 1.00..1.00, n=4)
+    t_launch_after_hold      1.83 (sd 0.00, 1.82..1.83, n=4)
+    t_launch_after_release   0.82 (sd 0.00, 0.82..0.83, n=4)
+    launch_speed             943.51 (sd 0.00, 943.51..943.51, n=4)
+    echo_dist                1983.90 (sd 0.00, 1983.90..1983.90, n=4)
+    echo_dist_h              1968.50 (sd 0.00, 1968.50..1968.50, n=4)
+    echo_z_above_floor       246.20 (sd 0.00, 246.20..246.20, n=4)
+    echo_settle_t            6.47 (sd 0.03, 6.45..6.50, n=4)
+    view_to_echo_deg         -49.62 (sd 0.13, -49.80..-49.50, n=4)
+    view_to_echo_3d_deg      49.83 (sd 0.13, 49.70..50.00, n=4)
+
+  m9v_off70  n=5 launched=0
+    hold_s                   1.00 (sd 0.00, 0.99..1.00, n=5)
+    echo_dist                1983.90 (sd 0.00, 1983.90..1983.90, n=5)
+    echo_dist_h              1968.50 (sd 0.00, 1968.50..1968.50, n=5)
+    echo_z_above_floor       246.20 (sd 0.00, 246.20..246.20, n=5)
+    echo_settle_t            6.48 (sd 0.03, 6.45..6.50, n=5)
+    view_to_echo_deg         -69.60 (sd 0.22, -70.00..-69.50, n=5)
+    view_to_echo_3d_deg      69.70 (sd 0.22, 69.60..70.10, n=5)
+
+  m9v_send_p0  n=5 launched=0
+    hold_s                   0.01 (sd 0.00, 0.01..0.01, n=5)
+    echo_dist                1983.90 (sd 0.00, 1983.90..1983.90, n=5)
+    echo_dist_h              1968.50 (sd 0.00, 1968.50..1968.50, n=5)
+    echo_z_above_floor       246.20 (sd 0.00, 246.20..246.20, n=5)
+    echo_settle_t            6.45 (sd 0.04, 6.40..6.50, n=5)
+    view_to_echo_deg         0.00 (sd 0.00, 0.00..0.00, n=5)
+    view_to_echo_3d_deg      5.40 (sd 0.00, 5.40..5.40, n=5)
+
+  m9v_send_pd10  n=5 launched=0
+    hold_s                   0.01 (sd 0.00, 0.01..0.01, n=5)
+    echo_dist                408.60 (sd 0.00, 408.60..408.60, n=5)
+    echo_dist_h              326.00 (sd 0.00, 326.00..326.00, n=5)
+    echo_z_above_floor       245.70 (sd 0.00, 245.70..245.70, n=5)
+    echo_settle_t            5.07 (sd 0.04, 5.05..5.15, n=5)
+    view_to_echo_deg         0.50 (sd 0.00, 0.50..0.50, n=5)
+    view_to_echo_3d_deg      39.80 (sd 0.00, 39.80..39.80, n=5)
+
+  m9v_send_pu20  n=5 launched=0
+    hold_s                   0.01 (sd 0.00, 0.01..0.01, n=5)
+    echo_dist                1988.40 (sd 0.00, 1988.40..1988.40, n=5)
+    echo_dist_h              1848.30 (sd 0.00, 1848.30..1848.30, n=5)
+    echo_z_above_floor       732.50 (sd 0.00, 732.50..732.50, n=5)
+    echo_settle_t            6.37 (sd 0.08, 6.25..6.45, n=5)
+    view_to_echo_deg         0.00 (sd 0.00, 0.00..0.00, n=5)
+    view_to_echo_3d_deg      0.00 (sd 0.00, 0.00..0.00, n=5)

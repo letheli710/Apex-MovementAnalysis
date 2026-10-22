@@ -1,0 +1,299 @@
+{
+ "build": "R5Flowstate S21 client + S3 dedicated server + SDK, local offline, 120 fps",
+ "params": [
+  {
+   "name": "uphill_slide_extra_accel",
+   "value": {
+    "n": 720,
+    "a_b_rms": [
+     106.534,
+     -856.767,
+     18.746
+    ],
+    "slope_range": [
+     29.6,
+     30.5
+    ]
+   },
+   "class": "fit",
+   "n": 720,
+   "note": "extra = a + b*sin(uphill angle) beyond the M2 flat slide law, grounded sliding usercmds on the 29-41 deg hillside"
+  },
+  {
+   "name": "sg_m9d_sg_back",
+   "value": {
+    "cut_no_jump": 5
+   },
+   "class": "meas",
+   "n": 5,
+   "exit_h_mean": 4.168
+  },
+  {
+   "name": "sg_m9d_sg_gap05",
+   "value": {
+    "mantle_jump": 5
+   },
+   "class": "meas",
+   "n": 5,
+   "exit_h_mean": 311.001
+  },
+  {
+   "name": "sg_m9d_sg_gap10",
+   "value": {
+    "superglide": 5
+   },
+   "class": "meas",
+   "n": 5,
+   "exit_h_mean": 460.005
+  },
+  {
+   "name": "sg_m9d_sg_gap20",
+   "value": {
+    "superglide": 5
+   },
+   "class": "meas",
+   "n": 5,
+   "exit_h_mean": 460.005
+  },
+  {
+   "name": "sg_m9d_sg_side",
+   "value": {
+    "cut_no_jump": 5
+   },
+   "class": "meas",
+   "n": 5,
+   "exit_h_mean": 4.167
+  },
+  {
+   "name": "sg_m9d_sg_slidejump",
+   "value": {
+    "mantle_jump": 5
+   },
+   "class": "meas",
+   "n": 5,
+   "exit_h_mean": 299.008
+  },
+  {
+   "name": "sg_m9d_sg_spr",
+   "value": {
+    "superglide": 5
+   },
+   "class": "meas",
+   "n": 5,
+   "exit_h_mean": 460.005
+  },
+  {
+   "name": "lurch_m8_lurch_sj_d_k2",
+   "value": {
+    "dv_abs": 212.547,
+    "D_aa1": 209.049,
+    "D_aa08": 209.746,
+    "v_h_pre": 515.833
+   },
+   "class": "meas",
+   "n": 10
+  },
+  {
+   "name": "lurch_m8_lurch_spr_d_k2",
+   "value": {
+    "dv_abs": 212.795,
+    "D_aa1": 209.299,
+    "D_aa08": 209.996,
+    "v_h_pre": 296.827
+   },
+   "class": "meas",
+   "n": 10
+  },
+  {
+   "name": "lurch_m8_pad_dj_lurch",
+   "value": {
+    "dv_abs": 212.533,
+    "D_aa1": 209.05,
+    "D_aa08": 209.745,
+    "v_h_pre": 514.31
+   },
+   "class": "meas",
+   "n": 10
+  },
+  {
+   "name": "m8_pad_chain_g4",
+   "value": {
+    "heading_change": -0.64,
+    "speed_ratio": 0.989,
+    "entry_h": 514.3
+   },
+   "class": "meas",
+   "n": 5
+  },
+  {
+   "name": "m8_pad_chain_g6",
+   "value": {
+    "heading_change": -0.65,
+    "speed_ratio": 0.9879,
+    "entry_h": 514.3
+   },
+   "class": "meas",
+   "n": 5
+  },
+  {
+   "name": "m9d_chain_sj_g4",
+   "value": {
+    "heading_change": -144.73,
+    "speed_ratio": 0.82,
+    "entry_h": 350.0
+   },
+   "class": "meas",
+   "n": 5
+  },
+  {
+   "name": "m9d_chain_sj_g6",
+   "value": {
+    "heading_change": -144.2,
+    "speed_ratio": 0.851,
+    "entry_h": 350.0
+   },
+   "class": "meas",
+   "n": 5
+  },
+  {
+   "name": "m9d_chain_spr_g4",
+   "value": {
+    "heading_change": -157.63,
+    "speed_ratio": 0.9535,
+    "entry_h": 297.0
+   },
+   "class": "meas",
+   "n": 5
+  },
+  {
+   "name": "m9d_chain_spr_g6",
+   "value": {
+    "heading_change": -156.19,
+    "speed_ratio": 0.9785,
+    "entry_h": 298.2
+   },
+   "class": "meas",
+   "n": 3
+  },
+  {
+   "name": "m9d_chain_walk_g4",
+   "value": {
+    "heading_change": -162.43,
+    "speed_ratio": 1.0002,
+    "entry_h": 199.5
+   },
+   "class": "meas",
+   "n": 5
+  },
+  {
+   "name": "m9d_chain_walk_g6",
+   "value": {
+    "heading_change": -157.34,
+    "speed_ratio": 1.0002,
+    "entry_h": 199.5
+   },
+   "class": "meas",
+   "n": 5
+  },
+  {
+   "name": "m9d_mshift",
+   "value": {
+    "heading_change": -23.86,
+    "speed_ratio": 0.208,
+    "entry_h": 350.0
+   },
+   "class": "meas",
+   "n": 5
+  },
+  {
+   "name": "m9d_r1a",
+   "value": {
+    "heading_change": -31.85,
+    "speed_ratio": 1.0005,
+    "entry_h": 296.9
+   },
+   "class": "meas",
+   "n": 5
+  },
+  {
+   "name": "m9d_r1b",
+   "value": {
+    "heading_change": -44.72,
+    "speed_ratio": 0.8535,
+    "entry_h": 296.3
+   },
+   "class": "meas",
+   "n": 5
+  },
+  {
+   "name": "m9d_r2",
+   "value": {
+    "heading_change": null,
+    "speed_ratio": null,
+    "entry_h": 296.8
+   },
+   "class": "meas",
+   "n": 5
+  },
+  {
+   "name": "m9d_ras_i_g10",
+   "value": {
+    "heading_change": -124.74,
+    "speed_ratio": 0.6336,
+    "entry_h": 199.5
+   },
+   "class": "meas",
+   "n": 5
+  },
+  {
+   "name": "m9d_ras_i_g4",
+   "value": {
+    "heading_change": -124.75,
+    "speed_ratio": 0.6343,
+    "entry_h": 199.5
+   },
+   "class": "meas",
+   "n": 5
+  },
+  {
+   "name": "m9d_ras_i_g6",
+   "value": {
+    "heading_change": -124.8,
+    "speed_ratio": 0.6339,
+    "entry_h": 199.5
+   },
+   "class": "meas",
+   "n": 5
+  },
+  {
+   "name": "m9d_ras_ii_g10",
+   "value": {
+    "heading_change": -161.95,
+    "speed_ratio": 0.9804,
+    "entry_h": 199.5
+   },
+   "class": "meas",
+   "n": 5
+  },
+  {
+   "name": "m9d_ras_ii_g4",
+   "value": {
+    "heading_change": -161.96,
+    "speed_ratio": 0.9804,
+    "entry_h": 199.5
+   },
+   "class": "meas",
+   "n": 5
+  },
+  {
+   "name": "m9d_ras_ii_g6",
+   "value": {
+    "heading_change": -161.96,
+    "speed_ratio": 0.9804,
+    "entry_h": 199.5
+   },
+   "class": "meas",
+   "n": 5
+  }
+ ]
+}

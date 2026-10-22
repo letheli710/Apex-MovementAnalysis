@@ -1,0 +1,485 @@
+{
+ "build": "R5Flowstate S21 client + S3 dedicated server + SDK, local offline, 120 fps, Gibraltar",
+ "params": [
+  {
+   "name": "find_cone_half_angle_bracket_deg",
+   "value": [
+    33.175,
+    35.942
+   ],
+   "unit": "deg (largest mounted, smallest refused rule angle)",
+   "class": "fit",
+   "n": 263,
+   "note": "standing ground presses; angle between the eye direction and the min-angle rope point within 130 u of origin+72 (M6-A3 rule); failures below the largest success: 0; M6-A3 bracket was 27.0-40.7"
+  },
+  {
+   "name": "find_collector_distance_bracket",
+   "value": [
+    115.6,
+    128.0
+   ],
+   "unit": "u, origin+72 -> nearest rope point (largest mounted, smallest refused)",
+   "class": "fit",
+   "n": 263,
+   "note": "consistent with the 120 u candidate collector (SDK comment); the 130 u point search radius of M6-A3 still fits every grip point"
+  },
+  {
+   "name": "grip_point",
+   "value": "= the M6-A3 min-angle rope point (within 130 u of origin+72) at any position along the rope, incl. mid-rope and at the anchors",
+   "unit": "-",
+   "class": "meas",
+   "n": 578,
+   "note": "see analysis_output \u00a73 grip - rule residual"
+  },
+  {
+   "name": "ride_direction_rule",
+   "value": "sign(eye . rope_dir): > 0 -> toward the rope end, <= 0 (incl. exactly 0) -> toward the start; dedi reverse flag = 1 for the start direction",
+   "unit": "-",
+   "class": "meas",
+   "n": 578,
+   "note": "dot>0: {'fwd': 240, 'rev': 5, 'None': 25, 'up': 10}; dot<0: {'fwd': 15, 'rev': 55, 'None': 10}; dot=0: {'rev': 39, 'fwd': 9, 'up': 30, 'None': 10} (ends excepted, see end_zone)"
+  },
+  {
+   "name": "end_zone_reverse",
+   "value": {
+    "grip_s_from_end": [
+     49.7,
+     69.7,
+     109.7
+    ],
+    "ride_dir": [
+     {
+      "fwd": 5
+     },
+     {
+      "fwd": 5
+     },
+     {
+      "rev": 5
+     }
+    ],
+    "ride_s": [
+     [
+      2.5,
+      2.5
+     ],
+     [
+      2.5,
+      2.5
+     ],
+     [
+      0.19,
+      0.19
+     ]
+    ]
+   },
+   "unit": "u / - / s",
+   "class": "meas",
+   "n": 15,
+   "note": "a grip within ~90 u (between 70 and 110) of the end the view points to rides away from it; just outside, the ride reaches the 90 u stop-short at once and auto-detaches at 600 (no end refusal in R5)"
+  },
+  {
+   "name": "ground_entry_speed_along_rope",
+   "value": {
+    "sprint_first_ride_v": {
+     "mean": 299.67,
+     "span": [
+      299.0,
+      302.33
+     ],
+     "n": 5
+    },
+    "slide_first_ride_v": {
+     "mean": 395.19,
+     "span": [
+      392.73,
+      400.11
+     ],
+     "n": 5
+    },
+    "slide_v_0.5s": {
+     "mean": 397.86,
+     "span": [
+      396.06,
+      400.13
+     ],
+     "n": 5
+    }
+   },
+   "unit": "u/s",
+   "class": "meas",
+   "n": 10,
+   "note": "running / sliding along the rope: the speed along the rope is kept as the mount-state floor (the M6-G grapple rule); 0.5 s later the normal +400 u/s^2 to 600"
+  },
+  {
+   "name": "mount_crouch_view0",
+   "value": "0/5",
+   "unit": "mounted",
+   "class": "meas",
+   "n": 5,
+   "note": "rule angle [26.52, 26.52]; crouched (and sliding) the reach with a level view is shorter [cause unknown]"
+  },
+  {
+   "name": "mount_crouch_view_up45",
+   "value": "5/5",
+   "unit": "mounted",
+   "class": "meas",
+   "n": 5,
+   "note": "rule angle [0.0, 0.0]; crouched (and sliding) the reach with a level view is shorter [cause unknown]"
+  },
+  {
+   "name": "mount_slide_view0",
+   "value": "0/5",
+   "unit": "mounted",
+   "class": "meas",
+   "n": 5,
+   "note": "rule angle [26.49, 26.53]; crouched (and sliding) the reach with a level view is shorter [cause unknown]"
+  },
+  {
+   "name": "mount_slide_view_up45",
+   "value": "5/5",
+   "unit": "mounted",
+   "class": "meas",
+   "n": 5,
+   "note": "rule angle [0.01, 0.06]; crouched (and sliding) the reach with a level view is shorter [cause unknown]"
+  },
+  {
+   "name": "air_mount",
+   "value": "65/65 accepted on client and dedi",
+   "unit": "-",
+   "class": "meas",
+   "n": 65,
+   "note": "standing jump under / 20-80 u beside the rope, view 0-80 deg off, use at the apex / rising / held; same Find rule; Mid Air Interact works in this build"
+  },
+  {
+   "name": "air_mount_height_gate",
+   "value": "none: mounted with origin+72 from 14.6 below to 26.8 above the rope",
+   "unit": "u",
+   "class": "meas",
+   "n": 30,
+   "note": "M6-A3 'rope must be above P' hypothesis rejected"
+  },
+  {
+   "name": "remount_lockout_after_detach_s",
+   "value": {
+    "jump_off": [
+     0.334,
+     0.334
+    ],
+    "crouch_off": [
+     0.359,
+     0.403
+    ]
+   },
+   "unit": "s (longest refused, shortest accepted)",
+   "class": "meas",
+   "n": 200,
+   "note": "refused before Zipline_Use on the client (no diag line on either side): a native S21-client gate, independent of height; wiki useZiplineCooldown 0.4"
+  },
+  {
+   "name": "regrab_ladder",
+   "value": "ground mount, then 2 air re-grabs (client cd 0.1 -> 0.2 -> 1.0 s); the 3rd air re-grab 0.42 s after detach is refused; landing resets (cd 0.1, SDK left=3)",
+   "unit": "-",
+   "class": "meas",
+   "n": 45,
+   "note": "the S21 client cooldown (1.0 s after the 3rd grant) and the SDK hop-regrab count (3, 'latest Apex') refuse together here; the 3 s refill was not tested"
+  },
+  {
+   "name": "super_jump_k12",
+   "value": "5/5 applied",
+   "unit": "-",
+   "class": "meas",
+   "n": 5,
+   "note": "jump-off on the command after the mount, second press K commands later"
+  },
+  {
+   "name": "super_jump_k18",
+   "value": "5/5 applied",
+   "unit": "-",
+   "class": "meas",
+   "n": 5,
+   "note": "jump-off on the command after the mount, second press K commands later"
+  },
+  {
+   "name": "super_jump_k24",
+   "value": "3/5 applied",
+   "unit": "-",
+   "class": "meas",
+   "n": 5,
+   "note": "jump-off on the command after the mount, second press K commands later"
+  },
+  {
+   "name": "super_jump_k30",
+   "value": "0/5 applied",
+   "unit": "-",
+   "class": "meas",
+   "n": 5,
+   "note": "jump-off on the command after the mount, second press K commands later"
+  },
+  {
+   "name": "lurch_after_jumpoff",
+   "value": {
+    "mean": 4.18,
+    "span": [
+     4.13,
+     4.21
+    ],
+    "n": 5
+   },
+   "unit": "|dv| u/s on the D press 3 cmds after the jump-off",
+   "class": "meas",
+   "n": 5,
+   "note": "AirAccelerate only (4.17 = 500 dt): a zipline jump-off does not open the lurch window"
+  },
+  {
+   "name": "carry_j1",
+   "value": [
+    [
+     -0.0,
+     285.36,
+     277.33
+    ],
+    [
+     -0.0,
+     285.14,
+     277.33
+    ],
+    [
+     -0.0,
+     285.15,
+     277.32
+    ],
+    [
+     -0.0,
+     285.11,
+     277.33
+    ],
+    [
+     -0.0,
+     285.15,
+     277.33
+    ]
+   ],
+   "unit": "u/s (3 frames after the exit)",
+   "class": "meas",
+   "n": 5,
+   "note": "run across the rope (+Y, ~285 u/s), use, jump on the next command (j1) / 2 commands later (j3)"
+  },
+  {
+   "name": "carry_j3",
+   "value": [
+    [
+     -8.33,
+     0.0,
+     271.07
+    ],
+    [
+     -8.33,
+     0.0,
+     271.07
+    ],
+    [
+     -8.33,
+     0.0,
+     271.08
+    ],
+    [
+     -8.34,
+     0.0,
+     271.07
+    ],
+    [
+     -8.34,
+     0.0,
+     271.07
+    ]
+   ],
+   "unit": "u/s (3 frames after the exit)",
+   "class": "meas",
+   "n": 5,
+   "note": "run across the rope (+Y, ~285 u/s), use, jump on the next command (j1) / 2 commands later (j3)"
+  },
+  {
+   "name": "direction_locked_during_ride",
+   "value": [
+    [
+     0.6,
+     343.4,
+     0.0
+    ],
+    [
+     0.9,
+     463.4,
+     -70.5
+    ],
+    [
+     1.2,
+     583.5,
+     -178.6
+    ],
+    [
+     1.5,
+     600.0,
+     -178.6
+    ]
+   ],
+   "unit": "[t, v along rope, yaw]",
+   "class": "meas",
+   "n": 5,
+   "note": "a 180 deg view turn after the mount state does not reverse the ride"
+  },
+  {
+   "name": "vertical_mid_up",
+   "value": {
+    "client": 5,
+    "dedi": 5,
+    "dir": {
+     "up": 5
+    },
+    "ride_s": [
+     1.43,
+     1.43
+    ]
+   },
+   "unit": "count / dir / s",
+   "class": "meas",
+   "n": 5,
+   "note": "vertical rope (CreateZipline, |dir.z|>0.7)"
+  },
+  {
+   "name": "vertical_mid_level",
+   "value": {
+    "client": 5,
+    "dedi": 5,
+    "dir": {
+     "up": 5
+    },
+    "ride_s": [
+     1.53,
+     1.53
+    ]
+   },
+   "unit": "count / dir / s",
+   "class": "meas",
+   "n": 5,
+   "note": "vertical rope (CreateZipline, |dir.z|>0.7)"
+  },
+  {
+   "name": "vertical_mid_down",
+   "value": {
+    "client": 5,
+    "dedi": 0,
+    "dir": {
+     "None": 5
+    },
+    "ride_s": [
+     0.04,
+     0.09
+    ]
+   },
+   "unit": "count / dir / s",
+   "class": "meas",
+   "n": 5,
+   "note": "vertical rope (CreateZipline, |dir.z|>0.7)"
+  },
+  {
+   "name": "vertical_floor_down",
+   "value": {
+    "client": 0,
+    "dedi": 0,
+    "dir": {},
+    "ride_s": null
+   },
+   "unit": "count / dir / s",
+   "class": "meas",
+   "n": 4,
+   "note": "vertical rope (CreateZipline, |dir.z|>0.7)"
+  },
+  {
+   "name": "vertical_turn_down_after_mount",
+   "value": {
+    "client": 5,
+    "dedi": 5,
+    "dir": {
+     "up": 5
+    },
+    "ride_s": [
+     1.43,
+     1.43
+    ]
+   },
+   "unit": "count / dir / s",
+   "class": "meas",
+   "n": 5,
+   "note": "vertical rope (CreateZipline, |dir.z|>0.7)"
+  },
+  {
+   "name": "vertical_air",
+   "value": {
+    "client": 5,
+    "dedi": 5,
+    "dir": {
+     "up": 5
+    },
+    "ride_s": [
+     1.83,
+     1.84
+    ]
+   },
+   "unit": "count / dir / s",
+   "class": "meas",
+   "n": 5,
+   "note": "vertical rope (CreateZipline, |dir.z|>0.7)"
+  },
+  {
+   "name": "vertical_ledge_air",
+   "value": {
+    "client": 5,
+    "dedi": 5,
+    "dir": {
+     "up": 5
+    },
+    "ride_s": [
+     1.44,
+     1.44
+    ]
+   },
+   "unit": "count / dir / s",
+   "class": "meas",
+   "n": 5,
+   "note": "vertical rope (CreateZipline, |dir.z|>0.7)"
+  },
+  {
+   "name": "height_r80",
+   "value": "0/5",
+   "unit": "mounted",
+   "class": "meas",
+   "n": 5,
+   "note": "rope height above the floor = 80; origin+72 -> rope [8.0, 8.0]"
+  },
+  {
+   "name": "height_r200",
+   "value": "0/5",
+   "unit": "mounted",
+   "class": "meas",
+   "n": 5,
+   "note": "rope height above the floor = 200; origin+72 -> rope [128.0, 128.0]"
+  },
+  {
+   "name": "height_r240",
+   "value": "0/5",
+   "unit": "mounted",
+   "class": "meas",
+   "n": 5,
+   "note": "rope height above the floor = 240; origin+72 -> rope [168.0, 168.0]"
+  },
+  {
+   "name": "height_r170",
+   "value": "5/5",
+   "unit": "mounted",
+   "class": "meas",
+   "n": 5,
+   "note": "rope height above the floor = 170; origin+72 -> rope [98.0, 98.0]"
+  }
+ ]
+}
