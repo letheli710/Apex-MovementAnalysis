@@ -1,0 +1,232 @@
+{
+ "build": "R5Flowstate S21 client + S3 dedicated server + SDK, local offline, 120 fps, Vantage (kit)",
+ "params": [
+  {
+   "name": "m9v_far",
+   "n": 5,
+   "launched": 5,
+   "class": "meas",
+   "t_launch_after_hold": 1.822,
+   "t_launch_after_release": 0.821,
+   "echo_dist": 2405.44,
+   "echo_z_above_floor": 246.0,
+   "echo_settle_t": 9.93,
+   "view_to_echo_deg": 0.0
+  },
+  {
+   "name": "m9v_far_ctrl",
+   "n": 4,
+   "launched": 4,
+   "class": "meas",
+   "t_launch_after_hold": 1.824,
+   "t_launch_after_release": 0.823,
+   "echo_dist": 1969.4,
+   "echo_z_above_floor": 60.0,
+   "echo_settle_t": 6.487,
+   "view_to_echo_deg": 0.0
+  },
+  {
+   "name": "m9v_hold_perched",
+   "n": 5,
+   "launched": 5,
+   "class": "meas",
+   "t_launch_after_hold": 1.662,
+   "t_launch_after_release": 0.662,
+   "echo_dist": 1185.2,
+   "echo_z_above_floor": 178.28,
+   "view_to_echo_deg": 0.16
+  },
+  {
+   "name": "m9v_jd_dj100",
+   "n": 5,
+   "launched": 5,
+   "class": "meas",
+   "jump_applied": 2,
+   "jump_dist_to_target": 119.0,
+   "jump_t_after_liftoff": 0.837
+  },
+  {
+   "name": "m9v_jd_dj100_lurch",
+   "n": 5,
+   "launched": 5,
+   "class": "meas",
+   "jump_applied": 1,
+   "jump_dist_to_target": 118.3,
+   "jump_t_after_liftoff": 0.835,
+   "lurch_dv": 0.836
+  },
+  {
+   "name": "m9v_jd_dj130",
+   "n": 5,
+   "launched": 5,
+   "class": "meas",
+   "jump_applied": 1,
+   "jump_dist_to_target": 25.8,
+   "jump_t_after_liftoff": 1.087
+  },
+  {
+   "name": "m9v_jd_dj145",
+   "n": 5,
+   "launched": 5,
+   "class": "meas",
+   "jump_applied": 4,
+   "jump_dist_to_target": 74.1,
+   "jump_t_after_liftoff": 1.217
+  },
+  {
+   "name": "m9v_jd_dj160",
+   "n": 5,
+   "launched": 5,
+   "class": "meas",
+   "jump_applied": 1,
+   "jump_dist_to_target": 101.6,
+   "jump_t_after_liftoff": 1.343
+  },
+  {
+   "name": "m9v_jd_dj70",
+   "n": 3,
+   "launched": 3,
+   "class": "meas",
+   "jump_applied": 0,
+   "jump_dist_to_target": 315.0,
+   "jump_t_after_liftoff": 0.587
+  },
+  {
+   "name": "m9v_jd_dj80",
+   "n": 5,
+   "launched": 5,
+   "class": "meas",
+   "jump_applied": 0,
+   "jump_dist_to_target": 249.2,
+   "jump_t_after_liftoff": 0.67
+  },
+  {
+   "name": "m9v_jd_wall",
+   "n": 5,
+   "launched": 5,
+   "class": "meas"
+  },
+  {
+   "name": "m9v_launch_h03",
+   "n": 5,
+   "launched": 3,
+   "class": "meas",
+   "t_launch_after_hold": 1.819,
+   "t_launch_after_release": 1.52,
+   "echo_dist": 1983.9,
+   "echo_z_above_floor": 246.2,
+   "echo_settle_t": 6.37,
+   "view_to_echo_deg": 0.0
+  },
+  {
+   "name": "m9v_launch_h06",
+   "n": 5,
+   "launched": 5,
+   "class": "meas",
+   "t_launch_after_hold": 1.822,
+   "t_launch_after_release": 1.222,
+   "echo_dist": 1983.9,
+   "echo_z_above_floor": 246.2,
+   "echo_settle_t": 6.42,
+   "view_to_echo_deg": 0.0
+  },
+  {
+   "name": "m9v_launch_h10",
+   "n": 4,
+   "launched": 4,
+   "class": "meas",
+   "t_launch_after_hold": 1.825,
+   "t_launch_after_release": 0.824,
+   "echo_dist": 1983.9,
+   "echo_z_above_floor": 246.2,
+   "echo_settle_t": 6.4,
+   "view_to_echo_deg": 0.0
+  },
+  {
+   "name": "m9v_launch_h20",
+   "n": 5,
+   "launched": 5,
+   "class": "meas",
+   "t_launch_after_hold": 1.808,
+   "t_launch_after_release": -0.192,
+   "echo_dist": 1983.9,
+   "echo_z_above_floor": 246.2,
+   "echo_settle_t": 6.37,
+   "view_to_echo_deg": 0.0
+  },
+  {
+   "name": "m9v_los_block",
+   "n": 5,
+   "launched": 0,
+   "class": "meas",
+   "echo_dist": 1980.18,
+   "echo_z_above_floor": 60.0,
+   "echo_settle_t": 6.47,
+   "view_to_echo_deg": 6.0
+  },
+  {
+   "name": "m9v_los_clear",
+   "n": 5,
+   "launched": 5,
+   "class": "meas",
+   "t_launch_after_hold": 1.823,
+   "t_launch_after_release": 0.822,
+   "echo_dist": 1969.4,
+   "echo_z_above_floor": 60.0,
+   "echo_settle_t": 6.48,
+   "view_to_echo_deg": 0.0
+  },
+  {
+   "name": "m9v_off50",
+   "n": 4,
+   "launched": 4,
+   "class": "meas",
+   "t_launch_after_hold": 1.826,
+   "t_launch_after_release": 0.824,
+   "echo_dist": 1983.9,
+   "echo_z_above_floor": 246.2,
+   "echo_settle_t": 6.475,
+   "view_to_echo_deg": -49.625
+  },
+  {
+   "name": "m9v_off70",
+   "n": 5,
+   "launched": 0,
+   "class": "meas",
+   "echo_dist": 1983.9,
+   "echo_z_above_floor": 246.2,
+   "echo_settle_t": 6.48,
+   "view_to_echo_deg": -69.6
+  },
+  {
+   "name": "m9v_send_p0",
+   "n": 5,
+   "launched": 0,
+   "class": "meas",
+   "echo_dist": 1983.9,
+   "echo_z_above_floor": 246.2,
+   "echo_settle_t": 6.45,
+   "view_to_echo_deg": 0.0
+  },
+  {
+   "name": "m9v_send_pd10",
+   "n": 5,
+   "launched": 0,
+   "class": "meas",
+   "echo_dist": 408.6,
+   "echo_z_above_floor": 245.7,
+   "echo_settle_t": 5.07,
+   "view_to_echo_deg": 0.5
+  },
+  {
+   "name": "m9v_send_pu20",
+   "n": 5,
+   "launched": 0,
+   "class": "meas",
+   "echo_dist": 1988.4,
+   "echo_z_above_floor": 732.5,
+   "echo_settle_t": 6.37,
+   "view_to_echo_deg": 0.0
+  }
+ ]
+}
