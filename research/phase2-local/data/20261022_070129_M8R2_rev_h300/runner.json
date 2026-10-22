@@ -1,0 +1,222 @@
+{
+ "schema": "hsd-runner/2",
+ "label": "M8R2_rev_h300",
+ "created": "20261022_070006",
+ "schedules": {
+  "m8r2_climb": {
+   "steps": [
+    "wait 60",
+    "down speed",
+    "down forward",
+    "wait 144",
+    "tap jump",
+    "wait 720",
+    "up forward",
+    "up speed",
+    "wait 240"
+   ],
+   "frames": 1165
+  }
+ },
+ "origin": [
+  -14750.0,
+  6500.0,
+  294.92
+ ],
+ "yaw": 0.0,
+ "client_fps": 120.0,
+ "census": false,
+ "legend": "revenant",
+ "legend_reply": "{\"changed\":[\"unnamed\"],\"legend\":\"character_revenant\",\"ok\":true}",
+ "trials": [
+  {
+   "trial": 900,
+   "run": 90,
+   "batch": 900,
+   "schedule": "m8r2_climb",
+   "yaw": 0.0,
+   "origin": [
+    -14100.0,
+    6500.0,
+    294.92
+   ],
+   "schedule_frames": 1165,
+   "reset": "[HSD-RESET] ver=1 batch=900 run=90 ent=1 o=-14100,6500,294.92 vel=0,0,0 yaw=0 ground=1 slide=0 weapon=mp_weapon_melee_survival t=48.35",
+   "scheduled": "scheduled trial=900 fc=3374",
+   "sched_lines": [
+    "[HSD-SCHED] ver=1 trial=900 run=90 edge=start frame=0 fc=3405 pt=47.7043 t=48.5911 o=-14100,6500,294.92 yaw=0 settle_frames=31",
+    "[HSD-SCHED] ver=1 trial=900 run=90 edge=down key=speed frame=60 fc=3465 pt=48.2047 t=49.0983",
+    "[HSD-SCHED] ver=1 trial=900 run=90 edge=down key=forward frame=60 fc=3465 pt=48.2049 t=49.0983",
+    "[HSD-SCHED] ver=1 trial=900 run=90 edge=down key=jump frame=204 fc=3609 pt=49.4058 t=50.2987",
+    "[HSD-SCHED] ver=1 trial=900 run=90 edge=up key=jump frame=205 fc=3610 pt=49.4145 t=50.307",
+    "[HSD-SCHED] ver=1 trial=900 run=90 edge=up key=forward frame=925 fc=4330 pt=55.4211 t=56.3154",
+    "[HSD-SCHED] ver=1 trial=900 run=90 edge=up key=speed frame=925 fc=4330 pt=55.4213 t=56.3154",
+    "[HSD-SCHED] ver=1 trial=900 run=90 edge=end frame=1165 fc=4570 pt=57.4221 t=58.3153 o=-12314.7,6499.52,-206.936"
+   ],
+   "log_gap": false,
+   "measured_fps": 119.88,
+   "ok": true,
+   "why": "",
+   "warmup": true
+  },
+  {
+   "trial": 9631,
+   "run": 9631,
+   "batch": 9631,
+   "schedule": "m8r2_climb",
+   "yaw": 0.0,
+   "origin": [
+    -14100.0,
+    6500.0,
+    294.92
+   ],
+   "schedule_frames": 1165,
+   "reset": "[HSD-RESET] ver=1 batch=9631 run=9631 ent=1 o=-14100,6500,294.92 vel=0,0,0 yaw=0 ground=1 slide=0 weapon=mp_weapon_melee_survival t=59.55",
+   "scheduled": "scheduled trial=9631 fc=4716",
+   "sched_lines": [
+    "[HSD-SCHED] ver=1 trial=9631 run=9631 edge=start frame=0 fc=4746 pt=58.891 t=59.782 o=-14100,6500,294.92 yaw=0 settle_frames=30",
+    "[HSD-SCHED] ver=1 trial=9631 run=9631 edge=down key=speed frame=60 fc=4806 pt=59.3914 t=60.282",
+    "[HSD-SCHED] ver=1 trial=9631 run=9631 edge=down key=forward frame=60 fc=4806 pt=59.3915 t=60.282",
+    "[HSD-SCHED] ver=1 trial=9631 run=9631 edge=down key=jump frame=204 fc=4950 pt=60.5926 t=61.482",
+    "[HSD-SCHED] ver=1 trial=9631 run=9631 edge=up key=jump frame=205 fc=4951 pt=60.6006 t=61.4903",
+    "[HSD-SCHED] ver=1 trial=9631 run=9631 edge=up key=forward frame=925 fc=5671 pt=66.6684 t=67.557",
+    "[HSD-SCHED] ver=1 trial=9631 run=9631 edge=up key=speed frame=925 fc=5671 pt=66.6685 t=67.557",
+    "[HSD-SCHED] ver=1 trial=9631 run=9631 edge=end frame=1165 fc=5911 pt=68.6693 t=69.557 o=-12312.3,6499.53,-209.08"
+   ],
+   "log_gap": false,
+   "measured_fps": 119.14,
+   "ok": true,
+   "why": "",
+   "warmup": false
+  },
+  {
+   "trial": 9632,
+   "run": 9632,
+   "batch": 9632,
+   "schedule": "m8r2_climb",
+   "yaw": 0.0,
+   "origin": [
+    -14100.0,
+    6500.0,
+    294.92
+   ],
+   "schedule_frames": 1165,
+   "reset": "[HSD-RESET] ver=1 batch=9632 run=9632 ent=1 o=-14100,6500,294.92 vel=0,0,0 yaw=0 ground=1 slide=0 weapon=mp_weapon_melee_survival t=70.75",
+   "scheduled": "scheduled trial=9632 fc=6051",
+   "sched_lines": [
+    "[HSD-SCHED] ver=1 trial=9632 run=9632 edge=start frame=0 fc=6082 pt=70.0945 t=70.982 o=-14100,6500,294.92 yaw=0 settle_frames=31",
+    "[HSD-SCHED] ver=1 trial=9632 run=9632 edge=down key=speed frame=60 fc=6142 pt=70.5955 t=71.482",
+    "[HSD-SCHED] ver=1 trial=9632 run=9632 edge=down key=forward frame=60 fc=6142 pt=70.5957 t=71.482",
+    "[HSD-SCHED] ver=1 trial=9632 run=9632 edge=down key=jump frame=204 fc=6286 pt=71.7963 t=72.6897",
+    "[HSD-SCHED] ver=1 trial=9632 run=9632 edge=up key=jump frame=205 fc=6287 pt=71.8048 t=72.698",
+    "[HSD-SCHED] ver=1 trial=9632 run=9632 edge=up key=forward frame=925 fc=7007 pt=77.8074 t=78.6987",
+    "[HSD-SCHED] ver=1 trial=9632 run=9632 edge=up key=speed frame=925 fc=7007 pt=77.8084 t=78.6987",
+    "[HSD-SCHED] ver=1 trial=9632 run=9632 edge=end frame=1165 fc=7247 pt=79.8084 t=80.6987 o=-12314.7,6499.53,-206.926"
+   ],
+   "log_gap": false,
+   "measured_fps": 119.93,
+   "ok": true,
+   "why": "",
+   "warmup": false
+  },
+  {
+   "trial": 9633,
+   "run": 9633,
+   "batch": 9633,
+   "schedule": "m8r2_climb",
+   "yaw": 0.0,
+   "origin": [
+    -14100.0,
+    6500.0,
+    294.92
+   ],
+   "schedule_frames": 1165,
+   "reset": "[HSD-RESET] ver=1 batch=9633 run=9633 ent=1 o=-14100,6500,294.92 vel=0,0,0 yaw=0 ground=1 slide=0 weapon=mp_weapon_melee_survival t=81.9",
+   "scheduled": "scheduled trial=9633 fc=7389",
+   "sched_lines": [
+    "[HSD-SCHED] ver=1 trial=9633 run=9633 edge=start frame=0 fc=7419 pt=81.2425 t=82.132 o=-14100,6500,294.92 yaw=0 settle_frames=30",
+    "[HSD-SCHED] ver=1 trial=9633 run=9633 edge=down key=speed frame=60 fc=7479 pt=81.7432 t=82.632",
+    "[HSD-SCHED] ver=1 trial=9633 run=9633 edge=down key=forward frame=60 fc=7479 pt=81.7433 t=82.632",
+    "[HSD-SCHED] ver=1 trial=9633 run=9633 edge=down key=jump frame=204 fc=7623 pt=82.9435 t=83.832",
+    "[HSD-SCHED] ver=1 trial=9633 run=9633 edge=up key=jump frame=205 fc=7624 pt=82.9523 t=83.8403",
+    "[HSD-SCHED] ver=1 trial=9633 run=9633 edge=up key=forward frame=925 fc=8344 pt=88.9546 t=89.8403",
+    "[HSD-SCHED] ver=1 trial=9633 run=9633 edge=up key=speed frame=925 fc=8344 pt=88.9557 t=89.8403",
+    "[HSD-SCHED] ver=1 trial=9633 run=9633 edge=end frame=1165 fc=8584 pt=90.9557 t=91.8403 o=-12310,6499.52,-211.127"
+   ],
+   "log_gap": false,
+   "measured_fps": 119.94,
+   "ok": true,
+   "why": "",
+   "warmup": false
+  },
+  {
+   "trial": 9634,
+   "run": 9634,
+   "batch": 9634,
+   "schedule": "m8r2_climb",
+   "yaw": 0.0,
+   "origin": [
+    -14100.0,
+    6500.0,
+    294.92
+   ],
+   "schedule_frames": 1165,
+   "reset": "[HSD-RESET] ver=1 batch=9634 run=9634 ent=1 o=-14100,6500,294.92 vel=0,0,0 yaw=0 ground=1 slide=0 weapon=mp_weapon_melee_survival t=93.05",
+   "scheduled": "scheduled trial=9634 fc=8726",
+   "sched_lines": [
+    "[HSD-SCHED] ver=1 trial=9634 run=9634 edge=start frame=0 fc=8757 pt=92.3971 t=93.282 o=-14100,6500,294.92 yaw=0 settle_frames=31",
+    "[HSD-SCHED] ver=1 trial=9634 run=9634 edge=down key=speed frame=60 fc=8817 pt=92.8979 t=93.782",
+    "[HSD-SCHED] ver=1 trial=9634 run=9634 edge=down key=forward frame=60 fc=8817 pt=92.898 t=93.782",
+    "[HSD-SCHED] ver=1 trial=9634 run=9634 edge=down key=jump frame=204 fc=8961 pt=94.0983 t=94.9824",
+    "[HSD-SCHED] ver=1 trial=9634 run=9634 edge=up key=jump frame=205 fc=8962 pt=94.1068 t=94.9911",
+    "[HSD-SCHED] ver=1 trial=9634 run=9634 edge=up key=forward frame=925 fc=9682 pt=100.109 t=100.999",
+    "[HSD-SCHED] ver=1 trial=9634 run=9634 edge=up key=speed frame=925 fc=9682 pt=100.11 t=100.999",
+    "[HSD-SCHED] ver=1 trial=9634 run=9634 edge=end frame=1165 fc=9922 pt=102.112 t=102.999 o=-12309.9,6499.53,-211.29"
+   ],
+   "log_gap": false,
+   "measured_fps": 119.92,
+   "ok": true,
+   "why": "",
+   "warmup": false
+  },
+  {
+   "trial": 9635,
+   "run": 9635,
+   "batch": 9635,
+   "schedule": "m8r2_climb",
+   "yaw": 0.0,
+   "origin": [
+    -14100.0,
+    6500.0,
+    294.92
+   ],
+   "schedule_frames": 1165,
+   "reset": "[HSD-RESET] ver=1 batch=9635 run=9635 ent=1 o=-14100,6500,294.92 vel=0,0,0 yaw=0 ground=1 slide=0 weapon=mp_weapon_melee_survival t=104.2",
+   "scheduled": "scheduled trial=9635 fc=10064",
+   "sched_lines": [
+    "[HSD-SCHED] ver=1 trial=9635 run=9635 edge=start frame=0 fc=10094 pt=103.546 t=104.432 o=-14100,6500,294.92 yaw=0 settle_frames=30",
+    "[HSD-SCHED] ver=1 trial=9635 run=9635 edge=down key=speed frame=60 fc=10154 pt=104.047 t=104.932",
+    "[HSD-SCHED] ver=1 trial=9635 run=9635 edge=down key=forward frame=60 fc=10154 pt=104.047 t=104.932",
+    "[HSD-SCHED] ver=1 trial=9635 run=9635 edge=down key=jump frame=204 fc=10298 pt=105.247 t=106.132",
+    "[HSD-SCHED] ver=1 trial=9635 run=9635 edge=up key=jump frame=205 fc=10299 pt=105.255 t=106.14",
+    "[HSD-SCHED] ver=1 trial=9635 run=9635 edge=up key=forward frame=925 fc=11019 pt=111.259 t=112.14",
+    "[HSD-SCHED] ver=1 trial=9635 run=9635 edge=up key=speed frame=925 fc=11019 pt=111.259 t=112.14",
+    "[HSD-SCHED] ver=1 trial=9635 run=9635 edge=end frame=1165 fc=11259 pt=113.26 t=114.143 o=-12314.7,6499.53,-206.891"
+   ],
+   "log_gap": false,
+   "measured_fps": 119.93,
+   "ok": true,
+   "why": "",
+   "warmup": false
+  }
+ ],
+ "view_cvars": {
+  "cl_yawspeed": "210",
+  "cl_pitchspeed": "225"
+ },
+ "geometry_wall_z": 362.92,
+ "geometry": {
+  "wall": "precached=true prop=8122 mins=<-124.095474, -221.090134, -250.490646> maxs=<124.095856, 218.990387, 247.97847>"
+ },
+ "both_cvars": {}
+}

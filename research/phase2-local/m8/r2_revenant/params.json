@@ -1,0 +1,521 @@
+[
+ {
+  "name": "rev_climb_vz_peak",
+  "value": 225.9684,
+  "sd": 0.1696,
+  "n": 25,
+  "unit": "u/s",
+  "class": "meas",
+  "note": "sprint-jump contact ~50 u above the floor"
+ },
+ {
+  "name": "rev_speed_line_Z0",
+  "value": 2547.7776,
+  "sd": 6.8408,
+  "n": 25,
+  "unit": "u above floor",
+  "class": "fit",
+  "note": "vz = k (Z0 - z) on the clean face z 100..400 (before any stacked-rock junction); Gibraltar control 180.4"
+ },
+ {
+  "name": "rev_speed_line_k",
+  "value": 0.0921,
+  "sd": 0.0003,
+  "n": 25,
+  "unit": "1/s",
+  "class": "fit",
+  "note": "Gibraltar control 1.7454 (same wall, same approach)"
+ },
+ {
+  "name": "rev_climb_final_jumpup",
+  "value": [
+   {
+    "z": 1111.95,
+    "t_after_seg_start": 7.2122,
+    "seg_z0": 48.54,
+    "dvz": 160.02,
+    "vz_before": 115.07
+   },
+   {
+    "z": 1246.65,
+    "t_after_seg_start": 7.4413,
+    "seg_z0": 50.56,
+    "dvz": 144.52,
+    "vz_before": 112.62
+   },
+   {
+    "z": 1246.54,
+    "t_after_seg_start": 7.3833,
+    "seg_z0": 51.21,
+    "dvz": 145.96,
+    "vz_before": 114.38
+   }
+  ],
+  "n": 3,
+  "unit": "u above floor / s / u / u/s",
+  "class": "meas",
+  "note": "climb ended by a final jump-up (only seen with W held 12 s); end rule not identified [unknown]"
+ },
+ {
+  "name": "rev_climb_no_end_after_impact",
+  "value": [
+   {
+    "z_end": 1145.04,
+    "dur": 11.7501,
+    "impacts": [
+     [
+      898.4,
+      75.0
+     ]
+    ]
+   },
+   {
+    "z_end": 1149.19,
+    "dur": 11.751,
+    "impacts": [
+     [
+      897.8,
+      75.0
+     ]
+    ]
+   }
+  ],
+  "n": 2,
+  "unit": "u / s",
+  "class": "meas",
+  "note": "after a junction impact the climb crept at ~10.8 u/s until the W release (no end) [unknown]"
+ },
+ {
+  "name": "outcome_gibraltar_m8r2_climb_H800.0",
+  "value": {
+   "detach": 5
+  },
+  "n": 5,
+  "unit": "count",
+  "class": "meas",
+  "note": "mantle = ledge reached and mantled"
+ },
+ {
+  "name": "gibraltar_m8r2_climb_H800.0_duration",
+  "value": 0.8399,
+  "sd": 0.0037,
+  "n": 5,
+  "unit": "s",
+  "class": "meas",
+  "note": "wr flag span"
+ },
+ {
+  "name": "outcome_gibraltar_m8r2_spw_jump_H480.0",
+  "value": {
+   "detach": 5
+  },
+  "n": 5,
+  "unit": "count",
+  "class": "meas",
+  "note": "mantle = ledge reached and mantled"
+ },
+ {
+  "name": "gibraltar_m8r2_spw_jump_H480.0_duration",
+  "value": 0.4407,
+  "sd": 0.0045,
+  "n": 5,
+  "unit": "s",
+  "class": "meas",
+  "note": "wr flag span"
+ },
+ {
+  "name": "outcome_revenant_m8r2_climb_long_H1850.0",
+  "value": {
+   "jumpup": 3,
+   "w_release": 2
+  },
+  "n": 5,
+  "unit": "count",
+  "class": "meas",
+  "note": "mantle = ledge reached and mantled"
+ },
+ {
+  "name": "revenant_m8r2_climb_long_H1850.0_duration",
+  "value": 8.0773,
+  "sd": 3.9966,
+  "n": 5,
+  "unit": "s",
+  "class": "meas",
+  "note": "wr flag span"
+ },
+ {
+  "name": "outcome_revenant_m8r2_climb_rel_H1400.0",
+  "value": {
+   "w_release": 3
+  },
+  "n": 3,
+  "unit": "count",
+  "class": "meas",
+  "note": "mantle = ledge reached and mantled"
+ },
+ {
+  "name": "revenant_m8r2_climb_rel_H1400.0_duration",
+  "value": 1.9137,
+  "sd": 0.0049,
+  "n": 3,
+  "unit": "s",
+  "class": "meas",
+  "note": "wr flag span"
+ },
+ {
+  "name": "outcome_revenant_m8r2_climb_H1400.0",
+  "value": {
+   "w_release": 4,
+   "detach": 1
+  },
+  "n": 5,
+  "unit": "count",
+  "class": "meas",
+  "note": "mantle = ledge reached and mantled"
+ },
+ {
+  "name": "revenant_m8r2_climb_H1400.0_duration",
+  "value": 5.693,
+  "sd": 0.3734,
+  "n": 5,
+  "unit": "s",
+  "class": "meas",
+  "note": "wr flag span"
+ },
+ {
+  "name": "outcome_revenant_m8r2_climb_H300.0",
+  "value": {
+   "mantle": 5
+  },
+  "n": 5,
+  "unit": "count",
+  "class": "meas",
+  "note": "mantle = ledge reached and mantled"
+ },
+ {
+  "name": "revenant_m8r2_climb_H300.0_duration",
+  "value": 0.9024,
+  "sd": 0.0048,
+  "n": 5,
+  "unit": "s",
+  "class": "meas",
+  "note": "wr flag span"
+ },
+ {
+  "name": "outcome_revenant_m8r2_climb_H500.0",
+  "value": {
+   "mantle": 5
+  },
+  "n": 5,
+  "unit": "count",
+  "class": "meas",
+  "note": "mantle = ledge reached and mantled"
+ },
+ {
+  "name": "revenant_m8r2_climb_H500.0_duration",
+  "value": 1.9127,
+  "sd": 0.0043,
+  "n": 5,
+  "unit": "s",
+  "class": "meas",
+  "note": "wr flag span"
+ },
+ {
+  "name": "outcome_revenant_m8r2_climb_H800.0",
+  "value": {
+   "mantle": 3,
+   "detach": 2
+  },
+  "n": 5,
+  "unit": "count",
+  "class": "meas",
+  "note": "mantle = ledge reached and mantled"
+ },
+ {
+  "name": "revenant_m8r2_climb_H800.0_duration",
+  "value": 2.7595,
+  "sd": 1.2005,
+  "n": 5,
+  "unit": "s",
+  "class": "meas",
+  "note": "wr flag span"
+ },
+ {
+  "name": "outcome_revenant_m8r2_jumpin_ctrl_H1400.0",
+  "value": {
+   "w_release": 5
+  },
+  "n": 5,
+  "unit": "count",
+  "class": "meas",
+  "note": "mantle = ledge reached and mantled"
+ },
+ {
+  "name": "revenant_m8r2_jumpin_ctrl_climb_after_contact",
+  "value": -0.0,
+  "sd": 0.0001,
+  "n": 5,
+  "unit": "s",
+  "class": "meas",
+  "note": ""
+ },
+ {
+  "name": "revenant_m8r2_jumpin_ctrl_H1400.0_duration",
+  "value": 4.637,
+  "sd": 0.016,
+  "n": 5,
+  "unit": "s",
+  "class": "meas",
+  "note": "wr flag span"
+ },
+ {
+  "name": "outcome_revenant_m8r2_pounce_d150_H1400.0",
+  "value": {
+   "w_release": 4
+  },
+  "n": 4,
+  "unit": "count",
+  "class": "meas",
+  "note": "mantle = ledge reached and mantled"
+ },
+ {
+  "name": "revenant_m8r2_pounce_d150_climb_after_release",
+  "value": 0.8789,
+  "sd": 0.025,
+  "n": 4,
+  "unit": "s",
+  "class": "meas",
+  "note": ""
+ },
+ {
+  "name": "revenant_m8r2_pounce_d150_contact_after_release",
+  "value": 0.3333,
+  "sd": 0.0001,
+  "n": 4,
+  "unit": "s",
+  "class": "meas",
+  "note": ""
+ },
+ {
+  "name": "revenant_m8r2_pounce_d150_climb_after_contact",
+  "value": 0.5455,
+  "sd": 0.025,
+  "n": 4,
+  "unit": "s",
+  "class": "meas",
+  "note": ""
+ },
+ {
+  "name": "revenant_m8r2_pounce_d150_H1400.0_duration",
+  "value": 4.2897,
+  "sd": 0.0295,
+  "n": 4,
+  "unit": "s",
+  "class": "meas",
+  "note": "wr flag span"
+ },
+ {
+  "name": "outcome_revenant_m8r2_pounce_d150_H800.0",
+  "value": {
+   "w_release": 1,
+   "top": 1,
+   "mantle": 1
+  },
+  "n": 3,
+  "unit": "count",
+  "class": "meas",
+  "note": "mantle = ledge reached and mantled"
+ },
+ {
+  "name": "revenant_m8r2_pounce_d150_climb_after_release",
+  "value": 0.855,
+  "sd": 0.0308,
+  "n": 3,
+  "unit": "s",
+  "class": "meas",
+  "note": ""
+ },
+ {
+  "name": "revenant_m8r2_pounce_d150_contact_after_release",
+  "value": 0.3429,
+  "sd": 0.0067,
+  "n": 3,
+  "unit": "s",
+  "class": "meas",
+  "note": ""
+ },
+ {
+  "name": "revenant_m8r2_pounce_d150_climb_after_contact",
+  "value": 0.5122,
+  "sd": 0.0244,
+  "n": 3,
+  "unit": "s",
+  "class": "meas",
+  "note": ""
+ },
+ {
+  "name": "revenant_m8r2_pounce_d150_H800.0_duration",
+  "value": 1.5089,
+  "sd": 1.314,
+  "n": 3,
+  "unit": "s",
+  "class": "meas",
+  "note": "wr flag span"
+ },
+ {
+  "name": "outcome_revenant_m8r2_pounce_d500_H1400.0",
+  "value": {
+   "w_release": 5
+  },
+  "n": 5,
+  "unit": "count",
+  "class": "meas",
+  "note": "mantle = ledge reached and mantled"
+ },
+ {
+  "name": "revenant_m8r2_pounce_d500_climb_after_release",
+  "value": 1.1914,
+  "sd": 0.0,
+  "n": 5,
+  "unit": "s",
+  "class": "meas",
+  "note": ""
+ },
+ {
+  "name": "revenant_m8r2_pounce_d500_contact_after_release",
+  "value": 1.1084,
+  "sd": 0.0001,
+  "n": 5,
+  "unit": "s",
+  "class": "meas",
+  "note": ""
+ },
+ {
+  "name": "revenant_m8r2_pounce_d500_climb_after_contact",
+  "value": 0.083,
+  "sd": 0.0001,
+  "n": 5,
+  "unit": "s",
+  "class": "meas",
+  "note": ""
+ },
+ {
+  "name": "revenant_m8r2_pounce_d500_H1400.0_duration",
+  "value": 3.9976,
+  "sd": 0.0088,
+  "n": 5,
+  "unit": "s",
+  "class": "meas",
+  "note": "wr flag span"
+ },
+ {
+  "name": "outcome_sparrow_m8r2_climb_H480.0",
+  "value": {
+   "detach": 3
+  },
+  "n": 3,
+  "unit": "count",
+  "class": "meas",
+  "note": "mantle = ledge reached and mantled"
+ },
+ {
+  "name": "sparrow_m8r2_climb_H480.0_duration",
+  "value": 0.8653,
+  "sd": 0.0012,
+  "n": 3,
+  "unit": "s",
+  "class": "meas",
+  "note": "wr flag span"
+ },
+ {
+  "name": "outcome_sparrow_m8r2_spw_jump_H480.0",
+  "value": {
+   "detach": 5
+  },
+  "n": 5,
+  "unit": "count",
+  "class": "meas",
+  "note": "mantle = ledge reached and mantled"
+ },
+ {
+  "name": "sparrow_m8r2_spw_jump_H480.0_duration",
+  "value": 0.4425,
+  "sd": 0.0018,
+  "n": 5,
+  "unit": "s",
+  "class": "meas",
+  "note": "wr flag span"
+ },
+ {
+  "name": "walljump_gibraltar_rise",
+  "value": 9.802,
+  "sd": 0.196,
+  "n": 5,
+  "unit": "u",
+  "class": "meas",
+  "note": "jump press 0.42 s into the climb, W held; apex - z at the press. SDK wall_launch_math.h max height 300"
+ },
+ {
+  "name": "walljump_gibraltar_post_vz",
+  "value": 118.15,
+  "sd": 1.219,
+  "n": 5,
+  "unit": "u/s",
+  "class": "meas",
+  "note": "post vz + g dt / 2"
+ },
+ {
+  "name": "walljump_gibraltar_outward",
+  "value": 103.102,
+  "sd": 0.0192,
+  "n": 5,
+  "unit": "u/s",
+  "class": "meas",
+  "note": "SDK outward 150..450"
+ },
+ {
+  "name": "walljump_gibraltar_vx_1s",
+  "value": 0.7,
+  "sd": 0.0,
+  "n": 5,
+  "unit": "u/s",
+  "class": "meas",
+  "note": "horizontal velocity 1 s after the press (+ = back toward the face, W held)"
+ },
+ {
+  "name": "walljump_sparrow_rise",
+  "value": 302.808,
+  "sd": 0.0179,
+  "n": 5,
+  "unit": "u",
+  "class": "meas",
+  "note": "jump press 0.42 s into the climb, W held; apex - z at the press. SDK wall_launch_math.h max height 300"
+ },
+ {
+  "name": "walljump_sparrow_post_vz",
+  "value": 670.82,
+  "sd": 0.0,
+  "n": 5,
+  "unit": "u/s",
+  "class": "meas",
+  "note": "post vz + g dt / 2"
+ },
+ {
+  "name": "walljump_sparrow_outward",
+  "value": 442.8,
+  "sd": 0.0447,
+  "n": 5,
+  "unit": "u/s",
+  "class": "meas",
+  "note": "SDK outward 150..450"
+ },
+ {
+  "name": "walljump_sparrow_vx_1s",
+  "value": 357.686,
+  "sd": 0.9813,
+  "n": 5,
+  "unit": "u/s",
+  "class": "meas",
+  "note": "horizontal velocity 1 s after the press (+ = back toward the face, W held)"
+ }
+]

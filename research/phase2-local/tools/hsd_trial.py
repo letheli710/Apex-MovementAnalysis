@@ -514,13 +514,70 @@ def _m8_sg(name):
     tail = "wait 1.5s; up forward; up speed; " + ("up moveright; " if m.group(1) == "wd" else "") + "wait 1.0s"
     return _M8SG_APP[m.group(1)] + ("waitf %d; " % k if k else "") + _M8SG_VAR[m.group(2)] + tail
 
+# ---- M8 track R2 (time-boxed feasibility probes, m8/EXPANSION-ASSESSMENT.md). Revenant long climb on the lane-A rock
+# (geometry h<H> up to ~480, or s<H> = two stacked rocks up to ~950): sprint jump into the face as a2_climb, W held 6 s.
+# Pounce into the face: start d u before the face (x -13728 - d at the player origin), view pitch -15 (no speed loss,
+# launch 50 deg up), tap tactical, W pressed after the release (0.9 s pull-out), so the face is reached 0.33 s (d150)
+# or 1.1 s (d500) after the release, inside / outside the 0.75 s wall-climb disable.
+SCHEDULES.update({
+    "m8r2_climb": "wait 72; down speed; down forward; wait 1.2s; tap jump; wait 6.0s; up forward; up speed; wait 2.0s",
+    # round 2: every s1400 climb ended 0.175 s after the W release, still rising at ~135 u/s; hold W 12 s on the s1850 stack
+    "m8r2_climb_long": "wait 72; down speed; down forward; wait 1.2s; tap jump; wait 12.0s; up forward; up speed; wait 3.0s",
+    # optional probe 3 (Sparrow wall launch, SDK wall_launch.cpp): a jump press while climbing with W held (input into the wall)
+    "m8r2_spw_jump": "wait 72; down speed; down forward; wait 1.2s; tap jump; wait 0.7s; tap jump; wait 2.5s; up forward; up speed; wait 1.5s",
+    "m8r2_climb_rel": "wait 72; down speed; down forward; wait 1.2s; tap jump; wait 2.0s; up forward; up speed; wait 4.0s",
+    "m8r2_pounce_d150": "wait 72; tap offhand1; wait 0.95s; down forward; wait 5.0s; up forward; wait 1.5s",
+    "m8r2_pounce_d500": "wait 72; tap offhand1; wait 0.95s; down forward; wait 5.0s; up forward; wait 1.5s",
+    "m8r2_jumpin_ctrl": "wait 72; down forward; wait 0.3s; tap jump; wait 5.0s; up forward; wait 1.5s",
+})
+# Vantage jet drive, shortcut without the Echo AI: the reset spawns a script mover D u ahead on lane C (120 u above the
+# floor; drive target = mover - 69 u as the source offset), and a server thread calls BeginJetDrive(787, 1575, mover, mover,
+# <0,0,-69>, round(2*dist/787, 1)) + EnableJetDriveDoubleJump(<512,0,394>, 0.5) 1.5 s after the reset
+# (mp_ability_companion_launch.nut:79-88,794-811). The schedule waits for the lift-off (waitair). _dj<K>: jump press K
+# frames after the lift-off; _duck: crouch 0.4 s after it; _mvy / _mvx: the mover moves 300 u to +Y in 1.0 s / 600 u to +X
+# in 1.5 s from the drive start. m8r2_echo_tac: the real tactical (legend vantage --kit), two presses.
+_R2JD = "wait 72; waitair; "
+SCHEDULES.update({"m8r2_jd_d%d" % d: _R2JD + "wait 4.0s" for d in (400, 800, 1200)})
+SCHEDULES.update({"m8r2_jd_d800_dj%d" % k: _R2JD + "waitf %d; tap jump; wait 4.0s" % k for k in (30, 60, 90, 120)})
+SCHEDULES.update({
+    "m8r2_jd_d800_duck": _R2JD + "wait 0.4s; tap duck; wait 4.0s",
+    "m8r2_jd_d800_mvy": _R2JD + "wait 4.0s",
+    "m8r2_jd_d800_mvx": _R2JD + "wait 4.0s",
+    "m8r2_echo_tac": "wait 72; tap offhand1; wait 3.0s; tap offhand1; wait 5.0s",
+    "m8r2_echo_hold": "wait 72; down offhand1; wait 1.0s; up offhand1; wait 3.0s; tap offhand1; wait 5.0s",
+    # explore round showed: tap = send Echo along the aim, hold = launch to it (CheckForHoldInput_Thread). Send, then hold.
+    "m8r2_echo_send_launch": "wait 72; tap offhand1; wait 2.5s; down offhand1; wait 1.0s; up offhand1; wait 5.0s",
+})
+SCHEDULES.update({"m8r2_jd_d800_dj%d" % k: _R2JD + "waitf %d; tap jump; wait 4.0s" % k for k in (100, 110)})
+
+
+def _r2_jd_pre(d, move=""):
+    return ('foreach ( entity e in GetEntArrayByScriptName( "hsd_r2_tgt" ) ) e.Destroy()\n'
+            'entity tg = CreateScriptMover( "hsd_r2_tgt", o + <%d, 0, 120>, <0, 0, 0> )\n'
+            'void functionref() jdf = void function() : ( p, tg ) {\n'
+            '\ttry {\n'
+            '\t\twait 1.5\n'
+            '\t\tif ( !IsValid( tg ) || !IsValid( p ) ) return\n'
+            '\t\tfloat dist = Length( tg.GetOrigin() - p.GetOrigin() )\n'
+            '\t\tfloat to = floor( 20.0 * dist / 787.0 + 0.5 ) / 10.0\n'
+            '\t\tprintt( "[R2-JD] begin t=" + Time() + " o=" + p.GetOrigin() + " tgt=" + tg.GetOrigin() + " timeout=" + to )\n'
+            '\t\tp.BeginJetDrive( 787.0, 1575.0, tg.GetOrigin(), tg, <0, 0, -69>, to )\n'
+            '\t\tp.EnableJetDriveDoubleJump( <512, 0, 394>, 0.5, "", "" )\n'
+            '\t\t%s\n'
+            '\t} catch ( jdErr ) { printt( "[R2-JD] error " + string( jdErr ) ) }\n'
+            '}\n'
+            'thread jdf()\n'
+            'pre = " jd_tgt=" + IsValid( tg )\n') % (d, move)
+
+
+
 KEYS = {"forward", "backward", "moveleft", "moveright", "jump", "duck", "speed", "left", "right", "lookup", "lookdown",
         "offhand1", "offhand4", "use", "attack"}
 # Client cvars a schedule may change with 'set' (constant-rate view turns, M4b).
 VIEW_CVARS = ("cl_yawspeed", "cl_pitchspeed")
 
 # View pitch per schedule (Source: + = down). Grapple trials aim slightly up at the test wall.
-SCHEDULE_PITCH = {"bp_ash_att": 2.86, "bp_ash_hold_att": 2.86, "b_ash_600": 5.71, "b_ash_1200": 2.86, "b_ash_2000": 1.72, "b_loba_drop_t07": -15.0,
+SCHEDULE_PITCH = {"m8r2_pounce_d150": -15.0, "m8r2_pounce_d500": -15.0, "bp_ash_att": 2.86, "bp_ash_hold_att": 2.86, "b_ash_600": 5.71, "b_ash_1200": 2.86, "b_ash_2000": 1.72, "b_loba_drop_t07": -15.0,
                   "b_loba_drop_t09": -15.0, "b_loba_drop_t12": -15.0, "b_loba_drop_t15": -15.0, "b_loba_sprint_t09": -15.0, "g1_rel_tac": -10.0, "g1_rel_attack": -10.0, "g1_hold": -10.0, "g3_hook": -9.09, "g3_hook_use": -9.09,
                   "z7b_air": -15.0, "z7c_air_hold": -15.0, "z2_jump_pu30": -30.0, "z2_jump_pd30": 30.0, "m55_nomod_hold": -10.0, "m4_grapple_hold": -10.0, "m4_grapple_jump": -10.0, "m4_grapple_fwd": -10.0,
                   "m4_grapple_near": -10.0, "m4_grapple_far": -10.0, "m4_grapple_p0": 0.0, "m4_grapple_p20": -20.0,
@@ -550,6 +607,31 @@ SCHEDULE_PRE = {
     "m8_liftoff83": 'thread SpaceElevator_PropDeploy( p, o + <120, 83, 0>, <0, 0, 0>, null )\npre = " lift=deployed_y83"\n',
     "m8_lift": 'thread SpaceElevator_PropDeploy( p, o + <120, 0, 0>, <0, 0, 0>, null )\npre = " lift=deployed"\n',
 }
+
+# M8 R2 jet-drive targets (_r2_jd_pre above)
+for _d in (400, 800, 1200):
+    SCHEDULE_PRE["m8r2_jd_d%d" % _d] = _r2_jd_pre(_d)
+SCHEDULE_PRE["m8r2_jd_d800_mvy"] = _r2_jd_pre(800, "tg.NonPhysicsMoveTo( tg.GetOrigin() + <0, 300, 0>, 1.0, 0.0, 0.0 )")
+SCHEDULE_PRE["m8r2_jd_d800_mvx"] = _r2_jd_pre(800, "tg.NonPhysicsMoveTo( tg.GetOrigin() + <600, 0, 0>, 1.5, 0.0, 0.0 )")
+# Echo position log (server, 10 Hz, 9 s) for the real-tactical trials
+_R2_ECHO_LOG = r"""
+void functionref() ef = void function() : ( p ) {
+	try {
+		float t0 = Time()
+		while ( Time() - t0 < 9.0 ) {
+			entity c = VantageCompanion_GetEnt( p )
+			printt( "[R2-ECHO] t=" + Time() + " valid=" + IsValid( c ) + " o=" + ( IsValid( c ) ? c.GetOrigin() : <0, 0, 0> ) + " p=" + p.GetOrigin() + " jd=" + p.IsJetDriveActive() )
+			WaitFrame()
+		}
+	} catch ( eErr ) { printt( "[R2-ECHO] error " + string( eErr ) ) }
+}
+thread ef()
+pre = " echo_log=1"
+"""
+SCHEDULE_PRE["m8r2_echo"] = _R2_ECHO_LOG
+# SCHEDULE_PRE is matched by prefix in insertion order: the exact moving-target keys must win over "m8r2_jd_d800"
+for _k in ("m8r2_jd_d800_mvy", "m8r2_jd_d800_mvx"):
+    SCHEDULE_PRE = {_k: SCHEDULE_PRE.pop(_k), **SCHEDULE_PRE}
 
 # M6-A3 ropes on the clear lanes (m6/SOURCE-AUDIT.md E-Z): Z1 flat 1600 u on lane C 100 u above the floor, Z2 uphill
 # 1600 u (+300 u) at y 6350, Z3 vertical 800 u at (-14700, 6500). CreateZipline picks vertical above |dir.z| 0.7.
@@ -588,7 +670,7 @@ LANE_B = (-14200.0, 5900.0, 294.92)
 # Lane C: y 6800 is flat from x -14825 to -12475 (m3/map/field_fine.json) and 81 u clear of the wall's bounds.
 LANE_C = (-14800.0, 6800.0, 294.92)
 SPAWN_PAD = (-11699.0, 512.0, 1577.046)  # visible firing-range floor (M0/M1)
-SCHEDULE_ORIGIN_PREFIX = {"m8_slope": (-10900.0, 550.0, 1580.03), "m8_lurch_ledge": (-13640.0, 6500.0, 532.80), "m8_lurch_sj": LANE_C, "m8_lurch": LANE_B, "m8_sg_ang": (-14100.0, 6272.0, 294.92), "m8_sg_slide": (-14200.0, 6500.0, 294.92), "m8_sg_": LANE_A, "m8_pad": LANE_C, "m8_djctrl": LANE_C, "m8_lift": LANE_C, "b_alter_stand": (-13856.0, 6500.0, 294.92), "bp_alter": (-13856.0, 6500.0, 294.92), "bp_ash": (-14900.0, 6650.0, 294.92), "b_alter_": (-14306.0, 6500.0, 294.92),
+SCHEDULE_ORIGIN_PREFIX = {"m8r2_climb": LANE_A, "m8r2_spw": LANE_A, "m8r2_jumpin": (-13878.0, 6500.0, 294.92), "m8r2_jd_": LANE_C, "m8r2_echo": LANE_C, "m8_slope": (-10900.0, 550.0, 1580.03), "m8_lurch_ledge": (-13640.0, 6500.0, 532.80), "m8_lurch_sj": LANE_C, "m8_lurch": LANE_B, "m8_sg_ang": (-14100.0, 6272.0, 294.92), "m8_sg_slide": (-14200.0, 6500.0, 294.92), "m8_sg_": LANE_A, "m8_pad": LANE_C, "m8_djctrl": LANE_C, "m8_lift": LANE_C, "b_alter_stand": (-13856.0, 6500.0, 294.92), "bp_alter": (-13856.0, 6500.0, 294.92), "bp_ash": (-14900.0, 6650.0, 294.92), "b_alter_": (-14306.0, 6500.0, 294.92),
                           "b_loba_": (-14900.0, 6650.0, 294.92), "b_ash_": (-14900.0, 6650.0, 294.92), "b_valk_": LANE_C, "a2r_": LANE_A, "g1_": LANE_A, "a2_": LANE_A, "z": (-14550.0, 6800.0, 294.92), "a1_wb": LANE_A, "a1_": LANE_B, "m4b_view": LANE_C, "m4b_pad": LANE_C, "m4_valk": LANE_C, "m4_pounce": LANE_C, "m4_stim": LANE_C, "m4_ctrl": LANE_C, "m4_pad": LANE_C, "m4_lift": LANE_C,
                           "m4_grapple": LANE_A, "x_pad_": SPAWN_PAD, "e8_hop350": LANE_C, "e3_": LANE_B, "e8_fast": LANE_C, "e8_slide": LANE_C, "e6_": LANE_A, "e7_": LANE_A,
                           "e8_drop": LANE_A}
@@ -605,7 +687,7 @@ SCHEDULE_ZIP_ORIGIN = {"z0_off40": (-14550.0, 6760.0, 294.92), "z0_off80": (-145
                        "g3_hook": (-14000.0, 6650.0, 294.92), "g3_hook_use": (-14000.0, 6650.0, 294.92)}
 
 # Exact-name origins take precedence over prefixes (grapple distance variants on lane A).
-SCHEDULE_ORIGIN = {"m4_grapple_near": (-13950.0, 6500.0, 294.92), "m4_grapple_far": (-14400.0, 6500.0, 294.92)}
+SCHEDULE_ORIGIN = {"m8r2_pounce_d150": (-13878.0, 6500.0, 294.92), "m8r2_pounce_d500": (-14228.0, 6500.0, 294.92), "m4_grapple_near": (-13950.0, 6500.0, 294.92), "m4_grapple_far": (-14400.0, 6500.0, 294.92)}
 # M4b swing: lane A shifted 150 u to -Y (the wall spans y 6279..6719, so a 20 deg aim hits it near y 6493)
 SCHEDULE_ORIGIN.update({n: (-14100.0, 6350.0, 294.92) for n in ("m4b_swing_side", "m4b_swing_turn", "m4b_swing_turn_w",
                                                                   "m4b_swing_jump", "m4b_swing_turn_jump")})
@@ -1023,8 +1105,27 @@ def main(argv):
             client.cmd(f"fps_max {a.fps:g}")
             time.sleep(3.0)
         geos = [g for g in a.geometry.split(",") if g and g != "none"]
-        wall = next((g for g in geos if g == "m3" or (g.startswith("h") and g[1:].isdigit())), None)
-        if wall:
+        wall = next((g for g in geos if g == "m3" or (g[:1] in "hs" and g[1:].isdigit())), None)
+        if wall and wall.startswith("s"):
+            # M8 R2: copies of the rock stacked 470 u apart (the rock is ~498 u tall; overlap ~18 u), the top one with its
+            # top H u above the floor (h<H> convention), down to the first copy whose bottom (origin - 250) reaches the floor.
+            import test_geometry as tg
+            H = float(wall[1:])
+            zs = [tg.M3_WALL_ORIGIN[2] - (232.0 - H)]
+            while zs[-1] - 250.0 > tg.M3_WALL_ORIGIN[2]:
+                zs.append(zs[-1] - 470.0)
+            if len(zs) > 4:
+                raise SystemExit("stack height out of range: %s" % wall)
+            server.eval(tg.CLEAR, check=False)
+            replies = [server.eval(tg.SPAWN % dict(model=tg.M3_WALL_MODEL, x=tg.M3_WALL_ORIGIN[0], y=tg.M3_WALL_ORIGIN[1],
+                                                   z=z, yaw=0.0), check=False).get("reply", "") for z in zs]
+            manifest["geometry_wall_z"] = zs
+            manifest["geometry"] = {"wall": " | ".join(replies)}
+            print("geometry:", manifest["geometry"]["wall"])
+            if any("prop=" not in r or "invalid" in r for r in replies):
+                raise SystemExit("stacked test wall could not be spawned")
+            time.sleep(2.0)
+        elif wall:
             import test_geometry as tg
             # the rock's top is 232 u above its origin floor (M3); sink it to get a ledge H u above the floor
             wz = tg.M3_WALL_ORIGIN[2] - (232.0 - float(wall[1:])) if wall != "m3" else tg.M3_WALL_ORIGIN[2]

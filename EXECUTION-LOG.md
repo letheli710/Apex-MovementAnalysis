@@ -344,6 +344,19 @@ Newest entries at the bottom. Problems are tagged **[ISSUE]** and also listed in
   - Superglide Reference follows the track R grid.
   - Fixed: a W-released SG gave 172 u/s from rest; coplanar wall blocks allowed a wall-run restart.
   - Fun slope slide is about 1.6× R5's fit; left as [design] for the user to judge.
+- **Track R2 done** (time-boxed local R5 probe; 9 sessions plus 1 exploratory session, not analysed; the lead reran both analyses with byte-identical output):
+  - Revenant long climb is feasible: mantles at 300/500/800, where Gibraltar falls; vz = 0.0921·(Z0 − z); the 0.75 s climb lock after a pounce is confirmed. The end rule is unsettled because of stacked-rock joints.
+  - Vantage jet drive is feasible with the real tactical and with an EVAL shortcut: launch 943, cruise about 787, tracks moving targets, end double jump vz 394, crouch ×0.8.
+  - The Sparrow wall launch exists: vz 670.82, 442.8 outward.
+- **M8-C done** (HSD-Unity `1982b46`, merged as #14 → main `2ea2a4f`; lead-verified by rerun):
+  - Tests: EditMode 1152/1152, PlayMode 1/1.
+  - Default motor identical: M2+M1 111, M1 first guess 111, M3 90.
+  - M4 replays 114/114 identical, including pad and lift.
+  - Smoke on `HSD-Build\M8C`: demos 126/126 (110 older verdicts unchanged, M8-C 16/16), course lap 80.82 s.
+  - Pad double jump uses the measured model at arbitration rank 300.
+  - Lift: short-dwell scaling added. Fixed: a lift eject opened the lurch window (0.36 s reversal vs 0.61 s measured).
+  - Spacewalk soft landing audited against R5.
+- **M8 complete.** Summary: `m8/M8-REPORT.md` (Chinese). Status: numbers pass; hands-on feel not yet checked by a person.
 
 ## Open issues
 
