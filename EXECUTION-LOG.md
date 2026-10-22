@@ -320,6 +320,20 @@ Newest entries at the bottom. Problems are tagged **[ISSUE]** and also listed in
   - Slope slide [design] with an energy ledger.
   - Zipline: end-zone mounts are refused; Fun air mounts get no lift.
   - Status: numbers pass; hands-on feel not yet checked by a person.
+- **Track R done** (15 local R5 sessions, 120 fps; the lead reran all 5 analyses with byte-identical output):
+  - **Pad double jump:**
+    - granted ≈0.108 s after launch, once only; cleared on landing;
+    - vertical: vz += 201.81 when vz ≥ 360, else vz = 409.25 (discontinuous);
+    - horizontal: re-aim of 240 toward the input; restarts the lurch window;
+    - holding jump through the launch never fires it.
+  - **Horizon lift:** eject 0.50 s after the hover starts (400 h / 450 up); jump does nothing at the top; side exits get the full eject. Horizon landings have no slowdown (f0 1.0), Gibraltar's stop dead, so the soft landing is a real movement difference.
+  - **Superglide:** native exit 460 at H90–H232; window is the last ≈0.085 s of the mantle; lateral approaches work; slide-jump approaches 0/15.
+  - **Slope (downhill only):** extra accel 147 + 342·sin(slope) u/s² while sliding, fitted on 29–41°.
+  - **Lurch:**
+    - a reverse chain keeps speed but tops out at 156°, so no 180° reversal;
+    - no lurch after a walk-off (the window opens only on a jump);
+    - the clamp is 209.3 at a 350 entry too.
+  - **Data issue:** M8_lift1 trial 8250 timed out and the runner crashed before writing `runner.json`. The manifest was rebuilt from the console and client lines, marked `reconstructed`. The runner now records timeouts as failed trials.
 
 ## Open issues
 
