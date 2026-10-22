@@ -334,6 +334,16 @@ Newest entries at the bottom. Problems are tagged **[ISSUE]** and also listed in
     - no lurch after a walk-off (the window opens only on a jump);
     - the clamp is 209.3 at a 350 entry too.
   - **Data issue:** M8_lift1 trial 8250 timed out and the runner crashed before writing `runner.json`. The manifest was rebuilt from the console and client lines, marked `reconstructed`. The runner now records timeouts as failed trials.
+- **Item 10 desk assessment** (`m8/EXPANSION-ASSESSMENT.md`). Top three: the Revenant kit (pounce measured; `climbHeight` 1250 never tested), the Vantage Echo jet-drive (in this build, never measured), and the Sparrow wall launch (conditional). The lead checked the cited pounce formula, the climbHeight value in the M4 Revenant log, and the BeginJetDrive reference.
+- **M8-B done** (HSD-Unity `2e8a39e`, merged as #13 → main `8e959bc`; lead-verified by rerun):
+  - Tests: EditMode 1038/1038, PlayMode 1/1.
+  - Default motor identical: M2+M1 111, M1 first guess 111, M3 90.
+  - M4 replays 114/114 identical.
+  - Smoke on `HSD-Build\M8B`: demos 110/110 (82 older verdicts unchanged, M8-B 28/28), course lap 80.82 s.
+  - Bunny hop and lurch chains needed no code change; Unity matches track R's reverse-chain and TS numbers.
+  - Superglide Reference follows the track R grid.
+  - Fixed: a W-released SG gave 172 u/s from rest; coplanar wall blocks allowed a wall-run restart.
+  - Fun slope slide is about 1.6× R5's fit; left as [design] for the user to judge.
 
 ## Open issues
 
