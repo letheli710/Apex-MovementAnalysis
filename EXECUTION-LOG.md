@@ -395,6 +395,20 @@ Newest entries at the bottom. Problems are tagged **[ISSUE]** and also listed in
     - no prompt.
   - Reference now follows r_zip. A mount hint and prompt were added, plus zipline yard Z.
   - `m6c_grapple_highline` moved to Fun, because R5 shows no lurch after a jump-off.
+- **D2 done** (`m9/D2-CANDIDATES.md`): the 26-legend S21 roster with HSD status, 13 candidates, a post-S21 history table and a ranking (grapple techniques → Zipline Gun → Octane completion → Newcastle conditional; ask the user about the Wraith portal and the Ash dash).
+  - The lead checked Bloodhound `hunt_mode.nut:276` and the Axle slide-gate script.
+  - The Bangalore citation could not be confirmed in the cited file and is marked unverified.
+  - The local `s21-platform` scripts contain post-S21 content.
+- **M9-C done** (HSD-Unity `307c6ed`, merged as #17 → main `37fcc88`; lead-verified by rerun):
+  - Tests: EditMode 1512/1512, PlayMode 1/1.
+  - Replays: M2+M1 111, M1 first guess 111, M3 90; M4 114/114.
+  - Smoke on `HSD-Build\M9C`: demos 170/170 (M9-C 14/14), course lap 80.82 s.
+  - Vantage Echo with S21 gates; end double jump at arbitration rank 280.
+  - D1: SG slide-boost re-arm 1.8 s; uphill slide matches R5 with no change; pad-DJ clamp confirmed.
+  - Lurch tests now assert R5 numbers.
+  - Revenant climb inputs per r_rev.
+  - Open: pad launch opens a lurch window in Unity Reference but not in R5. It was kept because of the user-accepted M5.5 `pad_lurch` demo; the user decides.
+- **M9 complete.** Summary: `m9/M9-REPORT.md` (Chinese). Status: numbers/rules pass and real-input demos pass; hands-on feel not yet checked by a person. E1–E3 remain deferred.
 
 ## Open issues
 
