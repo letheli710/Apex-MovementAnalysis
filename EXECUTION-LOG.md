@@ -357,6 +357,20 @@ Newest entries at the bottom. Problems are tagged **[ISSUE]** and also listed in
   - Lift: short-dwell scaling added. Fixed: a lift eject opened the lurch window (0.36 s reversal vs 0.61 s measured).
   - Spacewalk soft landing audited against R5.
 - **M8 complete.** Summary: `m8/M8-REPORT.md` (Chinese). Status: numbers pass; hands-on feel not yet checked by a person.
+- **M9 plan received** (user, 2026-10-22; archived `m9/M9-PLAN.md` with the lead's audit). Root `DEFERRED-DESIGN-TODO.md` holds E1–E3, deferred by the user and not to be decided by agents. Tracks: R (R5: zipline → Revenant → D1 → Vantage), D (technique library), U (B → A → C).
+- **Track D done** (`m9/d_library/TECHNIQUE-LIBRARY.md`):
+  - Wiki full text was extracted from the site bundle; YouTube metadata and chapters only, no video was watched, and a to-watch list is included.
+  - The lead spot-checked `CanLaunchToCompanion`/`DOT_60DEGREE` in the S21 scripts and `zipline_cooldown.cpp` in the SDK.
+  - Every source allows mounting anywhere on the rope and mid-air re-grabs.
+  - LS/RAS has no full text input sequence; 156° is one condition, not a limit.
+  - 20 reproduction specs were forwarded to track R.
+- **M9-B done** (HSD-Unity `7a72289`, merged as #15 → main `e0e620b`; lead-verified by rerun):
+  - Tests: EditMode 1273/1273, PlayMode 1/1.
+  - Replays: M2+M1 111, M1 first guess 111, M3 90; M4 114/114.
+  - Smoke on `HSD-Build\M9B`: demos 140/140 (M9-B 14/14), course lap 80.82 s.
+  - Pounce audited against the S21 constants, with a 0.85 s climb/wall-run/hang lock. Revenant long-climb profile; other presets bit-identical.
+  - **[ISSUE→caught]** The lead's brief attributed the wall launch to Revenant. It was measured on Sparrow, so the Unity agent kept it out of Reference (Fun only).
+  - D1 mantle: no discrepancy. The M8 figure of 0.531 s came from a 30 u test approach; Unity gives 0.412 vs R5 0.418.
 
 ## Open issues
 
