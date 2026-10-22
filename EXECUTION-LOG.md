@@ -295,6 +295,17 @@ Newest entries at the bottom. Problems are tagged **[ISSUE]** and also listed in
   - 7 real-input demos (Ash↔slide, Ash↔zipline, Valk↔Super Jump, Valk↔grapple, and 3 more), each with a failure variant.
   - Fun values are all [design] and kept separate.
   - Status: numbers pass; hands-on feel not yet checked by a person. Docs: `m6/unity/M6B-UNITY.md`, `m6/PLAYTEST-GUIDE-M6B.md`.
+- **M7-A plan received** (user, 2026-10-22; archived `m7/M7-A-PLAN.md`): wall-run, ledge grab/hang, configurable double jump. The lead's audit found all three absent from R5 S21: M6-A measured no ledge hang; Apex has no Titanfall wall-run; its only double jump is Octane's pad. So all three are HSD designs and every value is [design]. Config decision: off in Reference, on in Fun, with in-game toggles.
+- **M7-A done** (HSD-Unity `5f9cb56` + lead `M6CourseTests.cs` line-ending fix, merged as #11 → main `3fba896`; lead-verified by rerun):
+  - Tests: EditMode 742/742, PlayMode 1/1.
+  - Default motor identical: M2+M1 111, M1 first guess 111, M3 90.
+  - M4 replays 114/114 identical.
+  - Smoke on `HSD-Build\M7A`: demos 70/70 (M7-A 22/22, earlier verdicts unchanged), M5.5 route final position unchanged, course lap 80.82 s.
+  - Wall-run vs climb is decided by the view (climb within the 35° cone). The hang is guarded (apex/falling, impact ≤ 420, hand window, cooldown, 5 s guard).
+  - Double jump vs jets: air jump first, keep holding 0.25 s to engage the jets; key 0 switches to jets first.
+  - 11 real-input demos with failure variants; fuzz extended with no stuck states and caps held.
+  - **[ISSUE→fixed]** The agent's commit stored `M6CourseTests.cs` with CRLF plus a stray CR (stored as -text). The lead normalised it to LF; the real diff is +105/−19.
+  - Status: numbers pass; hands-on feel not yet checked by a person. Docs: `m7/unity/M7A-UNITY.md`, `m7/PLAYTEST-GUIDE-M7A.md`.
 
 ## Open issues
 
