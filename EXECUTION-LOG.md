@@ -371,6 +371,30 @@ Newest entries at the bottom. Problems are tagged **[ISSUE]** and also listed in
   - Pounce audited against the S21 constants, with a 0.85 s climb/wall-run/hang lock. Revenant long-climb profile; other presets bit-identical.
   - **[ISSUE→caught]** The lead's brief attributed the wall launch to Revenant. It was measured on Sparrow, so the Unity agent kept it out of Reference (Fun only).
   - D1 mantle: no discrepancy. The M8 figure of 0.531 s came from a 30 u test approach; Unity gives 0.412 vs R5 0.418.
+- **Track R done** (M9; ~1500 trials over 13 sessions; the lead reran all 4 analyses with byte-identical output).
+  - **Zipline:**
+    - mid-rope mounts work anywhere, cone 33.2–35.9°, reach ~120 u;
+    - air mounts work 65/65, with an air re-mount lockout of ~0.35 s after a detach;
+    - no end refusal: inside ~90 u of the end you face, the ride reverses;
+    - re-grabs: ground + 2 air; super-jump window ~0.2 s; the jump-off opens no lurch window.
+  - **Revenant:** pounce formula exact over the grid; no lurch window after a pounce; pounce TS at 1150 works; climb A/D drift ~161 u/s. The smooth-wall end rule hit stop-loss.
+  - **D1:**
+    - SG after a slide depends on the slide-boost state (0/5 at 0.5 s, 5/5 at ≥1 s);
+    - the pad-DJ lurch clamp equals the normal one (212.55 included AirAccelerate);
+    - reverse chain: walk 162.4°, sprint 157.6°, slide jump 144.7°, so 156° is not a limit; OG Ras from a walk 162°;
+    - uphill ~30°: −322 u/s².
+  - **Vantage:** Echo at the aim hit or 1968.5 u; launch 1.82 s after the hold press; gates 60° on-screen and LOS (S21 script), no distance limit; end-jump window opens ~115 u before the target.
+- **M9-A done** (HSD-Unity `1c1824b`, merged as #16 → main `76d4ee8`; lead-verified by rerun):
+  - Tests: EditMode 1398/1398, PlayMode 1/1.
+  - Replays: M2+M1 111, M1 first guess 111, M3 90; M4 114/114.
+  - Smoke on `HSD-Build\M9A`: demos 156/156 (M9-A 16/16), course lap 80.82 s.
+  - **Root cause of the user's zipline report:**
+    - Reference refused all air mounts (a wrong M6 rule);
+    - the M8-A end refusal;
+    - map ropes above standing reach past the first 10–25 %;
+    - no prompt.
+  - Reference now follows r_zip. A mount hint and prompt were added, plus zipline yard Z.
+  - `m6c_grapple_highline` moved to Fun, because R5 shows no lurch after a jump-off.
 
 ## Open issues
 
