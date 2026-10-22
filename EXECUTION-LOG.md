@@ -284,6 +284,17 @@ Newest entries at the bottom. Problems are tagged **[ISSUE]** and also listed in
   - F9/F10 feedback snapshots; Chinese design notes and guide.
   - **[ISSUE→fixed]** In random play the player flew over the 800 u boundary walls; the walls are now 5000 u with an invisible ceiling.
 - **M6 summary** written (`m6/M6-REPORT.md`). Awaiting the user's choice of M6-B legend builds.
+- **User decision:** build the Valkyrie jets and Ash Phase Breach (route tool); shelve Loba and Alter (`SHELVED-ABILITIES.md`, research #11). The user then added requirements: no new reverse engineering, strictly separate Reference/Fun configs, Ash/Valkyrie edge-case tests, four combos, and two acceptance labels kept apart.
+- **M6-B build done** (HSD-Unity `764a618`, merged as #10 → main `199dde8`; lead-verified by rerun):
+  - Tests: EditMode 607/607, PlayMode 1/1.
+  - Default motor identical: M2+M1 111, M1 first guess 111, M3 90 (the pre-M3 comparison shows the known 35/76).
+  - M4 replays 114/114 identical, including every `m4_valk_*`: the replay keeps the M4 jets preset.
+  - Smoke on `HSD-Build\M6B`: demos 48/48 (M5.5 12/12, M6 8/8, M6-C 14/14, M6-B 14/14), M5.5 route line unchanged, course lap 80.82 s.
+  - Valkyrie: cost 1, drain 1/s, empty at 7.000 s, recharge 0.7494/s after 4.43 s, vz×0.4 + 3 s post effect, no cut above 265.75.
+  - Ash: refuses invalid targets, travels phased; freeze 0.152 + 0.1017·frames, exit 0.918·d at v = 0; reusable 15 s portal; not interruptible during travel.
+  - 7 real-input demos (Ash↔slide, Ash↔zipline, Valk↔Super Jump, Valk↔grapple, and 3 more), each with a failure variant.
+  - Fun values are all [design] and kept separate.
+  - Status: numbers pass; hands-on feel not yet checked by a person. Docs: `m6/unity/M6B-UNITY.md`, `m6/PLAYTEST-GUIDE-M6B.md`.
 
 ## Open issues
 
