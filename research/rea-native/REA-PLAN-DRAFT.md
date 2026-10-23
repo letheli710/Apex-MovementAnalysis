@@ -103,7 +103,7 @@ M2–M10 的数值大多是黑盒实测：设计输入、看输出、拟合公�
 
 ### N2 子系统公式提取
 
-**状态（2026-10-23）**：P1 的六个子系统（G、L、J、S、T、M）都有文档，见 [subsystems/](subsystems/)。T 和 M 是部分完成（M 的 SG 窗口、T 的冲量来源没读通），遗留项写在各文档末尾。P2（钩爪、滑索、外力）和镜头 C2 还没做。工具：`n2/DecompileList.java` 反编译到本机 `local/`，`n2/annotate.py` 把 setfile 描述符、ConVar 和函数换成 N1 的名字。
+**状态（2026-10-23）**：P1 的六个子系统（G、L、J、S、T、M）都有文档，见 [subsystems/](subsystems/)。T 和 M 是部分完成（M 的 SG 窗口、T 的冲量来源没读通），遗留项写在各文档末尾。P2（钩爪、滑索、跳板）和镜头 C2 的第一批也已完成（`N2-P2-GRAPPLE-ZIPLINE-PADS.md`、`N2-C-CAMERA.md`）；重力炮、升降梯、JetDrive、喷气和镜头的其余效果还没读。工具：`n2/DecompileList.java` 反编译到本机 `local/`，`n2/annotate.py` 把 setfile 描述符、ConVar 和函数换成 N1 的名字。
 
 逐个子系统读代码，用我们自己的话写出：
 - 公式；
@@ -116,7 +116,7 @@ M2–M10 的数值大多是黑盒实测：设计输入、看输出、拟合公�
 
 ### N3 对照账本
 
-**状态（2026-10-23）**：P1 部分完成，见 [CROSSCHECK-LEDGER.md](CROSSCHECK-LEDGER.md) 和 [ledger.csv](ledger.csv)。60 条：一致 35、结构差 7、数值差 2、只有代码 8、未定 8；代码和实测之间没有矛盾，差别主要在 Unity 的写法。高影响 3 条：G-07 地面转向、M-04 SG 窗口、M-08 原生 SG 和 SDK mantle boost。原因分类在原有 5 类之外加了 U（Unity 实现和原生不同）。
+**状态（2026-10-23）**：见 [CROSSCHECK-LEDGER.md](CROSSCHECK-LEDGER.md) 和 [ledger.csv](ledger.csv)。P1 + P2 + 镜头第一批共 78 条：一致 45、结构差 7、数值差 2、只有代码 13、未定 11；代码和实测之间没有矛盾，差别主要在 Unity 的写法。高影响 3 条：G-07 地面转向、M-04 SG 窗口、M-08 原生 SG 和 SDK mantle boost。原因分类在原有 5 类之外加了 U（Unity 实现和原生不同）。
 
 把 N2 的每一条结论和实测、Unity 逐项对齐，写进 `CROSSCHECK-LEDGER.md` 和 `ledger.csv`。每行：
 

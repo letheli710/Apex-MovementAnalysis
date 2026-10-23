@@ -48,7 +48,7 @@ S-10,S,slide start slope limit,ground normal z > 0.7,none,not checked,只有代�
 T-01,T,dt = frame time,usercmd frametime,M1,same,一致,,低,
 T-02,T,press edge,buttons & ~previous buttons,M3/M8,same,一致,,低,
 T-03,T,first-command input 0.75,see G-08,,,只有代码,,中,see G-08
-T-04,T,low-decel window after impulses,see G-15,,,只有代码,,中,see G-15
+T-04,T,low-decel window after impulses,impulse queue sets T = now + |impulse| * 0.003; JumpPad_Launch does not write it,,,只有代码,,中,find which events write type-1 impulses; pads are not one of them (F-03)
 T-05,T,frame-rate dependence,per-command band choice,M2: 13 % spread of time-to-cap,same,一致,,低,
 M-01,M,mantle natural exit,stance max speed x forward (299 sprint),M8: 299,Climb ability,一致,,低,
 M-02,M,mantle top jump,h = 299 then Jump(),M8: 299 and vz 286.7,Climb ability,一致,,低,
@@ -59,3 +59,21 @@ M-06,M,walk-approach SG 402.009,not found,M8: 3 / 15,,未定,5,低,
 M-07,M,no SG after a slide-jump approach,boost cooldown refreshed by the slide start (S-02),M8: 0 / 15,Reference slideBoostRearm 1.8 s,一致,,中,
 M-08,M,native SG vs SDK mantle boost,SDK FSM wraps TraversalMove (default on),M8: 388.7 / 367.42 with SDK; 460 without,,一致,4,高,Reference must state which path it follows
 M-09,M,S21 wall-run off,setfile wallrun = false,M7: wall-run is HSD design,WallRun ability (Fun),一致,,低,
+P-01,P,pull speed ramp,lerp(50; 800; t/1.5),M10 d|v|/dt 500.0-502.7,Grapple ability (M10 RF model),一致,,低,
+P-02,P,tangential brake,|t| -= grapple_decel*dt (425),M10 425,same,一致,,低,
+P-03,P,no pendulum in S21,grapple_swing = false -> non-swing branch,M10 no pendulum,same,一致,,低,
+P-04,P,side keys = air strafe,AirMove uses grapple_airAccel 650 / grapple_airSpeedMax 420,M10 650 > 425,same,一致,,低,
+P-05,P,proximity detach,grapple_detachLengthMin / Max 33 / 50,M10 35-53 u,same,一致,,低,
+P-06,P,press detach clamp to 460,grapple_detachSpeedLoss 300 / Min 460,M10 580 -> 458.7,same,一致,,低,
+P-07,P,low-speed detach timeouts,speed < 250 for 1.5 s air / 0.7 s ground / 1.2 s wall,not measured,not modelled,只有代码,,中,N4-B slow grapple test
+P-08,P,detach when moving away fast,grapple_detachAwaySpeed 500,M10: released 1 command after passing the anchor at radial -28..-214,Grapple ability (fit),未定,5,中,read the passing-anchor rule
+P-09,P,detach vertical boost 200,conditional boost capped at 200,M10: detaches keep momentum,,未定,5,低,read the trigger condition
+P-10,P,look-away detach on the S21 client,not located,M10: client yes; S3 dedi no,[S21-client] rule in Reference,未定,3,中,locate in the client code
+Z-01,Z,zipline jump-off,damped rope speed capped at ziplineJumpOffSpeed + sqrt(2g*jumpHeight) up,M9/M10,Zipline ability: min(v; 400) + 289.828 (residual 0),一致,,低,N4-A read ziplineJumpOffSpeed (expect 400)
+Z-02,Z,end auto-detach,clamp(v.d; ziplineSpeed; ziplineDetachSpeed) = 600,M9/M10,same (residual 0),一致,,低,
+F-01,F,jump pad launch,PUSH * normalize(h + V*z); PUSH 1150; V 2.0,M4 same fit,JumpPad ability,一致,,低,
+F-02,F,ducked pad launch,V x jumppad_vert_override_ducked_scalar,SDK parity 0.5; M4 crouch pad data,JumpPad ability,一致,,低,N4-A read the ConVar default
+CAM-01,C,view punch spring,two 3-axis damped springs; k 65; c 9; zeta ~0.56 (one overshoot),no R5 camera data,M5.5 CriticalSmoother (critically damped),只有代码,U,中,reference only; C3 frame capture
+CAM-02,C,landing view kick,speed-scaled kick with fall distances in feet; ducked x0.2; random spread,no R5 camera data,M5.5 landing feedback,只有代码,,中,N4-A read viewkickFallDist*
+CAM-05,C,strafe roll,sv_rollangle = 0: off in S21,no R5 camera data,not checked,只有代码,,低,
+CAM-05b,C,slide tilt,state toward 1 while sliding; scaled by speed; 15 deg; rates 5 / 2.5,no R5 camera data,M5.5 slide camera,只有代码,,中,compare with M5.5; C3

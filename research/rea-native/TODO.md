@@ -22,14 +22,14 @@
   - [x] L Lurch / tap-strafe → `subsystems/N2-L-LURCH.md`（209.3 夹紧出处已找到）
   - [x] S 滑铲 → `subsystems/N2-S-SLIDE.md`（遗留：斜坡项公式 S-09、按住下蹲时结束速度 125 vs 112 S-05）
   - [x] M 攀越、mantle、SG、墙 → `subsystems/N2-M-TRAVERSAL.md`（部分：SG 窗口 M-04、1.1 × 299、402.009 还没读通；攀墙、自动 mantle 触发条件没读）
-- [ ] **N2** P2 子系统（看用户决定）：P 钩爪、Z 滑索、F 外力类
+- [x] **N2** P2 子系统：P 钩爪、Z 滑索、F 跳板 → `subsystems/N2-P2-GRAPPLE-ZIPLINE-PADS.md`（遗留：P-08 ~ P-10；重力炮、升降梯、JetDrive、喷气没读）
 - [ ] **C 第一人称镜头手感**（camera feel，用户 2026-10-23 加入，计划 §5.1）：随角色动作产生的**全部**镜头效果，不只是跑步晃动、落地震动、滑铲下沉；也包括墙跑、攀爬、跳跃、钩爪、滑索等
   - [x] C1 完整清单：一共有哪些效果、各叫什么、由什么触发、在哪里计算（原生 / 脚本 / 动画）→ `camera/CAMERA-INVENTORY.md`（23 项 + 3 个边界项；跑步晃动还没找到对应参数）
-  - [ ] C2 逐个弄清做法：触发条件、幅度、包络、叠加、帧率关系、是否影响准星 → `subsystems/N2-C-CAMERA.md`
+  - [x] C2（第一批）逐个弄清做法 → `subsystems/N2-C-CAMERA.md`：punch 弹簧（k 65、c 9）、落地 kick、横滚汇总（S21 只有滑铲 / 冲刺 / 钩爪滑索横滚生效）。遗留：滑铲倾斜精确公式、冲刺倾斜、眼高曲线、cockpit sway 是否动镜头、是否影响准星
   - [ ] C3 逐帧实测：按渲染帧记录镜头位置、角度和 FOV（要改 HSD.MoveDiag，先问用户）
   - [ ] C4 进对照账本（`CAM-`），和 M5.5 镜头对照，只给建议
 - [x] **N3**（P1 部分）对照账本 → `CROSSCHECK-LEDGER.md`、`ledger.csv`（60 条）
-  - [ ] P2 子系统和镜头 C2 做完后补进账本
+  - [x] P2 子系统和镜头 C2 的第一批条目补进账本（现在 78 条）
   - [ ] 用户决定账本 §3.2 的 Unity 修改建议（不自动改）
 - [ ] **N4** 针对性验证（按需；Frida 需用户批准），待测清单见下一节
 
@@ -45,6 +45,8 @@
 - [ ] `player_slideBoostCooldown`：预期在 M8 测到的 1.6–2.1 s 范围内（N2-S S-02）
 - [ ] `landSlowdownDuration` / `Frac` / `HeightMin` / `HeightMax` / `TimePower` / `NoSprintFrac`（N2-J J-09）
 - [ ] 蹲姿那一行的 `speed`、`deceleration`：预期 80 / 1500（N2-G G-05）
+- [ ] 镜头键：`viewkickFallDistMin` / `Max` / `MaxScale`、`slideFOVScale` / `LerpInTime` / `LerpOutTime`、`sprinttiltMaxRoll`、`grapple_roll*`、`ziplineRoll*`（N2-C）
+- [ ] `ziplineJumpOffSpeed`：预期 **400**（N2-P2 Z-01）；ConVar `jumppad_vert_override_ducked_scalar`：预期 **0.5**（F-02）
 - [ ] 其余 census 没读过的 setfile 键，共 513 个（`map/setfile-keys.csv`）
 
 **B. 新的行为预言**（需要设计实验，用现有 runner）
@@ -57,6 +59,7 @@
 - [ ] **第一条命令的输入是 0.75，不是 0.5**：输入曲线 m(2 − m)（N2-G G-08），用 M2 起步数据先查
 - [ ] **滑铲中只能转向**：滑铲时按 W 不加速，只有侧向分量起作用（N2-G G-12 / N2-S S-07）
 - [ ] **滑铲加成冷却被每次滑铲刷新**：连续短滑铲时加成迟迟不恢复（N2-S S-02）
+- [ ] **钩爪低速超时脱钩**：速度低于 250 持续 1.5 s（空中）/ 0.7 s（地面）后自动脱钩（N2-P2 P-07）
 
 **C. 还对不上、要细查的**
 
