@@ -103,7 +103,7 @@ M2–M10 的数值大多是黑盒实测：设计输入、看输出、拟合公�
 
 ### N2 子系统公式提取
 
-**状态（2026-10-23）**：G 地面、L lurch 完成，见 [subsystems/N2-G-GROUND.md](subsystems/N2-G-GROUND.md)、[subsystems/N2-L-LURCH.md](subsystems/N2-L-LURCH.md)。T、J、S、M 待做。工具：`n2/DecompileList.java` 反编译到本机 `local/`，`n2/annotate.py` 把 setfile 描述符、ConVar 和函数换成 N1 的名字。
+**状态（2026-10-23）**：G 地面、L lurch、J 跳跃空中落地、S 滑铲完成，见 [subsystems/](subsystems/)。T、M 待做；S 的斜坡项和 J 的 `AirMove` 本体还没细读。工具：`n2/DecompileList.java` 反编译到本机 `local/`，`n2/annotate.py` 把 setfile 描述符、ConVar 和函数换成 N1 的名字。
 
 逐个子系统读代码，用我们自己的话写出：
 - 公式；
@@ -251,7 +251,7 @@ census 只读了 158 个预选的键，setfile 里很可能还有没读过的镜
 | lurch 夹紧 | `jump_grace_max` × msc × `sprintspeed` = 0.7 × 1.15 × 260（N2-L 读出） | 209.3 u/s（M3、M8：不随入口速度变化） | **一致，出处已找到**，见 [subsystems/N2-L-LURCH.md](subsystems/N2-L-LURCH.md) L-04 |
 | lurch 窗口 | `jump_graceperiod` = 0.2 s（min 0.2 / max 0.5） | M3 拟合：0.2 s 内全强度，之后线性衰减到 0.5 s 为 0（±1 ms） | 一致：0.2 / 0.5 正好是 min / max |
 | lurch 高速截断 | `jump_grace_cutoff_speed` = 1100 | 客户端未测；SDK dedi 用 1100 | 只有代码 |
-| 连跳惩罚 | `skip_time` = 1.0 s，`skip_speed_retain` = −1，`skip_jump_height_speed` = 450 | AIR-JUMP 拟合：高度比例 clamp(0.3 + 0.7·(t − 0.15)/0.60, 0.3, 1)，0.75 s 后完全恢复 | **对不上**（1.0 s vs 0.75 s），要读代码看这几个值怎么用 |
+| 连跳惩罚 | `skip_time` = 1.0 s，`skip_speed_retain` = −1，`skip_jump_height_speed` = 450 | AIR-JUMP 拟合：高度比例 clamp(0.3 + 0.7·(t − 0.15)/0.60, 0.3, 1)，0.75 s 后完全恢复 | **矛盾已消除**（N2-J）：连跳惩罚来自 setfile `antiMultiJump*`；`skip_*` 管超速削减，见 [subsystems/N2-J-JUMP-AIR.md](subsystems/N2-J-JUMP-AIR.md) J-02 ~ J-04 |
 | Source 遗留值 | `sv_friction` 4、`sv_stopspeed` 100、`sv_airaccelerate` 10、`sv_maxspeed` 320 | M2：实际减速用 setfile `deceleration` | 要在代码里确认这些值还有没有被用到 |
 
 ## 7. 分工建议
