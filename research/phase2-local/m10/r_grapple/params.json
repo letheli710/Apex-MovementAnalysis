@@ -1,0 +1,484 @@
+{
+ "_scope": "Pathfinder grapple, R5Flowstate local hybrid (S21 client + S3 dedi + SDK), offline, 120 fps; grapple_analysis.py",
+ "classvar.grapple_accel": {
+  "evidence": "src (client class-var census)",
+  "n": 1,
+  "value": "1500"
+ },
+ "classvar.grapple_airAccel": {
+  "evidence": "src (client class-var census)",
+  "n": 1,
+  "value": "650"
+ },
+ "classvar.grapple_airSpeedMax": {
+  "evidence": "src (client class-var census)",
+  "n": 1,
+  "value": "420"
+ },
+ "classvar.grapple_attachVerticalBoost": {
+  "evidence": "src (client class-var census)",
+  "n": 1,
+  "value": "200"
+ },
+ "classvar.grapple_decel": {
+  "evidence": "src (client class-var census)",
+  "n": 1,
+  "value": "425"
+ },
+ "classvar.grapple_detachAwaySpeed": {
+  "evidence": "src (client class-var census)",
+  "n": 1,
+  "value": "500"
+ },
+ "classvar.grapple_detachHorizontalMaxSpeed": {
+  "evidence": "src (client class-var census)",
+  "n": 1,
+  "value": "600"
+ },
+ "classvar.grapple_detachLengthMax": {
+  "evidence": "src (client class-var census)",
+  "n": 1,
+  "value": "50"
+ },
+ "classvar.grapple_detachLengthMin": {
+  "evidence": "src (client class-var census)",
+  "n": 1,
+  "value": "33"
+ },
+ "classvar.grapple_detachLowSpeedGroundTime": {
+  "evidence": "src (client class-var census)",
+  "n": 1,
+  "value": "0.7"
+ },
+ "classvar.grapple_detachLowSpeedThreshold": {
+  "evidence": "src (client class-var census)",
+  "n": 1,
+  "value": "250"
+ },
+ "classvar.grapple_detachLowSpeedTime": {
+  "evidence": "src (client class-var census)",
+  "n": 1,
+  "value": "1.5"
+ },
+ "classvar.grapple_detachLowSpeedWallTime": {
+  "evidence": "src (client class-var census)",
+  "n": 1,
+  "value": "1.2"
+ },
+ "classvar.grapple_detachOnGrapple": {
+  "evidence": "src (client class-var census)",
+  "n": 1,
+  "value": "true"
+ },
+ "classvar.grapple_detachOnGrappleDebounceTime": {
+  "evidence": "src (client class-var census)",
+  "n": 1,
+  "value": "0.5"
+ },
+ "classvar.grapple_detachSpeedLoss": {
+  "evidence": "src (client class-var census)",
+  "n": 1,
+  "value": "300"
+ },
+ "classvar.grapple_detachSpeedLossMin": {
+  "evidence": "src (client class-var census)",
+  "n": 1,
+  "value": "460"
+ },
+ "classvar.grapple_detachVerticalBoost": {
+  "evidence": "src (client class-var census)",
+  "n": 1,
+  "value": "200"
+ },
+ "classvar.grapple_detachVerticalMaxSpeed": {
+  "evidence": "src (client class-var census)",
+  "n": 1,
+  "value": "200"
+ },
+ "classvar.grapple_gravityFracMax": {
+  "evidence": "src (client class-var census)",
+  "n": 1,
+  "value": "0.7"
+ },
+ "classvar.grapple_gravityFracMin": {
+  "evidence": "src (client class-var census)",
+  "n": 1,
+  "value": "0.25"
+ },
+ "classvar.grapple_impactVerticalBoost": {
+  "evidence": "src (client class-var census)",
+  "n": 1,
+  "value": "300"
+ },
+ "classvar.grapple_impactVerticalMaxSpeed": {
+  "evidence": "src (client class-var census)",
+  "n": 1,
+  "value": "300"
+ },
+ "classvar.grapple_lastZiplineCooldown": {
+  "evidence": "src (client class-var census)",
+  "n": 1,
+  "value": "0.5"
+ },
+ "classvar.grapple_speedRampMax": {
+  "evidence": "src (client class-var census)",
+  "n": 1,
+  "value": "800"
+ },
+ "classvar.grapple_speedRampMin": {
+  "evidence": "src (client class-var census)",
+  "n": 1,
+  "value": "50"
+ },
+ "classvar.grapple_speedRampTime": {
+  "evidence": "src (client class-var census)",
+  "n": 1,
+  "value": "1.5"
+ },
+ "classvar.grapple_swing": {
+  "evidence": "src (client class-var census)",
+  "n": 1,
+  "value": "false"
+ },
+ "classvar.grapple_swingAccel": {
+  "evidence": "src (client class-var census)",
+  "n": 1,
+  "value": "2000"
+ },
+ "classvar.grapple_swingHoldTime": {
+  "evidence": "src (client class-var census)",
+  "n": 1,
+  "value": "0.4"
+ },
+ "classvar.grapple_swingMaxSpeed": {
+  "evidence": "src (client class-var census)",
+  "n": 1,
+  "value": "1000"
+ },
+ "classvar.grapple_swingMinLength": {
+  "evidence": "src (client class-var census)",
+  "n": 1,
+  "value": "150"
+ },
+ "classvar.grapple_swingSticky": {
+  "evidence": "src (client class-var census)",
+  "n": 1,
+  "value": "true"
+ },
+ "classvar.grapple_swingType": {
+  "evidence": "src (client class-var census)",
+  "n": 1,
+  "value": "0"
+ },
+ "detach.near": {
+  "evidence": "meas",
+  "n": 96,
+  "schedules": [
+   "air",
+   "d250",
+   "d400",
+   "d700",
+   "dbounce",
+   "g200",
+   "g200_j30",
+   "g400",
+   "g400_j30",
+   "g400_sl",
+   "g400_spr",
+   "g700",
+   "g700_j24",
+   "g700_j30",
+   "g700_j48",
+   "hold_d",
+   "hold_s",
+   "hold_w",
+   "hold_wd",
+   "over55_jump",
+   "over75_jump",
+   "p0",
+   "p20",
+   "sl8_g1",
+   "sl8_jump",
+   "sl8_w",
+   "sl_g1",
+   "sl_hold",
+   "sl_s",
+   "sl_spr",
+   "sl_turn_d",
+   "slide",
+   "sprint"
+  ],
+  "value": {
+   "radial_end": {
+    "max": 801.57,
+    "mean": 505.38,
+    "min": 169.59,
+    "n": 96,
+    "sd": 148.186
+   },
+   "seg_post_last": {
+    "max": 52.79,
+    "mean": 44.282,
+    "min": 34.56,
+    "n": 96,
+    "sd": 3.77
+   },
+   "view3d_end": {
+    "max": 119.9,
+    "mean": 57.759,
+    "min": 3.3,
+    "n": 96,
+    "sd": 23.967
+   }
+  }
+ },
+ "detach.other": {
+  "evidence": "meas",
+  "n": 0,
+  "schedules": [],
+  "value": {
+   "radial_end": {
+    "n": 0
+   },
+   "seg_post_last": {
+    "n": 0
+   },
+   "view3d_end": {
+    "n": 0
+   }
+  }
+ },
+ "detach.passed": {
+  "evidence": "meas",
+  "n": 41,
+  "schedules": [
+   "g200_j12",
+   "g200_j2",
+   "g400_j12",
+   "g400_j2",
+   "g400_sl_j2",
+   "g400_spr_j2",
+   "g700_j1",
+   "g700_j12",
+   "g700_j18",
+   "g700_j6",
+   "rodeo_d",
+   "sl_a",
+   "sl_d",
+   "sl_turn_w"
+  ],
+  "value": {
+   "radial_end": {
+    "max": -27.94,
+    "mean": -84.524,
+    "min": -213.69,
+    "n": 41,
+    "sd": 52.683
+   },
+   "seg_post_last": {
+    "max": 339.44,
+    "mean": 237.206,
+    "min": 61.35,
+    "n": 41,
+    "sd": 78.245
+   },
+   "view3d_end": {
+    "max": 110.7,
+    "mean": 94.444,
+    "min": 86.1,
+    "n": 41,
+    "sd": 8.67
+   }
+  }
+ },
+ "detach.view": {
+  "evidence": "meas",
+  "n": 13,
+  "schedules": [
+   "look180",
+   "over55_jump_w",
+   "over75_jump_w",
+   "rodeo",
+   "tether"
+  ],
+  "value": {
+   "radial_end": {
+    "max": 334.48,
+    "mean": 154.58,
+    "min": 7.93,
+    "n": 13,
+    "sd": 109.308
+   },
+   "seg_post_last": {
+    "max": 600.76,
+    "mean": 276.578,
+    "min": 129.35,
+    "n": 13,
+    "sd": 184.916
+   },
+   "view3d_end": {
+    "max": 121.7,
+    "mean": 109.723,
+    "min": 101.2,
+    "n": 13,
+    "sd": 6.526
+   }
+  }
+ },
+ "jump_grapple.g700_j24_no_effect": {
+  "evidence": "meas",
+  "field": "vh_end",
+  "n": 3,
+  "schedule": "m10_g_g700_j24",
+  "spread": {
+   "max": 800.66,
+   "min": 796.54,
+   "sd": 2.31
+  },
+  "unit": "u/s",
+  "value": 799.203
+ },
+ "jump_grapple.g700_j6": {
+  "evidence": "meas",
+  "field": "vh_end",
+  "n": 3,
+  "schedule": "m10_g_g700_j6",
+  "spread": {
+   "max": 1027.71,
+   "min": 1017.35,
+   "sd": 5.695
+  },
+  "unit": "u/s",
+  "value": 1023.897
+ },
+ "jump_grapple.g700_no_jump": {
+  "evidence": "meas",
+  "field": "vh_end",
+  "n": 3,
+  "schedule": "m10_g_g700",
+  "spread": {
+   "max": 796.7,
+   "min": 796.5,
+   "sd": 0.101
+  },
+  "unit": "u/s",
+  "value": 796.59
+ },
+ "release.press_t18_speed_before": {
+  "evidence": "meas",
+  "field": "speed_end",
+  "n": 3,
+  "schedule": "m10_g_rel_t18",
+  "spread": {
+   "max": 676.18,
+   "min": 672.24,
+   "sd": 2.244
+  },
+  "unit": "u/s",
+  "value": 674.83
+ },
+ "rf.speed_ramp_d700": {
+  "evidence": "meas",
+  "field": "max_speed",
+  "n": 3,
+  "schedule": "m10_g_d700",
+  "spread": {
+   "max": 804.6,
+   "min": 804.4,
+   "sd": 0.115
+  },
+  "unit": "u/s",
+  "value": 804.467
+ },
+ "slingshot.hold_600": {
+  "evidence": "meas",
+  "field": "max_speed",
+  "n": 2,
+  "schedule": "m10_g_sl_hold",
+  "spread": {
+   "max": 796.3,
+   "min": 795.1,
+   "sd": 0.849
+  },
+  "unit": "u/s",
+  "value": 795.7
+ },
+ "slingshot.side_key_a": {
+  "evidence": "meas",
+  "field": "max_speed",
+  "n": 2,
+  "schedule": "m10_g_sl_a",
+  "spread": {
+   "max": 937.8,
+   "min": 937.4,
+   "sd": 0.283
+  },
+  "unit": "u/s",
+  "value": 937.6
+ },
+ "slingshot.side_key_d": {
+  "evidence": "meas",
+  "field": "max_speed",
+  "n": 3,
+  "schedule": "m10_g_sl_d",
+  "spread": {
+   "max": 944.7,
+   "min": 938.0,
+   "sd": 3.573
+  },
+  "unit": "u/s",
+  "value": 942.067
+ },
+ "slingshot.track_d_g1_600": {
+  "evidence": "meas",
+  "field": "max_speed",
+  "n": 3,
+  "schedule": "m10_g_sl_g1",
+  "spread": {
+   "max": 855.5,
+   "min": 851.6,
+   "sd": 1.986
+  },
+  "unit": "u/s",
+  "value": 853.767
+ },
+ "slingshot.track_d_g1_800": {
+  "evidence": "meas",
+  "field": "max_speed",
+  "n": 3,
+  "schedule": "m10_g_sl8_g1",
+  "spread": {
+   "max": 911.1,
+   "min": 910.8,
+   "sd": 0.173
+  },
+  "unit": "u/s",
+  "value": 911.0
+ },
+ "tether.max_speed": {
+  "evidence": "meas",
+  "field": "max_speed",
+  "n": 2,
+  "schedule": "m10_g_tether",
+  "spread": {
+   "max": 703.2,
+   "min": 696.1,
+   "sd": 5.02
+  },
+  "unit": "u/s",
+  "value": 699.65
+ },
+ "w_clamp.v_along_view": {
+  "evidence": "meas",
+  "field": "vh_end",
+  "n": 3,
+  "schedule": "m10_g_hold_w",
+  "spread": {
+   "max": 483.0,
+   "min": 483.0,
+   "sd": 0.0
+  },
+  "unit": "u/s",
+  "value": 483.0
+ }
+}

@@ -409,6 +409,22 @@ Newest entries at the bottom. Problems are tagged **[ISSUE]** and also listed in
   - Revenant climb inputs per r_rev.
   - Open: pad launch opens a lurch window in Unity Reference but not in R5. It was kept because of the user-accepted M5.5 `pad_lurch` demo; the user decides.
 - **M9 complete.** Summary: `m9/M9-REPORT.md` (Chinese). Status: numbers/rules pass and real-input demos pass; hands-on feel not yet checked by a person. E1–E3 remain deferred.
+- **M10 plan received** (user, 2026-10-22; archived `m10/M10-PLAN.md`). User decisions:
+  - pad-launch lurch follows R5 in Reference, with `pad_lurch` kept in Fun;
+  - no Ash dash;
+  - Wraith portal approved, after the main line.
+- **Track D done** (`m10/d_library/TECHNIQUE-LIBRARY-M10.md`): grapple, Zipline Gun, Octane / ceiling surf and Wraith; version boundaries; specs G/Z/O/W forwarded to R. The lead checked `zipline_distance_min/max` 700/8000 in the weapon file (a 4000 block is the upgrade variant).
+- **Track R stage ① grapple** (`m10/r_grapple/`; lead rerun byte-identical):
+  - no pendulum (grapple_swing false);
+  - side keys during the pull work like air strafe (airAccel 650 > brake 425): 938–945 vs 796; Slingshot 854/911;
+  - Jump Grapple coyote 0.2 s (+280.5, exit ~1000–1030);
+  - four detach rules: proximity 36–50 u, view >~100°, passing the anchor, crouch/tactical.
+- **M10-D done** (HSD-Unity `aca5a22`, merged as #18 → main `2f5f5c1`; lead-verified by rerun):
+  - Tests: EditMode 1529/1529.
+  - Replays: M2+M1 111, M1 first guess 111, M3 90; M4 114/114.
+  - Smoke: demos 170/170, all lines identical to M9-C.
+  - Per-key direction input; R-1a now −31.9° as measured.
+  - Reference pad launch opens no lurch window (R5), per the user's decision; `pad_lurch` moved to Fun with a bit-identical verdict.
 
 ## Open issues
 
