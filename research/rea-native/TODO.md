@@ -13,7 +13,8 @@
 
 - [ ] 用户审阅计划草稿，回答 §10 的问题
 - [x] **N0** 环境和试点：检查二进制，跑 Ghidra 自动分析，用 `sv_gravity` = 750 和 SDK 命名函数定标，读出原生 ConVar 默认值（ConVar 部分见 `convar-defaults/`），结论见 `N0-PILOT.md`
-- [ ] **N1** 骨架地图：`NATIVE-MAP.md`、`map/functions.csv`、`map/reads.csv`、`map/sdk-hooks.csv`
+- [x] **N1** 骨架地图：`NATIVE-MAP.md`、`map/functions.csv`、`map/reads.csv`、`map/sdk-hooks.csv`、`map/setfile-keys.csv`
+  - [ ] N1 遗留：8 个 SDK 钩子的地址（`IN_JumpDown` / `IN_JumpUp`、`Glide_*` 等）；51 个没分类的核心函数
 - [ ] **N2** P1 子系统公式提取：
   - [ ] T 时序和输入
   - [ ] G 地面移动
@@ -23,7 +24,7 @@
   - [ ] M 攀越、mantle、SG、墙
 - [ ] **N2** P2 子系统（看用户决定）：P 钩爪、Z 滑索、F 外力类
 - [ ] **C 第一人称镜头手感**（camera feel，用户 2026-10-23 加入，计划 §5.1）：随角色动作产生的**全部**镜头效果，不只是跑步晃动、落地震动、滑铲下沉；也包括墙跑、攀爬、跳跃、钩爪、滑索等
-  - [ ] C1 完整清单：一共有哪些效果、各叫什么、由什么触发、在哪里计算（原生 / 脚本 / 动画）→ `camera/CAMERA-INVENTORY.md`（和 N1 同时做）
+  - [x] C1 完整清单：一共有哪些效果、各叫什么、由什么触发、在哪里计算（原生 / 脚本 / 动画）→ `camera/CAMERA-INVENTORY.md`（23 项 + 3 个边界项；跑步晃动还没找到对应参数）
   - [ ] C2 逐个弄清做法：触发条件、幅度、包络、叠加、帧率关系、是否影响准星 → `subsystems/N2-C-CAMERA.md`
   - [ ] C3 逐帧实测：按渲染帧记录镜头位置、角度和 FOV（要改 HSD.MoveDiag，先问用户）
   - [ ] C4 进对照账本（`CAM-`），和 M5.5 镜头对照，只给建议
@@ -58,4 +59,5 @@
 
 ## 其他发现（工作中记下的，不自动开工）
 
-（空）
+- N1：513 个 setfile 键从没读过值（`map/setfile-keys.csv` 里 census 以外的键）。可以用 `bridge_classvar_get` 在运行时批量补读，放进 N4。
+- N1：SDK 在客户端的核心移动函数上挂了很多钩子（`map/sdk-hooks.csv`）。N2 每个子系统都要先确认相关钩子默认是否开启、改了什么。

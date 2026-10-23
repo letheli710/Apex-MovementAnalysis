@@ -16,9 +16,10 @@
 | [TODO.md](TODO.md) | 本研究的待办，包括暂缓的研究方向（传送类机制） |
 | [N0-PILOT.md](N0-PILOT.md) | N0 环境和试点：二进制检查、两个客户端的对比、定标、闸门结论 |
 | [convar-defaults/](convar-defaults/README.md) | 35 个原生 ConVar 的默认值（会话「从 rea 获取精确数值」的成果，PR #28） |
-| `NATIVE-MAP.md`、`map/*.csv` | （N1 产出）原生函数地图 |
+| [NATIVE-MAP.md](NATIVE-MAP.md)、`map/*.csv` | N1 骨架地图：函数、参数读取、setfile 键、SDK 钩子 |
+| [camera/CAMERA-INVENTORY.md](camera/CAMERA-INVENTORY.md)、`map/camera-effects.csv` | N1 / C1 第一人称镜头效果清单，见计划 §5.1 |
+| `n0/`、`n1/` | 各阶段的脚本和输入（只有地址和名字） |
 | `subsystems/N2-*.md` | （N2 产出）各子系统的公式提取 |
-| `camera/CAMERA-INVENTORY.md`、`map/camera-effects.csv` | （N1 产出）第一人称镜头效果清单，见计划 §5.1 |
 | `CROSSCHECK-LEDGER.md`、`ledger.csv` | （N3 产出）代码 vs 实测 vs Unity 对照账本 |
 | `local/` | **只在本机**：反编译原文、Ghidra 导出、大段伪代码。不进 git（见 `.gitignore`） |
 

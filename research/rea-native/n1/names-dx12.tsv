@@ -1,0 +1,83 @@
+# Provisional names (ours, N1) for dx12 functions. entry<TAB>name<TAB>evidence
+# Evidence = what the function reads (ConVar / setfile key) or how it sits in the
+# call graph. "?" marks a weaker guess. Confirm or rename in N2.
+1407ea760	Pred_RunCommands?	caller chain above PlayerMove (4 levels up from FullWalkMove)
+14092ab70	Pred_RunCommand?	calls 140a33cf0; reads 1 ConVar
+140a33cf0	GameMovement_ProcessMovement?	only caller of PlayerMove
+140a33620	Movement_CheckAutoMantleSetup?	automantle_* + wallrunMaxSpeedHorizontal + mantleH*
+140a34170	ViewPunch_DecaySpring	viewpunch_base_springConstant/Damping X/Y/Z
+140a349c0	Jump_Rumble	rumbleOnJump
+140a34c00	DoubleJump_Rumble	rumbleOnDoubleJump
+140a34e40	WallRun_StartViewPunch	wallrun_viewpunch_onStart_* + rumbleOnWallrunStart
+140a35170	WallRun_TimeoutViewPunch	wallrun_viewpunch_onTimeout_* + rumbleOnWallrunTimeout
+140a354a0	WallHang_StartFeedback	rumbleOnWallHangStart
+140a35750	Land_ViewKick	viewkickFallDistMin/Max/MaxScale + rumbleOnLandingHard/Soft + sv_gravity
+140a35ac0	Zipline_DetachFeedback	rumbleOnZiplineDetach
+140a35d20	Grapple_GravityFrac	grapple_gravityFracMin/Max, grapple_swingGravity, grapple_letGravityHelpCosAngle
+140a36130	Grapple_DetachGravity	grapple_detachGravityScale/Speed/Time, gravityScale
+140a36580	Ground_GetAccelDecel	acceleration, deceleration, sprintAcceleration, sprintDeceleration, slideDecel, slideWantToStopDecel, speed
+140a36a90	Ground_SlipSpeed	slipSpeed
+140a36c20	Ground_SlipAccel	slipAcceleration
+140a38a90	JumpPad_Launch	SDK name C_GameMovement::JumpPadLaunch
+140a3af30	GravityCannon_Launch	SDK name C_GameMovement::ApplyGravityCannonLaunch
+140a3b550	Jump	SDK name C_GameMovement::Jump; doubleJump, superjump*, skip_*
+140a3cf80	Grapple_SwingMove	grapple_swing*, grapple_swingPullAngle, grapple_swingMinLength
+140a3da20	Grapple_SwingHold	grapple_swingSticky/Type/HoldTime
+140a3e4f0	Grapple_AroundObstacle	grapple_windowCheckDist, grapple_around_obstacle_accel
+140a3f050	Tether_Move	tether_maxvel, tether_zipline_strength_scale
+140a40710	AutoMantle_AngleCheck	automantle_maxangle_push/view, mantleAngleScale
+140a40c90	AutoMantle_Search	automantle_mindist/forwarddist/dangle_required_space
+140a41af0	Traversal_PickAnim	traversal_anim
+140a42410	Traversal_Window	traversal_window_*, viewheight
+140a43060	AutoMantle_Try	automantle_enable/cooldown, grapple_autoMantle
+140a44120	Traversal_HandCheck	traversal_hand_required_width
+140a45380	TraversalMove	SDK name C_GameMovement::TraversalMove
+140a47030	MovementBounds	player_useMovementBounds, player_movementBounds_predictionShare
+140a47a40	Slide_StepVelocityReduction	slide_step_velocity_reduction
+140a485e0	AirAccelerate	SDK name GameMovement::AirAccelerate; player_extraairaccelleration
+140a48810	TapStrafe_MultiTapDecay	jump_grace_multi_tap_decay_velocity_based_*
+140a48a30	AirMove_TapStrafe	SDK name; all jump_grace_* (lurch)
+140a48f90	AirMove	SDK name C_GameMovement::AirMove; airDrag, airFriction, grapple_airAccel
+140a4a280	Slide_VelocityDecay	slideVelocityDecay
+140a4a7c0	WallRun_Move	wallrun_* slip/hang, wallstickEnabled, wallrun_upwardAutoPush
+140a4c4e0	SuperJump_JumpPadWindow?	superjump_jumppad_enable_time
+140a4c810	FullWalkMove	SDK name CGameMovement::FullWalkMove
+140a4d040	Ground_Impact?	impactSpeed
+140a4d4e0	WallClimb_Move	climbHeight, climbFinalJumpUpHeight, wallrun_hang*, wallrun_viewTiltPredictTime
+140a4e220	WallRun_TryStart	wallrun_enable, wallrun_sameWall*, wallrun_minAngle_air, climbSpeedStart
+140a4f120	WallRun_Begin	wallrun_retry_interval, wallrunImpact sounds
+140a4fb00	WallRun_Rotate	wallrun_rotateMaxRate
+140a50050	JumpOutOfWallRun	SDK name GameMovement::JumpOutOfWallRun
+140a50400	NoclipOrSpectatorMove?	sv_specaccelerate, sv_specspeed, sv_specnoclip, sv_friction, sv_maxvelocity
+140a507c0	SourceFriction?	sv_friction, sv_maxspeed (Source-style; N2: is it on the normal ground path?)
+140a50da0	CheckVelocity?	sv_maxvelocity
+140a51650	SetGroundEntity	SDK name GameMovement::SetGroundEntity; skip_time, landSlowdownDuration
+140a51bc0	CategorizePosition?	ground_debug, can_stand_on_obb, wallrun_angleChangeMinCos
+140a53180	Fall_Check	hardFallDist, sv_gravity
+140a53990	Land_PickAnim	landDistLow/Medium/High, enable_height_based_land_anims
+140a53d50	Duck_SetViewHeight?	viewheight, hull_max
+140a53f30	ViewHeight?	viewheight
+140a54080	Duck	SDK name C_GameMovement::Duck
+140a54890	Slide_TryBegin	slideRequiredStartSpeed(Air), slideSpeedBoost, slide_max_angle_dot, player_slideBoost*
+140a54e80	PlayerMove	calls FullWalkMove; slide_auto_stand, airslowmo_*, freefall_*
+140a56a00	Skydive_Move	skydive_glide_angle, skyward_launch_obstacle_avoidance
+140a58560	WindowHint	window_hint_*
+140a591d0	MeleeLunge_Move	melee_lunge_*
+140a59ef0	MeleeWalkMove	SDK name C_GameMovement::MeleeWalkMove
+140a5a430	SprintTilt_TurnRange	sprinttilt_turnrange
+140a5a630	SprintTilt_Update	sprinttilt_accel, sprinttilt_maxvel
+1405fc020	CockpitSway	cockpitSway* (20 keys)
+1406668a0	Traversal_GetViewPosition	SDK name C_PredictedFirstPersonProxy::GetTraversalViewPosition; traversal_viewLerp*
+1407ef190	CockpitSpring	cockpit_spring_origin/pitch/yaw/roll Constant/Damping
+1407f2bb0	Slide_FOV	slideFOVScale, slideFOVLerpInTime/OutTime
+1407fac60	Grapple_CameraRoll	grapple_roll*
+1407fb0f0	Swing_CameraRoll	swingRoll*
+1407fb580	Zipline_CameraRoll	ziplineRoll*, maxCameraRoll, ziprail_roll_strength
+140838830	ScreenShake_Apply	shake_angleFactor_*, shake_offsetFactor_*
+14085bdb0	ViewmodelShake	viewmodelShake, viewmodelDuckOffset
+14074bd60	Zipline_BankTilt	banktilt_accel, banktilt_maxvel
+140af0d00	ViewDrift_Compute	viewDrift_* (40 ConVars)
+140af15a0	ViewDrift_Apply	viewDrift, cockpitDrift_*
+140af2370	Sprint_ViewOffset	sprintViewOffset
+140afc480	View_CalcRoll	sv_rollangle, sv_rollspeed, slide_viewTilt*, wallrun_maxViewTilt, dodge_viewTilt*, sprinttiltMaxRoll
+140b110c0	MovePostThinkAnimSwitch	SDK name; ziplineViewOffset

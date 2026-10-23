@@ -81,6 +81,8 @@ M2–M10 的数值大多是黑盒实测：设计输入、看输出、拟合公�
 
 ### N1 骨架地图
 
+**状态（2026-10-23）：骨架完成**，见 [NATIVE-MAP.md](NATIVE-MAP.md)。2534 个函数，其中核心 553 个；ConVar 和 setfile 的读取关系都已导出；SDK 钩子 70 个；镜头清单 C1 同时完成。setfile 键是通过"描述符"读的，不是按名字查（见 NATIVE-MAP §2）。
+
 从入口一路往下，把移动相关的函数都找出来、分类、命名（只在我们的表里）。
 
 - 起点：`CPlayer::PlayerRunCommand` → `ProcessUserCmds` → `PlayerMove` → `FullWalkMove` → 各分支。

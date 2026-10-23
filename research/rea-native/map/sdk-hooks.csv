@@ -1,0 +1,71 @@
+native,entry_dx12,hook,kind,sdk_file,purpose
+v_AimAssist_GetRawMagnetScale,140811390,Hook_GetRawMagnetScale,detour,game/client/aimassist.cpp,"Client aim-assist magnet miss, look-only PLV filter, look-idle"
+v_AimAssist_Apply,1408115f0,Hook_Apply,detour,game/client/aimassist.cpp,"Client aim-assist magnet miss, look-only PLV filter, look-idle"
+v_AimAssist_Pull,1408132c0,Hook_Pull,detour,game/client/aimassist.cpp,"Client aim-assist magnet miss, look-only PLV filter, look-idle"
+v_AimAssist_Sniper,14080ffd0,Hook_Sniper,detour,game/client/aimassist.cpp,"Client aim-assist magnet miss, look-only PLV filter, look-idle"
+v_AnimBodySkinChange,1409eb2a0,Hook_AnimBodySkinChange,detour,game/client/body_skin.cpp,Clamp OOB bodypart indices on C_BaseAnimating skin/body change so map-load cannot AV on a bad table slot.
+v_C_UserCmd_ComputeRandomSeed,140ad3c20,Hook_C_UserCmd_ComputeRandomSeed,detour,game/client/bridge_cmd_seed.cpp,cross-build per-usercmd prediction-RNG seed parity (client side).
+v_C_WeaponX_PrimaryAttack,1406fea80,Hook_C_WeaponX_PrimaryAttack,detour,game/client/bridge_fire_tap.cpp,seed C_WeaponX::m_burstFireCount from the burst_fire_count
+v_C_Player_ApplySettingsChange,140af2f00,Hook_C_Player_ApplySettingsChange,detour,game/client/classvar_natives.cpp,"player class-var natives, client half. Movement is predicted, so"
+v_CollPropJob,140a152d0,Hook_CollPropJob,detour,game/client/coll_prop_job.cpp,Let collision-prop update jobs read under the entity transform lock
+v_TransformLockShared,140a15220,Hook_TransformLockShared,detour,game/client/coll_prop_job.cpp,Let collision-prop update jobs read under the entity transform lock
+v_TransformUnlockShared,140a15280,Hook_TransformUnlockShared,detour,game/client/coll_prop_job.cpp,Let collision-prop update jobs read under the entity transform lock
+IN_JumpDown,,Hook_IN_JumpDown,detour,game/client/dodge_bind.cpp,"couple +jump onto in_dodge when dodge is unbound, shares jump's"
+IN_JumpUp,,Hook_IN_JumpUp,detour,game/client/dodge_bind.cpp,"couple +jump onto in_dodge when dodge is unbound, shares jump's"
+v_C_GameMovement__Jump,140a3b550,Hook_C_GameMovement_Jump,detour,game/client/dodge_rules.cpp,client half of the airborne dodge rules (game/shared/dodge_rules.h)
+jnz,,,byte-patch,game/client/dodge_rules.cpp,client half of the airborne dodge rules (game/shared/dodge_rules.h)
+jnz,,,byte-patch,game/client/dodge_rules.cpp,client half of the airborne dodge rules (game/shared/dodge_rules.h)
+v_GameMovement_Jump,140a3b550,Hook_GameMovement_Jump,detour,game/client/double_jump_power.cpp,client prediction twin of Sparrow's double-jump power
+v_Player_TouchGround,140b09440,Hook_Player_TouchGround,detour,game/client/double_jump_power.cpp,client prediction twin of Sparrow's double-jump power
+v_Player_SuitPowerUpdate,140afdd60,Hook_Player_SuitPowerUpdate,detour,game/client/double_jump_power.cpp,client prediction twin of Sparrow's double-jump power
+v_Glide_Check,,Hook_Glide_Check,detour,game/client/glide_flight.cpp,glide_flight.h implementation.
+v_Glide_Apply,,Hook_Glide_Apply,detour,game/client/glide_flight.cpp,glide_flight.h implementation.
+v_GrappleAnimSelectSequence,140b0dea0,GrappleAnimSelectSequence_Hook,detour,game/client/grapple_rope_diag.cpp,Fixes the Pathfinder grapple-rope hand-origin bug. See
+v_IsPlayingGrappleAnimation_Client,1406729a0,IsPlayingGrappleAnimation_Client_Hook,detour,game/client/grapple_rope_diag.cpp,Fixes the Pathfinder grapple-rope hand-origin bug. See
+v_MovePostThinkAnimSwitch,140b110c0,MovePostThinkAnimSwitch_Hook,detour,game/client/grapple_rope_diag.cpp,Fixes the Pathfinder grapple-rope hand-origin bug. See
+v_C_GameMovement__Duck,140a54080,Hook_C_GameMovement_Duck,detour,game/client/halfduck_zip_parity.cpp,client half of zipline-exit m_doingHalfDuck parity.
+C_GameMovement__JumpPadLaunch,140a38a90,Hook_C_GameMovement_JumpPadLaunch,detour,game/client/jumppad_predict.cpp,prediction twin of the dedi's jump pad launch state. See header.
+C_GameMovement__TraversalMove,140a45380,Hook_TraversalMove,detour,game/client/mantle_boost.cpp,client-predicted twin of the automantle-exit boost. Same FSM and
+C_GameMovement__AirMove_TapStrafe,140a48a30,Hook_AirMove_TapStrafe,detour,game/client/mantle_boost.cpp,client-predicted twin of the automantle-exit boost. Same FSM and
+C_WeaponX__StartCustomActivity_Internal,1406f2010,Hook_StartCustomActivity_Internal,detour,game/client/melee_activity_trace.cpp,client half of the melee attack-lifetime trace. Twin of
+C_WeaponX__OnCustomActivityFinished,140715f90,Hook_OnCustomActivityFinished,detour,game/client/melee_activity_trace.cpp,client half of the melee attack-lifetime trace. Twin of
+C_Player__PlayerMelee_EndAttack,140b08230,Hook_PlayerMelee_EndAttack,detour,game/client/melee_activity_trace.cpp,client half of the melee attack-lifetime trace. Twin of
+C_Player__PlayerMelee_ClearActiveAttackState,140b08270,Hook_PlayerMelee_ClearActiveAttackState,detour,game/client/melee_activity_trace.cpp,client half of the melee attack-lifetime trace. Twin of
+C_Player__Lunge_ClearTarget,140b08f70,Hook_Lunge_ClearTarget,detour,game/client/melee_activity_trace.cpp,client half of the melee attack-lifetime trace. Twin of
+C_GameMovement__MeleeWalkMove,140a59ef0,Hook_MeleeWalkMove,detour,game/client/melee_lunge_probe.cpp,name the input behind the melee lunge-boost prediction divergence.
+PlayerMelee_ItemPreFrame,14068e0d0,Hook_PlayerMelee_ItemPreFrame,detour,game/client/melee_lunge_probe.cpp,name the input behind the melee lunge-boost prediction divergence.
+C_Player__PlayerMelee_SetAttackHitEntity,140b08620,Hook_PlayerMelee_SetAttackHitEntity,detour,game/client/melee_lunge_probe.cpp,name the input behind the melee lunge-boost prediction divergence.
+C_BaseAnimating__ProcessPredictedAnimEvents,1409ea700,Hook_ProcessPredictedAnimEvents,detour,game/client/melee_lunge_probe.cpp,name the input behind the melee lunge-boost prediction divergence.
+v_CGameMovement__FullWalkMove,140a4c810,Hook_CGameMovement_FullWalkMove,detour,game/client/move_sim_trace.cpp,client [MOVE-TRACE] twin -- FullWalkMove per-command state dump
+v_PortalSurf_Transparent,1409a1c70,Hook_PortalSurf_Transparent,detour,game/client/portal_render.cpp,Portal surface renderer (see portal_render.h). Draws after opaque
+C_BaseEntity__PostNetworkDataReceived,140795230,h_C_BaseEntity__PostNetworkDataReceived,detour,game/client/pred_diag.cpp,Per-field client/server prediction-error spew (S21 client).
+Prediction_Dispatch,1409295a0,h_Prediction_Dispatch,detour,game/client/pred_diag.cpp,Per-field client/server prediction-error spew (S21 client).
+PredErrorCheck,140928930,h_PredErrorCheck,detour,game/client/pred_diag.cpp,Per-field client/server prediction-error spew (S21 client).
+C_Player__NotePredictionError,1407eabd0,Hook_C_Player_NotePredictionError,detour,game/client/pred_icon_diag.cpp,[PRED-ICON] -- log every visible prediction correction and whether
+v_SceneView_SetupMonitors,1409a7880,Hook_SceneView_SetupMonitors,detour,game/client/sceneview.cpp,Full-resolution scene views (see sceneview.h). Setup runs after the
+v_SceneView_DrawMonitors,1409a74f0,Hook_SceneView_DrawMonitors,detour,game/client/sceneview.cpp,Full-resolution scene views (see sceneview.h). Setup runs after the
+v_SceneView_ResolveMain,140960950,Hook_SceneView_ResolveMain,detour,game/client/sceneview.cpp,Full-resolution scene views (see sceneview.h). Setup runs after the
+v_SceneView_AllocFrameMRTs,1404b4bc0,Hook_SceneView_AllocFrameMRTs,detour,game/client/sceneview.cpp,Full-resolution scene views (see sceneview.h). Setup runs after the
+v_GameMovement_UpdateGroundMoveExtra,140a59ef0,Hook_GameMovement_UpdateGroundMoveExtra,detour,game/client/source_push.cpp,client prediction twin of the Source trigger_push. The map script
+v_UseSelfCheck,,Hook_UseSelfCheck,detour,game/client/titan_use_self.cpp,Call CodeCallback_CanUseEntity with its declared arguments from the
+C_GameMovement__ApplyGravityCannonLaunch,140a3af30,Hook_ApplyGravityCannonLaunch,detour,game/client/trigger_cannon.cpp,"gravity-cannon air-control lock, client half. See header."
+C_GameMovement__AirMove,140a48f90,Hook_AirMove,detour,game/client/trigger_cannon.cpp,"gravity-cannon air-control lock, client half. See header."
+v_VisClutter_PlayWeaponFx,14069db50,Hook_PlayWeaponFx,detour,game/client/visual_clutter.cpp,"""Visual clutter"" setting for the S21 client."
+v_VisClutter_AnimWeaponFx,140876dd0,Hook_AnimWeaponFx,detour,game/client/visual_clutter.cpp,"""Visual clutter"" setting for the S21 client."
+v_VisClutter_StartParticleOnEntity,140a26960,Hook_StartParticleOnEntity,detour,game/client/visual_clutter.cpp,"""Visual clutter"" setting for the S21 client."
+v_VisClutter_CreateParticleByIndex,140944dd0,Hook_CreateParticleByIndex,detour,game/client/visual_clutter.cpp,"""Visual clutter"" setting for the S21 client."
+v_GameMovement_JumpOutOfWallRun,140a50050,Hook_GameMovement_JumpOutOfWallRun,detour,game/client/wall_launch.cpp,client prediction twin of the Sparrow wall launch. Runs the same
+v_GameMovement_AirAccelerate,140a485e0,Hook_GameMovement_AirAccelerate,detour,game/client/wall_launch.cpp,client prediction twin of the Sparrow wall launch. Runs the same
+v_C_WeaponX_TranslateWeaponActivity,140714010,Hook_C_WeaponX_TranslateWeaponActivity,detour,game/client/weapon_akimbo_activity.cpp,weapon_akimbo_activity.h implementation. See that header.
+v_C_WeaponX_GetActivityModifiers,1406eef70,Hook_C_WeaponX_GetActivityModifiers,detour,game/client/weapon_akimbo_activity.cpp,weapon_akimbo_activity.h implementation. See that header.
+v_C_Player_AkimboSetState,1409f4d10,Hook_C_Player_AkimboSetState,detour,game/client/weapon_akimbo_activity.cpp,weapon_akimbo_activity.h implementation. See that header.
+v_C_Player_PostDataUpdate,1407dc980,Hook_C_Player_PostDataUpdate,detour,game/client/weapon_akimbo_activity.cpp,weapon_akimbo_activity.h implementation. See that header.
+v_C_WeaponX_SetIdealActivityWithModifiers,1406eb570,Hook_C_WeaponX_SetIdealActivityWithModifiers,detour,game/client/weapon_akimbo_activity.cpp,weapon_akimbo_activity.h implementation. See that header.
+v_C_WeaponX_FireGate,1406fdf50,Hook_C_WeaponX_FireGate,detour,game/client/weapon_akimbo_activity.cpp,weapon_akimbo_activity.h implementation. See that header.
+v_C_Player_CanZoom,140b04290,Hook_C_Player_CanZoom,detour,game/client/weapon_akimbo_activity.cpp,weapon_akimbo_activity.h implementation. See that header.
+v_C_Player_StartZoom,140b037e0,Hook_C_Player_StartZoom,detour,game/client/weapon_akimbo_activity.cpp,weapon_akimbo_activity.h implementation. See that header.
+v_C_Player_StopZoom,140b03b50,Hook_C_Player_StopZoom,detour,game/client/weapon_akimbo_activity.cpp,weapon_akimbo_activity.h implementation. See that header.
+v_C_WeaponX_RecalcMods,140714510,Hook_C_WeaponX_RecalcMods,detour,game/client/weapon_mod_visual.cpp,weapon_mod_visual.h implementation. See that header.
+v_WeaponWorldProxy_Update,,Hook_WeaponWorldProxy_Update,detour,game/client/weapon_world_proxy.cpp,Skip the weapon world-model proxy update when the weapon's owner is
+v_Zipline_Use,1407496a0,Hook_Zipline_Use,detour,game/client/zipline_disconnect.cpp,client twin of the latest zipline hop-regrab count.
+v_Zipline_JumpOff,14073f280,Hook_Zipline_JumpOff,detour,game/client/zipline_disconnect.cpp,client twin of the latest zipline hop-regrab count.
