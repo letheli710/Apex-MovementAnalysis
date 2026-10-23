@@ -460,6 +460,13 @@ Newest entries at the bottom. Problems are tagged **[ISSUE]** and also listed in
   - Slide-jump-by-age matches R5 within 2 u/s.
   - Ceiling surf follows the S21 client.
   - Octane S21 preset: stim 6.7 s lock, pad upgrades as options.
+- **M10-W done** (Wraith portal and Void, user-approved; HSD-Unity `91e8b27`, merged as #22 → main `d7b74c8`; lead-verified by rerun):
+  - Tests: EditMode 1968/1968.
+  - Replays: M2+M1 111, M1 first guess 111, M3 90; M4 114/114.
+  - Smoke: demos 238/238 (M10-W 16/16), older trajectories identical, course lap 80.55 s.
+  - Portal reproduces R5: exit speed 0, travel-time law, placement severity ramp, 128 u gap, 45 s lifetime.
+  - `SpeedBoost` rule msc = W·(1+2q).
+  - **[ISSUE→fixing]** The agent found a pre-existing motor defect: exact antiparallel ground input is never decelerated (sprint forward, then hold S keeps 199.5 u/s forever). The fix is being made as M10-D4.
 
 ## Open issues
 
