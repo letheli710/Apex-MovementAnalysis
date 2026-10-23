@@ -1111,7 +1111,467 @@ SCHEDULE_PRE = {**_jd_pre, **SCHEDULE_PRE}
 SCHEDULE_PRE["m9v_"] = _M9V_PRE
 
 
-DEFAULT_ORIGIN_SCHEDULES = {"basic", "e1_walk", "e1_sprint", "e1_crouch", "e1_back", "e1_side", "e1_diag", "e1_turn",
+# ---- M10 track R (m10/M10-PLAN.md). ① Pathfinder grapple (legend pathfinder --kit, --m10-log). Every m10_g* reset starts a
+# server logger (_M10_GR_LOG: per server frame the grapple flags, the hook origin and the player state for 6 s); --m10-log
+# adds the client per-frame logger (M10_CLIENT). Geometry: m3 (lane-A rock, face x -13706) and m10fly (the same rock floating
+# at (-13300, 5900, floor + 700): front face x ~ -13424, underside ~ floor + 450..505, y 5679..6119; probed in the M10 explore
+# game). Pitch: Source convention (+ = down).
+_M10_GR_LOG = r"""
+void functionref() m10gr = void function() : ( p ) {
+	try {
+		float t0 = Time()
+		while ( Time() - t0 < 6.5 && IsValid( p ) ) {
+			entity h = p.GetGrappleHook()
+			vector ho = IsValid( h ) ? h.GetOrigin() : <0, 0, 0>
+			vector po = p.GetOrigin()
+			vector pv = p.GetVelocity()
+			printt( "[M10-GRS] run=" + GetConVarInt( "hsd_md_run" ) + format( " t=%.4f", Time() ) + " act=" + p.IsGrappleActive() + " att=" + p.IsGrappleAttached() + " pull=" + p.IsGrapplePulling() + format( " hook=%.3f,%.3f,%.3f o=%.3f,%.3f,%.3f v=%.3f,%.3f,%.3f eye=%.3f", ho.x, ho.y, ho.z, po.x, po.y, po.z, pv.x, pv.y, pv.z, p.EyePosition().z - po.z ) + " gnd=" + p.IsOnGround() )
+			WaitFrame()
+		}
+	} catch ( grErr ) { printt( "[M10-GRS] error " + string( grErr ) ) }
+}
+thread m10gr()
+pre += " m10_grlog=1"
+"""
+M10_ROCK = "mdl/rocks/rock_white_chalk_modular_wallrun_02.rmdl"
+M10_FLY = (-13300.0, 5900.0, FLOOR_Z + 700.0)   # m10fly rock origin (pitch 0)
+_M10G = {}
+# detach / RF base on lane A (as M4 near / hold / far; p0 / p20 at the hold distance)
+for _n, _x, _pt in (("d250", -13950.0, -10.0), ("d400", -14100.0, -10.0), ("d700", -14400.0, -10.0), ("p0", -14100.0, 0.0),
+                    ("p20", -14100.0, -20.0)):
+    _M10G["m10_g_" + _n] = ((_x, 6500.0, FLOOR_Z), 0.0, _pt, "wait 72; tap offhand1; wait 3.5s")
+_M10GA = ((-14100.0, 6500.0, FLOOR_Z), 0.0, -10.0)    # the M4 hold start
+_M10G.update({
+    # entry speed: sprint / slide / air (grapple pressed while moving toward the face)
+    "m10_g_sprint": ((-14500.0, 6500.0, FLOOR_Z), 0.0, -10.0, "wait 72; down speed; down forward; wait 1.0s; tap offhand1; up forward; up speed; wait 3.5s"),
+    "m10_g_slide": ((-14500.0, 6500.0, FLOOR_Z), 0.0, -10.0, "wait 72; down speed; down forward; wait 1.0s; down duck; wait 0.15s; up forward; up speed; tap offhand1; wait 1.5s; up duck; wait 2.0s"),
+    "m10_g_air": ((-14500.0, 6500.0, FLOOR_Z), 0.0, -10.0, "wait 72; down speed; down forward; wait 1.0s; tap jump; up forward; up speed; wait 0.3s; tap offhand1; wait 3.5s"),
+    # keys held from the fire
+    "m10_g_hold_w": _M10GA + ("wait 72; tap offhand1; down forward; wait 3.0s; up forward; wait 0.5s",),
+    "m10_g_hold_s": _M10GA + ("wait 72; tap offhand1; down backward; wait 3.0s; up backward; wait 0.5s",),
+    "m10_g_hold_d": _M10GA + ("wait 72; tap offhand1; down moveright; wait 3.0s; up moveright; wait 0.5s",),
+    "m10_g_hold_wd": _M10GA + ("wait 72; tap offhand1; down forward; down moveright; wait 3.0s; up forward; up moveright; wait 0.5s",),
+    # second tactical press (release) at 0.6 / 0.9 / 1.2 s after the fire from the far start (speed > 460 at 0.9 / 1.2 s)
+    "m10_g_rel_t06": ((-14400.0, 6500.0, FLOOR_Z), 0.0, -10.0, "wait 72; tap offhand1; wait 0.6s; tap offhand1; wait 3.0s"),
+    "m10_g_rel_t09": ((-14400.0, 6500.0, FLOOR_Z), 0.0, -10.0, "wait 72; tap offhand1; wait 0.9s; tap offhand1; wait 3.0s"),
+    "m10_g_rel_t12": ((-14400.0, 6500.0, FLOOR_Z), 0.0, -10.0, "wait 72; tap offhand1; wait 1.2s; tap offhand1; wait 3.0s"),
+    # rodeo attempt: sprint along +X past the rock's -Y side face (y ~6280), turn left onto it, fire, hold A and keep turning
+    "m10_g_rodeo": ((-14150.0, 6120.0, FLOOR_Z), 0.0, -10.0, "set cl_yawspeed 180; wait 72; down speed; down forward; wait 1.2s; down left; "
+                   "wait 0.3s; up left; tap offhand1; up forward; up speed; down moveleft; down left; wait 1.5s; up left; up moveleft; wait 2.0s"),
+})
+# Jump / drag grapple on lane B (open floor): the hook on the ground 200 / 400 u ahead (pitch 19.3 / 9.9 down from eye 70);
+# jump K frames after the attach hop (waitair = the hop makes the player airborne); sprint and slide versions
+for _p, _pv in (("g200", 19.29), ("g400", 9.93)):
+    _M10G["m10_g_%s" % _p] = (LANE_B, 0.0, _pv, "wait 72; tap offhand1; wait 3.0s")
+    for _k in (2, 12, 30):
+        _M10G["m10_g_%s_j%d" % (_p, _k)] = (LANE_B, 0.0, _pv, "wait 72; tap offhand1; waitair; waitf %d; tap jump; wait 3.0s" % _k)
+_M10G.update({
+    "m10_g_g400_spr": (LANE_B, 0.0, 9.93, "wait 72; down speed; down forward; wait 1.0s; tap offhand1; up forward; up speed; wait 3.0s"),
+    "m10_g_g400_spr_j2": (LANE_B, 0.0, 9.93, "wait 72; down speed; down forward; wait 1.0s; tap offhand1; up forward; up speed; waitair; waitf 2; tap jump; wait 3.0s"),
+    "m10_g_g400_sl": (LANE_B, 0.0, 9.93, "wait 72; down speed; down forward; wait 1.0s; down duck; wait 0.15s; up forward; up speed; tap offhand1; wait 1.5s; up duck; wait 1.5s"),
+    "m10_g_g400_sl_j2": (LANE_B, 0.0, 9.93, "wait 72; down speed; down forward; wait 1.0s; down duck; wait 0.15s; up forward; up speed; tap offhand1; waitair; waitf 2; tap jump; wait 1.5s; up duck; wait 1.5s"),
+    # control: the same sprint and jump without the grapple
+    "m10_g_ctrl_spr_jump": (LANE_B, 0.0, 9.93, "wait 72; down speed; down forward; wait 1.0s; up forward; up speed; wait 0.25s; tap jump; wait 3.0s"),
+})
+# m10fly: slingshot (hook on the front face ~49 deg up from (-13850, 5900)), overhead pendulum test (sprint under the rock with
+# the view pitched up, fire when the ray meets the underside), and the slingshot inputs (turn + strafe at the pull midpoint,
+# W + turn, a release press at the midpoint, a sprint entry)
+_M10SL = ((-13850.0, 5900.0, FLOOR_Z), 0.0, -49.0)
+_M10G.update({
+    "m10_g_sl_hold": _M10SL + ("wait 72; tap offhand1; wait 3.5s",),
+    "m10_g_sl_turn_d": _M10SL + ("set cl_yawspeed 180; wait 72; tap offhand1; wait 0.9s; down right; down moveright; wait 0.5s; up right; wait 0.5s; up moveright; wait 2.0s",),
+    "m10_g_sl_turn_w": _M10SL + ("set cl_yawspeed 180; wait 72; tap offhand1; down forward; wait 0.9s; down right; wait 0.5s; up right; wait 0.5s; up forward; wait 2.0s",),
+    "m10_g_sl_rel": _M10SL + ("wait 72; tap offhand1; wait 0.9s; tap offhand1; wait 2.5s",),
+    "m10_g_sl_turn_rel": _M10SL + ("set cl_yawspeed 180; wait 72; tap offhand1; wait 0.9s; down right; down moveright; wait 0.3s; tap offhand1; wait 0.2s; up right; wait 0.5s; up moveright; wait 2.0s",),
+    "m10_g_sl_spr": ((-14250.0, 5900.0, FLOOR_Z), 0.0, -36.0, "wait 72; down speed; down forward; wait 1.0s; tap offhand1; up forward; up speed; wait 3.5s"),
+})
+# (explore: a grapple fired on the ground stops a sprint within ~0.25 s, so the overhead test fires in the air: sprint 1.8 s,
+# jump, fire 0.2 s later; start so the hook lands on the underside ~100 u (pitch 75) / ~260 u (pitch 55) ahead)
+for _p, _x0 in ((75, -13930.0), (55, -14070.0)):
+    _M10G["m10_g_over%d_jump" % _p] = ((_x0, 5900.0, FLOOR_Z), 0.0, -float(_p),
+                                       "wait 72; down speed; down forward; wait 1.8s; tap jump; up forward; up speed; wait 0.2s; tap offhand1; wait 3.5s")
+    _M10G["m10_g_over%d_jump_w" % _p] = ((_x0, 5900.0, FLOOR_Z), 0.0, -float(_p),
+                                         "wait 72; down speed; down forward; wait 1.8s; tap jump; up speed; wait 0.2s; tap offhand1; wait 3.5s; up forward")
+# track D specs (m10/d_library/TECHNIQUE-LIBRARY-M10.md §6). G-1 Slingshot: from the pull start (~0.5 s after the fire) turn
+# the view 80 deg left at 300 deg/s holding W+A, at about half the pull turn back right 90 deg and swap to W+D; 600 u anchor
+# (start -13850, pitch -49) and 800 u anchor (start -13989, pitch -45, hook ~floor+635 on the m10fly face); W-only and a
+# jump 2 cmds after the attach. G-1b: A / D / S held from the pull start with the view on the anchor.
+_G1 = ("set cl_yawspeed 300; wait 72; tap offhand1; wait 0.5s; down left; down forward; down moveleft; wait 0.27s; up left; wait 0.43s; "
+       "down right; up moveleft; down moveright; wait 0.3s; up right; wait 1.0s; up forward; up moveright; wait 1.5s")
+_M10SL8 = ((-13989.0, 5900.0, FLOOR_Z), 0.0, -45.0)
+_M10G.update({
+    "m10_g_sl_g1": _M10SL + (_G1,),
+    "m10_g_sl8_g1": _M10SL8 + (_G1,),
+    "m10_g_sl8_hold": _M10SL8 + ("wait 72; tap offhand1; wait 3.5s",),
+    "m10_g_sl8_w": _M10SL8 + ("wait 72; tap offhand1; wait 0.5s; down forward; wait 2.5s; up forward; wait 0.5s",),
+    "m10_g_sl8_jump": _M10SL8 + ("wait 72; tap offhand1; waitair; waitf 2; tap jump; wait 3.5s",),
+    "m10_g_sl_a": _M10SL + ("wait 72; tap offhand1; wait 0.5s; down moveleft; wait 2.5s; up moveleft; wait 0.5s",),
+    "m10_g_sl_d": _M10SL + ("wait 72; tap offhand1; wait 0.5s; down moveright; wait 2.5s; up moveright; wait 0.5s",),
+    "m10_g_sl_s": _M10SL + ("wait 72; tap offhand1; wait 0.5s; down backward; wait 2.5s; up backward; wait 0.5s",),
+    # G-5 slide grapple (hook on the m10fly front-bottom edge, ~57 deg up from (-13700, 5900)): walk backwards 1 s, jump, hold
+    # crouch, fire 2 cmds after the landing (slide) and hold W 0.6 s later; control: fire 0.15 s after the jump (air connect)
+    "m10_g_slidegr": ((-13700.0, 5900.0, FLOOR_Z), 0.0, -57.0, "wait 72; down backward; wait 1.0s; tap jump; down duck; waitair; waitland; "
+                      "waitf 2; tap offhand1; up backward; wait 0.6s; down forward; wait 1.5s; up forward; up duck; wait 1.0s"),
+    "m10_g_slidegr_air": ((-13700.0, 5900.0, FLOOR_Z), 0.0, -57.0, "wait 72; down backward; wait 1.0s; tap jump; down duck; wait 0.15s; "
+                          "tap offhand1; up backward; wait 0.6s; down forward; wait 1.5s; up forward; up duck; wait 1.0s"),
+})
+# G-2 jump grapple: ground hook 700 u ahead (pitch 5.71), jump k cmds after the attach hop; G-2b grapple hop: pitch 89
+_M10G["m10_g_g700"] = (LANE_B, 0.0, 5.71, "wait 72; tap offhand1; wait 3.5s")
+for _k in (1, 6, 12, 18, 24, 30, 48):
+    _M10G["m10_g_g700_j%d" % _k] = (LANE_B, 0.0, 5.71, "wait 72; tap offhand1; waitair; waitf %d; tap jump; wait 3.5s" % _k)
+_M10G["m10_g_hop"] = (LANE_B, 0.0, 89.0, "wait 72; tap offhand1; wait 2.5s")
+for _k in (0, 1, 2, 4):
+    _M10G["m10_g_hop_j%d" % _k] = (LANE_B, 0.0, 89.0, "wait 72; tap offhand1; waitair; " + ("waitf %d; " % _k if _k else "") + "tap jump; wait 2.5s")
+_M10G["m10_g_jump_ctrl"] = (LANE_B, 0.0, 0.0, "wait 72; tap jump; wait 2.0s")
+# G-3 detach candidates on lane A from the far start: view turned away at 180 deg/s from the pull start; crouch edge at
+# pull + 0.3 s; (passing the anchor = g700; tactical = rel_t*)
+_M10G["m10_g_look180"] = ((-14400.0, 6500.0, FLOOR_Z), 0.0, -10.0, "set cl_yawspeed 180; wait 72; tap offhand1; wait 0.55s; down left; wait 1.0s; up left; wait 2.0s")
+_M10G["m10_g_crouch"] = ((-14400.0, 6500.0, FLOOR_Z), 0.0, -10.0, "wait 72; tap offhand1; wait 0.85s; tap duck; wait 3.0s")
+# G-6 super grapple: aim 30 u over the lane-A rock top from 300 u (miss), jump 0.2 s after the fire / no jump (control)
+_M10G["m10_g_super_jump"] = ((-14006.0, 6500.0, FLOOR_Z), 0.0, -32.6, "wait 72; tap offhand1; wait 0.2s; tap jump; wait 3.0s")
+_M10G["m10_g_super_none"] = ((-14006.0, 6500.0, FLOOR_Z), 0.0, -32.6, "wait 72; tap offhand1; wait 3.0s")
+# G-7 rodeo, D held with the view kept on the fire direction (no turn); G-8 double bounce attempt: wallbounce as M3
+# e6_bounce_none_15, tactical 0.25 s after the bounce jump (view on the wall), W pressed 0.5 s later
+_M10G["m10_g_rodeo_d"] = ((-14150.0, 6120.0, FLOOR_Z), 0.0, -10.0, "set cl_yawspeed 180; wait 72; down speed; down forward; wait 1.2s; down left; "
+                          "wait 0.3s; up left; tap offhand1; up forward; up speed; down moveright; wait 2.0s; up moveright; wait 1.5s")
+_M10G["m10_g_dbounce"] = (LANE_A, 0.0, 0.0, "wait 72; down speed; down forward; wait 1.2s; tap jump; wait 0.43s; up forward; up speed; tap jump; "
+                          "wait 0.25s; tap offhand1; wait 0.5s; down forward; wait 2.0s; up forward; wait 1.0s")
+# round 2 (after session M10R_g1): the second-press release above the class-var grapple_detachSpeedLossMin 460 (far start,
+# 1.6 / 1.8 s after the fire), and one tether / rodeo attempt under the m10fly overhang: the over75 jump with D held and the view
+# turning right at 120 deg/s from the fire (an orbit around the vertical through the anchor)
+_M10G["m10_g_rel_t16"] = ((-14400.0, 6500.0, FLOOR_Z), 0.0, -10.0, "wait 72; tap offhand1; wait 1.6s; tap offhand1; wait 3.0s")
+_M10G["m10_g_rel_t18"] = ((-14400.0, 6500.0, FLOOR_Z), 0.0, -10.0, "wait 72; tap offhand1; wait 1.8s; tap offhand1; wait 3.0s")
+_M10G["m10_g_tether"] = ((-13930.0, 5900.0, FLOOR_Z), 0.0, -75.0, "set cl_yawspeed 120; wait 72; down speed; down forward; wait 1.8s; tap jump; up forward; "
+                         "up speed; wait 0.2s; tap offhand1; down moveright; down right; wait 3.0s; up right; up moveright; wait 0.5s")
+for _n, (_o, _yw, _pt, _s) in _M10G.items():
+    SCHEDULES[_n] = _s
+    SCHEDULE_ORIGIN[_n] = _o
+    SCHEDULE_YAW[_n] = _yw
+    SCHEDULE_PITCH[_n] = _pt
+SCHEDULE_PRE["m10_g"] = _M10_GR_LOG
+
+# ---- M10 ③ Octane (legend octane --kit, --m10-log). Every m10_o* reset: full health, the pad upgrades (passives) taken away
+# and given per schedule, then a server logger (health, speed_boost severity, stim visual effect; 10 Hz, 10 s). Pads are created
+# with JumpPad_CreateAtLocation (as M4) AFTER the passives so the x1.2 launch (PAS_ULT_UPGRADE_ONE) and the upgraded skin
+# (PAS_ULT_UPGRADE_THREE, enable_doublejump_aircontrol) are applied. Ceilings: three copies of the M3 rock pitched 90 deg
+# (flat underside ~110 u below the origin, ~450 u along x and ~420 u along y each; probed in the M10 explore game) at x -14450 /
+# -14000 / -13550 over lane C, underside H u above the floor; the logger traces the underside 0.3 s after the spawn.
+_M10O_LOG = r"""
+void functionref() m10o = void function() : ( p ) {
+	try {
+		wait 0.3
+		string ce = ""
+		foreach ( float cx in [ -14500.0, -14300.0, -14000.0, -13600.0, -13300.0 ] ) {
+			TraceResults tr = TraceLine( <cx, 6800, 304.92>, <cx, 6800, 1500>, [ p ], TRACE_MASK_PLAYERSOLID, TRACE_COLLISION_GROUP_PLAYER )
+			ce += format( " %.0f:%.1f", cx, tr.fraction < 1 ? tr.endPos.z - 294.92 : -1.0 )
+		}
+		printt( "[M10-OCT] run=" + GetConVarInt( "hsd_md_run" ) + " ceiling" + ce )
+		float t0 = Time()
+		while ( Time() - t0 < 10.0 && IsValid( p ) ) {
+			printt( "[M10-OCT] run=" + GetConVarInt( "hsd_md_run" ) + format( " t=%.4f hp=%d boost=%.4f stimfx=%.4f", Time(), p.GetHealth(), StatusEffect_GetSeverity( p, eStatusEffect.speed_boost ), StatusEffect_GetSeverity( p, eStatusEffect.stim_visual_effect ) ) )
+			WaitFrame()
+		}
+	} catch ( oErr ) { printt( "[M10-OCT] error " + string( oErr ) ) }
+}
+thread m10o()
+"""
+
+
+def _m10o_pre(pad_dx=None, passives=(), ceil_h=None, smooth=False):
+    s = ['p.SetHealth( p.GetMaxHealth() )',
+         'foreach ( int pas in [ ePassives.PAS_ULT_UPGRADE_ONE, ePassives.PAS_ULT_UPGRADE_TWO, ePassives.PAS_ULT_UPGRADE_THREE ] ) '
+         '{ if ( p.HasPassive( pas ) ) TakePassive( p, pas ) }',
+         'foreach ( entity e in GetEntArrayByScriptName( "hsd_test_geo_m4" ) ) e.Destroy()',
+         'foreach ( entity e in GetEntArrayByScriptName( "hsd_m10_ceil" ) ) e.Destroy()']
+    for ps in passives:
+        s.append('GivePassive( p, ePassives.%s )' % ps)
+    if ceil_h is not None and smooth:
+        # round 2: ONE rock pitched -90 / yaw 180 (its smooth climbable face down): underside rises ~1.9 deg along +X from
+        # ~H at x -14475 to ~H + 13 at x -14075 (probed in the M10 explore game), lip at x -14500 over the pad
+        s.append('asset rk = $"%s"' % M10_ROCK)
+        s.append('if ( !ModelIsPrecached( rk ) ) MapEdit_PrecacheModel( rk )')
+        s.append('{ entity ce = CreatePropDynamic( rk, <-14290.0, 6800, %.2f>, <-90, 180, 0>, SOLID_VPHYSICS, -1.0 ); ce.SetScriptName( "hsd_m10_ceil" ) }'
+                 % (FLOOR_Z + ceil_h + 115.0))
+    elif ceil_h is not None:
+        s.append('asset rk = $"%s"' % M10_ROCK)
+        s.append('if ( !ModelIsPrecached( rk ) ) MapEdit_PrecacheModel( rk )')
+        for cx in (-14450.0, -14000.0, -13550.0):
+            s.append('{ entity ce = CreatePropDynamic( rk, <%.1f, 6800, %.2f>, <90, 0, 0>, SOLID_VPHYSICS, -1.0 ); ce.SetScriptName( "hsd_m10_ceil" ) }'
+                     % (cx, FLOOR_Z + ceil_h + 110.0))
+    if pad_dx is not None:
+        s.append('entity pad = JumpPad_CreateAtLocation( o + <%.1f, 0, 0>, <0, 0, 0>, p, true )' % pad_dx)
+        s.append('if ( IsValid( pad ) ) pad.SetScriptName( "hsd_test_geo_m4" )')
+        s.append('pre += " pad=" + IsValid( pad )')
+    s.append('pre += " passives=%s ceil=%s%s"' % ("+".join(passives) or "none", ceil_h, "_smooth" if smooth else ""))
+    return "\n".join(s) + "\n" + _M10O_LOG
+
+
+_M10O = {}   # name: (origin, yaw, pitch, steps, pre)
+_LC = LANE_C
+_M10O.update({
+    # O-1 regression and interactions (lane C, no pad)
+    "m10_o_stim_sprint": (_LC, 0.0, 0.0, "wait 72; down speed; down forward; wait 1.0s; tap offhand1; wait 2.5s; up forward; up speed; wait 6.0s", _m10o_pre()),
+    "m10_o_stim_slide": (_LC, 0.0, 0.0, "wait 72; down speed; down forward; wait 0.6s; tap offhand1; wait 1.0s; down duck; wait 1.2s; up duck; up forward; up speed; wait 6.0s", _m10o_pre()),
+    "m10_o_ctrl_slide": (_LC, 0.0, 0.0, "wait 72; down speed; down forward; wait 1.6s; down duck; wait 1.2s; up duck; up forward; up speed; wait 1.0s", _m10o_pre()),
+    "m10_o_stim_hop": (_LC, 0.0, 0.0, "wait 72; down speed; down forward; wait 0.4s; tap offhand1; wait 1.0s; tap jump; waitair; waitland; tap jump; waitair; waitland; tap jump; "
+                       "waitair; waitland; wait 0.3s; up forward; up speed; wait 5.0s", _m10o_pre()),
+    "m10_o_ctrl_hop": (_LC, 0.0, 0.0, "wait 72; down speed; down forward; wait 1.4s; tap jump; waitair; waitland; tap jump; waitair; waitland; tap jump; "
+                       "waitair; waitland; wait 0.3s; up forward; up speed; wait 1.0s", _m10o_pre()),
+    # O-2 re-use: stand, stim, second press X s later; single stim control
+    "m10_o_stim_once": (_LC, 0.0, 0.0, "wait 72; tap offhand1; wait 9.0s", _m10o_pre()),
+    # O-3 / O-4 pad direction and arcs (pad 300 u ahead; drift = pad 60 u ahead, a 12-frame W tap, no key at contact)
+    "m10_o_pad_walk": (_LC, 0.0, 0.0, "wait 72; down forward; wait 2.5s; up forward; wait 3.5s", _m10o_pre(300.0)),
+    "m10_o_pad_crouch": (_LC, 0.0, 0.0, "wait 72; down duck; wait 0.5s; down forward; wait 4.0s; up forward; up duck; wait 2.0s", _m10o_pre(300.0)),
+    "m10_o_pad_sprint": (_LC, 0.0, 0.0, "wait 72; down speed; down forward; wait 1.5s; up forward; up speed; wait 4.0s", _m10o_pre(300.0)),
+    "m10_o_pad_drift": (_LC, 0.0, 0.0, "wait 72; down forward; waitf 12; up forward; wait 4.5s", _m10o_pre(60.0)),
+    "m10_o_pad_side": (_LC, 90.0, 0.0, "wait 72; down moveright; wait 3.0s; up moveright; wait 3.0s", _m10o_pre(300.0)),
+    "m10_o_pad_back": (_LC, 180.0, 0.0, "wait 72; down backward; wait 3.0s; up backward; wait 3.0s", _m10o_pre(300.0)),
+    # upgrades (local scripts; S21 status per track D): x1.2 push, upgraded pad double jump with D held 0.5 s after the launch
+    "m10_o_padup1_walk": (_LC, 0.0, 0.0, "wait 72; down forward; wait 2.5s; up forward; wait 4.0s", _m10o_pre(300.0, ("PAS_ULT_UPGRADE_ONE",))),
+    "m10_o_padup1_crouch": (_LC, 0.0, 0.0, "wait 72; down duck; wait 0.5s; down forward; wait 4.0s; up forward; up duck; wait 2.5s", _m10o_pre(300.0, ("PAS_ULT_UPGRADE_ONE",))),
+    "m10_o_pad_dj_d": (_LC, 0.0, 0.0, "wait 72; down speed; down forward; waitair; up forward; up speed; waitf 60; down moveright; tap jump; wait 0.6s; up moveright; wait 3.0s", _m10o_pre(300.0)),
+    "m10_o_padup3_dj_d": (_LC, 0.0, 0.0, "wait 72; down speed; down forward; waitair; up forward; up speed; waitf 60; down moveright; tap jump; wait 0.6s; up moveright; wait 3.0s",
+                          _m10o_pre(300.0, ("PAS_ULT_UPGRADE_THREE",))),
+    "m10_o_padup3_dj_none": (_LC, 0.0, 0.0, "wait 72; down speed; down forward; waitair; up forward; up speed; waitf 60; tap jump; wait 3.6s", _m10o_pre(300.0, ("PAS_ULT_UPGRADE_THREE",))),
+    "m10_o_padup3_dj_dhold": (_LC, 0.0, 0.0, "wait 72; down speed; down forward; waitair; up forward; up speed; waitf 40; down moveright; waitf 20; tap jump; wait 0.6s; up moveright; wait 3.0s",
+                              _m10o_pre(300.0, ("PAS_ULT_UPGRADE_THREE",))),
+})
+for _x in (1.0, 2.0, 3.0, 5.9, 6.1, 6.6):
+    _M10O["m10_o_restim_t%02d" % int(round(_x * 10))] = (_LC, 0.0, 0.0, "wait 72; tap offhand1; wait %.1fs; tap offhand1; wait %.1fs" % (_x, 9.0 - _x), _m10o_pre())
+# O-6 / O-7 ceiling surf: walk (W held) / crouch-walk onto the pad under a ceiling H u above the floor; W held 2 s after the
+# launch (waitair = the launch); drift (no key at contact) at 250; steer (D 0.3 s after the launch) at 150; controls without
+# a pad under the H100 ceiling (standing jump, sprint jump)
+for _h in (100, 150, 250, 400, 600):
+    _M10O["m10_o_ceil_h%d_st" % _h] = (_LC, 0.0, 0.0, "wait 72; down forward; waitair; wait 2.0s; up forward; wait 2.5s", _m10o_pre(300.0, (), _h))
+    _M10O["m10_o_ceil_h%d_cr" % _h] = (_LC, 0.0, 0.0, "wait 72; down duck; wait 0.5s; down forward; waitair; wait 2.0s; up forward; up duck; wait 2.5s", _m10o_pre(300.0, (), _h))
+_M10O["m10_o_ceil_h250_drift"] = (_LC, 0.0, 0.0, "wait 72; down forward; waitf 12; up forward; wait 4.5s", _m10o_pre(60.0, (), 250))
+_M10O["m10_o_ceil_h150_steer"] = (_LC, 0.0, 0.0, "wait 72; down forward; waitair; wait 0.3s; up forward; down moveright; wait 1.0s; up moveright; wait 3.0s", _m10o_pre(300.0, (), 150))
+_M10O["m10_o_ceil_h100_jump"] = ((-14300.0, 6800.0, FLOOR_Z), 0.0, 0.0, "wait 72; tap jump; wait 2.0s", _m10o_pre(None, (), 100))
+_M10O["m10_o_ceil_h100_sprjump"] = (_LC, 0.0, 0.0, "wait 72; down speed; down forward; wait 1.0s; tap jump; wait 1.5s; up forward; up speed; wait 1.0s", _m10o_pre(None, (), 100))
+# round 2 (after session M10R_octane: the surf exists but the three rough rocks broke it after 0.05-0.13 s): one smooth rock;
+# stim re-press after the charge cooldown (charge_time 6 + charge_cooldown_time 0.7 in mp_ability_octane_stim.txt)
+for _h in (150, 250, 400):
+    _M10O["m10_o_ceil2_h%d_st" % _h] = (_LC, 0.0, 0.0, "wait 72; down forward; waitair; wait 2.0s; up forward; wait 2.5s", _m10o_pre(300.0, (), _h, True))
+    _M10O["m10_o_ceil2_h%d_cr" % _h] = (_LC, 0.0, 0.0, "wait 72; down duck; wait 0.5s; down forward; waitair; wait 2.0s; up forward; up duck; wait 2.5s", _m10o_pre(300.0, (), _h, True))
+_M10O["m10_o_ceil2_h250_drift"] = (_LC, 0.0, 0.0, "wait 72; down forward; waitf 12; up forward; wait 4.5s", _m10o_pre(60.0, (), 250, True))
+_M10O["m10_o_ceil2_h250_steer"] = (_LC, 0.0, 0.0, "wait 72; down forward; waitair; wait 0.25s; up forward; down moveright; wait 1.0s; up moveright; wait 3.0s", _m10o_pre(300.0, (), 250, True))
+_M10O["m10_o_ceil2_h250_noW"] = (_LC, 0.0, 0.0, "wait 72; down forward; waitair; up forward; wait 4.5s", _m10o_pre(300.0, (), 250, True))
+_M10O["m10_o_ceil2_h100_jump"] = ((-14350.0, 6800.0, FLOOR_Z), 0.0, 0.0, "wait 72; tap jump; wait 2.0s", _m10o_pre(None, (), 100, True))
+for _x in (7.5, 9.0):
+    _M10O["m10_o_restim_t%02d" % int(round(_x * 10))] = (_LC, 0.0, 0.0, "wait 72; tap offhand1; wait %.1fs; tap offhand1; wait %.1fs" % (_x, 10.5 - _x), _m10o_pre())
+_M10O["m10_o_noceil_st"] = (_LC, 0.0, 0.0, "wait 72; down forward; waitair; wait 2.0s; up forward; wait 2.5s", _m10o_pre(300.0))
+_M10O["m10_o_noceil_cr"] = (_LC, 0.0, 0.0, "wait 72; down duck; wait 0.5s; down forward; waitair; wait 2.0s; up forward; up duck; wait 2.5s", _m10o_pre(300.0))
+for _n, (_o, _yw, _pt, _s, _pre) in _M10O.items():
+    SCHEDULES[_n] = _s
+    SCHEDULE_ORIGIN[_n] = _o
+    SCHEDULE_YAW[_n] = _yw
+    SCHEDULE_PITCH[_n] = _pt
+    SCHEDULE_PRE[_n] = _pre
+# exact names must win over the shorter prefixes already in SCHEDULE_PRE (matched in insertion order)
+SCHEDULE_PRE = {**{k: SCHEDULE_PRE[k] for k in _M10O}, **{k: v for k, v in SCHEDULE_PRE.items() if k not in _M10O}}
+
+
+# ---- M10 ② Zipline Gun (legend pathfinder --kit, --m10-log). Real ultimate: tap offhand4 (raise), 1.0 s later tap attack.
+# Every m10_z* reset: the player is taken off any rope, the gun ropes already in the world are counted and (except m10_z_keep*)
+# destroyed, the ult weapon's mods / clip / distance keys are printed, then a server logger (10 Hz, 10 s): every gun rope
+# (script name zipline_start: origin, linked zipline_end origin), the player's zipline flag, origin, velocity, ult clip.
+_M10Z_LOG = r"""
+void functionref() m10z = void function() : ( p ) {
+	try {
+		float t0 = Time()
+		while ( Time() - t0 < 10.0 && IsValid( p ) ) {
+			string rs = ""
+			foreach ( entity zs in GetEntArrayByScriptName( "zipline_start" ) ) {
+				entity ze = zs.GetLinkEnt()
+				vector a = zs.GetOrigin()
+				vector b = IsValid( ze ) ? ze.GetOrigin() : <0, 0, 0>
+				rs += format( " rope=%.2f,%.2f,%.2f>%.2f,%.2f,%.2f", a.x, a.y, a.z, b.x, b.y, b.z )
+			}
+			entity uw = p.GetOffhandWeapon( OFFHAND_ULTIMATE )
+			vector po = p.GetOrigin()
+			vector pv = p.GetVelocity()
+			printt( "[M10-ZIP] run=" + GetConVarInt( "hsd_md_run" ) + format( " t=%.4f zip=%d o=%.3f,%.3f,%.3f v=%.3f,%.3f,%.3f clip=%d gnd=%d", Time(), p.IsZiplining() ? 1 : 0, po.x, po.y, po.z, pv.x, pv.y, pv.z, IsValid( uw ) ? uw.GetWeaponPrimaryClipCount() : -1, p.IsOnGround() ? 1 : 0 ) + rs )
+			WaitFrame()
+		}
+	} catch ( zErr ) { printt( "[M10-ZIP] error " + string( zErr ) ) }
+}
+thread m10z()
+"""
+
+
+def _m10z_pre(keep=False):
+    s = ['if ( p.IsZiplining() ) p.Zipline_Stop()',
+         'int nz = GetEntArrayByScriptName( "zipline_start" ).len()',
+         'pre += " ropes_before=" + nz']
+    if not keep:
+        s.append('foreach ( entity zs in GetEntArrayByScriptName( "zipline_start" ) ) zs.Destroy()')
+    s.append('entity zw = p.GetOffhandWeapon( OFFHAND_ULTIMATE )')
+    s.append('if ( IsValid( zw ) ) pre += " ult=" + zw.GetWeaponClassName() + " mods=" + zw.GetMods().len() + " clip=" + zw.GetWeaponPrimaryClipCount() + "/" + zw.GetWeaponPrimaryClipCountMax()')
+    s.append('if ( IsValid( zw ) ) { foreach ( string md in zw.GetMods() ) pre += " mod:" + md }')
+    return "\n".join(s) + "\n" + _M10Z_LOG
+
+
+_ZF = "wait 72; tap offhand4; wait 1.0s; tap attack; "
+_M10Z = {   # name: (origin, yaw, pitch, steps, keep)
+    "m10_z_fire_d600": (_LC, 0.0, 6.65, _ZF + "wait 3.0s", False),
+    "m10_z_fire_d800": (_LC, 0.0, 5.0, _ZF + "wait 3.0s", False),
+    "m10_z_fire_d1500": (_LC, 0.0, 2.67, _ZF + "wait 3.0s", False),
+    "m10_z_fire_d2300": (_LC, 0.0, 1.74, _ZF + "wait 3.0s", False),
+    "m10_z_fire_flat": (_LC, 0.0, 0.0, _ZF + "wait 4.0s", False),
+    "m10_z_fire_sky": (_LC, 0.0, -40.0, _ZF + "wait 3.0s", False),
+    "m10_z_fire_air": (_LC, 0.0, 2.67, "wait 72; tap offhand4; wait 1.0s; tap jump; wait 0.25s; tap attack; wait 3.0s", False),
+    "m10_z_wall_d800": ((-14506.0, 6500.0, FLOOR_Z), 0.0, -10.0, _ZF + "wait 3.0s", False),
+    "m10_z_wall_d600": ((-14306.0, 6500.0, FLOOR_Z), 0.0, -10.0, _ZF + "wait 3.0s", False),
+    "m10_z_steep40": ((-14306.0, 6500.0, FLOOR_Z), 0.0, -40.0, _ZF + "wait 3.0s", False),
+    "m10_z_steep50": ((-14306.0, 6500.0, FLOOR_Z), 0.0, -50.0, _ZF + "wait 3.0s", False),
+    # rides: mount from the begin station 2 s after the fire
+    "m10_z_ride_d1500": (_LC, 0.0, 2.67, _ZF + "wait 2.0s; tap use; wait 6.0s", False),
+    "m10_z_ride_wall": ((-14506.0, 6500.0, FLOOR_Z), 0.0, -10.0, _ZF + "wait 2.0s; tap use; wait 4.0s", False),
+    "m10_z_ride_s40": ((-14306.0, 6500.0, FLOOR_Z), 0.0, -40.0, _ZF + "wait 2.0s; tap use; wait 4.0s", False),
+    "m10_z_ride_s50": ((-14306.0, 6500.0, FLOOR_Z), 0.0, -50.0, _ZF + "wait 2.0s; tap use; wait 4.0s", False),
+    "m10_z_ride_jump": (_LC, 0.0, 2.67, _ZF + "wait 2.0s; tap use; wait 0.8s; tap jump; wait 3.0s", False),
+    "m10_z_ride_super": (_LC, 0.0, 2.67, _ZF + "wait 2.0s; tap use; waitf 2; tap jump; waitf 1; tap jump; wait 3.0s", False),
+    "m10_z_ride_s50_jump90": ((-14306.0, 6500.0, FLOOR_Z), 0.0, -50.0, "set cl_yawspeed 180; " + _ZF + "wait 2.0s; tap use; wait 0.3s; down right; wait 0.5s; up right; tap jump; wait 3.0s", False),
+    "m10_z_ride_s40_jump90": ((-14306.0, 6500.0, FLOOR_Z), 0.0, -40.0, "set cl_yawspeed 180; " + _ZF + "wait 2.0s; tap use; wait 0.3s; down right; wait 0.5s; up right; tap jump; wait 3.0s", False),
+    # grapple onto the own rope: fire along lane C, walk 1.3 s to +Y, turn right 90 deg, grapple (pitch 2.67 = the rope height
+    # ~58 u at 260 u lateral, if the stations hold the rope ~60 u up)
+    "m10_z_grapple_rope": (_LC, 0.0, 2.67, "set cl_yawspeed 180; " + _ZF + "wait 1.5s; down moveleft; wait 1.3s; up moveleft; down right; wait 0.5s; up right; "
+                           "wait 0.2s; tap offhand1; wait 4.0s", False),
+    # retry (session M10R_zip: the gun rope hangs 112 u up, the 2.67 deg aim passed under it): the rope is fired with the view
+    # 9.2 deg up (it lands on the far terrain), the player walks 1.0 s forward and 1.3 s to +Y, turns right 90 deg, grapples
+    "m10_z_grapple_rope2": (_LC, 0.0, -9.2, "set cl_yawspeed 180; " + _ZF + "wait 1.5s; down forward; wait 1.0s; up forward; down moveleft; wait 1.3s; "
+                            "up moveleft; down right; wait 0.5s; up right; wait 0.2s; tap offhand1; wait 4.0s", False),
+    # several ropes: not destroyed between these trials (3 ropes side by side from y 6800 / 6650 / 6500 is not possible on one
+    # origin, so the same origin is reused: count the ropes and see what a second gun rope does to the first)
+    "m10_z_keep_d1500": (_LC, 0.0, 2.67, _ZF + "wait 3.0s", True),
+}
+for _n, (_o, _yw, _pt, _s, _keep) in _M10Z.items():
+    SCHEDULES[_n] = _s
+    SCHEDULE_ORIGIN[_n] = _o
+    SCHEDULE_YAW[_n] = _yw
+    SCHEDULE_PITCH[_n] = _pt
+    SCHEDULE_PRE[_n] = _m10z_pre(_keep)
+SCHEDULE_PRE = {**{k: SCHEDULE_PRE[k] for k in _M10Z}, **{k: v for k, v in SCHEDULE_PRE.items() if k not in _M10Z}}
+
+
+# ---- M10 ④ D1 slide re-check (lane C, legend gibraltar, no kit). rel: crouch released at slide age X with W + sprint still
+# held (and one with every key released); sj: slide jump at slide age A from a 1.5 s sprint (fresh slide boost); sj2: the same
+# on a second slide that starts 0.6 s after a first 0.4 s slide ended (boost not re-armed, M9-D1: ~1 s re-arm)
+_M10S = {}
+for _x in (0.10, 0.25, 0.50, 1.00):
+    _M10S["m10_s_rel_t%03d" % int(round(_x * 100))] = "wait 72; down speed; down forward; wait 1.5s; down duck; wait %.2fs; up duck; wait 1.5s; up forward; up speed; wait 0.5s" % _x
+_M10S["m10_s_rel_t025_nokeys"] = "wait 72; down speed; down forward; wait 1.5s; down duck; wait 0.25s; up duck; up forward; up speed; wait 2.0s"
+_M10S["m10_s_hold"] = "wait 72; down speed; down forward; wait 1.5s; down duck; wait 2.0s; up duck; up forward; up speed; wait 0.5s"
+for _a in (0.10, 0.25, 0.40, 0.60, 1.00):
+    _M10S["m10_s_sj_a%03d" % int(round(_a * 100))] = "wait 72; down speed; down forward; wait 1.5s; down duck; wait %.2fs; tap jump; wait 1.0s; up duck; up forward; up speed; wait 0.5s" % _a
+for _a in (0.25, 0.60):
+    _M10S["m10_s_sj2_a%03d" % int(round(_a * 100))] = ("wait 72; down speed; down forward; wait 1.5s; down duck; wait 0.4s; up duck; wait 0.6s; down duck; wait %.2fs; tap jump; "
+                                                       "wait 1.0s; up duck; up forward; up speed; wait 0.5s" % _a)
+_M10S["m10_s_sprint_jump"] = "wait 72; down speed; down forward; wait 1.5s; tap jump; wait 1.0s; up forward; up speed; wait 0.5s"
+for _n, _s in _M10S.items():
+    SCHEDULES[_n] = _s
+    SCHEDULE_ORIGIN[_n] = LANE_C
+
+
+# ---- M10 ⑤ Wraith feasibility (legend wraith --kit, --state-log). Server logger (10 Hz, 12 s): speed_boost severity, phase
+# flag, placing_phase_tunnel severity, ult clip, origin / velocity, phase-tunnel blockers (the portals' trace blockers).
+# Tactical regression = M4 m4_wraith_void. Portal (mp_weapon_phase_tunnel, charge_time -1, placement up to 10 s / 6000 u, a
+# +0.1 speed_boost step per 20 % of the max distance): tap ultimate, sprint D s, tap ultimate again (end portal), then walk
+# back into the exit portal: back 0.6 s, forward 1.5 s (the travel replays the path); sl = slide the last 0.4 s before the
+# end press; walk = no sprint.
+_M10W_LOG = r"""
+void functionref() m10w = void function() : ( p ) {
+	try {
+		float t0 = Time()
+		while ( Time() - t0 < 14.0 && IsValid( p ) ) {
+			entity uw = p.GetOffhandWeapon( OFFHAND_ULTIMATE )
+			vector po = p.GetOrigin()
+			vector pv = p.GetVelocity()
+			int nb = GetEntArrayByScriptName( "phase_tunnel_blocker" ).len()
+			int npb = GetEntArrayByScriptName( "pre_phase_tunnel_blocker" ).len()
+			printt( "[M10-WR] run=" + GetConVarInt( "hsd_md_run" ) + format( " t=%.4f boost=%.4f placing=%.3f ph=%d clip=%d o=%.3f,%.3f,%.3f v=%.3f,%.3f,%.3f blockers=%d pre=%d", Time(),
+				StatusEffect_GetSeverity( p, eStatusEffect.speed_boost ), StatusEffect_GetSeverity( p, eStatusEffect.placing_phase_tunnel ), p.IsPhaseShifted() ? 1 : 0,
+				IsValid( uw ) ? uw.GetWeaponPrimaryClipCount() : -1, po.x, po.y, po.z, pv.x, pv.y, pv.z, nb, npb ) )
+			WaitFrame()
+		}
+	} catch ( wErr ) { printt( "[M10-WR] error " + string( wErr ) ) }
+}
+thread m10w()
+"""
+_WR_PRE = 'try { DEV_PhaseTunnel_DestroyAll() } catch ( dErr ) { pre += " destroyall_err" }\n' + _M10W_LOG
+_M10W = {
+    "m10_w_void": "wait 72; down speed; down forward; wait 0.5s; tap offhand1; wait 4.2s; up forward; up speed; wait 1.0s",
+    "m10_w_ctrl": "wait 72; down speed; down forward; wait 4.7s; up forward; up speed; wait 1.0s",
+    "m10_w_portal_d2": "wait 72; tap offhand4; wait 0.3s; down speed; down forward; wait 2.0s; up forward; up speed; tap offhand4; wait 1.0s; "
+                       "down backward; wait 0.6s; up backward; down forward; wait 1.5s; up forward; wait 4.0s",
+    "m10_w_portal_d5": "wait 72; tap offhand4; wait 0.3s; down speed; down forward; wait 5.0s; up forward; up speed; tap offhand4; wait 1.0s; "
+                       "down backward; wait 0.6s; up backward; down forward; wait 1.5s; up forward; wait 5.0s",
+    "m10_w_portal_walk": "wait 72; tap offhand4; wait 0.3s; down forward; wait 3.0s; up forward; tap offhand4; wait 1.0s; "
+                         "down backward; wait 0.6s; up backward; down forward; wait 1.5s; up forward; wait 4.0s",
+    "m10_w_portal_sl": "wait 72; tap offhand4; wait 0.3s; down speed; down forward; wait 2.0s; down duck; wait 0.4s; up duck; up forward; up speed; "
+                       "tap offhand4; wait 1.0s; down backward; wait 0.6s; up backward; down forward; wait 1.5s; up forward; wait 4.0s",
+    "m10_w_portal_sprint_in": "wait 72; tap offhand4; wait 0.3s; down speed; down forward; wait 2.0s; up forward; up speed; tap offhand4; wait 0.5s; "
+                              "down backward; wait 1.2s; up backward; down speed; down forward; wait 1.5s; up forward; up speed; wait 4.0s",
+    "m10_w_portal_hold": "wait 72; down offhand4; wait 0.3s; down speed; down forward; wait 2.0s; up forward; up speed; up offhand4; wait 1.0s; "
+                         "down backward; wait 0.6s; up backward; down forward; wait 1.5s; up forward; wait 4.0s",
+}
+for _n, _s in _M10W.items():
+    SCHEDULES[_n] = _s
+    SCHEDULE_ORIGIN[_n] = (-14700.0, 6650.0, FLOOR_Z)   # explore: from x -14900 the portal exit dropped the player off the field edge
+    SCHEDULE_PRE[_n] = _WR_PRE
+SCHEDULE_PRE = {**{k: SCHEDULE_PRE[k] for k in _M10W}, **{k: v for k, v in SCHEDULE_PRE.items() if k not in _M10W}}
+
+
+# M10 client per-frame logger (--m10-log): grapple flags, hook origin, eye height; zipline flag
+M10_CLIENT = string.Template(r'''
+void functionref() hsd_m10_f = void function() {
+	entity p = GetLocalClientPlayer()
+	int w = 0
+	while ( GetConVarInt( "hsd_md_run" ) != $run && w < 2400 )
+	{
+		WaitFrame()
+		w++
+	}
+	while ( IsValid( p ) && GetConVarInt( "hsd_md_run" ) == $run )
+	{
+		entity h = p.GetGrappleHook()
+		vector ho = IsValid( h ) ? h.GetOrigin() : <0, 0, 0>
+		printt( "[M10-GRC] run=$run fc=" + FrameCount() + format( " t=%.5f", Time() ) + " act=" + p.IsGrappleActive() + " att=" + p.IsGrappleAttached() + " pull=" + p.IsGrapplePulling() + format( " hook=%.3f,%.3f,%.3f eye=%.3f", ho.x, ho.y, ho.z, p.EyePosition().z - p.GetOrigin().z ) + " zip=" + p.IsZiplining() )
+		WaitFrame()
+	}
+}
+thread hsd_m10_f()
+AgentLink_Reply( "m10 logger run=$run" )
+''')
+
+# m10fly and later M10 props: (model, x, y, z, pitch, yaw, roll); spawned with the script name hsd_test_geo after the wall
+M10_GEO = {"m10fly": [(M10_ROCK,) + M10_FLY + (0.0, 0.0, 0.0)]}
+M10_SPAWN = r'''
+string out = ""
+try
+{
+	asset m = $"%(model)s"
+	bool pre = ModelIsPrecached( m ) || MapEdit_PrecacheModel( m )
+	out = "precached=" + pre
+	if ( pre )
+	{
+		entity prop = CreatePropDynamic( m, <%(x)f, %(y)f, %(z)f>, <%(p)f, %(yw)f, %(r)f>, SOLID_VPHYSICS, -1.0 )
+		if ( IsValid( prop ) )
+		{
+			prop.SetScriptName( "hsd_test_geo" )
+			prop.AllowMantle()
+			out += " prop=" + prop.GetEntIndex()
+		}
+		else
+			out += " prop=invalid"
+	}
+}
+catch ( err ) { out += " error=" + string( err ) }
+AgentLink_Reply( out )
+'''
+
+
+DEFAULT_ORIGIN_SCHEDULES = {"basic","e1_walk", "e1_sprint", "e1_crouch", "e1_back", "e1_side", "e1_diag", "e1_turn",
                             "e2_strafe", "e2_noinput", "e2_keepfwd", "e4_stand", "e4_hop0", "e4_hop3", "e4_hop43", "e5_slide",
                             "e5_slidejump02", "e5_slidejump06"}
 
@@ -1468,6 +1928,9 @@ def main(argv):
                     help="NAME=VALUE set on the dedi and client consoles for the session, restored afterwards")
     ap.add_argument("--server-cvar", action="append", default=[],
                     help="NAME=VALUE set on the dedi console only for the session (M9: bridge_zip_mount_diag=1), restored afterwards")
+    ap.add_argument("--client-exec", action="append", default=[],
+                    help="M10: client console 'exec <cfg>' after the legend / kit (e.g. user/hsd_m10_classvars)")
+    ap.add_argument("--m10-log", action="store_true", help="M10: client [M10-GRC] logger thread per trial")
     ap.add_argument("--m6-census", action="store_true",
                     help="also exec user/hsd_m6_classvars (client) and the M6 cvar finds on both consoles")
     ap.add_argument("--kit", action="store_true",
@@ -1568,6 +2031,21 @@ def main(argv):
                 if "zip_ents=" not in manifest["geometry_zip"]:
                     raise SystemExit("ziplines could not be spawned")
                 time.sleep(1.0)
+        m10g = [g for g in geos if g in M10_GEO]
+        if m10g:
+            if not wall:   # the wall branch clears hsd_test_geo; without a wall clear it here
+                import test_geometry as tg
+                server.eval(tg.CLEAR, check=False)
+            manifest["geometry_m10"] = {}
+            for g in m10g:
+                reps = []
+                for (mdl, x, y, z, pp, yw, rr) in M10_GEO[g]:
+                    reps.append(server.eval(M10_SPAWN % dict(model=mdl, x=x, y=y, z=z, p=pp, yw=yw, r=rr), check=False).get("reply", ""))
+                manifest["geometry_m10"][g] = {"props": M10_GEO[g], "replies": reps}
+                print("geometry:", g, " | ".join(reps))
+                if any("prop=" not in r or "invalid" in r for r in reps):
+                    raise SystemExit("M10 geometry could not be spawned: " + g)
+            time.sleep(2.0)
         if "m6zip" in geos:
             r = server.eval(ZIP_SERVER, check=False)
             manifest["geometry_zip"] = r.get("reply", "")
@@ -1609,6 +2087,10 @@ def main(argv):
                                (server, "hsd_md_dump_now 1")):
                 side.cmd(line)
             time.sleep(2.0)
+        for cfg in a.client_exec:
+            client.cmd("exec " + cfg)
+            time.sleep(2.0)
+        manifest["client_exec"] = a.client_exec
         if a.m6_census:
             client.cmd("exec user/hsd_m6_classvars")
             for side in (server, client):
@@ -1642,6 +2124,8 @@ def main(argv):
                     client.cmd(st[4:])
             if a.state_log:
                 client.eval(STATE_CLIENT.substitute(run=run), check=False)
+            if a.m10_log:
+                client.eval(M10_CLIENT.substitute(run=run), check=False)
             sched = client.eval(SCHED_CLIENT.substitute(
                 steps=", ".join(json.dumps(s) for s in steps), ox=ox, oy=oy, oz=oz,
                 settle_frames=a.settle_frames, settle_timeout=a.settle_timeout, trial=trial, run=run))
