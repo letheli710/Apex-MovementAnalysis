@@ -16,20 +16,53 @@
 - [x] **N1** 骨架地图：`NATIVE-MAP.md`、`map/functions.csv`、`map/reads.csv`、`map/sdk-hooks.csv`、`map/setfile-keys.csv`
   - [ ] N1 遗留：8 个 SDK 钩子的地址（`IN_JumpDown` / `IN_JumpUp`、`Glide_*` 等）；51 个没分类的核心函数
 - [ ] **N2** P1 子系统公式提取：
-  - [ ] T 时序和输入（N2-G 已发现输入曲线 m(2 − m) 和冲刺 × 1.25，从这里接着做）
+  - [x] T 时序和输入 → `subsystems/N2-T-TIMING-INPUT.md`（部分：冲量队列的写入方、`PlayerMove` 分派没读）
   - [x] G 地面移动 → `subsystems/N2-G-GROUND.md`（遗留：吸附阈值位置 G-06、Friction 里的 x、几个结构体偏移）
   - [x] J 跳跃、空中、落地 → `subsystems/N2-J-JUMP-AIR.md`（M2 的空中残余增益、连跳惩罚、skip 削减都已解释；遗留 `AirMove` 本体、二段跳分支）
   - [x] L Lurch / tap-strafe → `subsystems/N2-L-LURCH.md`（209.3 夹紧出处已找到）
   - [x] S 滑铲 → `subsystems/N2-S-SLIDE.md`（遗留：斜坡项公式 S-09、按住下蹲时结束速度 125 vs 112 S-05）
-  - [ ] M 攀越、mantle、SG、墙
+  - [x] M 攀越、mantle、SG、墙 → `subsystems/N2-M-TRAVERSAL.md`（部分：SG 窗口 M-04、1.1 × 299、402.009 还没读通；攀墙、自动 mantle 触发条件没读）
 - [ ] **N2** P2 子系统（看用户决定）：P 钩爪、Z 滑索、F 外力类
 - [ ] **C 第一人称镜头手感**（camera feel，用户 2026-10-23 加入，计划 §5.1）：随角色动作产生的**全部**镜头效果，不只是跑步晃动、落地震动、滑铲下沉；也包括墙跑、攀爬、跳跃、钩爪、滑索等
   - [x] C1 完整清单：一共有哪些效果、各叫什么、由什么触发、在哪里计算（原生 / 脚本 / 动画）→ `camera/CAMERA-INVENTORY.md`（23 项 + 3 个边界项；跑步晃动还没找到对应参数）
   - [ ] C2 逐个弄清做法：触发条件、幅度、包络、叠加、帧率关系、是否影响准星 → `subsystems/N2-C-CAMERA.md`
   - [ ] C3 逐帧实测：按渲染帧记录镜头位置、角度和 FOV（要改 HSD.MoveDiag，先问用户）
   - [ ] C4 进对照账本（`CAM-`），和 M5.5 镜头对照，只给建议
-- [ ] **N3** 对照账本，先放入计划 §6 的种子
-- [ ] **N4** 针对性验证（按需；Frida 需用户批准）
+- [x] **N3**（P1 部分）对照账本 → `CROSSCHECK-LEDGER.md`、`ledger.csv`（60 条）
+  - [ ] P2 子系统和镜头 C2 做完后补进账本
+  - [ ] 用户决定账本 §3.2 的 Unity 修改建议（不自动改）
+- [ ] **N4** 针对性验证（按需；Frida 需用户批准），待测清单见下一节
+
+---
+
+## N4 待测预言和补读清单
+
+代码读出来、但还没有实测确认的东西。每条都写明预期结果，测完在这里打勾并写上会话名。用户 2026-10-23 要求集中放在这里。
+
+**A. 补读数值**（运行时 `bridge_classvar_get`，不需要设计实验，成本最低）
+
+- [ ] `antiMultiJumpTimeMin` / `antiMultiJumpTimeMax` / `antiMultiJumpHeightFrac`：预期 **0.15 / 0.75 / 0.3**（N2-J J-02）
+- [ ] `player_slideBoostCooldown`：预期在 M8 测到的 1.6–2.1 s 范围内（N2-S S-02）
+- [ ] `landSlowdownDuration` / `Frac` / `HeightMin` / `HeightMax` / `TimePower` / `NoSprintFrac`（N2-J J-09）
+- [ ] 蹲姿那一行的 `speed`、`deceleration`：预期 80 / 1500（N2-G G-05）
+- [ ] 其余 census 没读过的 setfile 键，共 513 个（`map/setfile-keys.csv`）
+
+**B. 新的行为预言**（需要设计实验，用现有 runner）
+
+- [x] ~~lurch 夹紧随 msc 变化~~：M4 Octane 已经测过（stim 下 294.67 = 0.7 × 冲刺上限），和原生公式一致（N2-L L-05）
+- [ ] **地面按键急转**（N3 高影响 G-07）：冲刺中 A↔D、W→D 急转，看速度方向是渐进还是瞬间。原生预期：偏离部分按 1250 减速，意图方向按加速度增长
+- [ ] **超速连跳**：落地 1.0 s 内以 450 起跳，出口应为 **350**（max(v − 100, 299)），不是 299（N2-J J-04）
+- [ ] **lurch 高速截断**：水平速度 > 1100 时不再 lurch（S21 客户端原生，N2-L L-10）
+- [ ] **按住方向键时的摩擦**：意图方向上不超过目标速度的那部分速度不受摩擦，减速只作用在偏离部分（N2-G G-07），用 M2 的 e2 数据先查
+- [ ] **第一条命令的输入是 0.75，不是 0.5**：输入曲线 m(2 − m)（N2-G G-08），用 M2 起步数据先查
+- [ ] **滑铲中只能转向**：滑铲时按 W 不加速，只有侧向分量起作用（N2-G G-12 / N2-S S-07）
+- [ ] **滑铲加成冷却被每次滑铲刷新**：连续短滑铲时加成迟迟不恢复（N2-S S-02）
+
+**C. 还对不上、要细查的**
+
+- [ ] 按住下蹲时滑铲的结束速度：代码 125，实测 112（N2-S S-05）
+- [ ] 地面停止吸附在哪里（N2-G G-06）
+- [ ] 斜坡滑铲项的公式，对照 M8 的 147 + 342·sin(坡度)（N2-S S-09）
 - [ ] **N5** 汇总报告和 Reference 修改建议
 
 ---
@@ -59,9 +92,6 @@
 
 ## 其他发现（工作中记下的，不自动开工）
 
-- N1：513 个 setfile 键从没读过值（`map/setfile-keys.csv` 里 census 以外的键）。可以用 `bridge_classvar_get` 在运行时批量补读，放进 N4。
 - N1：SDK 在客户端的核心移动函数上挂了很多钩子（`map/sdk-hooks.csv`）。N2 每个子系统都要先确认相关钩子默认是否开启、改了什么。
 - N2-L：`convar-defaults/README.md` 里"夹紧 209.3 没有 ConVar 出处"已经过时（出处是 `jump_grace_max` × msc × `sprintspeed`）。那个文件属于 PR #28，合并后再改。
-- N2-L：可测的新预言：lurch 夹紧随 msc 变化（stim、拿武器）。放进 N4。
-- N2-J / N2-S：要用 `bridge_classvar_get` 补读的 setfile 键：`antiMultiJumpTimeMin` / `TimeMax` / `HeightFrac`（预测 0.15 / 0.75 / 0.3）、`player_slideBoostCooldown`、`landSlowdown*`。放进 N4，成本很低。
-- N2-J：可测的新预言：以 450 连跳，出口应为 350（max(v − 100, 299)），不是 299。放进 N4。
+- 可测预言和补读清单已集中到上面的"N4 待测预言和补读清单"。
