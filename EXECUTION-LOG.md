@@ -467,6 +467,13 @@ Newest entries at the bottom. Problems are tagged **[ISSUE]** and also listed in
   - Portal reproduces R5: exit speed 0, travel-time law, placement severity ramp, 128 u gap, 45 s lifetime.
   - `SpeedBoost` rule msc = W·(1+2q).
   - **[ISSUE→fixing]** The agent found a pre-existing motor defect: exact antiparallel ground input is never decelerated (sprint forward, then hold S keeps 199.5 u/s forever). The fix is being made as M10-D4.
+- **M10-D4 done** (HSD-Unity `b0cccc1`, merged as #23 → main `b70482f`; lead-verified by rerun):
+  - Tests: EditMode 1984/1984.
+  - Replays: M2+M1 111, M1 first guess 111, M3 90; M4 114/114.
+  - Smoke: demos 238/238.
+  - **Course lap 80.55 → 78.98 s**, explained by the defect itself (the autopilot was stuck reversing at the M tower).
+  - The fix is one line, `along = max(0, v·ŵ)`. The braking profile on a reversal is a model choice, and an R5 check is suggested.
+- **M10 complete.** Summary: `m10/M10-REPORT.md` (Chinese). Final build: `HSD-Build\M10`. Status: numbers/rules pass and real-input demos pass; hands-on feel not yet checked by a person. E1–E3 remain deferred.
 
 ## Open issues
 
