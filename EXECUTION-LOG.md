@@ -440,6 +440,12 @@ Newest entries at the bottom. Problems are tagged **[ISSUE]** and also listed in
   - Smoke: demos 184/184 (M10-A 14/14), course lap 80.82 s.
   - Grapple fitted on 72 R5 trials: Slingshot 889/975 vs 854/911, side-key 927–934 vs 938–945, Jump Grapple 1025–1049 vs 1006–1029; detach rules included.
   - Nine older grapple demos changed trajectory with unchanged verdicts (consistent with R5).
+- **E2 next-batch assessment** (`m10/E2-NEXT-BATCH.md`): Wraith portal → Maggie speed pads → Newcastle leap → R5 gap-filling → Pathfinder leftovers. Found a speed-boost severity mapping inconsistency, queued for R2.
+- **M10-B done** (HSD-Unity `151a432`, merged as #20 → main `06a5c55`; lead-verified by rerun):
+  - Tests: EditMode 1735/1735.
+  - Replays: M2+M1 111, M1 first guess 111, M3 90; M4 114/114.
+  - Smoke: demos 202/202 (M10-B 18/18), older trajectories identical, course lap 80.82 s.
+  - Zipline Gun adds ordinary runtime rails with a per-rope ride law (cap 1000, matching R5); map ropes are byte-identical.
 
 ## Open issues
 
