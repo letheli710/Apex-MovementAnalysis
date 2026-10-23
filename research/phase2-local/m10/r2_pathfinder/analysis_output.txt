@@ -1,0 +1,53 @@
+# M10 R2 Pathfinder: Zipline Gun from a climb, grapple onto the own rope, pad tap strafe (O-5)
+session 20261023_000555_M10R2_s1 + 20261023_002614_M10R2_s2: scored 55, excluded 6 ['r18512 m10r2_z_grope (schedule ran 1086 frames, planned 1083)', 'r18565 m10r2_z_climb_side (frame rate 116.24 outside 120.0 +/- 3%)', 'r18621 m10r2_o5b_ctrl (frame rate 114.98 outside 120.0 +/- 3%)', 'r18627 m10r2_o5b_j270 (frame rate 115.52 outside 120.0 +/- 3%)', 'r18629 m10r2_o5b_j270 (frame rate 116.26 outside 120.0 +/- 3%)', 'r18635 m10r2_o5b_j300 (frame rate 113.56 outside 120.0 +/- 3%)']
+
+## 1. Zipline Gun: ground control and climb fire (times from the jump press)
+  r18501 z_ground_m90   fired True rope True len 2516.5 | climb (client wr) None dedi wr None max z None | attack at None in climb None
+  r18502 z_ground_m90   fired True rope True len 2516.5 | climb (client wr) None dedi wr None max z None | attack at None in climb None
+  r18503 z_climb_t90    fired False rope False len None | climb (client wr) (0.44, 0.68) dedi wr (0.6, 0.8) max z 69.5 | attack at 0.71 in climb False
+  r18504 z_climb_t90    fired False rope False len None | climb (client wr) (0.44, 0.68) dedi wr (0.64, 0.74) max z 71.1 | attack at 0.71 in climb False
+  r18505 z_climb_t90    fired False rope False len None | climb (client wr) (0.44, 0.68) dedi wr (0.6, 0.8) max z 69.4 | attack at 0.71 in climb False
+  r18506 z_climb_t135   fired False rope False len None | climb (client wr) (0.45, 0.68) dedi wr (0.65, 0.75) max z 66.0 | attack at 0.76 in climb False
+  r18507 z_climb_t135   fired False rope False len None | climb (client wr) (0.45, 0.67) dedi wr (0.57, 0.77) max z 63.4 | attack at 0.76 in climb False
+  r18508 z_climb_t135   fired False rope False len None | climb (client wr) (0.44, 0.68) dedi wr (0.65, 0.75) max z 70.4 | attack at 0.76 in climb False
+  r18509 z_climb_t0     fired False rope False len None | climb (client wr) (0.44, 1.44) dedi wr (0.6, 1.5) max z 126.0 | attack at 0.6 in climb True
+  r18510 z_climb_t0     fired False rope False len None | climb (client wr) (0.44, 1.43) dedi wr (0.6, 1.5) max z 126.8 | attack at 0.6 in climb True
+  r18561 z_climb_ctrl   fired False rope False len None | climb (client wr) (0.26, 2.18) dedi wr (0.46, 1.16) max z 193.9 | attack at None in climb None
+  r18562 z_climb_ctrl   fired False rope False len None | climb (client wr) (0.26, 2.16) dedi wr (0.41, 1.21) max z 194.1 | attack at None in climb None
+  r18563 z_climb_side   fired False rope False len None | climb (client wr) (0.44, 0.63) dedi wr (0.64, 0.74) max z 61.1 | attack at 0.64 in climb False
+  r18564 z_climb_side   fired False rope False len None | climb (client wr) (0.42, 0.63) dedi wr (0.57, 0.67) max z 67.0 | attack at 0.64 in climb False
+  r18566 z_climb_back   fired False rope False len None | climb (client wr) (0.35, 0.64) dedi wr (0.55, 0.75) max z 103.0 | attack at 0.66 in climb False
+  r18567 z_climb_back   fired False rope False len None | climb (client wr) (0.44, 0.61) dedi wr (0.59, 0.69) max z 58.9 | attack at 0.64 in climb False
+  r18568 z_climb_back   fired False rope False len None | climb (client wr) (0.44, 0.61) dedi wr (0.64, 0.74) max z 59.2 | attack at 0.64 in climb False
+
+## 2. Grapple onto the own gun rope (aim helper)
+  r18569 z_grope pitch 348.06 | hooked True zipline True (1.1 s after the press) | speed before zip dedi 325.1 client [358.7, 363.0, 367.2] | ride (s, |v|) [(0.0, 367.2), (0.1, 103.4), (0.3, 305.1), (0.5, 502.4), (1.0, 643.6), (1.5, 784.8), (2.0, 926.1), (2.5, 1000.0)], dedi ride max 1000.0
+  r18570 z_grope pitch 348.06 | hooked True zipline True (1.14 s after the press) | speed before zip dedi 346.6 client [363.8, 368.1, 368.1] | ride (s, |v|) [(0.0, 368.1), (0.1, 104.8), (0.3, 302.7), (0.5, 507.3), (1.0, 648.4), (1.5, 789.8), (2.0, 930.8), (2.5, 1000.0)], dedi ride max 1000.0
+  r18571 z_grope pitch 348.06 | hooked True zipline True (1.15 s after the press) | speed before zip dedi 350.3 client [358.7, 362.9, 367.2] | ride (s, |v|) [(0.0, 367.2), (0.1, 103.3), (0.3, 305.1), (0.5, 502.4), (1.0, 643.5), (1.5, 784.6), (2.0, 925.6), (2.5, 1000.0)], dedi ride max 1000.0
+  r18572 z_grope pitch 348.06 | hooked True zipline True (1.17 s after the press) | speed before zip dedi 363.3 client [363.3, 367.4, 367.4] | ride (s, |v|) [(0.0, 367.4), (0.1, 103.1), (0.3, 305.1), (0.5, 502.3), (1.0, 643.5), (1.5, 784.7), (2.0, 925.9), (2.5, 1000.0)], dedi ride max 1000.0
+  r18591 z_gup  pitch 346.56 | hooked True zipline True (1.19 s after the press) | speed before zip dedi 367.0 client [367.0, 371.1, 371.1] | ride (s, |v|) [(0.0, 371.1), (0.1, 103.6), (0.3, 306.2), (0.5, 502.3), (1.0, 642.3), (1.5, 783.5), (2.0, 925.2), (2.5, 1000.0)], dedi ride max 1000.0
+  r18592 z_gup  pitch 346.56 | hooked True zipline True (1.14 s after the press) | speed before zip dedi 345.5 client [366.5, 370.8, 370.8] | ride (s, |v|) [(0.0, 370.8), (0.1, 103.2), (0.3, 305.0), (0.5, 502.4), (1.0, 643.6), (1.5, 784.8), (2.0, 925.9), (2.5, 1000.0)], dedi ride max 1000.0
+  r18593 z_gdn  pitch 349.56 | hooked True zipline True (1.14 s after the press) | speed before zip dedi 351.7 client [360.1, 364.4, 368.6] | ride (s, |v|) [(0.0, 368.6), (0.1, 103.1), (0.3, 304.9), (0.5, 502.4), (1.0, 643.6), (1.5, 784.7), (2.0, 925.9), (2.5, 1000.0)], dedi ride max 1000.0
+  r18594 z_gdn  pitch 349.56 | hooked True zipline True (1.1 s after the press) | speed before zip dedi 326.2 client [361.6, 365.7, 369.8] | ride (s, |v|) [(0.0, 369.8), (0.1, 95.2), (0.3, 296.6), (0.5, 500.7), (1.0, 641.4), (1.5, 782.5), (2.0, 923.9), (2.5, 1000.0)], dedi ride max 1000.0
+  hooked 8/8, handed to the zipline 8/8
+
+## 3. O-5 tap strafe off a pad (headings relative to the launch heading, deg)
+  r18622 o5b_ctrl  launch [514.3, 0.0, 1026.1] (heading 0.0, pre 0.0 at 299.0) jump->launch None cmds | W edges before/after 0/29 | dHeading +0.1/0.2/0.3/0.5 s -3.09/-2.94/0.86/0.36 | v_h 499.1/457.4/443.2/443.6 | max one-cmd dv_h after 5.33
+  r18623 o5b_ctrl  launch [514.3, 0.0, 1026.1] (heading 0.0, pre 0.0 at 299.0) jump->launch None cmds | W edges before/after 0/29 | dHeading +0.1/0.2/0.3/0.5 s -3.09/-2.85/0.85/0.35 | v_h 499.1/461.3/443.2/443.6 | max one-cmd dv_h after 7.13
+  r18624 o5b_jnots launch [514.3, 0.0, 1026.1] (heading 0.0, pre 0.0 at 296.7) jump->launch 1 cmds | W edges before/after 0/0 | dHeading +0.1/0.2/0.3/0.5 s 0.0/0.0/0.0/0.0 | v_h 514.3/514.3/514.3/514.3 | max one-cmd dv_h after 0.01
+  r18625 o5b_jnots launch [514.3, 0.0, 1026.1] (heading 0.0, pre 0.0 at 296.8) jump->launch 1 cmds | W edges before/after 0/0 | dHeading +0.1/0.2/0.3/0.5 s 0.0/0.0/0.0/0.0 | v_h 514.3/514.3/514.3/514.3 | max one-cmd dv_h after 0.01
+  r18626 o5b_jnots launch [514.3, 0.0, 1026.0] (heading 0.0, pre 0.0 at 298.0) jump->launch 1 cmds | W edges before/after 0/0 | dHeading +0.1/0.2/0.3/0.5 s 0.0/0.0/0.0/0.0 | v_h 514.3/514.3/514.3/514.3 | max one-cmd dv_h after 0.01
+  r18628 o5b_j270  launch [514.3, 0.0, 1026.1] (heading 0.0, pre 0.0 at 293.1) jump->launch 0 cmds | W edges before/after 0/26 | dHeading +0.1/0.2/0.3/0.5 s -1.78/-3.81/-0.37/0.88 | v_h 510.4/475.7/442.1/441.9 | max one-cmd dv_h after 6.26
+  r18630 o5b_j280  launch [514.3, 0.0, 1026.1] (heading 0.0, pre 0.0 at 296.7) jump->launch 1 cmds | W edges before/after 0/28 | dHeading +0.1/0.2/0.3/0.5 s -2.93/-3.32/0.84/0.84 | v_h 502.2/459.5/442.7/443.0 | max one-cmd dv_h after 8.19
+  r18631 o5b_j280  launch [514.3, 0.0, 1026.1] (heading 0.0, pre 0.0 at 296.8) jump->launch 1 cmds | W edges before/after 0/29 | dHeading +0.1/0.2/0.3/0.5 s -2.93/-3.32/0.92/0.92 | v_h 502.2/459.5/442.8/443.1 | max one-cmd dv_h after 8.19
+  r18632 o5b_j280  launch [514.3, 0.0, 1026.1] (heading 0.0, pre 0.0 at 296.8) jump->launch 1 cmds | W edges before/after 0/28 | dHeading +0.1/0.2/0.3/0.5 s -2.94/-3.32/0.84/0.84 | v_h 502.2/459.5/442.7/443.0 | max one-cmd dv_h after 8.19
+  r18633 o5b_j300  launch None (heading None, pre None at None) jump->launch None cmds | W edges before/after None/None | dHeading +0.1/0.2/0.3/0.5 s None/None/None/None | v_h None/None/None/None | max one-cmd dv_h after None
+  r18634 o5b_j300  launch None (heading None, pre None at None) jump->launch None cmds | W edges before/after None/None | dHeading +0.1/0.2/0.3/0.5 s None/None/None/None | v_h None/None/None/None | max one-cmd dv_h after None
+  r18636 o5b_j310  launch None (heading None, pre None at None) jump->launch None cmds | W edges before/after None/None | dHeading +0.1/0.2/0.3/0.5 s None/None/None/None | v_h None/None/None/None | max one-cmd dv_h after None
+  r18637 o5b_j310  launch None (heading None, pre None at None) jump->launch None cmds | W edges before/after None/None | dHeading +0.1/0.2/0.3/0.5 s None/None/None/None | v_h None/None/None/None | max one-cmd dv_h after None
+  r18638 o5b_j310  launch None (heading None, pre None at None) jump->launch None cmds | W edges before/after None/None | dHeading +0.1/0.2/0.3/0.5 s None/None/None/None | v_h None/None/None/None | max one-cmd dv_h after None
+  r18641 o5b_ctrl  launch [514.3, 0.0, 1026.1] (heading 0.0, pre 0.0 at 299.0) jump->launch None cmds | W edges before/after 0/29 | dHeading +0.1/0.2/0.3/0.5 s -3.09/-2.85/0.85/0.35 | v_h 499.1/461.3/443.2/443.6 | max one-cmd dv_h after 7.13
+  r18642 o5b_ctrl  launch [514.3, 0.0, 1026.1] (heading 0.0, pre 0.0 at 299.0) jump->launch None cmds | W edges before/after 0/29 | dHeading +0.1/0.2/0.3/0.5 s -3.09/-2.85/0.86/0.36 | v_h 499.1/461.3/443.2/443.6 | max one-cmd dv_h after 7.13
+  r18643 o5b_j270  launch [514.3, 0.0, 1026.0] (heading 0.0, pre 0.0 at 293.0) jump->launch 0 cmds | W edges before/after 0/26 | dHeading +0.1/0.2/0.3/0.5 s -1.41/-3.73/-0.89/0.77 | v_h 511.0/479.5/443.6/441.7 | max one-cmd dv_h after 6.4
+  r18644 o5b_j270  launch [514.3, 0.0, 1026.1] (heading 0.0, pre 0.0 at 293.7) jump->launch 0 cmds | W edges before/after 0/27 | dHeading +0.1/0.2/0.3/0.5 s -2.05/-3.57/-0.01/1.01 | v_h 508.1/470.9/442.2/442.3 | max one-cmd dv_h after 5.97
+  r18645 o5b_j300  launch None (heading None, pre None at None) jump->launch None cmds | W edges before/after None/None | dHeading +0.1/0.2/0.3/0.5 s None/None/None/None | v_h None/None/None/None | max one-cmd dv_h after None

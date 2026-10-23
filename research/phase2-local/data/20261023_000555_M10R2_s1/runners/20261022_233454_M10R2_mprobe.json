@@ -1,0 +1,97 @@
+{
+ "schema": "hsd-runner/2",
+ "label": "M10R2_mprobe",
+ "created": "20261022_233454",
+ "schedules": {
+  "m10r2_m_probe_tap": {
+   "steps": [
+    "wait 60",
+    "tap offhand4",
+    "wait 720"
+   ],
+   "frames": 781
+  },
+  "m10r2_m_probe_hold": {
+   "steps": [
+    "wait 60",
+    "down offhand4",
+    "wait 180",
+    "up offhand4",
+    "wait 720"
+   ],
+   "frames": 960
+  }
+ },
+ "origin": [
+  -14750.0,
+  6500.0,
+  294.92
+ ],
+ "yaw": 0.0,
+ "client_fps": 120.0,
+ "census": false,
+ "legend": "madmaggie",
+ "legend_reply": "{\"changed\":[\"unnamed\"],\"legend\":\"character_madmaggie\",\"ok\":true}",
+ "trials": [
+  {
+   "trial": 18301,
+   "run": 18301,
+   "batch": 18301,
+   "schedule": "m10r2_m_probe_tap",
+   "yaw": 0.0,
+   "origin": [
+    -14800.0,
+    6800.0,
+    294.92
+   ],
+   "schedule_frames": 781,
+   "reset": "[HSD-RESET] ver=1 batch=18301 run=18301 ent=1 o=-14800,6800,294.274 vel=0,0,0 yaw=0 ground=1 slide=0 weapon=mp_weapon_melee_survival t=1959.1",
+   "scheduled": "scheduled trial=18301 fc=252874",
+   "sched_lines": [
+    "[HSD-SCHED] ver=1 trial=18301 run=18301 edge=start frame=0 fc=252905 pt=1958.38 t=1959.33 o=-14800,6800,294.274 yaw=0 settle_frames=31",
+    "[HSD-SCHED] ver=1 trial=18301 run=18301 edge=down key=offhand4 frame=60 fc=252965 pt=1958.88 t=1959.83",
+    "[HSD-SCHED] ver=1 trial=18301 run=18301 edge=up key=offhand4 frame=61 fc=252966 pt=1958.89 t=1959.84",
+    "[HSD-SCHED] ver=1 trial=18301 run=18301 edge=end frame=781 fc=253686 pt=1964.91 t=1965.87 o=-14800,6800,294.274"
+   ],
+   "log_gap": false,
+   "measured_fps": 119.6,
+   "ok": true,
+   "why": "",
+   "warmup": false
+  },
+  {
+   "trial": 18302,
+   "run": 18302,
+   "batch": 18302,
+   "schedule": "m10r2_m_probe_hold",
+   "yaw": 0.0,
+   "origin": [
+    -14800.0,
+    6800.0,
+    294.92
+   ],
+   "schedule_frames": 960,
+   "reset": "[HSD-RESET] ver=1 batch=18302 run=18302 ent=1 o=-14800,6800,294.274 vel=0,0,0 yaw=0 ground=1 slide=0 weapon=mp_weapon_melee_survival t=1967.65",
+   "scheduled": "scheduled trial=18302 fc=253838",
+   "sched_lines": [
+    "[HSD-SCHED] ver=1 trial=18302 run=18302 edge=start frame=0 fc=253868 pt=1966.93 t=1967.88 o=-14800,6800,294.274 yaw=0 settle_frames=30",
+    "[HSD-SCHED] ver=1 trial=18302 run=18302 edge=down key=offhand4 frame=60 fc=253928 pt=1967.46 t=1968.39",
+    "[HSD-SCHED] ver=1 trial=18302 run=18302 edge=up key=offhand4 frame=240 fc=254108 pt=1968.95 t=1969.9",
+    "[HSD-SCHED] ver=1 trial=18302 run=18302 edge=end frame=960 fc=254828 pt=1975.01 t=1975.96 o=-14800,6800,294.274"
+   ],
+   "log_gap": false,
+   "measured_fps": 118.81,
+   "ok": true,
+   "why": "",
+   "warmup": false
+  }
+ ],
+ "view_cvars": {
+  "cl_yawspeed": "210",
+  "cl_pitchspeed": "225"
+ },
+ "both_cvars": {},
+ "server_cvars": {},
+ "kit_reply": "legend=character_madmaggie tactical=mp_weapon_riot_drill ultimate=mp_ability_wrecking_ball passives=1",
+ "client_exec": []
+}

@@ -1522,6 +1522,396 @@ for _n, _s in _M10W.items():
 SCHEDULE_PRE = {**{k: SCHEDULE_PRE[k] for k in _M10W}, **{k: v for k, v in SCHEDULE_PRE.items() if k not in _M10W}}
 
 
+# ---- M10 track R2 (m10/E2-NEXT-BATCH.md section 5; follow-up of track R). Prefix m10r2_*. Every m10r2 reset stops all
+# speed_boost status effects first. Server logger [M10R2-WR] (per dedi script frame, 10 Hz): speed_boost severity, placing
+# severity, phase flag, isInPhaseTunnel, ult / tactical clip, origin, velocity, eye yaw, portal blocker count and (when the
+# count changes) their origins. Duration per schedule (lifetime trials 52 s).
+def _m10r2_log(dur):
+    return r"""
+void functionref() m10r2w = void function() : ( p ) {
+	try {
+		float t0 = Time()
+		int lastnb = -1
+		int lastnpb = -1
+		int run0 = GetConVarInt( "hsd_md_run" )
+		while ( Time() - t0 < %.1f && IsValid( p ) ) {
+			int rn = GetConVarInt( "hsd_md_run" )
+			if ( rn != run0 && rn != 0 )
+				break
+			entity uw = p.GetOffhandWeapon( OFFHAND_ULTIMATE )
+			entity tw = p.GetOffhandWeapon( OFFHAND_TACTICAL )
+			vector po = p.GetOrigin()
+			vector pv = p.GetVelocity()
+			array<entity> bl = GetEntArrayByScriptName( "phase_tunnel_blocker" )
+			array<entity> pbl = GetEntArrayByScriptName( "pre_phase_tunnel_blocker" )
+			int npb = pbl.len()
+			string bs = ""
+			if ( npb != lastnpb ) {
+				bs += " pbls="
+				foreach ( entity b in pbl ) { vector bo = b.GetOrigin(); bs += format( "%%.1f,%%.1f,%%.1f;", bo.x, bo.y, bo.z ) }
+				lastnpb = npb
+			}
+			if ( bl.len() != lastnb ) {
+				bs += " bls="
+				foreach ( entity b in bl ) { vector bo = b.GetOrigin(); bs += format( "%%.1f,%%.1f,%%.1f;", bo.x, bo.y, bo.z ) }
+				lastnb = bl.len()
+			}
+			printt( "[M10R2-WR] run=" + GetConVarInt( "hsd_md_run" ) + format( " t=%%.4f boost=%%.4f placing=%%.3f ph=%%d tun=%%d uclip=%%d tclip=%%d o=%%.3f,%%.3f,%%.3f v=%%.3f,%%.3f,%%.3f yaw=%%.2f gnd=%%d blockers=%%d pre=%%d", Time(),
+				StatusEffect_GetSeverity( p, eStatusEffect.speed_boost ), StatusEffect_GetSeverity( p, eStatusEffect.placing_phase_tunnel ), p.IsPhaseShifted() ? 1 : 0,
+				p.e.isInPhaseTunnel ? 1 : 0, IsValid( uw ) ? uw.GetWeaponPrimaryClipCount() : -1, IsValid( tw ) ? tw.GetWeaponPrimaryClipCount() : -1,
+				po.x, po.y, po.z, pv.x, pv.y, pv.z, p.EyeAngles().y, p.IsOnGround() ? 1 : 0, bl.len(), npb ) + bs )
+			WaitFrame()
+		}
+	} catch ( wErr ) { printt( "[M10R2-WR] error " + string( wErr ) ) }
+}
+thread m10r2w()
+""" % dur
+
+
+_M10R2_CLEAN = ('StatusEffect_StopAllOfType( p, eStatusEffect.speed_boost )\n'
+                'try { DEV_PhaseTunnel_DestroyAll() } catch ( dErr ) { pre += " destroyall_err" }\n')
+
+# Teleport helper for the start-portal entry: once the portal pair exists (2 blockers) wait D s, then put the player DX u
+# along +X from the start portal (the blocker nearest the reset origin), velocity 0, view kept; the schedule then walks in.
+_M10R2_TP = r"""
+void functionref() m10r2tp = void function() : ( p ) {
+	try {
+		float t0 = Time()
+		while ( Time() - t0 < 25.0 && StatusEffect_GetSeverity( p, eStatusEffect.placing_phase_tunnel ) <= 0.0 ) WaitFrame()
+		while ( Time() - t0 < 25.0 && GetEntArrayByScriptName( "phase_tunnel_blocker" ).len() < 2 ) WaitFrame()
+		wait %(delay).2f
+		vector o0 = <%(ox).1f, %(oy).1f, %(oz).2f>
+		array<entity> bl = GetEntArrayByScriptName( "phase_tunnel_blocker" )
+		entity s = bl[0]
+		foreach ( entity b in bl ) {
+			vector d1 = b.GetOrigin() - o0
+			vector d2 = s.GetOrigin() - o0
+			if ( d1.x * d1.x + d1.y * d1.y < d2.x * d2.x + d2.y * d2.y ) s = b
+		}
+		vector so = s.GetOrigin()
+		p.SetVelocity( <0, 0, 0> )
+		p.SetOrigin( <so.x + %(dx).1f, so.y, %(oz).2f> )
+		p.SetVelocity( <0, 0, 0> )
+		printt( "[M10R2-TP] run=" + GetConVarInt( "hsd_md_run" ) + format( " t=%%.4f start=%%.1f,%%.1f,%%.1f", Time(), so.x, so.y, so.z ) )
+	} catch ( tErr ) { printt( "[M10R2-TP] error " + string( tErr ) ) }
+}
+thread m10r2tp()
+"""
+
+_M10R2_WO = (-14700.0, 6650.0, FLOOR_Z)   # track R portal start (field edge safe)
+# placement with a run-in: sprint 1 s, tap ult while sprinting, sprint 2 s more, tap ult (end) and release W on the next frame
+_RUNIN = "wait 72; down speed; down forward; wait 1.0s; tap offhand4; wait 2.0s; tap offhand4; up forward; up speed; "
+# track R placement (standing start, W released before the end tap)
+_STAND = "wait 72; tap offhand4; wait 0.3s; down speed; down forward; wait 2.0s; up forward; up speed; tap offhand4; "
+_M10R2W = {   # name: (steps, pre extra, logger seconds)
+    # exit velocity rule: through the end portal (arrive at the start node) and through the start portal (arrive at the end node)
+    "m10r2_w_runin_end": (_RUNIN + "wait 1.0s; down backward; waitph; up backward; wait 4.0s", "", 16.0),
+    "m10r2_w_runin_start": (_RUNIN + "wait 2.8s; down forward; waitph; up forward; wait 4.0s", "TP", 18.0),
+    "m10r2_w_stand_start": (_STAND + "wait 2.8s; down forward; waitph; up forward; wait 4.0s", "TP", 18.0),
+    # minimum portal gap: walk W for X s after the raise, stop, end tap
+    "m10r2_w_gap_t000": ("wait 72; tap offhand4; wait 1.2s; tap offhand4; wait 3.0s", "", 8.0),
+    "m10r2_w_gap_t015": ("wait 72; tap offhand4; wait 0.7s; down forward; wait 0.15s; up forward; wait 0.5s; tap offhand4; wait 3.0s", "", 8.0),
+    "m10r2_w_gap_t030": ("wait 72; tap offhand4; wait 0.7s; down forward; wait 0.30s; up forward; wait 0.5s; tap offhand4; wait 3.0s", "", 8.0),
+    "m10r2_w_gap_t045": ("wait 72; tap offhand4; wait 0.7s; down forward; wait 0.45s; up forward; wait 0.5s; tap offhand4; wait 3.0s", "", 8.0),
+    "m10r2_w_gap_t060": ("wait 72; tap offhand4; wait 0.7s; down forward; wait 0.60s; up forward; wait 0.5s; tap offhand4; wait 3.0s", "", 8.0),
+    "m10r2_w_gap_t065": ("wait 72; tap offhand4; wait 0.7s; down forward; wait 0.65s; up forward; wait 0.5s; tap offhand4; wait 3.0s", "", 8.0),
+    "m10r2_w_gap_t070": ("wait 72; tap offhand4; wait 0.7s; down forward; wait 0.70s; up forward; wait 0.5s; tap offhand4; wait 3.0s", "", 8.0),
+    "m10r2_w_gap_t075": ("wait 72; tap offhand4; wait 0.7s; down forward; wait 0.75s; up forward; wait 0.5s; tap offhand4; wait 3.0s", "", 8.0),
+    # lifetime: standing-start portal, then wait
+    "m10r2_w_life": (_STAND + "wait 48.0s", "", 52.0),
+    # stay on the exit portal (no keys) after arriving; repeated traversal (step out, back in, twice)
+    "m10r2_w_stay": (_STAND + "wait 1.0s; down backward; waitph; up backward; wait 6.0s", "", 16.0),
+    "m10r2_w_repeat": (_STAND + "wait 1.0s; down backward; waitph; up backward; wait 1.5s; down forward; wait 0.5s; up forward; wait 0.5s; "
+                       "down backward; waitph; up backward; wait 1.5s; down backward; wait 0.5s; up backward; wait 0.5s; down forward; waitph; up forward; wait 3.0s", "", 24.0),
+    # Into the Void + portal: walk into the end portal while phased; tap ult while phased
+    "m10r2_w_void_in": (_STAND + "wait 0.6s; tap offhand1; wait 1.25s; down backward; wait 1.5s; up backward; wait 3.0s", "", 16.0),
+    "m10r2_w_void_place": ("wait 72; tap offhand1; wait 1.4s; tap offhand4; wait 0.3s; down forward; wait 1.0s; up forward; tap offhand4; wait 3.0s", "", 10.0),
+    # session 2 (the tactical did not fire 0.6 s after the end tap): Void 2.5 s after the end tap, walk back through the end
+    # portal during the phase (from 1.3 s after the press); vctrl = the same walk without the Void press
+    "m10r2_w_vin2": (_STAND + "wait 2.5s; tap offhand1; wait 1.3s; down backward; wait 1.2s; up backward; wait 3.0s", "", 16.0),
+    "m10r2_w_vctrl": (_STAND + "wait 2.5s; wait 1.3s; down backward; wait 1.2s; up backward; wait 3.0s", "", 16.0),
+}
+for _n, (_s, _x, _d) in _M10R2W.items():
+    SCHEDULES[_n] = _s
+    SCHEDULE_ORIGIN[_n] = _M10R2_WO
+    _p = _M10R2_CLEAN + _m10r2_log(_d)
+    if _x == "TP":
+        _p += _M10R2_TP % dict(delay=1.5, ox=_M10R2_WO[0], oy=_M10R2_WO[1], oz=_M10R2_WO[2], dx=-80.0)
+    SCHEDULE_PRE[_n] = _p
+
+# speed_boost severity -> move scale: StatusEffect_AddTimed( speed_boost, S, 5 s, fade 0 ) at the reset, sprint 3 s on lane C;
+# stack = 0.2 + 0.1 (two effects); fade = 0.15 for 1.5 s with a 0.25 s fade (the Maggie trailing call)
+_M10R2_SEV = {"s005": [(0.05, 5.0, 0.0)], "s010": [(0.10, 5.0, 0.0)], "s015": [(0.15, 5.0, 0.0)], "s020": [(0.20, 5.0, 0.0)],
+              "s030": [(0.30, 5.0, 0.0)], "s040": [(0.40, 5.0, 0.0)], "s050": [(0.50, 5.0, 0.0)], "s100": [(1.00, 5.0, 0.0)],
+              "stack": [(0.20, 5.0, 0.0), (0.10, 5.0, 0.0)], "fade": [(0.15, 1.5, 0.25)], "ctrl": []}
+for _k, _effs in _M10R2_SEV.items():
+    _n = "m10r2_sev_" + _k
+    SCHEDULES[_n] = "wait 72; down speed; down forward; wait %s; up forward; up speed; wait 3.0s" % ("1.6s" if _k == "s100" else "2.5s")
+    SCHEDULE_ORIGIN[_n] = LANE_C
+    SCHEDULE_PRE[_n] = (_M10R2_CLEAN + "".join("StatusEffect_AddTimed( p, eStatusEffect.speed_boost, %.3f, %.2f, %.2f )\n" % e for e in _effs)
+                        + 'pre += " sev=%s"\n' % _k + _m10r2_log(9.0))
+# long portal: the M10 rock floated with its flat top (x -14700..-14500, y 6325..6650) at z 5532.8 (probed: top = origin +
+# 237.88; the map's ceiling is z ~8475 here); start on it, sprint off the +X edge, brake in the air with S, land on the
+# field ~5238 u lower, sprint 1.5 s (severity steps), end tap, walk back into the end portal (replay up the drop)
+_M10R2_GEO = {"m10r2tower": [(M10_ROCK, -14600.0, 6500.0, FLOOR_Z + 5000.0, 0.0, 0.0, 0.0)]}
+_M10R2_TOWER = (-14680.0, 6500.0, 5532.8)
+for _n, _s in {
+        "m10r2_w_drop": "wait 72; tap offhand4; wait 0.3s; down speed; down forward; waitair; up forward; up speed; down backward; wait 0.8s; up backward; "
+                        "waitland; wait 0.3s; down speed; down forward; wait 2.0s; up forward; up speed; tap offhand4; wait 1.0s; down backward; waitph; up backward; wait 6.0s",
+        "m10r2_w_tower_ctrl": "wait 72; down speed; down forward; waitair; up forward; up speed; down backward; wait 0.8s; up backward; "
+                              "waitland; wait 0.3s; down speed; down forward; wait 2.0s; up forward; up speed; wait 2.0s"}.items():
+    SCHEDULES[_n] = _s
+    SCHEDULE_ORIGIN[_n] = _M10R2_TOWER
+    SCHEDULE_PRE[_n] = _M10R2_CLEAN + _m10r2_log(22.0)
+# ---- M10 R2 Mad Maggie Wrecking Ball (legend madmaggie --kit). Server logger [M10R2-MG] per dedi frame: speed_boost severity,
+# ground friction scale, sliding, origin, velocity, count of wreckingball_speedtrigger entities (and their origins when the
+# count changes), balls. Reset: speed triggers cleared (DEV_ClearWreckingBallSpeedTriggers), friction 1, boosts stopped.
+def _m10r2_mlog(dur):
+    return r"""
+void functionref() m10r2m = void function() : ( p ) {
+	try {
+		float t0 = Time()
+		int lastn = -1
+		int run0 = GetConVarInt( "hsd_md_run" )
+		while ( Time() - t0 < %.1f && IsValid( p ) ) {
+			int rn = GetConVarInt( "hsd_md_run" )
+			if ( rn != run0 && rn != 0 )
+				break
+			array<entity> tr = GetEntArrayByScriptName( "wreckingball_speedtrigger" )
+			int nb = GetEntArrayByScriptName( "wreckingball_ball" ).len()
+			string ts = ""
+			if ( tr.len() != lastn ) {
+				ts = " trs="
+				foreach ( entity e in tr ) { vector eo = e.GetOrigin(); ts += format( "%%.1f,%%.1f,%%.1f;", eo.x, eo.y, eo.z ) }
+				lastn = tr.len()
+			}
+			vector po = p.GetOrigin()
+			vector pv = p.GetVelocity()
+			entity uw = p.GetOffhandWeapon( OFFHAND_ULTIMATE )
+			printt( "[M10R2-MG] run=" + GetConVarInt( "hsd_md_run" ) + format( " t=%%.4f boost=%%.4f fric=%%.3f slide=%%d gnd=%%d o=%%.3f,%%.3f,%%.3f v=%%.3f,%%.3f,%%.3f ntr=%%d balls=%%d uclip=%%d stim=%%.3f", Time(),
+				StatusEffect_GetSeverity( p, eStatusEffect.speed_boost ), p.GetGroundFrictionScale(), p.IsSliding() ? 1 : 0, p.IsOnGround() ? 1 : 0,
+				po.x, po.y, po.z, pv.x, pv.y, pv.z, tr.len(), nb, IsValid( uw ) ? uw.GetWeaponPrimaryClipCount() : -1,
+				StatusEffect_GetSeverity( p, eStatusEffect.stim_visual_effect ) ) + ts )
+			WaitFrame()
+		}
+	} catch ( mErr ) { printt( "[M10R2-MG] error " + string( mErr ) ) }
+}
+thread m10r2m()
+""" % dur
+
+
+_M10R2_MCLEAN = ('StatusEffect_StopAllOfType( p, eStatusEffect.speed_boost )\n'
+                 'try { foreach ( entity wb in GetEntArrayByScriptName( "wreckingball_ball" ) ) wb.Destroy() } catch ( bErr ) { pre += " ball_err" }\n'
+                 'try { DEV_ClearWreckingBallSpeedTriggers() } catch ( cErr ) { pre += " clear_err" }\n'
+                 'p.SetGroundFrictionScale( 1.0 )\n')
+_M10R2M = {
+    "m10r2_m_probe_tap": ("wait 72; tap offhand4; wait 6.0s", 10.0),
+    "m10r2_m_probe_hold": ("wait 72; down offhand4; wait 1.5s; up offhand4; wait 6.0s", 10.0),
+    # ball thrown +X from lane C (first piece lands ~490-520 u ahead, then one piece per ~1 s every ~500-700 u)
+    "m10r2_m_pass": ("wait 72; tap offhand4; wait 2.8s; down speed; down forward; wait 2.6s; up forward; up speed; wait 3.5s", 12.0),
+    "m10r2_m_pass2": ("wait 72; tap offhand4; wait 2.8s; down speed; down forward; wait 4.6s; up forward; up speed; wait 3.0s", 13.0),
+    "m10r2_m_walk": ("wait 72; tap offhand4; wait 2.8s; down forward; wait 3.6s; up forward; wait 3.0s", 12.0),
+    "m10r2_m_slide": ("wait 72; tap offhand4; wait 2.8s; down speed; down forward; wait 1.4s; down duck; wait 1.6s; up duck; up forward; up speed; wait 3.0s", 12.0),
+    "m10r2_m_stand": ("wait 72; tap offhand4; wait 2.8s; down forward; wait 2.45s; up forward; wait 3.0s; down forward; wait 1.0s; up forward; wait 3.0s", 15.0),
+    "m10r2_m_ctrl_slide": ("wait 72; wait 2.8s; down speed; down forward; wait 1.4s; down duck; wait 1.6s; up duck; up forward; up speed; wait 3.0s", 12.0),
+}
+for _n, (_s, _d) in _M10R2M.items():
+    SCHEDULES[_n] = _s
+    SCHEDULE_ORIGIN[_n] = LANE_C
+    SCHEDULE_PRE[_n] = _M10R2_MCLEAN + _m10r2_mlog(_d)
+# ---- M10 R2 Newcastle Castle Wall / Armored Leap (legend newcastle --kit, --server-cvar bridge_armored_leap_trace=1). Ult is
+# offhandHybrid: tap offhand4 (raise 1.5 s), then attack fires the leap at the view trace point. Server logger [M10R2-NC] per
+# dedi frame: origin, velocity, ground, ult clip, castle wall entity count. Distances by pitch from the standing eye (60 u).
+def _m10r2_nlog(dur):
+    return r"""
+void functionref() m10r2n = void function() : ( p ) {
+	try {
+		float t0 = Time()
+		int run0 = GetConVarInt( "hsd_md_run" )
+		while ( Time() - t0 < %.1f && IsValid( p ) ) {
+			int rn = GetConVarInt( "hsd_md_run" )
+			if ( rn != run0 && rn != 0 )
+				break
+			vector po = p.GetOrigin()
+			vector pv = p.GetVelocity()
+			entity uw = p.GetOffhandWeapon( OFFHAND_ULTIMATE )
+			int nw = GetEntArrayByScriptName( "al_shield_barrier" ).len() + GetEntArrayByScriptName( "al_shield_anchor" ).len()
+			printt( "[M10R2-NC] run=" + GetConVarInt( "hsd_md_run" ) + format( " t=%%.4f o=%%.3f,%%.3f,%%.3f v=%%.3f,%%.3f,%%.3f gnd=%%d uclip=%%d walls=%%d", Time(),
+				po.x, po.y, po.z, pv.x, pv.y, pv.z, p.IsOnGround() ? 1 : 0, IsValid( uw ) ? uw.GetWeaponPrimaryClipCount() : -1, nw ) )
+			WaitFrame()
+		}
+	} catch ( nErr ) { printt( "[M10R2-NC] error " + string( nErr ) ) }
+}
+thread m10r2n()
+""" % dur
+
+
+_M10R2_NCLEAN = ('StatusEffect_StopAllOfType( p, eStatusEffect.speed_boost )\n'
+                 'try { foreach ( string sn in [ "al_shield_barrier", "al_shield_anchor", "axiom_castle_wall_snakehead" ] ) '
+                 'foreach ( entity we in GetEntArrayByScriptName( sn ) ) we.Destroy() } catch ( wErr ) { pre += " wall_err" }\n'
+                 'foreach ( entity ie in GetEntArrayByScriptName( "hsd_m10r2_int" ) ) ie.Destroy()\n')
+_NC_FIRE = "wait 72; tap offhand4; wait 1.6s; tap attack; wait 5.0s"
+# interruption helper (harness shortcut): once the leap launch speed is reached (v_x > 1500) a rock is spawned in the path
+# (origin 330 u ahead, 100 u below the player; its -X face ~206 u ahead); removed at the next reset
+_M10R2_NINT = r"""
+void functionref() m10r2ni = void function() : ( p ) {
+	try {
+		float t0 = Time()
+		while ( Time() - t0 < 8.0 && p.GetVelocity().x < 1500.0 ) WaitFrame()
+		vector po = p.GetOrigin()
+		entity ce = CreatePropDynamic( $"%s", <po.x + 330.0, po.y, po.z - 100.0>, <0, 0, 0>, SOLID_VPHYSICS, -1.0 )
+		ce.SetScriptName( "hsd_m10r2_int" )
+		printt( "[M10R2-NI] run=" + GetConVarInt( "hsd_md_run" ) + format( " t=%%.4f at=%%.1f,%%.1f,%%.1f vx=%%.1f", Time(), po.x, po.y, po.z, p.GetVelocity().x ) )
+	} catch ( iErr ) { printt( "[M10R2-NI] error " + string( iErr ) ) }
+}
+thread m10r2ni()
+""" % M10_ROCK
+_M10R2N = {   # name: (origin, yaw, pitch, steps)
+    "m10r2_n_d500": (LANE_C, 0.0, 6.84, _NC_FIRE),
+    "m10r2_n_d900": (LANE_C, 0.0, 3.81, _NC_FIRE),
+    "m10r2_n_d1400": (LANE_C, 0.0, 2.45, _NC_FIRE),
+    "m10r2_n_d2000": (LANE_C, 0.0, 1.72, _NC_FIRE),
+    # interruption: the leap arc to ~1300 u passes under the floating m10fly rock (underside ~ floor + 450..505)
+    "m10r2_n_fly1300": ((-14300.0, 5900.0, FLOOR_Z), 0.0, 2.64, _NC_FIRE),
+}
+# round 2 (probe: the target lands ~1.13x farther than a 60 u eye predicts -> eye ~69 u during the raise; cap 1575 u = 40 m)
+for _d in (300, 600, 700, 1200, 1800):
+    _M10R2N["m10r2_n_e%d" % _d] = (LANE_C, 0.0, round(math.degrees(math.atan2(69.0, _d)), 2), _NC_FIRE)
+_M10R2N["m10r2_n_int"] = (LANE_C, 0.0, round(math.degrees(math.atan2(69.0, 1200.0)), 2), _NC_FIRE)
+_M10R2N["m10r2_n_ceil"] = (LANE_C, 0.0, round(math.degrees(math.atan2(69.0, 1200.0)), 2), _NC_FIRE)   # ceiling variant
+for _n, (_o, _yw, _pt, _s) in _M10R2N.items():
+    SCHEDULES[_n] = _s
+    SCHEDULE_ORIGIN[_n] = _o
+    SCHEDULE_YAW[_n] = _yw
+    SCHEDULE_PITCH[_n] = _pt
+    SCHEDULE_PRE[_n] = _M10R2_NCLEAN + _m10r2_nlog(9.0) + {"m10r2_n_int": _M10R2_NINT,
+                                                          "m10r2_n_ceil": _M10R2_NINT.replace("po.x + 330.0, po.y, po.z - 100.0", "po.x + 250.0, po.y, po.z + 362.0")}.get(_n, "")
+# ---- M10 R2 Pathfinder (legend pathfinder --kit): Zipline Gun fired while climbing (s950 wall), grapple onto the own gun
+# rope with a deterministic aim (harness teleport + eye snap), and Octane pad tap strafe (O-5, pads by JumpPad_CreateAtLocation).
+# Server logger [M10R2-ZP] per dedi frame: zipline / wall-run / grapple flags, origin, velocity, ult clip, gun ropes.
+def _m10r2_zlog(dur):
+    return r"""
+void functionref() m10r2z = void function() : ( p ) {
+	try {
+		float t0 = Time()
+		int run0 = GetConVarInt( "hsd_md_run" )
+		int lastn = -1
+		while ( Time() - t0 < %.1f && IsValid( p ) ) {
+			int rn = GetConVarInt( "hsd_md_run" )
+			if ( rn != run0 && rn != 0 )
+				break
+			array<entity> zl = GetEntArrayByScriptName( "zipline_start" )
+			string rs = ""
+			if ( zl.len() != lastn ) {
+				foreach ( entity zs in zl ) {
+					entity ze = zs.GetLinkEnt()
+					vector a = zs.GetOrigin()
+					vector b = IsValid( ze ) ? ze.GetOrigin() : <0, 0, 0>
+					rs += format( " rope=%%.2f,%%.2f,%%.2f>%%.2f,%%.2f,%%.2f", a.x, a.y, a.z, b.x, b.y, b.z )
+				}
+				lastn = zl.len()
+			}
+			entity uw = p.GetOffhandWeapon( OFFHAND_ULTIMATE )
+			vector po = p.GetOrigin()
+			vector pv = p.GetVelocity()
+			printt( "[M10R2-ZP] run=" + GetConVarInt( "hsd_md_run" ) + format( " t=%%.4f zip=%%d wr=%%d hang=%%d gract=%%d gratt=%%d o=%%.3f,%%.3f,%%.3f v=%%.3f,%%.3f,%%.3f uclip=%%d gnd=%%d nrope=%%d", Time(),
+				p.IsZiplining() ? 1 : 0, p.IsWallRunning() ? 1 : 0, p.IsWallHanging() ? 1 : 0, p.IsGrappleActive() ? 1 : 0, p.IsGrappleAttached() ? 1 : 0,
+				po.x, po.y, po.z, pv.x, pv.y, pv.z, IsValid( uw ) ? uw.GetWeaponPrimaryClipCount() : -1, p.IsOnGround() ? 1 : 0, zl.len() ) + rs )
+			WaitFrame()
+		}
+	} catch ( zErr ) { printt( "[M10R2-ZP] error " + string( zErr ) ) }
+}
+thread m10r2z()
+""" % dur
+
+
+_M10R2_ZCLEAN = ('StatusEffect_StopAllOfType( p, eStatusEffect.speed_boost )\n'
+                 'if ( p.IsZiplining() ) p.Zipline_Stop()\n'
+                 'foreach ( entity zs in GetEntArrayByScriptName( "zipline_start" ) ) zs.Destroy()\n'
+                 'foreach ( entity e in GetEntArrayByScriptName( "hsd_test_geo_m4" ) ) e.Destroy()\n'
+                 'foreach ( entity e in GetEntArrayByScriptName( "hsd_m10r2_int" ) ) e.Destroy()\n')
+# grapple-to-rope aim helper (harness shortcut): when the gun rope exists, wait 1 s, put the player LAT u to the right of the
+# rope, ALONG u from its start, on the floor, and snap the eye to the rope point (eye = origin + 60) plus a pitch offset
+_M10R2_GROPE = r"""
+void functionref() m10r2gr = void function() : ( p ) {
+	try {
+		float t0 = Time()
+		array<entity> zl
+		while ( Time() - t0 < 10.0 ) {
+			zl = GetEntArrayByScriptName( "zipline_start" )
+			if ( zl.len() > 0 && IsValid( zl[0].GetLinkEnt() ) )
+				break
+			WaitFrame()
+		}
+		wait 1.0
+		vector a = zl[0].GetOrigin()
+		vector b = zl[0].GetLinkEnt().GetOrigin()
+		vector u = Normalize( b - a )
+		vector tp = a + u * %(along).1f
+		vector side = Normalize( CrossProduct( u, <0, 0, 1> ) )
+		vector po = tp + side * %(lat).1f
+		po.z = %(fz).2f
+		vector ang = VectorToAngles( tp - ( po + <0, 0, 60> ) )
+		ang.x += %(poff).2f
+		p.SetVelocity( <0, 0, 0> )
+		p.SetOrigin( po )
+		p.SetVelocity( <0, 0, 0> )
+		p.SnapEyeAngles( ang )
+		p.SnapFeetToEyes()
+		printt( "[M10R2-GR] run=" + GetConVarInt( "hsd_md_run" ) + format( " t=%%.4f tp=%%.1f,%%.1f,%%.1f po=%%.1f,%%.1f,%%.1f pitch=%%.2f yaw=%%.2f", Time(), tp.x, tp.y, tp.z, po.x, po.y, po.z, ang.x, ang.y ) )
+	} catch ( gErr ) { printt( "[M10R2-GR] error " + string( gErr ) ) }
+}
+thread m10r2gr()
+"""
+_ZFIRE = "wait 72; tap offhand4; wait 1.0s; tap attack; "
+_M10R2Z = {   # name: (origin, yaw, pitch, steps, extra pre)
+    # Zipline Gun while climbing the s950 wall (lane A, face x -13706): raise, sprint, jump into the wall, then turn the view
+    # 90 / 135 deg right in 0.1 / 0.15 s and fire along the wall (a far target); ground control: same aim from the floor
+    "m10r2_z_climb_t90": (LANE_A, 0.0, 0.0, "set cl_yawspeed 900; wait 72; tap offhand4; wait 1.0s; down speed; down forward; wait 1.2s; tap jump; "
+                          "wait 0.6s; down right; wait 0.1s; up right; tap attack; wait 0.5s; up forward; up speed; wait 3.0s", ""),
+    "m10r2_z_climb_t135": (LANE_A, 0.0, 0.0, "set cl_yawspeed 900; wait 72; tap offhand4; wait 1.0s; down speed; down forward; wait 1.2s; tap jump; "
+                           "wait 0.6s; down right; wait 0.15s; up right; tap attack; wait 0.5s; up forward; up speed; wait 3.0s", ""),
+    "m10r2_z_climb_t0": (LANE_A, 0.0, -30.0, "wait 72; tap offhand4; wait 1.0s; down speed; down forward; wait 1.2s; tap jump; "
+                         "wait 0.6s; tap attack; wait 0.5s; up forward; up speed; wait 3.0s", ""),
+    "m10r2_z_ground_m90": (LANE_A, -90.0, 0.0, _ZFIRE + "wait 3.0s", ""),
+    # design 2 (the 0.1 s turn ended the climb before the fire): turn in 4 frames, fire on the next frame; side = 90 deg right
+    # (pitch 0, target along -Y), back = 180 deg with the view 20 deg down (floor ~800 u behind); ctrl = climb without the gun
+    "m10r2_z_climb_side": (LANE_A, 0.0, 0.0, "set cl_yawspeed 2700; wait 72; tap offhand4; wait 1.0s; down speed; down forward; wait 1.2s; tap jump; "
+                           "wait 0.6s; down right; waitf 4; up right; tap attack; wait 0.5s; up forward; up speed; wait 3.0s", ""),
+    "m10r2_z_climb_back": (LANE_A, 0.0, 20.0, "set cl_yawspeed 5400; wait 72; tap offhand4; wait 1.0s; down speed; down forward; wait 1.2s; tap jump; "
+                           "wait 0.6s; down right; waitf 4; up right; tap attack; wait 0.5s; up forward; up speed; wait 3.0s", ""),
+    "m10r2_z_climb_ctrl": (LANE_A, 0.0, 0.0, "wait 72; down speed; down forward; wait 1.2s; tap jump; wait 2.5s; up forward; up speed; wait 1.5s", ""),
+    # grapple onto the own gun rope (rope fired flat along +X from lane C to the far terrain, track R m10_z_fire_flat)
+    "m10r2_z_grope": (LANE_C, 0.0, 0.0, _ZFIRE + "wait 3.0s; tap offhand1; wait 4.5s", "GR0"),
+    "m10r2_z_gup": (LANE_C, 0.0, 0.0, _ZFIRE + "wait 3.0s; tap offhand1; wait 4.5s", "GR+"),
+    "m10r2_z_gdn": (LANE_C, 0.0, 0.0, _ZFIRE + "wait 3.0s; tap offhand1; wait 4.5s", "GR-"),
+}
+_O5_TS = "down moveright; down right; " + "; ".join(["tap forward; waitf 1"] * 30) + "; up right; up moveright; wait 3.0s"
+for _dx in (260, 290, 320):
+    _M10R2Z["m10r2_o5_j%d" % _dx] = (LANE_C, 0.0, 0.0, "set cl_yawspeed 720; wait 72; down speed; down forward; wait 1.0s; tap jump; waitf 1; up forward; up speed; " + _O5_TS, "PAD%d" % _dx)
+_M10R2Z["m10r2_o5_ctrl"] = (LANE_C, 0.0, 0.0, "set cl_yawspeed 720; wait 72; down speed; down forward; waitair; up forward; up speed; " + _O5_TS, "PAD300")
+# session 2 (session 1's O-5 trials hit leftover Newcastle castle walls on lane C): fresh game, pads 270 / 280 / 300 / 310 u
+for _dx in (270, 280, 300, 310):
+    _M10R2Z["m10r2_o5b_j%d" % _dx] = (LANE_C, 0.0, 0.0, "set cl_yawspeed 720; wait 72; down speed; down forward; wait 1.0s; tap jump; waitf 1; up forward; up speed; " + _O5_TS, "PAD%d" % _dx)
+_M10R2Z["m10r2_o5b_ctrl"] = _M10R2Z["m10r2_o5_ctrl"]
+_M10R2Z["m10r2_o5b_jnots"] = (LANE_C, 0.0, 0.0, "wait 72; down speed; down forward; wait 1.0s; tap jump; waitf 1; up forward; up speed; wait 3.5s", "PAD280")
+_M10R2Z["m10r2_o5_jnots"] = (LANE_C, 0.0, 0.0, "wait 72; down speed; down forward; wait 1.0s; tap jump; waitf 1; up forward; up speed; wait 3.5s", "PAD290")
+for _n, (_o, _yw, _pt, _s, _x) in _M10R2Z.items():
+    SCHEDULES[_n] = _s
+    SCHEDULE_ORIGIN[_n] = _o
+    SCHEDULE_YAW[_n] = _yw
+    SCHEDULE_PITCH[_n] = _pt
+    _p = _M10R2_ZCLEAN + _m10r2_zlog(11.0)
+    if _x.startswith("GR"):
+        _p += _M10R2_GROPE % dict(along=400.0, lat=250.0, fz=FLOOR_Z, poff={"GR0": 0.0, "GR+": -1.5, "GR-": 1.5}[_x])
+    elif _x.startswith("PAD"):
+        _p += ('entity pad = JumpPad_CreateAtLocation( o + <%s, 0, 0>, <0, 0, 0>, p, true )\n'
+               'if ( IsValid( pad ) ) pad.SetScriptName( "hsd_test_geo_m4" )\npre += " pad=" + IsValid( pad )\n' % _x[3:])
+    SCHEDULE_PRE[_n] = _p
+_R2K = [k for k in SCHEDULE_PRE if isinstance(k, str) and k.startswith("m10r2_")]
+SCHEDULE_PRE = {**{k: SCHEDULE_PRE[k] for k in _R2K}, **{k: v for k, v in SCHEDULE_PRE.items() if k not in _R2K}}
+
+
 # M10 client per-frame logger (--m10-log): grapple flags, hook origin, eye height; zipline flag
 M10_CLIENT = string.Template(r'''
 void functionref() hsd_m10_f = void function() {
@@ -1546,6 +1936,7 @@ AgentLink_Reply( "m10 logger run=$run" )
 
 # m10fly and later M10 props: (model, x, y, z, pitch, yaw, roll); spawned with the script name hsd_test_geo after the wall
 M10_GEO = {"m10fly": [(M10_ROCK,) + M10_FLY + (0.0, 0.0, 0.0)]}
+M10_GEO.update(_M10R2_GEO)
 M10_SPAWN = r'''
 string out = ""
 try
@@ -1669,6 +2060,18 @@ void functionref() f = void function() : ( steps ) {
 				g++
 			}
 			printt( "[HSD-SCHED] ver=1 trial=$trial run=$run edge=" + verb + " frame=" + ( FrameCount() - f0 ) + " fc=" + FrameCount() + " pt=" + PlatformTime() + " t=" + Time() + " waited=" + g )
+			continue
+		}
+		if ( verb == "waitph" )
+		{
+			// M10 R2: wait until the client sees the phase shift (Wraith portal travel)
+			int g = 0
+			while ( !p.IsPhaseShifted() && g < 1200 )
+			{
+				WaitFrame()
+				g++
+			}
+			printt( "[HSD-SCHED] ver=1 trial=$trial run=$run edge=waitph frame=" + ( FrameCount() - f0 ) + " fc=" + FrameCount() + " pt=" + PlatformTime() + " t=" + Time() + " waited=" + g )
 			continue
 		}
 		if ( verb == "waittrav" )
@@ -1835,7 +2238,7 @@ def parse_schedule(spec, fps=144.0):
             steps.append(f"wait {n}")
             continue
         steps.append(s)
-        if verb in ("waitair", "waitland", "waittrav"):
+        if verb in ("waitair", "waitland", "waittrav", "waitph"):
             continue
         if verb in ("down", "up", "tap"):
             if arg not in KEYS:
@@ -1854,7 +2257,7 @@ def parse_schedule(spec, fps=144.0):
 
 
 def has_state_waits(steps):
-    return any(s in ("waitair", "waitland", "waittrav") for s in steps)
+    return any(s in ("waitair", "waitland", "waittrav", "waitph") for s in steps)
 
 
 def schedule_frames(steps):
@@ -1862,7 +2265,7 @@ def schedule_frames(steps):
     n = 0
     for s in steps:
         verb, _, arg = s.partition(" ")
-        n += int(arg) if verb == "wait" else (1 if verb == "tap" else 0) if verb not in ("waitair", "waitland", "waittrav") else 0
+        n += int(arg) if verb == "wait" else (1 if verb == "tap" else 0) if verb not in ("waitair", "waitland", "waittrav", "waitph") else 0
     return n
 
 
