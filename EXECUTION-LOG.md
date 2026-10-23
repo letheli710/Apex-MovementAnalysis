@@ -474,6 +474,11 @@ Newest entries at the bottom. Problems are tagged **[ISSUE]** and also listed in
   - **Course lap 80.55 → 78.98 s**, explained by the defect itself (the autopilot was stuck reversing at the M tower).
   - The fix is one line, `along = max(0, v·ŵ)`. The braking profile on a reversal is a model choice, and an R5 check is suggested.
 - **M10 complete.** Summary: `m10/M10-REPORT.md` (Chinese). Final build: `HSD-Build\M10`. Status: numbers/rules pass and real-input demos pass; hands-on feel not yet checked by a person. E1–E3 remain deferred.
+- **M10-R skill folders** (user request 2026-10-23: one folder per skill, each with a README, replays/demos byte-identical; HSD-Unity `0608483`, merged as #24 → main `6b27c04`; lead-verified by rerun):
+  - `Runtime/Abilities/<Skill>/` for 24 skills, plus `_Core/` for shared framework code. `Traversal/` and `Skills/` were merged in. 8 multi-type files were split. Every original `.meta` GUID was kept (30/30). The index `Abilities/README.md` maps each old path to its new one, for older milestone docs that cite the old paths.
+  - Code lines are identical before and after (9822 = 9822, excluding using/namespace/brace lines).
+  - EditMode 1984/1984. BatchReplay m2m1/m3/m4 outputs are byte-identical to the M10 baseline, except the `Generated` timestamp line. Regression output is identical; M4 114/114.
+  - New build `HSD-Build\M10R`: `[HSD-SMOKE]` lines are identical to M10 (238/238 demos, lap 78.98 s).
 
 ## Open issues
 
