@@ -1,0 +1,105 @@
+# M10 R2 Wraith portal
+session 20261023_000555_M10R2_s1 + 20261023_002614_M10R2_s2: scored 47, excluded 3 ['r18152 m10r2_w_gap_t030 (schedule ran 604 frames, planned 602)', 'r18154 m10r2_w_gap_t045 (schedule ran 621 frames, planned 620)', 'r18155 m10r2_w_gap_t060 (schedule ran 640 frames, planned 638)']
+
+## 1. Exit velocity / travel (dedi rows; travel = rows with the phase flag; exit = first free row)
+  r18123 w_runin_end    place start 1.16 s after the tap, 1.0 s, len 272.7, sev [0.2], v first/last 220.4/364.0 | pair True gap 322.3 | travels 1
+      end->start dur 0.5 s (5 rows) disp 349.2 path 349.2 rate 1164.0 u/s | v-field h [332.6, 323.9, 267.1, 178.3, 0.0] | exit v [-0.0, 0.0, 0.0] yaw 44.3 (series [0.0, 0.0, 0.0, 25.3, 44.3])
+      client phase [0.49] s; client exits [{'entry_vh': 199.5, 'exit_v': [0.0, 0.0, 0.0], 'exit_v_0p2s': [0.0]}]
+  r18124 w_runin_end    place start 1.17 s after the tap, 1.0 s, len 274.7, sev [0.2], v first/last 230.7/364.0 | pair True gap 327.6 | travels 1
+      end->start dur 0.5 s (5 rows) disp 358.4 path 358.4 rate 1194.7 u/s | v-field h [322.2, 327.7, 271.5, 178.1, 0.0] | exit v [-0.0, 0.0, 0.0] yaw 61.2 (series [0.0, 0.0, 16.9, 42.2, 61.2])
+      client phase [0.49] s; client exits [{'entry_vh': 199.5, 'exit_v': [0.0, 0.0, 0.0], 'exit_v_0p2s': [0.0]}]
+  r18125 w_runin_end    place start 1.12 s after the tap, 1.1 s, len 305.8, sev [0.2], v first/last 194.2/364.0 | pair True gap 342.3 | travels 1
+      start->end dur 0.5 s (5 rows) disp 318.8 path 365.8 rate 1219.3 u/s | v-field h [178.4, 278.0, 335.3, 259.5, 0.0] | exit v [0.0, 0.0, 0.0] yaw 0.0 (series [0.0, 0.0, 0.0, 0.0, 0.0])
+      client phase [0.49] s; client exits [{'entry_vh': 199.5, 'exit_v': [0.0, 0.0, 0.0], 'exit_v_0p2s': [0.0]}]
+  r18126 w_runin_start  place start 1.11 s after the tap, 1.1 s, len 300.5, sev [0.2], v first/last 194.2/364.0 | pair True gap 337.9 | travels 1
+      start->end dur 0.5 s (5 rows) disp 360.4 path 360.4 rate 1201.3 u/s | v-field h [178.5, 274.9, 332.7, 269.8, 0.0] | exit v [0.0, 0.0, 0.0] yaw 0.0 (series [0.0, 0.0, 0.0, 0.0, 0.0])
+      client phase [0.48] s; client exits [{'entry_vh': 404.2, 'exit_v': [0.0, 0.0, 0.0], 'exit_v_0p2s': [0.0]}]
+  r18127 w_runin_start  place start 1.12 s after the tap, 1.1 s, len 305.4, sev [0.2], v first/last 193.9/364.0 | pair True gap 341.9 | travels 1
+      start->end dur 0.5 s (5 rows) disp 373.7 path 373.7 rate 1245.7 u/s | v-field h [178.1, 277.6, 335.0, 259.4, 0.0] | exit v [0.0, 0.0, 0.0] yaw 0.0 (series [0.0, 0.0, 0.0, 0.0, 0.0])
+      client phase [0.49] s; client exits [{'entry_vh': 496.7, 'exit_v': [0.0, 0.0, 0.0], 'exit_v_0p2s': [0.0]}]
+  r18128 w_runin_start  place start 1.17 s after the tap, 1.0 s, len 274.5, sev [0.2], v first/last 230.8/364.0 | pair True gap 327.4 | travels 1
+      start->end dur 0.5 s (5 rows) disp 357.7 path 357.7 rate 1192.3 u/s | v-field h [178.1, 286.0, 342.0, 322.2, 0.0] | exit v [0.0, 0.0, 0.0] yaw 0.0 (series [0.0, 0.0, 0.0, 0.0, 0.0])
+      client phase [0.49] s; client exits [{'entry_vh': 480.4, 'exit_v': [0.0, 0.0, 0.0], 'exit_v_0p2s': [0.0]}]
+  r18129 w_stand_start  place start 1.12 s after the tap, 1.4 s, len 412.6, sev [0.2], v first/last 198.3/364.0 | pair True gap 449.8 | travels 1
+      start->end dur 0.6 s (6 rows) disp 481.6 path 481.6 rate 1204.0 u/s | v-field h [177.2, 276.9, 334.2, 364.0, 249.1, 0.0] | exit v [0.0, 0.0, 0.0] yaw 0.0 (series [0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+      client phase [0.59] s; client exits [{'entry_vh': 496.2, 'exit_v': [0.0, 0.0, 0.0], 'exit_v_0p2s': [0.0]}]
+  r18130 w_stand_start  place start 1.12 s after the tap, 1.4 s, len 414.2, sev [0.2], v first/last 192.9/364.0 | pair True gap 449.7 | travels 1
+      start->end dur 0.6 s (6 rows) disp 481.5 path 481.5 rate 1203.8 u/s | v-field h [177.2, 276.6, 334.0, 364.0, 249.1, 0.0] | exit v [0.0, 0.0, 0.0] yaw 0.0 (series [0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+      client phase [0.58] s; client exits [{'entry_vh': 495.9, 'exit_v': [0.0, 0.0, 0.0], 'exit_v_0p2s': [0.0]}]
+  r18131 w_stay         place start 1.17 s after the tap, 1.3 s, len 386.5, sev [0.2], v first/last 229.9/364.0 | pair True gap 438.6 | travels 1
+      end->start dur 0.6 s (6 rows) disp 464.2 path 464.2 rate 1160.5 u/s | v-field h [301.3, 364.0, 328.0, 270.8, 177.2, 0.0] | exit v [0.0, 0.0, 0.0] yaw 75.4 (series [0.0, 0.0, 16.9, 42.2, 61.2, 75.4])
+      client phase [0.59] s; client exits [{'entry_vh': 199.5, 'exit_v': [0.0, 0.0, 0.0], 'exit_v_0p2s': [0.0]}]
+  r18132 w_stay         place start 1.12 s after the tap, 1.4 s, len 414.1, sev [0.2], v first/last 192.9/364.0 | pair True gap 449.6 | travels 1
+      start->end dur 0.6 s (6 rows) disp 421.3 path 477.9 rate 1194.8 u/s | v-field h [177.1, 276.6, 333.9, 364.0, 249.0, 0.0] | exit v [0.0, 0.0, 0.0] yaw 0.0 (series [0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+      client phase [0.59] s; client exits [{'entry_vh': 199.5, 'exit_v': [0.0, 0.0, 0.0], 'exit_v_0p2s': [0.0]}]
+  r18133 w_stay         place start 1.11 s after the tap, 1.4 s, len 411.5, sev [0.2], v first/last 192.8/364.0 | pair True gap 446.9 | travels 1
+      start->end dur 0.6 s (6 rows) disp 421.3 path 472.6 rate 1181.5 u/s | v-field h [176.9, 273.2, 331.1, 364.0, 249.2, 0.0] | exit v [0.0, 0.0, 0.0] yaw 0.0 (series [0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+      client phase [0.59] s; client exits [{'entry_vh': 199.5, 'exit_v': [0.0, 0.0, 0.0], 'exit_v_0p2s': [0.0]}]
+  r18134 w_repeat       place start 1.17 s after the tap, 1.3 s, len 386.3, sev [0.2], v first/last 229.9/364.0 | pair True gap 438.1 | travels 3
+      end->start dur 0.6 s (6 rows) disp 463.8 path 463.8 rate 1159.5 u/s | v-field h [301.4, 364.0, 328.0, 270.7, 177.2, 0.0] | exit v [0.0, 0.0, 0.0] yaw 75.4 (series [0.0, 0.0, 16.9, 42.2, 61.2, 75.4])
+      start->end dur 0.6 s (6 rows) disp 460.7 path 468.3 rate 1170.8 u/s | v-field h [177.2, 270.7, 328.0, 364.0, 301.4, 0.0] | exit v [0.0, 0.0, 0.0] yaw 79.5 (series [136.9, 136.9, 124.1, 104.8, 90.4, 79.5])
+      end->start dur 0.6 s (6 rows) disp 413.1 path 468.3 rate 1170.8 u/s | v-field h [301.4, 364.0, 328.0, 270.7, 177.2, 0.0] | exit v [0.0, 0.0, 0.0] yaw 94.4 (series [32.6, 32.6, 46.5, 67.2, 82.7, 94.4])
+      client phase [0.59, 0.58, 0.59] s; client exits [{'entry_vh': 199.5, 'exit_v': [0.0, 0.0, 0.0], 'exit_v_0p2s': [0.0]}, {'entry_vh': 450.8, 'exit_v': [0.0, 0.0, 0.0], 'exit_v_0p2s': [0.0]}, {'entry_vh': 582.2, 'exit_v': [0.0, 0.0, 0.0], 'exit_v_0p2s': [0.0]}]
+  r18135 w_repeat       place start 1.17 s after the tap, 1.3 s, len 385.6, sev [0.2], v first/last 224.6/364.0 | pair True gap 436.2 | travels 3
+      end->start dur 0.6 s (6 rows) disp 465.6 path 465.6 rate 1164.0 u/s | v-field h [311.7, 364.0, 326.8, 269.5, 177.2, 0.0] | exit v [-0.0, 0.0, 0.0] yaw 75.4 (series [0.0, 0.0, 16.9, 42.2, 61.2, 75.4])
+      start->end dur 0.6 s (6 rows) disp 459.7 path 467.7 rate 1169.2 u/s | v-field h [177.2, 269.5, 326.8, 364.0, 311.7, 0.0] | exit v [0.0, 0.0, 0.0] yaw 79.5 (series [136.8, 136.8, 124.0, 104.8, 90.3, 79.5])
+      end->start dur 0.6 s (6 rows) disp 411.1 path 466.3 rate 1165.8 u/s | v-field h [311.7, 364.0, 326.8, 269.5, 177.2, 0.0] | exit v [-0.0, 0.0, 0.0] yaw 94.4 (series [32.7, 32.7, 46.5, 67.2, 82.7, 94.4])
+      client phase [0.58, 0.59, 0.59] s; client exits [{'entry_vh': 199.4, 'exit_v': [0.0, 0.0, 0.0], 'exit_v_0p2s': [0.0]}, {'entry_vh': 464.9, 'exit_v': [0.0, 0.0, 0.0], 'exit_v_0p2s': [0.0]}, {'entry_vh': 592.6, 'exit_v': [0.0, 0.0, 0.0], 'exit_v_0p2s': [0.0]}]
+  r18140 w_drop         place start 1.12 s after the tap, 6.6 s, len 6108.8, sev [0.2, 0.298, 0.4, 0.498], v first/last 192.9/519.0 | pair True gap 5285.1 | travels 1
+      end->start dur 3.7 s (37 rows) disp 5289.0 path 6185.0 rate 1767.1 u/s | v-field h [403.9, 519.0, 519.0, 519.0, 505.5, 464.7, 423.8, 383.0, 319.1, 176.1, 90.2, 39.5, 84.0, 84.0, 84.0, 84.0, 84.0, 84.0, 84.0, 84.0, 84.0, 84.0, 84.0, 84.0, 84.0, 84.0, 84.0, 56.3, 43.9, 144.2, 244.4, 290.9, 262.3, 248.0, 192.9, 177.1, 0.0] | exit v [0.0, 0.0, 0.0] yaw 107.7 (series [0.0, 0.0, 16.9, 42.2, 61.2, 75.4, 86.1, 94.1, 100.1, 103.8, 104.1, 57.5, 21.7, -5.6, -26.2, -41.8, -53.5, -62.3, -68.8, -73.7, -77.4, -80.0, -82.0, -83.3, -84.3, -85.1, -86.0, -41.4, -5.5, 24.8, 49.5, 68.5, 82.3, 92.0, 99.0, 104.0, 107.7])
+      client phase [3.69] s; client exits [{'entry_vh': 199.5, 'exit_v': [0.0, 0.0, 0.0], 'exit_v_0p2s': [0.0]}]
+  r18141 w_drop         place start 1.15 s after the tap, 6.6 s, len 6114.4, sev [0.2, 0.298, 0.4, 0.498], v first/last 206.1/519.0 | pair True gap 5286.6 | travels 1
+      end->start dur 3.7 s (37 rows) disp 5289.9 path 6190.1 rate 1768.6 u/s | v-field h [414.4, 519.0, 519.0, 519.0, 505.3, 464.5, 423.7, 382.9, 313.4, 172.8, 88.5, 38.8, 84.0, 84.0, 84.0, 84.0, 84.0, 84.0, 84.0, 84.0, 84.0, 84.0, 84.0, 84.0, 84.0, 84.0, 84.0, 45.7, 50.3, 155.5, 253.4, 293.0, 265.3, 251.1, 206.1, 180.5, 0.0] | exit v [0.0, 0.0, 0.0] yaw 91.0 (series [0.0, 0.0, 0.0, 25.3, 44.3, 58.5, 69.2, 77.2, 83.2, 87.3, 89.3, 45.1, 11.7, -13.5, -32.5, -46.8, -57.4, -65.4, -71.4, -75.9, -79.3, -81.8, -83.6, -85.0, -86.0, -86.8, -87.5, -42.8, -8.4, 18.7, 39.9, 55.9, 67.8, 76.5, 82.9, 87.6, 91.0])
+      client phase [3.69] s; client exits [{'entry_vh': 199.5, 'exit_v': [0.0, 0.0, 0.0], 'exit_v_0p2s': [0.0]}]
+  r18142 w_drop         place start 1.17 s after the tap, 6.5 s, len 6075.3, sev [0.2, 0.298, 0.4, 0.498], v first/last 224.5/519.0 | pair True gap 5282.6 | travels 1
+      end->start dur 3.7 s (37 rows) disp 5286.1 path 6165.9 rate 1761.7 u/s | v-field h [456.4, 519.0, 519.0, 519.0, 518.0, 477.2, 436.4, 395.5, 353.0, 207.3, 107.5, 47.3, 0.0, 84.0, 84.0, 84.0, 84.0, 84.0, 84.0, 84.0, 84.0, 84.0, 84.0, 84.0, 84.0, 84.0, 84.0, 81.4, 18.8, 119.1, 219.4, 298.2, 269.5, 255.2, 224.5, 177.2, 0.0] | exit v [0.0, 0.0, 0.0] yaw 91.0 (series [0.0, 0.0, 0.0, 25.3, 44.3, 58.5, 69.2, 77.2, 83.2, 87.5, 89.8, 90.5, 45.8, 12.1, -13.3, -32.3, -46.6, -57.3, -65.4, -71.4, -75.9, -79.2, -81.7, -83.6, -84.9, -85.9, -86.8, -42.5, -8.6, 18.2, 39.2, 55.4, 67.5, 76.3, 82.8, 87.5, 91.0])
+      client phase [3.68] s; client exits [{'entry_vh': 199.5, 'exit_v': [0.0, 0.0, 0.0], 'exit_v_0p2s': [0.0]}]
+
+## 2. Long portal (tower drop, 5238 u): severity steps vs straight distance from the start node
+  r18140 place 6.6 s landed at 4.3 s, max dist 5279.1, floor v_h max 519.0
+      -> sev 0.298 at 3.2 s: dist 2595.7..2797.6 (43.3..46.6 % of 6000)
+      -> sev 0.4 at 3.8 s: dist 3918.5..4165.3 (65.3..69.4 % of 6000)
+      -> sev 0.498 at 4.3 s: dist 5204.1..5238.0 (86.7..87.3 % of 6000)
+  r18141 place 6.6 s landed at 4.3 s, max dist 5280.4, floor v_h max 519.0
+      -> sev 0.298 at 3.2 s: dist 2576.4..2777.0 (42.9..46.3 % of 6000)
+      -> sev 0.4 at 3.8 s: dist 3893.9..4139.8 (64.9..69.0 % of 6000)
+      -> sev 0.498 at 4.3 s: dist 5198.9..5237.9 (86.6..87.3 % of 6000)
+  r18142 place 6.5 s landed at 4.2 s, max dist 5276.3, floor v_h max 519.0
+      -> sev 0.298 at 3.2 s: dist 2695.9..2901.7 (44.9..48.4 % of 6000)
+      -> sev 0.4 at 3.8 s: dist 4034.7..4285.9 (67.2..71.4 % of 6000)
+      -> sev 0.498 at 4.3 s: dist 5238.0..5238.0 (87.3..87.3 % of 6000)
+
+## 3. Minimum portal gap (walk W for X s after the placement start, end tap)
+  r18147 w_gap_t000 pre-portal None | straight start->end-tap None | pair False gap None | ult spent False | place len 0.0
+  r18148 w_gap_t000 pre-portal None | straight start->end-tap None | pair False gap None | ult spent False | place len 0.0
+  r18149 w_gap_t015 pre-portal None | straight start->end-tap None | pair False gap None | ult spent False | place len 0.0
+  r18150 w_gap_t015 pre-portal None | straight start->end-tap None | pair False gap None | ult spent False | place len 0.0
+  r18151 w_gap_t030 pre-portal None | straight start->end-tap None | pair False gap None | ult spent False | place len 7.5
+  r18207 w_gap_t030 pre-portal [-14664.4, 6650.0, 339.9] | straight start->end-tap 20.7 | pair False gap None | ult spent False | place len 8.7
+  r18153 w_gap_t045 pre-portal None | straight start->end-tap None | pair False gap None | ult spent False | place len 59.7
+  r18208 w_gap_t045 pre-portal [-14665.4, 6650.0, 339.9] | straight start->end-tap 67.1 | pair False gap None | ult spent False | place len 60.8
+  r18156 w_gap_t060 pre-portal None | straight start->end-tap None | pair False gap None | ult spent False | place len 95.1
+  r18209 w_gap_t060 pre-portal [-14665.4, 6650.0, 339.9] | straight start->end-tap 111.7 | pair False gap None | ult spent False | place len 96.7
+  r18210 w_gap_t065 pre-portal [-14665.5, 6650.0, 339.9] | straight start->end-tap 125.7 | pair False gap None | ult spent False | place len 110.6
+  r18211 w_gap_t065 pre-portal [-14665.4, 6650.0, 339.9] | straight start->end-tap 125.6 | pair False gap None | ult spent False | place len 110.6
+  r18212 w_gap_t070 pre-portal [-14664.2, 6650.0, 339.9] | straight start->end-tap 144.4 | pair True gap 144.4 | ult spent True | place len 128.8
+  r18213 w_gap_t070 pre-portal [-14665.1, 6650.0, 339.9] | straight start->end-tap 141.7 | pair True gap 141.7 | ult spent True | place len 126.7
+  r18157 w_gap_t075 pre-portal None | straight start->end-tap None | pair True gap 158.0 | ult spent True | place len 141.0
+  r18158 w_gap_t075 pre-portal None | straight start->end-tap None | pair True gap 157.8 | ult spent True | place len 142.8
+  r18214 w_gap_t075 pre-portal [-14665.4, 6650.0, 339.9] | straight start->end-tap 157.9 | pair True gap 157.9 | ult spent True | place len 141.0
+
+## 4. Lifetime (pair -> blockers gone)
+  r18145 pair life 45.1 s (pair True)
+  r18146 pair life 45.1 s (pair True)
+
+## 5. Into the Void + portal
+  r18136 w_void_in    placed True pair True portal travels 0 ult spent True | phase (Void) None..None | min 2D distance to the end portal after pairing 3.5
+  r18137 w_void_in    placed True pair True portal travels 1 ult spent True | phase (Void) 1435.65..1436.25 | min 2D distance to the end portal after pairing 0.0
+  r18138 w_void_place placed False pair False portal travels 0 ult spent False | phase (Void) 1443.25..1447.15 | min 2D distance to the end portal after pairing None
+  r18139 w_void_place placed False pair False portal travels 0 ult spent False | phase (Void) 1450.95..1454.85 | min 2D distance to the end portal after pairing None
+  r18601 w_vctrl      placed True pair True portal travels 1 ult spent True | phase (Void) 83.85..84.45 | min 2D distance to the end portal after pairing 0.0
+  r18602 w_vctrl      placed True pair True portal travels 1 ult spent True | phase (Void) 96.25..96.85 | min 2D distance to the end portal after pairing 0.0
+  r18603 w_vctrl      placed True pair True portal travels 1 ult spent True | phase (Void) 108.65..109.15 | min 2D distance to the end portal after pairing 0.0
+  r18604 w_vin2       placed True pair True portal travels 0 ult spent True | phase (Void) 120.85..124.75 | min 2D distance to the end portal after pairing 12.7
+  r18605 w_vin2       placed True pair True portal travels 0 ult spent True | phase (Void) 133.35..137.25 | min 2D distance to the end portal after pairing 13.4
+  r18606 w_vin2       placed True pair True portal travels 0 ult spent True | phase (Void) 145.75..149.65 | min 2D distance to the end portal after pairing 11.3

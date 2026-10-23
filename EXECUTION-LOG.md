@@ -446,6 +446,20 @@ Newest entries at the bottom. Problems are tagged **[ISSUE]** and also listed in
   - Replays: M2+M1 111, M1 first guess 111, M3 90; M4 114/114.
   - Smoke: demos 202/202 (M10-B 18/18), older trajectories identical, course lap 80.82 s.
   - Zipline Gun adds ordinary runtime rails with a per-rope ride law (cap 1000, matching R5); map ropes are byte-identical.
+- **Track R2 done** (M10; 2 sessions; the lead reran all 5 analyses with byte-identical output):
+  - Wraith portal: exit speed always 0; travel time clamp(path/1024, 0.3, 2.0) s, up to 3.5 s; placement severity ramp +0.1 per 20 % of 6000 u.
+  - Speed-boost rule msc = W·(1+2q), with q = floor(255·S)/255.
+  - Maggie pads: ×1.298 inside, a 2 s trail, no sprint requirement.
+  - Newcastle leap triggers locally (SDK twin on the dedi).
+  - Grapple onto your own gun rope: 8/8.
+- **M10-C + D1 done** (HSD-Unity `60ae630`, merged as #21 → main `30d4271`; lead-verified by rerun):
+  - Tests: EditMode 1853/1853.
+  - Replays: M2+M1 111, M1 first guess 111, M3 90; M4 114/114.
+  - Smoke: demos 222/222 (M10-C 20/20).
+  - **Course lap 80.82 → 80.55 s.** This is explained, not a regression: the measured crouch-release rule ends the K-barrier slide. 65 of 67 original recordings are bit-identical with the rule on, and 2 M3 slide-chain recordings get closer to R5. The replay motor was not switched, to keep the baseline.
+  - Slide-jump-by-age matches R5 within 2 u/s.
+  - Ceiling surf follows the S21 client.
+  - Octane S21 preset: stim 6.7 s lock, pad upgrades as options.
 
 ## Open issues
 

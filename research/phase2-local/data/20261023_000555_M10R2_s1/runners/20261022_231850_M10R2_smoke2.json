@@ -1,0 +1,171 @@
+{
+ "schema": "hsd-runner/2",
+ "label": "M10R2_smoke2",
+ "created": "20261022_231850",
+ "schedules": {
+  "m10r2_w_runin_start": {
+   "steps": [
+    "wait 60",
+    "down speed",
+    "down forward",
+    "wait 120",
+    "tap offhand4",
+    "wait 240",
+    "tap offhand4",
+    "up forward",
+    "up speed",
+    "wait 336",
+    "down forward",
+    "waitph",
+    "up forward",
+    "wait 480"
+   ],
+   "frames": 1238
+  },
+  "m10r2_w_drop": {
+   "steps": [
+    "wait 60",
+    "tap offhand4",
+    "wait 36",
+    "down speed",
+    "down forward",
+    "waitair",
+    "up forward",
+    "up speed",
+    "down backward",
+    "wait 96",
+    "up backward",
+    "waitland",
+    "wait 36",
+    "down speed",
+    "down forward",
+    "wait 180",
+    "up forward",
+    "up speed",
+    "tap offhand4",
+    "wait 120",
+    "down backward",
+    "waitph",
+    "up backward",
+    "wait 720"
+   ],
+   "frames": 1250
+  }
+ },
+ "origin": [
+  -14750.0,
+  6500.0,
+  294.92
+ ],
+ "yaw": 0.0,
+ "client_fps": 120.0,
+ "census": false,
+ "legend": "wraith",
+ "legend_reply": "{\"changed\":[\"unnamed\"],\"legend\":\"character_wraith\",\"ok\":true}",
+ "trials": [
+  {
+   "trial": 18011,
+   "run": 18011,
+   "batch": 18011,
+   "schedule": "m10r2_w_runin_start",
+   "yaw": 0.0,
+   "origin": [
+    -14700.0,
+    6650.0,
+    294.92
+   ],
+   "schedule_frames": 1238,
+   "reset": "[HSD-RESET] ver=1 batch=18011 run=18011 ent=1 o=-14700,6650,294.92 vel=0,0,0 yaw=0 ground=1 slide=0 weapon=mp_weapon_melee_survival t=996.95",
+   "scheduled": "scheduled trial=18011 fc=134005",
+   "sched_lines": [
+    "[HSD-SCHED] ver=1 trial=18011 run=18011 edge=start frame=0 fc=134035 pt=996.219 t=997.182 o=-14700,6650,294.92 yaw=0 settle_frames=30",
+    "[HSD-SCHED] ver=1 trial=18011 run=18011 edge=down key=speed frame=60 fc=134095 pt=996.72 t=997.682",
+    "[HSD-SCHED] ver=1 trial=18011 run=18011 edge=down key=forward frame=60 fc=134095 pt=996.721 t=997.682",
+    "[HSD-SCHED] ver=1 trial=18011 run=18011 edge=down key=offhand4 frame=180 fc=134215 pt=997.733 t=998.693",
+    "[HSD-SCHED] ver=1 trial=18011 run=18011 edge=up key=offhand4 frame=181 fc=134216 pt=997.741 t=998.701",
+    "[HSD-SCHED] ver=1 trial=18011 run=18011 edge=down key=offhand4 frame=421 fc=134456 pt=999.774 t=1000.73",
+    "[HSD-SCHED] ver=1 trial=18011 run=18011 edge=up key=offhand4 frame=422 fc=134457 pt=999.783 t=1000.74",
+    "[HSD-SCHED] ver=1 trial=18011 run=18011 edge=up key=forward frame=422 fc=134457 pt=999.783 t=1000.74",
+    "[HSD-SCHED] ver=1 trial=18011 run=18011 edge=up key=speed frame=422 fc=134457 pt=999.783 t=1000.74",
+    "[HSD-SCHED] ver=1 trial=18011 run=18011 edge=down key=forward frame=758 fc=134793 pt=1002.58 t=1003.55",
+    "[HSD-SCHED] ver=1 trial=18011 run=18011 edge=waitph frame=807 fc=134842 pt=1002.99 t=1003.95 waited=49",
+    "[HSD-SCHED] ver=1 trial=18011 run=18011 edge=up key=forward frame=807 fc=134842 pt=1002.99 t=1003.95",
+    "[HSD-SCHED] ver=1 trial=18011 run=18011 edge=end frame=1287 fc=135322 pt=1006.99 t=1007.96 o=-13936.3,6650,294.92"
+   ],
+   "log_gap": false,
+   "measured_fps": 119.49,
+   "ok": true,
+   "why": "",
+   "warmup": false
+  },
+  {
+   "trial": 18012,
+   "run": 18012,
+   "batch": 18012,
+   "schedule": "m10r2_w_drop",
+   "yaw": 0.0,
+   "origin": [
+    -14680.0,
+    6500.0,
+    5532.8
+   ],
+   "schedule_frames": 1250,
+   "reset": "[HSD-RESET] ver=1 batch=18012 run=18012 ent=1 o=-14680,6500,5532.8 vel=0,0,0 yaw=0 ground=1 slide=0 weapon=mp_weapon_melee_survival t=1009.1",
+   "scheduled": "scheduled trial=18012 fc=135457",
+   "sched_lines": [
+    "[HSD-SCHED] ver=1 trial=18012 run=18012 edge=start frame=0 fc=135487 pt=1008.37 t=1009.33 o=-14680,6500,5532.8 yaw=0 settle_frames=30",
+    "[HSD-SCHED] ver=1 trial=18012 run=18012 edge=down key=offhand4 frame=60 fc=135547 pt=1008.87 t=1009.83",
+    "[HSD-SCHED] ver=1 trial=18012 run=18012 edge=up key=offhand4 frame=61 fc=135548 pt=1008.88 t=1009.84",
+    "[HSD-SCHED] ver=1 trial=18012 run=18012 edge=down key=speed frame=97 fc=135584 pt=1009.18 t=1010.14",
+    "[HSD-SCHED] ver=1 trial=18012 run=18012 edge=down key=forward frame=97 fc=135584 pt=1009.18 t=1010.14",
+    "[HSD-SCHED] ver=1 trial=18012 run=18012 edge=waitair frame=239 fc=135726 pt=1010.36 t=1011.32 waited=142",
+    "[HSD-SCHED] ver=1 trial=18012 run=18012 edge=up key=forward frame=239 fc=135726 pt=1010.36 t=1011.32",
+    "[HSD-SCHED] ver=1 trial=18012 run=18012 edge=up key=speed frame=239 fc=135726 pt=1010.36 t=1011.32",
+    "[HSD-SCHED] ver=1 trial=18012 run=18012 edge=down key=backward frame=239 fc=135726 pt=1010.36 t=1011.32",
+    "[HSD-SCHED] ver=1 trial=18012 run=18012 edge=up key=backward frame=335 fc=135822 pt=1011.16 t=1012.12",
+    "[HSD-SCHED] ver=1 trial=18012 run=18012 edge=waitland frame=688 fc=136175 pt=1014.11 t=1015.07 waited=353",
+    "[HSD-SCHED] ver=1 trial=18012 run=18012 edge=down key=speed frame=724 fc=136211 pt=1014.41 t=1015.37",
+    "[HSD-SCHED] ver=1 trial=18012 run=18012 edge=down key=forward frame=724 fc=136211 pt=1014.41 t=1015.37",
+    "[HSD-SCHED] ver=1 trial=18012 run=18012 edge=up key=forward frame=904 fc=136391 pt=1015.91 t=1016.87",
+    "[HSD-SCHED] ver=1 trial=18012 run=18012 edge=up key=speed frame=904 fc=136391 pt=1015.91 t=1016.87",
+    "[HSD-SCHED] ver=1 trial=18012 run=18012 edge=down key=offhand4 frame=904 fc=136391 pt=1015.91 t=1016.87",
+    "[HSD-SCHED] ver=1 trial=18012 run=18012 edge=up key=offhand4 frame=905 fc=136392 pt=1015.92 t=1016.87",
+    "[HSD-SCHED] ver=1 trial=18012 run=18012 edge=down key=backward frame=1025 fc=136512 pt=1016.92 t=1017.87",
+    "[HSD-SCHED] ver=1 trial=18012 run=18012 edge=waitph frame=1059 fc=136546 pt=1017.2 t=1018.16 waited=34",
+    "[HSD-SCHED] ver=1 trial=18012 run=18012 edge=up key=backward frame=1059 fc=136546 pt=1017.2 t=1018.16",
+    "[HSD-SCHED] ver=1 trial=18012 run=18012 edge=end frame=1779 fc=137266 pt=1023.2 t=1024.16 o=-14614.1,6500,5532.82"
+   ],
+   "log_gap": false,
+   "measured_fps": 119.96,
+   "ok": true,
+   "why": "",
+   "warmup": false
+  }
+ ],
+ "view_cvars": {
+  "cl_yawspeed": "210",
+  "cl_pitchspeed": "225"
+ },
+ "geometry_m10": {
+  "m10r2tower": {
+   "props": [
+    [
+     "mdl/rocks/rock_white_chalk_modular_wallrun_02.rmdl",
+     -14600.0,
+     6500.0,
+     5294.92,
+     0.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "replies": [
+    "precached=true prop=8122"
+   ]
+  }
+ },
+ "both_cvars": {},
+ "server_cvars": {},
+ "kit_reply": "legend=character_wraith tactical=mp_ability_phase_walk ultimate=mp_weapon_phase_tunnel passives=1",
+ "client_exec": []
+}

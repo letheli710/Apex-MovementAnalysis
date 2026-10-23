@@ -1,0 +1,59 @@
+# M10 R2 speed_boost severity -> move scale
+session 20261023_000555_M10R2_s1: scored 36, excluded 4 ['r18112 m10r2_sev_s030 (frame rate 108.76 outside 120.0 +/- 3%)', 'r18113 m10r2_sev_s040 (frame rate 109.92 outside 120.0 +/- 3%)', 'r18114 m10r2_sev_s040 (frame rate 103.45 outside 120.0 +/- 3%)', 'r18119 m10r2_sev_stack (frame rate 100.0 outside 120.0 +/- 3%)']
+
+## 1. Script severity S -> logged severity, client msc / maxspeed, sprint v_h (model msc = 1.15 (1 + 2 q(S)))
+  r18101 ctrl   S []          logged [0.0]            q None    | msc 1.15 (model None) ms 299.0 v_h 299.0 (model None) | levels [(1.15, 299)]
+  r18102 ctrl   S []          logged [0.0]            q None    | msc 1.15 (model None) ms 299.0 v_h 299.0 (model None) | levels [(1.15, 299)]
+  r18121 fade   S [0.15]      logged [0.0, 0.0501, 0.1341, 0.149] q 0.149   | msc 1.4927 (model 1.4927) ms 388.114 v_h 320.366 (model 388.114) | levels [(1.15, 222), (1.4927, 47)]
+        fade series (s from the first non-zero row, severity): [(0.0, 0.149), (0.1, 0.149), (0.2, 0.149), (0.3, 0.149), (0.4, 0.149), (0.5, 0.149), (0.6, 0.149), (0.7, 0.149), (0.8, 0.149), (0.9, 0.149), (1.0, 0.149), (1.1, 0.149), (1.2, 0.149), (1.3, 0.1341), (1.4, 0.0501), (1.5, 0.0), (1.6, 0.0), (1.7, 0.0), (1.8, 0.0), (1.9, 0.0), (2.0, 0.0), (2.1, 0.0), (2.2, 0.0)]
+  r18122 fade   S [0.15]      logged [0.0, 0.0001, 0.0547, 0.1368, 0.149] q 0.149   | msc 1.4927 (model 1.4927) ms 388.114 v_h 320.325 (model 388.114) | levels [(1.15, 222), (1.4927, 47)]
+        fade series (s from the first non-zero row, severity): [(0.0, 0.149), (0.1, 0.149), (0.2, 0.149), (0.3, 0.149), (0.4, 0.149), (0.5, 0.149), (0.6, 0.149), (0.7, 0.149), (0.8, 0.149), (0.9, 0.149), (1.0, 0.149), (1.1, 0.149), (1.2, 0.149), (1.3, 0.1368), (1.4, 0.0547), (1.5, 0.0001), (1.6, 0.0), (1.7, 0.0), (1.8, 0.0), (1.9, 0.0), (2.0, 0.0), (2.1, 0.0), (2.2, 0.0)]
+  r18103 s005   S [0.05]      logged [0.0, 0.0471]    q 0.0471  | msc 1.2582 (model 1.2582) ms 327.141 v_h 327.141 (model 327.141) | levels [(1.2582, 299)]
+  r18104 s005   S [0.05]      logged [0.0, 0.0471]    q 0.0471  | msc 1.2582 (model 1.2582) ms 327.141 v_h 327.141 (model 327.141) | levels [(1.2582, 299)]
+  r18105 s010   S [0.1]       logged [0.0, 0.098]     q 0.098   | msc 1.3755 (model 1.3755) ms 357.627 v_h 357.627 (model 357.627) | levels [(1.3755, 299)]
+  r18106 s010   S [0.1]       logged [0.0, 0.098]     q 0.098   | msc 1.3755 (model 1.3755) ms 357.627 v_h 357.627 (model 357.627) | levels [(1.3755, 299)]
+  r18107 s015   S [0.15]      logged [0.0, 0.149]     q 0.149   | msc 1.4927 (model 1.4927) ms 388.114 v_h 388.114 (model 388.114) | levels [(1.4927, 299)]
+  r18108 s015   S [0.15]      logged [0.0, 0.149]     q 0.149   | msc 1.4927 (model 1.4927) ms 388.114 v_h 388.114 (model 388.114) | levels [(1.4927, 299)]
+  r18109 s020   S [0.2]       logged [0.0, 0.2]       q 0.2     | msc 1.61 (model 1.61) ms 418.6 v_h 418.6 (model 418.6) | levels [(1.61, 299)]
+  r18110 s020   S [0.2]       logged [0.0, 0.2]       q 0.2     | msc 1.61 (model 1.61) ms 418.6 v_h 418.6 (model 418.6) | levels [(1.61, 299)]
+  r18111 s030   S [0.3]       logged [0.0, 0.298]     q 0.298   | msc 1.8355 (model 1.8355) ms 477.227 v_h 477.227 (model 477.227) | levels [(1.8355, 299)]
+  r18201 s030   S [0.3]       logged [0.0, 0.298]     q 0.298   | msc 1.8355 (model 1.8355) ms 477.227 v_h 477.227 (model 477.227) | levels [(1.8355, 299)]
+  r18202 s030   S [0.3]       logged [0.0, 0.298]     q 0.298   | msc 1.8355 (model 1.8355) ms 477.227 v_h 477.227 (model 477.227) | levels [(1.8355, 299)]
+  r18203 s040   S [0.4]       logged [0.0, 0.4]       q 0.4     | msc 2.07 (model 2.07) ms 538.2 v_h 538.2 (model 538.2) | levels [(2.07, 299)]
+  r18204 s040   S [0.4]       logged [0.0, 0.4]       q 0.4     | msc 2.07 (model 2.07) ms 538.2 v_h 538.2 (model 538.2) | levels [(2.07, 299)]
+  r18115 s050   S [0.5]       logged [0.0, 0.498]     q 0.498   | msc 2.2955 (model 2.2955) ms 596.827 v_h 596.827 (model 596.827) | levels [(2.2955, 299)]
+  r18116 s050   S [0.5]       logged [0.0, 0.498]     q 0.498   | msc 2.2955 (model 2.2955) ms 596.827 v_h 596.827 (model 596.827) | levels [(2.2955, 299)]
+  r18117 s100   S [1.0]       logged [0.0, 1.0]       q 1.0     | msc 3.45 (model 3.45) ms 897.0 v_h 897.0 (model 897.0) | levels [(3.45, 191)]
+  r18118 s100   S [1.0]       logged [0.0, 1.0]       q 1.0     | msc 3.45 (model 3.45) ms 897.0 v_h 897.0 (model 897.0) | levels [(3.45, 191)]
+  r18120 stack  S [0.2, 0.1]  logged [0.0, 0.2]       q 0.2     | msc 1.61 (model 1.61) ms 418.6 v_h 418.6 (model 418.6) | levels [(1.61, 299)]
+  r18205 stack  S [0.2, 0.1]  logged [0.0, 0.2]       q 0.2     | msc 1.61 (model 1.61) ms 418.6 v_h 418.6 (model 418.6) | levels [(1.61, 299)]
+  r18206 stack  S [0.2, 0.1]  logged [0.0, 0.2]       q 0.2     | msc 1.61 (model 1.61) ms 418.6 v_h 418.6 (model 418.6) | levels [(1.61, 299)]
+
+## 2. Cross-check: Wraith portal placement (weapons locked) -- (msc, maxspeed, sprint flag) levels while placing
+  r18123 w_runin_end          sev [0.2] levels [(1.0, 173.5, 0), (1.4, 242.9, 0), (1.4, 364.0, 1)]
+  r18124 w_runin_end          sev [0.2] levels [(1.0, 173.5, 0), (1.4, 242.9, 0), (1.4, 364.0, 1)]
+  r18125 w_runin_end          sev [0.2] levels [(1.0, 173.5, 0), (1.4, 242.9, 0), (1.4, 364.0, 1)]
+  r18126 w_runin_start        sev [0.2] levels [(1.0, 173.5, 0), (1.4, 242.9, 0), (1.4, 364.0, 1)]
+  r18127 w_runin_start        sev [0.2] levels [(1.0, 173.5, 0), (1.4, 242.9, 0), (1.4, 364.0, 1)]
+  r18128 w_runin_start        sev [0.2] levels [(1.0, 173.5, 0), (1.4, 242.9, 0), (1.4, 364.0, 1)]
+  r18140 w_drop               sev [0.2, 0.298, 0.4, 0.498] levels [(1.0, 173.5, 0), (1.4, 242.9, 0), (1.4, 364.0, 1), (1.9961, 346.32, 0), (1.9961, 518.98, 1)]
+  r18141 w_drop               sev [0.2, 0.298, 0.4, 0.498] levels [(1.0, 173.5, 0), (1.4, 242.9, 0), (1.4, 364.0, 1), (1.9961, 346.32, 0), (1.9961, 518.98, 1)]
+  r18142 w_drop               sev [0.2, 0.298, 0.4, 0.498] levels [(1.0, 173.5, 0), (1.4, 242.9, 0), (1.4, 364.0, 1), (1.9961, 346.32, 0), (1.9961, 518.98, 1)]
+
+## 3. Cross-check: Mad Maggie pad (dedi severity 0.149) -- levels while boosted
+  r18311 m_pass       levels [(1.4927, 258.991, 0), (1.4927, 388.114, 1)] v_h max 388.114
+  r18312 m_pass       levels [(1.4927, 258.991, 0), (1.4927, 388.114, 1)] v_h max 388.114
+  r18313 m_pass       levels [(1.4927, 258.991, 0), (1.4927, 388.114, 1)] v_h max 369.314
+
+## 4. Summary per case (mean over trials)
+  ctrl   n=2 msc [1.15] v_h [299.0] max |msc - model| None
+  s005   n=2 msc [1.2582] v_h [327.141] max |msc - model| 0.0
+  s010   n=2 msc [1.3755] v_h [357.627] max |msc - model| 0.0
+  s015   n=2 msc [1.4927] v_h [388.114] max |msc - model| 0.0
+  s020   n=2 msc [1.61] v_h [418.6] max |msc - model| 0.0
+  s030   n=3 msc [1.8355] v_h [477.227] max |msc - model| 0.0
+  s040   n=2 msc [2.07] v_h [538.2] max |msc - model| 0.0
+  s050   n=2 msc [2.2955] v_h [596.827] max |msc - model| 0.0
+  s100   n=2 msc [3.45] v_h [897.0] max |msc - model| 0.0
+  stack  n=3 msc [1.61] v_h [418.6] max |msc - model| 0.0
+  fade   n=2 msc [1.4927] v_h [320.325, 320.366] max |msc - model| 0.0
