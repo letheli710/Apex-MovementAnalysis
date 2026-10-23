@@ -425,6 +425,21 @@ Newest entries at the bottom. Problems are tagged **[ISSUE]** and also listed in
   - Smoke: demos 170/170, all lines identical to M9-C.
   - Per-key direction input; R-1a now −31.9° as measured.
   - Reference pad launch opens no lurch window (R5), per the user's decision; `pad_lurch` moved to Fun with a bit-identical verdict.
+- **Track R done** (M10; 9 sessions; the lead reran all 5 analyses with byte-identical output).
+  - **Zipline Gun:** deploys locally; ground/wallrun/hang only; min 700; ropes 112 u above stations; ride cap 1000 (map ropes 600); steep ropes exit vertically.
+  - **Octane:**
+    - stim msc 1.4927 for 6 s, re-press blocked for 6 s + 0.7 s;
+    - pad launch follows the motion direction, not the keys; the ×1.2 upgrade gives 1377.8;
+    - **ceiling surf is a hybrid split:** the S21 client surfs, the S3 dedi clips vz.
+  - **Slide:** crouch release ends the slide at ≤ ~340 u/s; slide-jump exit by slide age (0.25 s → 397, so Unity's 236 corresponds to ~1.0 s).
+  - **Wraith:** Void regression holds; portals travel at the recorded speeds and slow to ~0 at the exit.
+- **Lead rule on hybrid splits:** when the S21 client and the S3 dedi disagree and community evidence supports the S21 behaviour, Reference follows the S21 client, labelled [S21-client; local dedi differs]. Applied to the grapple look-away detach and ceiling surf.
+- **M10-A done** (HSD-Unity `a394815`, merged as #19 → main `fd04cba`; lead-verified by rerun):
+  - Tests: EditMode 1623/1623.
+  - Replays: M2+M1 111, M1 first guess 111, M3 90; M4 114/114.
+  - Smoke: demos 184/184 (M10-A 14/14), course lap 80.82 s.
+  - Grapple fitted on 72 R5 trials: Slingshot 889/975 vs 854/911, side-key 927–934 vs 938–945, Jump Grapple 1025–1049 vs 1006–1029; detach rules included.
+  - Nine older grapple demos changed trajectory with unchanged verdicts (consistent with R5).
 
 ## Open issues
 
