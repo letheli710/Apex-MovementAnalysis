@@ -16,10 +16,10 @@
 - [x] **N1** 骨架地图：`NATIVE-MAP.md`、`map/functions.csv`、`map/reads.csv`、`map/sdk-hooks.csv`、`map/setfile-keys.csv`
   - [ ] N1 遗留：8 个 SDK 钩子的地址（`IN_JumpDown` / `IN_JumpUp`、`Glide_*` 等）；51 个没分类的核心函数
 - [ ] **N2** P1 子系统公式提取：
-  - [ ] T 时序和输入
-  - [ ] G 地面移动
-  - [ ] J 跳跃、空中、落地
-  - [ ] L Lurch / tap-strafe
+  - [ ] T 时序和输入（N2-G 已发现输入曲线 m(2 − m) 和冲刺 × 1.25，从这里接着做）
+  - [x] G 地面移动 → `subsystems/N2-G-GROUND.md`（遗留：吸附阈值位置 G-06、Friction 里的 x、几个结构体偏移）
+  - [ ] J 跳跃、空中、落地（先查 `AirAccelerate` 的 extra air accel = 2.0 能否解释 M2 的 ≈1.4e-5·vz² 残余增益；连跳惩罚 `skip_time` 1.0 vs 实测 0.75 s）
+  - [x] L Lurch / tap-strafe → `subsystems/N2-L-LURCH.md`（209.3 夹紧出处已找到）
   - [ ] S 滑铲
   - [ ] M 攀越、mantle、SG、墙
 - [ ] **N2** P2 子系统（看用户决定）：P 钩爪、Z 滑索、F 外力类
@@ -61,3 +61,5 @@
 
 - N1：513 个 setfile 键从没读过值（`map/setfile-keys.csv` 里 census 以外的键）。可以用 `bridge_classvar_get` 在运行时批量补读，放进 N4。
 - N1：SDK 在客户端的核心移动函数上挂了很多钩子（`map/sdk-hooks.csv`）。N2 每个子系统都要先确认相关钩子默认是否开启、改了什么。
+- N2-L：`convar-defaults/README.md` 里"夹紧 209.3 没有 ConVar 出处"已经过时（出处是 `jump_grace_max` × msc × `sprintspeed`）。那个文件属于 PR #28，合并后再改。
+- N2-L：可测的新预言：lurch 夹紧随 msc 变化（stim、拿武器）。放进 N4。

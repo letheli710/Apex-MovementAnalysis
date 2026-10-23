@@ -14,8 +14,8 @@
 140a35750	Land_ViewKick	viewkickFallDistMin/Max/MaxScale + rumbleOnLandingHard/Soft + sv_gravity
 140a35ac0	Zipline_DetachFeedback	rumbleOnZiplineDetach
 140a35d20	Grapple_GravityFrac	grapple_gravityFracMin/Max, grapple_swingGravity, grapple_letGravityHelpCosAngle
-140a36130	Grapple_DetachGravity	grapple_detachGravityScale/Speed/Time, gravityScale
-140a36580	Ground_GetAccelDecel	acceleration, deceleration, sprintAcceleration, sprintDeceleration, slideDecel, slideWantToStopDecel, speed
+140a36130	Gravity_HalfStep	N2-G: sv_gravity x 0.5 x dt, called before and after the move; grapple detach, wall-run ramp, jetpack, slide-on-ground horizontal term
+140a36580	Ground_GetDecel	N2-G: sprintDeceleration above walk cap, slideDecel / slideWantToStopDecel while sliding, else deceleration (fallback acceleration x 0.6)
 140a36a90	Ground_SlipSpeed	slipSpeed
 140a36c20	Ground_SlipAccel	slipAcceleration
 140a38a90	JumpPad_Launch	SDK name C_GameMovement::JumpPadLaunch
@@ -38,8 +38,8 @@
 140a48810	TapStrafe_MultiTapDecay	jump_grace_multi_tap_decay_velocity_based_*
 140a48a30	AirMove_TapStrafe	SDK name; all jump_grace_* (lurch)
 140a48f90	AirMove	SDK name C_GameMovement::AirMove; airDrag, airFriction, grapple_airAccel
-140a4a280	Slide_VelocityDecay	slideVelocityDecay
-140a4a7c0	WallRun_Move	wallrun_* slip/hang, wallstickEnabled, wallrun_upwardAutoPush
+140a4a280	Friction	N2-G: s = max(0, s - decel x ft), slide x slideVelocityDecay^((1 - 0.75x) ft); wish-aligned part kept
+140a4a7c0	WalkMove	N2-G: ground branch of FullWalkMove; input curve m(2-m), side/back scales, then GetAccel, Friction, Accelerate; wall-run/climb branch inside
 140a4c4e0	SuperJump_JumpPadWindow?	superjump_jumppad_enable_time
 140a4c810	FullWalkMove	SDK name CGameMovement::FullWalkMove
 140a4d040	Ground_Impact?	impactSpeed
@@ -48,8 +48,8 @@
 140a4f120	WallRun_Begin	wallrun_retry_interval, wallrunImpact sounds
 140a4fb00	WallRun_Rotate	wallrun_rotateMaxRate
 140a50050	JumpOutOfWallRun	SDK name GameMovement::JumpOutOfWallRun
-140a50400	NoclipOrSpectatorMove?	sv_specaccelerate, sv_specspeed, sv_specnoclip, sv_friction, sv_maxvelocity
-140a507c0	SourceFriction?	sv_friction, sv_maxspeed (Source-style; N2: is it on the normal ground path?)
+140a50400	SpectatorMove	N2-G: observer mode 7; sv_specspeed / sv_specaccelerate / sv_friction
+140a507c0	NoclipMove	N2-G: fly move with sv_maxspeed and sv_friction; called by SpectatorMove
 140a50da0	CheckVelocity?	sv_maxvelocity
 140a51650	SetGroundEntity	SDK name GameMovement::SetGroundEntity; skip_time, landSlowdownDuration
 140a51bc0	CategorizePosition?	ground_debug, can_stand_on_obb, wallrun_angleChangeMinCos
@@ -81,3 +81,9 @@
 140af2370	Sprint_ViewOffset	sprintViewOffset
 140afc480	View_CalcRoll	sv_rollangle, sv_rollspeed, slide_viewTilt*, wallrun_maxViewTilt, dodge_viewTilt*, sprinttiltMaxRoll
 140b110c0	MovePostThinkAnimSwitch	SDK name; ziplineViewOffset
+140a36450	Ground_GetAccel	N2-G: slideAccel; sprintAcceleration above (msc x speed - 1); lowAcceleration below msc x lowSpeed; else acceleration; all x msc
+140a4a0d0	Accelerate	N2-G: Source Accelerate; result capped at max(|v_old|, wishspeed)
+140b09c00	GetMaxSprintSpeed	N2-L: msc x sprintspeed[stance]
+140b09ba0	GetMaxWalkSpeed	N2-L: msc x speed[stance]
+140b0f6d0	AirSlowMo_TimeScale	N2-G: dt multiplier (airSlowMoSpeed, airslowmo_* ConVars); 1 normally
+140a58ec0	TapStrafe_WindowHint	N2-L: after a lurch, runs WindowHint on the new velocity

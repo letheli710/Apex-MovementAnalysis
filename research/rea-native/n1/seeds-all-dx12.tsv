@@ -102,7 +102,7 @@ v_Zipline_Use	1407496a0
 v_Zipline_JumpOff	14073f280
 pfnInitTable	140233090
 v_PortalSurf_Transparent	1409a1c70
-# N1 provisional names (names-dx12.tsv) as extra start points
+# N1/N2 provisional names (names-dx12.tsv) as extra start points
 Pred_RunCommands?	1407ea760
 Pred_RunCommand?	14092ab70
 GameMovement_ProcessMovement?	140a33cf0
@@ -116,8 +116,8 @@ WallHang_StartFeedback	140a354a0
 Land_ViewKick	140a35750
 Zipline_DetachFeedback	140a35ac0
 Grapple_GravityFrac	140a35d20
-Grapple_DetachGravity	140a36130
-Ground_GetAccelDecel	140a36580
+Gravity_HalfStep	140a36130
+Ground_GetDecel	140a36580
 Ground_SlipSpeed	140a36a90
 Ground_SlipAccel	140a36c20
 JumpPad_Launch	140a38a90
@@ -140,8 +140,8 @@ AirAccelerate	140a485e0
 TapStrafe_MultiTapDecay	140a48810
 AirMove_TapStrafe	140a48a30
 AirMove	140a48f90
-Slide_VelocityDecay	140a4a280
-WallRun_Move	140a4a7c0
+Friction	140a4a280
+WalkMove	140a4a7c0
 SuperJump_JumpPadWindow?	140a4c4e0
 FullWalkMove	140a4c810
 Ground_Impact?	140a4d040
@@ -150,8 +150,8 @@ WallRun_TryStart	140a4e220
 WallRun_Begin	140a4f120
 WallRun_Rotate	140a4fb00
 JumpOutOfWallRun	140a50050
-NoclipOrSpectatorMove?	140a50400
-SourceFriction?	140a507c0
+SpectatorMove	140a50400
+NoclipMove	140a507c0
 CheckVelocity?	140a50da0
 SetGroundEntity	140a51650
 CategorizePosition?	140a51bc0
@@ -183,3 +183,9 @@ ViewDrift_Apply	140af15a0
 Sprint_ViewOffset	140af2370
 View_CalcRoll	140afc480
 MovePostThinkAnimSwitch	140b110c0
+Ground_GetAccel	140a36450
+Accelerate	140a4a0d0
+GetMaxSprintSpeed	140b09c00
+GetMaxWalkSpeed	140b09ba0
+AirSlowMo_TimeScale	140b0f6d0
+TapStrafe_WindowHint	140a58ec0
