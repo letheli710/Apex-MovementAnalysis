@@ -1481,6 +1481,36 @@ for _n, (_o, _yw, _pt, _s, _pre) in _M10O.items():
 # exact names must win over the shorter prefixes already in SCHEDULE_PRE (matched in insertion order)
 SCHEDULE_PRE = {**{k: SCHEDULE_PRE[k] for k in _M10O}, **{k: v for k, v in SCHEDULE_PRE.items() if k not in _M10O}}
 
+# ---- N8-D phase + jump pad (legend wraith --kit, --m10-log). Native JumpPadLaunch returns at once while the player is in the
+# phase window (N8-C), so Into the Void (tap offhand1, 4 s) then a walk onto a pad 300 u ahead should not launch. Controls:
+# the same walk without the tactical, and the walk after the phase has ended. Server logger (every frame, 7 s): phase flag,
+# phase type, z, vz, speed_boost severity.
+_N8_LOG = r"""
+void functionref() n8pp = void function() : ( p ) {
+	try {
+		float t0 = Time()
+		while ( Time() - t0 < 7.0 && IsValid( p ) ) {
+			vector v = p.GetVelocity()
+			printt( "[N8-PP] run=" + GetConVarInt( "hsd_md_run" ) + format( " t=%.4f ph=%d type=%d z=%.2f vz=%.2f boost=%.3f", Time(), p.IsPhaseShifted() ? 1 : 0, p.GetPhaseShiftType(), p.GetOrigin().z, v.z, StatusEffect_GetSeverity( p, eStatusEffect.speed_boost ) ) )
+			WaitFrame()
+		}
+	} catch ( nErr ) { printt( "[N8-PP] error " + string( nErr ) ) }
+}
+thread n8pp()
+"""
+_N8PP = {
+    "n8_pp_phase": "wait 72; tap offhand1; wait 0.5s; down forward; wait 3.0s; up forward; wait 3.0s",
+    "n8_pp_ctrl": "wait 72; wait 0.5s; down forward; wait 3.0s; up forward; wait 3.0s",
+    "n8_pp_after": "wait 72; tap offhand1; wait 4.8s; down forward; wait 3.0s; up forward; wait 2.0s",
+}
+for _n, _s in _N8PP.items():
+    SCHEDULES[_n] = _s
+    SCHEDULE_ORIGIN[_n] = LANE_C
+    SCHEDULE_YAW[_n] = 0.0
+    SCHEDULE_PITCH[_n] = 0.0
+    SCHEDULE_PRE[_n] = _m10o_pre(300.0) + _N8_LOG
+SCHEDULE_PRE = {**{k: SCHEDULE_PRE[k] for k in _N8PP}, **{k: v for k, v in SCHEDULE_PRE.items() if k not in _N8PP}}
+
 
 # ---- M10 ② Zipline Gun (legend pathfinder --kit, --m10-log). Real ultimate: tap offhand4 (raise), 1.0 s later tap attack.
 # Every m10_z* reset: the player is taken off any rope, the gun ropes already in the world are counted and (except m10_z_keep*)
