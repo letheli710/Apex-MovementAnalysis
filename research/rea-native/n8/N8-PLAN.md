@@ -18,10 +18,12 @@
 |---|---|---|---|
 | Wraith 战术 Into the Void | `mp_ability_phase_walk.nut` + `sh_phase_shift.gnut` | 236 + 1062 | 原生相位：`PhaseShiftBegin(warmup, duration, style)` / `PhaseShiftCancel()`；脚本里有一段注释掉的 400 水平限速原型 |
 | Wraith 大招 Dimensional Rift | `mp_weapon_phase_tunnel.nut` | 2584 | **回放录下的路径**：每帧用 `NonPhysicsMoveTo` 把 mover 移到下一个路径点，并把玩家速度设成录下的速度；还回放下蹲 |
-| Alter 战术 Void Passage（待确认） | `mp_ability_phase_door.nut` | 2322 | 触发器 → `TeleportPlayerFromPortalTrigger` → `TeleportPlayerNoInterp`；出口速度 = 出口方向 × clamp(v·dir, exitVelocityMin, exitVelocityMax) |
-| Alter 大招 Void Nexus（待确认） | `mp_ability_transport_portal.nut` 或 `mp_ability_void_ring.nut` | 3142 / 2070 | 待读 |
-| Ash 大招 Phase Breach | `mp_weapon_phase_breach.nut` | 1926 | 待读（触发器 + 传送） |
+| Alter 战术 Void Passage | `mp_ability_phase_door.nut` | 2322 | 触发器 → `TeleportPlayerFromPortalTrigger` → `TeleportPlayerNoInterp`；出口速度 = 出口方向 × clamp(v·dir, exitVelocityMin, exitVelocityMax) |
+| Alter 大招 Void Nexus | `mp_ability_transport_portal.nut`（`void_ring` 是生存模式道具，不是 Alter） | 3142 | 生成抬高路径，用同一套隧道引擎 |
+| Ash 大招 Phase Breach | `mp_weapon_phase_breach.nut` | 1926 | 生成直线路径，用 Wraith 大招的隧道引擎 |
 | Loba 战术 | `abilities/loba_tactical_translocation.nut` | — | **已搁置**（`SHELVED-ABILITIES.md`），重启前先问用户 |
+
+共用关系的答案见 [N8-A-SHARED-SYSTEM.md](N8-A-SHARED-SYSTEM.md)；原生相位状态见 [N8-C-PHASE-NATIVE.md](N8-C-PHASE-NATIVE.md)。
 
 ## 2. 阶段
 
