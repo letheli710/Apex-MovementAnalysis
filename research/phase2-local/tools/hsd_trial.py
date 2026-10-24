@@ -590,7 +590,8 @@ def _r2_jd_pre(d, move=""):
 
 
 KEYS = {"forward", "backward", "moveleft", "moveright", "jump", "duck", "speed", "left", "right", "lookup", "lookdown",
-        "offhand1", "offhand4", "use", "attack", "zoom"}
+        "offhand1", "offhand4", "use", "attack", "zoom",
+        "scriptCommand5"}   # N8-D: Alter ultimate recall (character button, +scriptCommand5)
 # Client cvars a schedule may change with 'set' (constant-rate view turns, M4b).
 VIEW_CVARS = ("cl_yawspeed", "cl_pitchspeed")
 
@@ -1510,6 +1511,48 @@ for _n, _s in _N8PP.items():
     SCHEDULE_PITCH[_n] = 0.0
     SCHEDULE_PRE[_n] = _m10o_pre(300.0) + _N8_LOG
 SCHEDULE_PRE = {**{k: SCHEDULE_PRE[k] for k in _N8PP}, **{k: v for k, v in SCHEDULE_PRE.items() if k not in _N8PP}}
+
+# ---- N8-D Alter ultimate (legend alter --kit, --m10-log). Throw the Nexus (tap offhand4, tap attack), walk back ~3 s, recall
+# with the character button (+scriptCommand5 gives the datapad; its charge_time is 1.5 s, so attack is held 1.8 s), then the
+# path to the Nexus is replayed by the shared tunnel engine (N8-B: clamp(L / 1800, 0.8, 10) s, exit v = 0 predicted). Variants:
+# tap attack instead of hold; recall from ~1.5 s of walking. Server logger as N8-PP for 14 s plus the ult clip.
+_N8_ALT_LOG = _N8_LOG.replace("< 7.0", "< 14.0").replace("n8pp", "n8au").replace("[N8-PP]", "[N8-AU]").replace(
+    'StatusEffect_GetSeverity( p, eStatusEffect.speed_boost ) ) )',
+    'StatusEffect_GetSeverity( p, eStatusEffect.speed_boost ) ) + " act=" + ( IsValid( p.GetActiveWeapon( eActiveInventorySlot.mainHand ) ) ? p.GetActiveWeapon( eActiveInventorySlot.mainHand ).GetWeaponClassName() : "none" ) + format( " x=%.1f y=%.1f", p.GetOrigin().x, p.GetOrigin().y ) + " rcv=" + GetEntArrayByScriptName( "alter_ult_receiver" ).len() + " ally=" + GetEntArrayByScriptName( "alter_ult_ally_portal" ).len() + " ult=" + ( IsValid( p.GetOffhandWeapon( OFFHAND_ULTIMATE ) ) ? p.GetOffhandWeapon( OFFHAND_ULTIMATE ).GetWeaponPrimaryClipCount() : -1 ) )')
+_N8_ALT_PRE = r"""
+foreach ( int sl in [ OFFHAND_TACTICAL, OFFHAND_ULTIMATE ] ) {
+	entity w = p.GetOffhandWeapon( sl )
+	printt( "[N8-AU] run=" + GetConVarInt( "hsd_md_run" ) + " slot=" + sl + " w=" + ( IsValid( w ) ? w.GetWeaponClassName() + " clip=" + w.GetWeaponPrimaryClipCount() + "/" + w.GetWeaponPrimaryClipCountMax() : "none" ) )
+}
+"""
+_N8AU = {
+    "n8_au_hold": "wait 72; tap offhand4; wait 0.5s; tap attack; wait 1.5s; down backward; wait 3.0s; up backward; wait 0.5s; "
+                  "tap scriptCommand5; wait 0.5s; down attack; wait 1.8s; up attack; wait 5.0s",
+    "n8_au_tap": "wait 72; tap offhand4; wait 0.5s; tap attack; wait 1.5s; down backward; wait 3.0s; up backward; wait 0.5s; "
+                 "tap scriptCommand5; wait 0.5s; tap attack; wait 6.0s",
+    "n8_au_near": "wait 72; tap offhand4; wait 0.5s; tap attack; wait 1.5s; down backward; wait 1.5s; up backward; wait 0.5s; "
+                  "tap scriptCommand5; wait 0.5s; down attack; wait 1.8s; up attack; wait 5.0s",
+    # toss variants: attack held 1.2 s while raised (toss_time 1); offhand4 held through the throw
+    "n8_au_tosshold": "wait 72; tap offhand4; wait 0.4s; down attack; wait 1.2s; up attack; wait 1.5s; down backward; wait 3.0s; "
+                      "up backward; wait 0.5s; tap scriptCommand5; wait 0.5s; down attack; wait 1.8s; up attack; wait 5.0s",
+    "n8_au_offhold": "wait 72; down offhand4; wait 0.6s; tap attack; wait 0.8s; up offhand4; wait 1.5s; down backward; wait 3.0s; "
+                     "up backward; wait 0.5s; tap scriptCommand5; wait 0.5s; down attack; wait 1.8s; up attack; wait 5.0s",
+    # round 4: the character button only picks the Nexus up (allowRecallUlt false). The trip starts by USING the Nexus
+    # (extended use, any range up to maxUseDistance, no LOS), which gives the datapad; its 1.5 s charge then opens the portal.
+    "n8_au_use": "wait 72; tap offhand4; wait 0.5s; tap attack; wait 1.5s; down backward; wait 3.0s; up backward; wait 0.5s; "
+                 "down use; wait 0.8s; up use; wait 0.3s; down attack; wait 1.8s; up attack; wait 6.0s",
+    "n8_au_usehold": "wait 72; tap offhand4; wait 0.5s; tap attack; wait 1.5s; down backward; wait 3.0s; up backward; wait 0.5s; "
+                     "down use; wait 1.5s; down attack; wait 1.8s; up attack; up use; wait 6.0s",
+    "n8_au_usenear": "wait 72; tap offhand4; wait 0.5s; tap attack; wait 1.5s; down backward; wait 1.5s; up backward; wait 0.5s; "
+                     "down use; wait 0.8s; up use; wait 0.3s; down attack; wait 1.8s; up attack; wait 6.0s",
+}
+for _n, _s in _N8AU.items():
+    SCHEDULES[_n] = _s
+    SCHEDULE_ORIGIN[_n] = LANE_C
+    SCHEDULE_YAW[_n] = 0.0
+    SCHEDULE_PITCH[_n] = 10.0
+    SCHEDULE_PRE[_n] = 'p.SetHealth( p.GetMaxHealth() )\n' + _N8_ALT_PRE + _N8_ALT_LOG
+SCHEDULE_PRE = {**{k: SCHEDULE_PRE[k] for k in _N8AU}, **{k: v for k, v in SCHEDULE_PRE.items() if k not in _N8AU}}
 
 
 # ---- M10 ② Zipline Gun (legend pathfinder --kit, --m10-log). Real ultimate: tap offhand4 (raise), 1.0 s later tap attack.
