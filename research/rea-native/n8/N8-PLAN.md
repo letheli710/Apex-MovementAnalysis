@@ -23,7 +23,7 @@
 | Ash 大招 Phase Breach | `mp_weapon_phase_breach.nut` | 1926 | 生成直线路径，用 Wraith 大招的隧道引擎 |
 | Loba 战术 | `abilities/loba_tactical_translocation.nut` | — | **已搁置**（`SHELVED-ABILITIES.md`），重启前先问用户 |
 
-共用关系的答案见 [N8-A-SHARED-SYSTEM.md](N8-A-SHARED-SYSTEM.md)；原生相位状态见 [N8-C-PHASE-NATIVE.md](N8-C-PHASE-NATIVE.md)。
+共用关系的答案见 [N8-A-SHARED-SYSTEM.md](N8-A-SHARED-SYSTEM.md)；原生相位状态见 [N8-C-PHASE-NATIVE.md](N8-C-PHASE-NATIVE.md)；每个技能的规则见 [N8-B-RULES.md](N8-B-RULES.md)；实测见 [N8-D-MEASURE.md](N8-D-MEASURE.md)。
 
 ## 2. 阶段
 
