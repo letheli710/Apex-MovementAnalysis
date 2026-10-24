@@ -22,6 +22,7 @@
 | `subsystems/N2-*.md` | N2 各子系统的公式提取（P1：G、L、J、S、T、M；P2：钩爪、滑索、跳板；镜头 C2） |
 | `n2/` | N2 的反编译和标注工具（反编译输出只写进 `local/`） |
 | [CROSSCHECK-LEDGER.md](CROSSCHECK-LEDGER.md)、[ledger.csv](ledger.csv) | N3 代码 × 实测 × Unity 对照账本（78 条） |
+| [UNITY-CHANGE-PROPOSALS.md](UNITY-CHANGE-PROPOSALS.md) | 待用户决定的 Unity 修改建议（来自账本，实测后统一决定，不自动改） |
 | `local/` | **只在本机**：反编译原文、Ghidra 导出、大段伪代码。不进 git（见 `.gitignore`） |
 
 ## 公开仓库规则
