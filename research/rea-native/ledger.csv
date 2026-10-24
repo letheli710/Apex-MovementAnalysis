@@ -10,7 +10,7 @@ G-08,G,input curve m(2 - m),0.5 -> 0.75; 1 -> 1,M1/M2: first command axis 0.5; N
 G-09,G,sprint input x 1.25,before the curve; only matters when m < 1,M4b: sprint scales key turning x0.67,not modelled,未定,5,低,relate to M4b turning
 G-10,G/S,slide decay law and order,max(0; s - slideDecel*ft) * slideVelocityDecay^((1 - 0.75x)*ft),M2: (v - 100*dt)*0.7^dt chosen over the other order,R5MotorV2 same,一致,,低,x term: see S-09
 G-11,G/S,crouch release -> stronger decel,slideWantToStopDecel 400,M10: stronger decel; ends near 335,Reference M10-D1 same,一致,,低,
-G-12,G/S,slide steering,wish component along velocity removed; perpendicular part accelerates at slideAccel*msc,none,R5MotorV2: no steering at all,结构差,U,中,N4-B slide + strafe test
+G-12,G/S,slide steering,wish component along velocity removed; perpendicular part accelerates at slideAccel*msc,N4-C slide steer: lateral 41.1 u/s^2; full native slide model reproduces every command (rms 0.001 u/s),R5MotorV2: no steering at all,一致,U,中,user decision (UNITY-CHANGE-PROPOSALS G-12 / S-07)
 G-13,G,sv_friction on the ground path,only NoclipMove / SpectatorMove,M2: decel = deceleration,not used,一致,,低,
 G-14,G,Accelerate result cap,|v| <= max(|v_old|; wishspeed),none,implicit in s = min(cap; s + a*dt),只有代码,,低,
 G-15,G/T,low-decel window after an impulse,decel 0 until T - 0.5 s then ramp; T = now + |impulse| * 0.003,none,not modelled,只有代码,,中,N4-B pad / knockback landing test (see T-04)
@@ -30,7 +30,7 @@ L-13,L,SDK suppresses lurch in mantle-boost state 4,Hook_AirMove_TapStrafe (defa
 J-01,J,V = sqrt(2gH); penalty on height,Jump,M2 height-linear,R5MotorV2 same,一致,,低,
 J-02,J,hop height penalty parameters,setfile antiMultiJumpTimeMin / TimeMax / HeightFrac,M2 fit 0.15 / 0.75 / 0.3; N4-A read-back 0.15 / 0.75 / 0.3,hard-coded 0.15 / 0.60 + antiMultiJumpHeightFrac,一致,,低,
 J-03,J,skip_time is not the hop penalty,skip_time drives the over-cap cut and double-jump replenish,plan seed said 1.0 s vs 0.75 s,,一致,,低,
-J-04,J,over-cap hop cut,within skip_time: h = max(msc*sprintspeed; h - 100),M3: hop at 350 -> 299 (min/max not separable),R5MotorV2: min(h; 299),结构差,U,低,N4-B hop at 450 -> expect 350
+J-04,J,over-cap hop cut,within skip_time: h = max(msc*sprintspeed; h - 100),N4-C hop: 405.1 -> 305.1 (= h - 100; 5/5; error <= 0.004); 393.2 -> 299.0; M3 350 -> 299,R5MotorV2: min(h; 299),一致,U,低,user decision (UNITY-CHANGE-PROPOSALS J-04)
 J-05,J,residual air gain,extra air accel 2.0 + 3D speed cap; simulated 0.316 u/s / jump and 1.36e-5*vz^2,M2 0.301 u/s and 1.39e-5*vz^2,not modelled,一致,U,低,optional: add to Unity (0.1 % per jump)
 J-06,J,air accel has no wishspeed factor,min(addspeed; A*dt),M2 A*dt cap 69,R5MotorV2 same,一致,,低,
 J-07,J/S,slide jump raise to 350,only when 297.5 < h < 350,M10: 317 -> 350 at 0.6 s; 236 kept at 1.0 s,R5MotorV2 max(h; 350); Reference: only within 0.8 s,结构差,U,中,switch Unity to the speed band
@@ -38,10 +38,10 @@ J-08,J/S,slide-jump boost refund,within 0.4 s and duck transition unfinished (20
 J-09,J,landing slowdown,LandSlowdown_Scale formula,M4 Octane hard-landing recovery (t/1.0)^2; N4-A landSlowdownDuration 1 / TimePower 2 / HeightMin 300 / Max 800 / Frac 0,LandingSlowdown ability (M4 fit),一致,,中,compare the M4 landing-speed factor f0 with the height factor
 J-10,J,double jump replenished on every landing,skip_replenish_double_jump = 1,M7/M8,same,一致,,低,
 S-01,S,boost size and cap,min(h + 150*msc; 400*msc),M2: cap 460,same,一致,,低,
-S-02,S,boost cooldown counts from the last slide start,any slide start refreshes the cooldown; player_slideBoostCooldown = 2 s (N4-A),M2/M8/M10: no boost on quick re-entry; re-arm about 1.6-2.1 s,Reference: 1.8 s since the last boost,结构差,U,中,N4-B chain of short slides
+S-02,S,boost cooldown counts from the last slide start,any slide start refreshes the cooldown; player_slideBoostCooldown = 2 s (N4-A),N4-C slide chain: A boosted; B (1.0 s) and C (2.5 s) not boosted; control A + C both boosted (5/5 each); cooldown 2 s (N4-A),Reference: 1.8 s since the last boost,一致,U,中,user decision (UNITY-CHANGE-PROPOSALS S-02)
 S-04,S,crouch release ends at <= 350,slideMaxStopSpeed,M10: ends near 335,Reference M10-D1 same,一致,,低,the 335 vs 350 gap: unduck timing
 S-05,S,slide end speed with duck held,speed < slideStopSpeed 125,M10: ends at 112,R5MotorV2: post s < slideStopSpeed,数值差,1,低,read which speed WalkMove compares
-S-07,S,slide steering,see G-12,,,结构差,U,中,see G-12
+S-07,S,slide steering,see G-12,see G-12 (N4-C),,一致,U,中,see G-12
 S-08,S,duck transition 200 ms in a slide,Duck timer 400 / 200 ms,M2: early slide jump duck = 1 vs 2,not modelled,一致,,低,
 S-09,S,slope slide term,horizontal term in Gravity_HalfStep while sliding; x in Friction,M8 R4: 147 + 342*sin(slope) on 29-41 deg,Reference: measured slope rule (M8-B),未定,5,中,read the formula
 S-10,S,slide start slope limit,ground normal z > 0.7,none,not checked,只有代码,,低,

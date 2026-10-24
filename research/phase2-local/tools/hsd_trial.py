@@ -71,6 +71,17 @@ SCHEDULES = {
     "n4b_ws": "wait 72; down speed; down forward; wait 288; up forward; up speed; down backward; wait 288; up backward; wait 216",
     "n4b_ad": "wait 72; down moveleft; wait 288; up moveleft; down moveright; wait 288; up moveright; wait 216",
     "n4b_wwd": "wait 72; down speed; down forward; wait 288; down moveright; wait 288; up moveright; up forward; up speed; wait 216",
+    # N4-C (rea-native ledger J-04 / S-02 / G-12)
+    # J-04: slide jump just after the 0.2 s duck transition (no refund, ~410 u/s), duck up in the air, then hop on landing.
+    #       Native: h = max(299, h - 100) within skip_time; the replay motor clips to 299.
+    "n4c_hop_d0": "wait 72; down speed; down forward; wait 288; down duck; wait 31; tap jump; up duck; waitair; waitland; tap jump; waitair; waitland; wait 0.3s; up forward; up speed; wait 0.3s",
+    "n4c_hop_d1": "wait 72; down speed; down forward; wait 288; down duck; wait 31; tap jump; up duck; waitair; waitland; waitf 1; tap jump; waitair; waitland; wait 0.3s; up forward; up speed; wait 0.3s",
+    # S-02: slides A (t 0), B (t 1.0 s), C (t 2.5 s) while sprinting. Native cooldown counts from the last slide start (B),
+    #       so C gets no boost; the HSD Reference counts 1.8 s from the last boost (A), so C would be boosted.
+    "n4c_slidechain": "wait 72; down speed; down forward; wait 288; down duck; wait 58; up duck; wait 86; down duck; wait 58; up duck; wait 158; down duck; wait 144; up duck; up forward; up speed; wait 144",
+    "n4c_slidechain_ctrl": "wait 72; down speed; down forward; wait 288; down duck; wait 58; up duck; wait 302; down duck; wait 144; up duck; up forward; up speed; wait 144",
+    # G-12: slide, then drop W and hold D only. Native: the perpendicular wish accelerates at slideAccel*msc (~57.5 u/s^2).
+    "n4c_slidesteer": "wait 72; down speed; down forward; wait 288; down duck; wait 4; up forward; up speed; down moveright; wait 144; up moveright; wait 72; up duck; wait 144",
     # E2 air: sprint 2 s, jump, then (a) strafe right + turn right, (b) no input, (c) keep forward
     "e2_strafe": "wait 72; down speed; down forward; wait 288; tap jump; wait 4; up forward; up speed; down moveright; down right; wait 100; up right; up moveright; wait 288",
     "e2_noinput": "wait 72; down speed; down forward; wait 288; tap jump; wait 4; up forward; up speed; wait 288",
@@ -1970,7 +1981,7 @@ AgentLink_Reply( out )
 
 DEFAULT_ORIGIN_SCHEDULES = {"basic","e1_walk", "e1_sprint", "e1_crouch", "e1_back", "e1_side", "e1_diag", "e1_turn",
                             "e2_strafe", "e2_noinput", "e2_keepfwd", "e4_stand", "e4_hop0", "e4_hop3", "e4_hop43", "e5_slide",
-                            "e5_slidejump02", "e5_slidejump06", "n4b_wd", "n4b_ws", "n4b_ad", "n4b_wwd"}
+                            "e5_slidejump02", "e5_slidejump06", "n4b_wd", "n4b_ws", "n4b_ad", "n4b_wwd", "n4c_hop_d0", "n4c_hop_d1", "n4c_slidechain", "n4c_slidechain_ctrl", "n4c_slidesteer"}
 
 
 def origin_for(name, default):
