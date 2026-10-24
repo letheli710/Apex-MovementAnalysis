@@ -1,10 +1,10 @@
 id,subsystem,item,native,measured,unity,status,cause,impact,next
 G-01,G,accel x msc; decel not x msc,Ground_GetAccel / Ground_GetDecel,M2 exact ratios 1.1499 / 1.0000,R5MotorV2 same,一致,,低,
 G-02,G,low-speed band edge,h < msc*lowSpeed = 138,M2 edge in (136.38; 138.47],R5MotorV2 same,一致,,低,
-G-03,G,mid -> sprint accel edge,fixed edge h > msc*speed - 1 = 198.525; no sprint-flag check,M2 rule s0 + a_spr*dt >= speed*msc; any fixed edge in (197.97; 198.72] also fits,R5MotorV2 uses the M2 rule,结构差,U,低,optional: switch Unity to the fixed edge
+G-03,G,mid -> sprint accel edge,fixed edge h > msc*speed - 1 = 198.525; no sprint-flag check,M2 rule s0 + a_spr*dt >= speed*msc; any fixed edge in (197.97; 198.72] also fits,R5MotorV2 uses the M2 rule,一致,U,低,optional: switch Unity to the fixed edge
 G-04,G,band chosen from pre-move speed,GetAccel before Accelerate,M2 same,R5MotorV2 same,一致,,低,
-G-05,G,crouch decel 1500 / crouch speed 80,speed per stance; decel from a per-stance block [native-inf],M2 fit 1500 / 80,fitted constants,未定,,低,N4-A read the crouch row
-G-06,G,stop snap ~1 u/s,not in Friction; NoclipMove has < 1 -> 0,M2 bracket (0.58; 1.58],fitted 1,未定,5,低,find the snap (CheckVelocity / CategorizePosition)
+G-05,G,crouch decel 1500 / crouch speed 80,speed and deceleration read per stance (row stride set at runtime; read-back only reaches the standing row),M2 fit 1500 / 80,fitted constants,一致,,低,
+G-06,G,stop snap ~1 u/s,"WalkMove: after friction and accel, speed < 1 -> v = 0",M2 bracket (0.58; 1.58],fitted 1,一致,,低,
 G-07,G,friction spares the wish-aligned speed,Friction keeps the projection on wishdir up to wishspeed,N4-B keyturn (20 trials): native formula reproduces every command (rms 0.002-0.046 u/s); instant model rms 64-195 u/s; sprint W->D takes 0.233 s and dips to 131 u/s,R5MotorV2 sets v = s*wishdir each command (instant direction),一致,U,高,user decision (UNITY-CHANGE-PROPOSALS G-07)
 G-08,G,input curve m(2 - m),0.5 -> 0.75; 1 -> 1,M1/M2: first command axis 0.5; N4-B: the native model with the curve fits key turns to 0.004 u/s,M10-D2 input layer: not checked,一致,,中,compare Unity input layer
 G-09,G,sprint input x 1.25,before the curve; only matters when m < 1,M4b: sprint scales key turning x0.67,not modelled,未定,5,低,relate to M4b turning
@@ -23,7 +23,7 @@ L-06,L,wish from keys not axes,require_tap = 1 -> digital keys,M8 b1 equal-weigh
 L-07,L,opposing keys cancel,w = 0 -> no turn,M8 b2,M10-D2,一致,,低,
 L-08,L,window opens only on a jump,t0 = jump time,M8 d: no lurch after walking off,same,一致,,低,
 L-09,L,no multi-tap decay by default,max_tap_count / decay_start 1000; decay 1.0; velocity decay 0,M8 c: 15 taps all effective,same,一致,,低,
-L-10,L,cutoff 1100 on the client,h <= jump_grace_cutoff_speed,not measured on the client,not modelled,只有代码,3,低,N4-B
+L-10,L,cutoff 1100 on the client,h <= jump_grace_cutoff_speed,"N4-D: lurch at 1000 and 1090 (|dv| 212.79), none at 1110 and 1200 (4.17)",not modelled,一致,,低,
 L-11,L,M8 b1 residual 11.6 u/s,no extra term in lurch,M8 b1 11.6,,未定,5,低,check AirAccelerate and the input curve on that command
 L-12,L,reverse chain stops near 156 deg,each tap is an independent lerp with falling lam,M8 a,same,一致,,低,
 L-13,L,SDK suppresses lurch in mantle-boost state 4,Hook_AirMove_TapStrafe (default on),M8 R3 SG data were taken with mantle boost off,,一致,4,中,keep native vs SDK paths apart in Reference
@@ -33,27 +33,27 @@ J-03,J,skip_time is not the hop penalty,skip_time drives the over-cap cut and do
 J-04,J,over-cap hop cut,within skip_time: h = max(msc*sprintspeed; h - 100),N4-C hop: 405.1 -> 305.1 (= h - 100; 5/5; error <= 0.004); 393.2 -> 299.0; M3 350 -> 299,R5MotorV2: min(h; 299),一致,U,低,user decision (UNITY-CHANGE-PROPOSALS J-04)
 J-05,J,residual air gain,extra air accel 2.0 + 3D speed cap; simulated 0.316 u/s / jump and 1.36e-5*vz^2,M2 0.301 u/s and 1.39e-5*vz^2,not modelled,一致,U,低,optional: add to Unity (0.1 % per jump)
 J-06,J,air accel has no wishspeed factor,min(addspeed; A*dt),M2 A*dt cap 69,R5MotorV2 same,一致,,低,
-J-07,J/S,slide jump raise to 350,only when 297.5 < h < 350,M10: 317 -> 350 at 0.6 s; 236 kept at 1.0 s,R5MotorV2 max(h; 350); Reference: only within 0.8 s,结构差,U,中,switch Unity to the speed band
-J-08,J/S,slide-jump boost refund,within 0.4 s and duck transition unfinished (200 ms during a slide),M10: cut at 0.10 s; kept at 0.25 s; M2 window (0.201; 0.597],R5MotorV2 0.4 s; Reference 0.225 s,数值差,U,中,Reference: use the duck-transition rule (about 0.2 s)
+J-07,J/S,slide jump raise to 350,only when 297.5 < h < 350,M10: 317 -> 350 at 0.6 s; 236 kept at 1.0 s,R5MotorV2 max(h; 350); Reference: only within 0.8 s,一致,U,中,switch Unity to the speed band
+J-08,J/S,slide-jump boost refund,within 0.4 s and duck transition unfinished (200 ms during a slide),M10: cut at 0.10 s; kept at 0.25 s; M2 window (0.201; 0.597],R5MotorV2 0.4 s; Reference 0.225 s,一致,U,中,Reference: use the duck-transition rule (about 0.2 s)
 J-09,J,landing slowdown,LandSlowdown_Scale formula,M4 Octane hard-landing recovery (t/1.0)^2; N4-A landSlowdownDuration 1 / TimePower 2 / HeightMin 300 / Max 800 / Frac 0,LandingSlowdown ability (M4 fit),一致,,中,compare the M4 landing-speed factor f0 with the height factor
 J-10,J,double jump replenished on every landing,skip_replenish_double_jump = 1,M7/M8,same,一致,,低,
 S-01,S,boost size and cap,min(h + 150*msc; 400*msc),M2: cap 460,same,一致,,低,
 S-02,S,boost cooldown counts from the last slide start,any slide start refreshes the cooldown; player_slideBoostCooldown = 2 s (N4-A),N4-C slide chain: A boosted; B (1.0 s) and C (2.5 s) not boosted; control A + C both boosted (5/5 each); cooldown 2 s (N4-A),Reference: 1.8 s since the last boost,一致,U,中,user decision (UNITY-CHANGE-PROPOSALS S-02)
 S-04,S,crouch release ends at <= 350,slideMaxStopSpeed,M10: ends near 335,Reference M10-D1 same,一致,,低,the 335 vs 350 gap: unduck timing
-S-05,S,slide end speed with duck held,speed < slideStopSpeed 125,M10: ends at 112,R5MotorV2: post s < slideStopSpeed,数值差,1,低,read which speed WalkMove compares
+S-05,S,slide end speed with duck held,speed < slideStopSpeed 125,M2 e5_slide: last slide command post 124.4-124.9 (< 125); the next crouch command is at ~114 (M10 quoted 112 for that command),R5MotorV2: post s < slideStopSpeed,一致,,低,
 S-07,S,slide steering,see G-12,see G-12 (N4-C),,一致,U,中,see G-12
 S-08,S,duck transition 200 ms in a slide,Duck timer 400 / 200 ms,M2: early slide jump duck = 1 vs 2,not modelled,一致,,低,
-S-09,S,slope slide term,horizontal term in Gravity_HalfStep while sliding; x in Friction,M8 R4: 147 + 342*sin(slope) on 29-41 deg,Reference: measured slope rule (M8-B),未定,5,中,read the formula
+S-09,S,slope slide term,Gravity_HalfStep adds g*n_h*n_z while sliding on ground: along-slope accel g*sin*cos (321 / 352 / 371 at 29 / 35 / 41 deg),M8 R4: 147 + 342*sin(slope) on 29-41 deg,Reference: measured slope rule (M8-B),一致,,中,user decision (UNITY-CHANGE-PROPOSALS S-09)
 S-10,S,slide start slope limit,ground normal z > 0.7,none,not checked,只有代码,,低,
 T-01,T,dt = frame time,usercmd frametime,M1,same,一致,,低,
 T-02,T,press edge,buttons & ~previous buttons,M3/M8,same,一致,,低,
-T-03,T,first-command input 0.75,see G-08,,,只有代码,,中,see G-08
+T-03,T,first-command input 0.75,see G-08,N4-B key turns (see G-08),,一致,,中,see G-08
 T-04,T,low-decel window after impulses,impulse queue sets T = now + |impulse| * 0.003; JumpPad_Launch does not write it,,,只有代码,,中,find which events write type-1 impulses; pads are not one of them (F-03)
 T-05,T,frame-rate dependence,per-command band choice,M2: 13 % spread of time-to-cap,same,一致,,低,
 M-01,M,mantle natural exit,stance max speed x forward (299 sprint),M8: 299,Climb ability,一致,,低,
 M-02,M,mantle top jump,h = 299 then Jump(),M8: 299 and vz 286.7,Climb ability,一致,,低,
 M-03,M,superglide exit 460,299 + full slide boost capped at 460,M8: 460.000,Climb ability (M9-C),一致,,中,why a slide can start after the jump: read Duck's call into Slide_TryBegin
-M-04,M,superglide window (last ~0.085 s),jumpoff: progress > 0.5 or 0.1 s after the press,M8: 100 % in the last 0.005-0.085 s,Climb ability (fit),未定,5,高,read the 'too early -> cut' path of TraversalMove
+M-04,M,superglide window (last ~0.085 s),"jumpoff after 0.1 s or progress > 0.5; boundary is a time, matching automantle_jumpoff_duration 0.1 s [native-inf]",M8 sweep: the cut/SG boundary is ~0.1 s before the end at all five heights (fractions 0.74-0.85),Climb ability (fit),一致,,高,mechanism (0.1 s = automantle_jumpoff_duration) is inferred
 M-05,M,mantle jump 328.98 = 1.1 x 299,no 1.1 found,M8: 3 / 12,,未定,5,低,
 M-06,M,walk-approach SG 402.009,not found,M8: 3 / 15,,未定,5,低,
 M-07,M,no SG after a slide-jump approach,boost cooldown refreshed by the slide start (S-02),M8: 0 / 15,Reference slideBoostRearm 1.8 s,一致,,中,
@@ -67,7 +67,7 @@ P-05,P,proximity detach,grapple_detachLengthMin / Max 33 / 50,M10 35-53 u,same,�
 P-06,P,press detach clamp to 460,grapple_detachSpeedLoss 300 / Min 460,M10 580 -> 458.7,same,一致,,低,
 P-07,P,low-speed detach timeouts,speed < 250 for 1.5 s air / 0.7 s ground / 1.2 s wall,not measured,not modelled,只有代码,,中,N4-B slow grapple test
 P-08,P,detach when moving away fast,grapple_detachAwaySpeed 500,M10: released 1 command after passing the anchor at radial -28..-214,Grapple ability (fit),未定,5,中,read the passing-anchor rule
-P-09,P,detach vertical boost 200,conditional boost capped at 200,M10: detaches keep momentum,,未定,5,低,read the trigger condition
+P-09,P,detach vertical boost 200,conditional boost capped at 200,M10: 206 detaches; dvz never +200 (max +0.8),,一致,,低,
 P-10,P,look-away detach on the S21 client,not located,M10: client yes; S3 dedi no,[S21-client] rule in Reference,未定,3,中,locate in the client code
 Z-01,Z,zipline jump-off,damped rope speed capped at ziplineJumpOffSpeed + sqrt(2g*jumpHeight) up,M9/M10; N4-A ziplineJumpOffSpeed = 400,Zipline ability: min(v; 400) + 289.828 (residual 0),一致,,低,
 Z-02,Z,end auto-detach,clamp(v.d; ziplineSpeed; ziplineDetachSpeed) = 600,M9/M10,same (residual 0),一致,,低,

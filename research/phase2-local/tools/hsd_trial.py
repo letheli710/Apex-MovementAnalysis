@@ -629,6 +629,26 @@ SCHEDULE_PRE = {
 # M8 R2 jet-drive targets (_r2_jd_pre above)
 for _d in (400, 800, 1200):
     SCHEDULE_PRE["m8r2_jd_d%d" % _d] = _r2_jd_pre(_d)
+# N4-D (rea-native ledger L-10): lurch high-speed cutoff. Once the player leaves the ground after the jump, the dedi sets
+# the horizontal speed along +x (the view) to S; a D press 0.125 s after the jump should lurch only if S <= 1100
+# (jump_grace_cutoff_speed, S21 client). The thread logs the set speed.
+def _n4d_cut_pre(s):
+    return ("void functionref() cutf = void function() : ( p ) {\n"
+            "\ttry {\n"
+            "\t\tfloat t0 = Time()\n"
+            "\t\twhile ( p.IsOnGround() && Time() - t0 < 3.0 ) WaitFrame()\n"
+            "\t\tvector v = p.GetVelocity()\n"
+            "\t\tp.SetVelocity( <%.1f, 0, v.z> )\n"
+            "\t\tprintt( \"[N4D-CUT] set t=\" + Time() + \" s=%.1f vz=\" + v.z )\n"
+            "\t} catch ( cErr ) { printt( \"[N4D-CUT] error \" + string( cErr ) ) }\n"
+            "}\n"
+            "thread cutf()\n"
+            "pre = \" cut=%.0f\"\n") % (s, s, s)
+
+
+for _s in (1000, 1090, 1110, 1200):
+    SCHEDULE_PRE["n4d_cut%d" % _s] = _n4d_cut_pre(_s)
+    SCHEDULES["n4d_cut%d" % _s] = "wait 72; tap jump; wait 18; tap moveright; wait 216"
 SCHEDULE_PRE["m8r2_jd_d800_mvy"] = _r2_jd_pre(800, "tg.NonPhysicsMoveTo( tg.GetOrigin() + <0, 300, 0>, 1.0, 0.0, 0.0 )")
 SCHEDULE_PRE["m8r2_jd_d800_mvx"] = _r2_jd_pre(800, "tg.NonPhysicsMoveTo( tg.GetOrigin() + <600, 0, 0>, 1.5, 0.0, 0.0 )")
 # Echo position log (server, 10 Hz, 9 s) for the real-tactical trials
@@ -1981,7 +2001,7 @@ AgentLink_Reply( out )
 
 DEFAULT_ORIGIN_SCHEDULES = {"basic","e1_walk", "e1_sprint", "e1_crouch", "e1_back", "e1_side", "e1_diag", "e1_turn",
                             "e2_strafe", "e2_noinput", "e2_keepfwd", "e4_stand", "e4_hop0", "e4_hop3", "e4_hop43", "e5_slide",
-                            "e5_slidejump02", "e5_slidejump06", "n4b_wd", "n4b_ws", "n4b_ad", "n4b_wwd", "n4c_hop_d0", "n4c_hop_d1", "n4c_slidechain", "n4c_slidechain_ctrl", "n4c_slidesteer"}
+                            "e5_slidejump02", "e5_slidejump06", "n4b_wd", "n4b_ws", "n4b_ad", "n4b_wwd", "n4c_hop_d0", "n4c_hop_d1", "n4c_slidechain", "n4c_slidechain_ctrl", "n4c_slidesteer", "n4d_cut1000", "n4d_cut1090", "n4d_cut1110", "n4d_cut1200"}
 
 
 def origin_for(name, default):

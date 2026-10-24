@@ -1,0 +1,180 @@
+{
+  "ground": [
+    {
+      "source": "HSD",
+      "side": "cl",
+      "drv_run": "r0",
+      "accel": {
+        "ok": false,
+        "reason": "no accel-from-rest phase"
+      },
+      "decel": {
+        "ok": false,
+        "reason": "no coast-down phase"
+      }
+    },
+    {
+      "source": "HSD",
+      "side": "cl",
+      "drv_run": "r20103",
+      "accel": {
+        "ok": true,
+        "n": 361,
+        "n_fit": 14,
+        "vmax": 199.525,
+        "models": {
+          "linear": {
+            "a": 1320.7276332432507,
+            "r2": 0.7390331081054483
+          },
+          "first_order": {
+            "k": 19.18898956864938,
+            "r2": 0.9902143832487744
+          }
+        },
+        "best": "first_order",
+        "good": true
+      },
+      "decel": {
+        "ok": true,
+        "n": 21,
+        "v0": 199.525,
+        "models": {
+          "linear": {
+            "d": 1250.0074064271896,
+            "r2": 0.9999999922795032
+          },
+          "friction": {
+            "k": 8.370244336568991,
+            "stopspeed": 137.67225,
+            "r2": 0.9940724054094234
+          }
+        },
+        "best": "linear",
+        "good": true
+      }
+    },
+    {
+      "source": "MT",
+      "side": "cl",
+      "drv_run": "b0",
+      "accel": {
+        "ok": false,
+        "reason": "no accel-from-rest phase"
+      },
+      "decel": {
+        "ok": false,
+        "reason": "no coast-down phase"
+      }
+    },
+    {
+      "source": "MT",
+      "side": "cl",
+      "drv_run": "r20103",
+      "accel": {
+        "ok": true,
+        "n": 361,
+        "n_fit": 14,
+        "vmax": 199.525,
+        "models": {
+          "linear": {
+            "a": 1320.8225569308522,
+            "r2": 0.7390061113634323
+          },
+          "first_order": {
+            "k": 19.189902921748143,
+            "r2": 0.9902163180757158
+          }
+        },
+        "best": "first_order",
+        "good": true
+      },
+      "decel": {
+        "ok": true,
+        "n": 21,
+        "v0": 199.525,
+        "models": {
+          "linear": {
+            "d": 1249.9896523819216,
+            "r2": 0.9999999830099855
+          },
+          "friction": {
+            "k": 8.370190907300099,
+            "stopspeed": 137.67225,
+            "r2": 0.994086974743717
+          }
+        },
+        "best": "linear",
+        "good": true
+      }
+    },
+    {
+      "source": "MT",
+      "side": "sv",
+      "drv_run": "b0",
+      "accel": {
+        "ok": false,
+        "reason": "no accel-from-rest phase"
+      },
+      "decel": {
+        "ok": false,
+        "reason": "no coast-down phase"
+      }
+    },
+    {
+      "source": "MT",
+      "side": "sv",
+      "drv_run": "r20103",
+      "accel": {
+        "ok": true,
+        "n": 361,
+        "n_fit": 14,
+        "vmax": 199.525,
+        "models": {
+          "linear": {
+            "a": 1320.8225569308522,
+            "r2": 0.7390061113634323
+          },
+          "first_order": {
+            "k": 19.189902921748143,
+            "r2": 0.9902163180757158
+          }
+        },
+        "best": "first_order",
+        "good": true
+      },
+      "decel": {
+        "ok": true,
+        "n": 21,
+        "v0": 199.525,
+        "models": {
+          "linear": {
+            "d": 1249.9896523819216,
+            "r2": 0.9999999830099855
+          },
+          "friction": {
+            "k": 8.370190907300099,
+            "stopspeed": 137.67225,
+            "r2": 0.994086974743717
+          }
+        },
+        "best": "linear",
+        "good": true
+      }
+    }
+  ],
+  "air": {
+    "cl": {
+      "ok": false,
+      "reason": "only 0 airborne input samples"
+    }
+  },
+  "vertical": [
+    {
+      "side": "cl",
+      "segments": 1,
+      "gravity_median": 749.9970192554173,
+      "takeoff_vz_median": 280.452
+    }
+  ]
+}

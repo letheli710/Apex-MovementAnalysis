@@ -31,7 +31,7 @@
 - [x] **N3**（P1 部分）对照账本 → `CROSSCHECK-LEDGER.md`、`ledger.csv`（60 条）
   - [x] P2 子系统和镜头 C2 的第一批条目补进账本（现在 78 条）
   - [ ] 用户决定账本 §3.2 的 Unity 修改建议（不自动改）：已记录在 `UNITY-CHANGE-PROPOSALS.md`，等 N4 实测后统一决定
-- [ ] **N4** 针对性验证（Frida 用户已允许），待测清单见下一节
+- [x] **N4** 针对性验证 → `n4/`（A / B / C / D 四批；剩 P-07、P-08、P-10 需专门场景，C3 镜头单独做）
   - [x] N4-A 批量补读 setfile 键 → `n4/N4A-READBACK.md`（预言 5 / 5 命中）
   - [x] N4-B 地面按键急转 G-07 → `n4/N4B-KEYTURN.md`（原生公式逐命令吻合；Unity 瞬间转向不符）
 
@@ -56,33 +56,33 @@ N4-A / N4-B 做完后回来做，顺序可以再定：
 - [x] `antiMultiJumpTimeMin` / `antiMultiJumpTimeMax` / `antiMultiJumpHeightFrac`：预期 **0.15 / 0.75 / 0.3**（N2-J J-02）→ **命中**（N4A_classvars）
 - [x] `player_slideBoostCooldown`：预期在 M8 测到的 1.6–2.1 s 范围内（N2-S S-02）→ **2**（N4A_classvars）
 - [x] `landSlowdownDuration` / `Frac` / `HeightMin` / `HeightMax` / `TimePower` / `NoSprintFrac`（N2-J J-09）→ 1 / 0 / 300 / 800 / 2 / 0.7（N4A_classvars）
-- [ ] 蹲姿那一行的 `speed`、`deceleration`：预期 80 / 1500（N2-G G-05）
+- [x] 蹲姿那一行的 `speed`、`deceleration`：代码按姿态取，M2 的 80 / 1500 即蹲姿那一行（N4-D）
 - [x] 镜头键（N4A_classvars 已读，见 `n4/N4A-READBACK.md`）：`viewkickFallDistMin` / `Max` / `MaxScale`、`slideFOVScale` / `LerpInTime` / `LerpOutTime`、`sprinttiltMaxRoll`、`grapple_roll*`、`ziplineRoll*`（N2-C）
 - [x] `ziplineJumpOffSpeed`：预期 **400**（N2-P2 Z-01）→ **命中**
 - [x] ConVar `jumppad_vert_override_ducked_scalar`：客户端原生默认 **1**，本地生效 0.5（SDK dedi）[hyb]，预言只对了一半（F-02）
 - [x] 其余 census 没读过的 setfile 键（Gibraltar 666 个全部读出，`n4/classvars-gibraltar.csv`）
-- [ ] 其他传奇再读一次（按传奇不同的键：喷气、钩爪等）
+- [x] 其他传奇再读一次 → 12 个传奇，`n4/classvars-by-legend.csv`（138 个键因传奇而异）
 
 **B. 新的行为预言**（需要设计实验，用现有 runner）
 
-- [ ] **SG 窗口分界**（M-04）：记录按键时的攀越进度，测出"切断 / SG"的分界
-- [ ] **钩爪脱钩细节**（P-08 ~ P-10）：越过锚点时的径向速度和距离、脱钩前后竖直速度、视线离开
+- [x] **SG 窗口分界**（M-04）→ 用 M8 数据换算：分界是时间（结束前约 0.1 s），不是动画比例
+- [ ] **钩爪脱钩细节**：P-09 已确认（M10 数据，从未触发 +200）；P-08 越过锚点、P-10 视线离开需要专门场景
 
 - [x] ~~lurch 夹紧随 msc 变化~~：M4 Octane 已经测过（stim 下 294.67 = 0.7 × 冲刺上限），和原生公式一致（N2-L L-05）
 - [x] **地面按键急转**（N3 高影响 G-07）→ 已确认（N4B_keyturn）：冲刺中 A↔D、W→D 急转，看速度方向是渐进还是瞬间。原生预期：偏离部分按 1250 减速，意图方向按加速度增长
 - [x] **超速连跳**（N4C：405 → 305，确认 max(v − 100, 299)）：落地 1.0 s 内以 450 起跳，出口应为 **350**（max(v − 100, 299)），不是 299（N2-J J-04）
-- [ ] **lurch 高速截断**：水平速度 > 1100 时不再 lurch（S21 客户端原生，N2-L L-10）
-- [ ] **按住方向键时的摩擦**：意图方向上不超过目标速度的那部分速度不受摩擦，减速只作用在偏离部分（N2-G G-07），用 M2 的 e2 数据先查
+- [x] **lurch 高速截断**（N4D_lurchcut：1090 有、1110 没有）：水平速度 > 1100 时不再 lurch（S21 客户端原生，N2-L L-10）
+- [x] **按住方向键时的摩擦**（N4-B 已覆盖）：意图方向上不超过目标速度的那部分速度不受摩擦，减速只作用在偏离部分（N2-G G-07），用 M2 的 e2 数据先查
 - [x] **第一条命令的输入是 0.75，不是 0.5**（N4B 急转里随原生公式一起吻合）：输入曲线 m(2 − m)（N2-G G-08），用 M2 起步数据先查
 - [x] **滑铲中只能转向**（N4C：侧向 41.1 u/s²，原生公式逐命令吻合）：滑铲时按 W 不加速，只有侧向分量起作用（N2-G G-12 / N2-S S-07）
 - [x] **滑铲加成冷却被每次滑铲刷新**（N4C：确认）：连续短滑铲时加成迟迟不恢复（N2-S S-02）
-- [ ] **钩爪低速超时脱钩**：速度低于 250 持续 1.5 s（空中）/ 0.7 s（地面）后自动脱钩（N2-P2 P-07）
+- [ ] **钩爪低速超时脱钩**（现有场景构造不出，仍只有代码）：速度低于 250 持续 1.5 s（空中）/ 0.7 s（地面）后自动脱钩（N2-P2 P-07）
 
 **C. 还对不上、要细查的**
 
-- [ ] 按住下蹲时滑铲的结束速度：代码 125，实测 112（N2-S S-05）
-- [ ] 地面停止吸附在哪里（N2-G G-06）
-- [ ] 斜坡滑铲项的公式，对照 M8 的 147 + 342·sin(坡度)（N2-S S-09）
+- [x] 按住下蹲时滑铲的结束速度：在移动后速度 < 125 时结束；112 是下一条蹲走命令（N4-D）
+- [x] 地面停止吸附在哪里 → `WalkMove`：移动后速度 < 1 归零（N4-D）
+- [x] 斜坡滑铲项的公式 → g·sinθ·cosθ，和 M8 拟合差 3 % 以内（N4-D）
 - [ ] **N5** 汇总报告和 Reference 修改建议
 
 ---

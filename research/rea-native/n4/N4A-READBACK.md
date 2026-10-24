@@ -37,5 +37,21 @@ M2 的连跳惩罚 frac = clamp(0.3 + 0.7·(t − 0.15)/0.60, 0.3, 1) 现在三�
 
 ## 3. 还没读的
 
-- ConVar（不是 setfile 键）：`jumppad_vert_override_ducked_scalar`（F-02，预期 0.5），用 Ghidra 离线读即可。
-- 只读了 Gibraltar。按传奇不同的键（喷气、钩爪等）要用对应传奇再读一次。
+- ~~ConVar `jumppad_vert_override_ducked_scalar`~~：已用 Ghidra 读出，客户端原生默认 1，本地生效 0.5（来自 SDK dedi）[hyb]。
+- ~~只读了 Gibraltar~~：已补读其余 11 个传奇，见 §4。
+
+## 4. 12 个传奇的补读（2026-10-23）
+
+又开了 11 次游戏（会话 `N4A_classvars_<legend>`），每次 1 个传奇，方法同上（`--no-census`）。合并表 [classvars-by-legend.csv](classvars-by-legend.csv)（[classvars_by_legend.py](classvars_by_legend.py) 生成）：12 个传奇 × 666 个键，**138 个键因传奇而异**，去掉音效、特效、模型等之后，和移动有关的约 100 个。
+
+和以前的实测对得上的：
+
+| 键 | 值 | 对照 |
+|---|---|---|
+| `grapple_attachVerticalBoost` | Pathfinder **200**（其他 0） | M10：钩爪挂上时的"200 上跳"（grapple hop），这次找到出处 |
+| `airAcceleration` / `airSpeed` | Horizon 800 / 80，其他 500 / 60 | census 已有 |
+| `climbHeight` / `climbHorzSpeed` | Revenant 1250 / 300，其他 100 / 100 | M8 R2 Revenant 攀爬 |
+| `jetpack*`、`airStrafeAcceleration` 200 | Valkyrie | M4 / M6-B Valkyrie |
+
+S21 之后的内容（按规则不计入 S21，只记录）：Sparrow 的 `doubleJump` = true 和另一套钩爪参数（`grapple_decel` 2500、`speedRampMin/Max` 1500 等），Ash 的 `dodge` = true。
+
