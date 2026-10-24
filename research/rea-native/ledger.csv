@@ -63,12 +63,12 @@ P-01,P,pull speed ramp,lerp(50; 800; t/1.5),M10 d|v|/dt 500.0-502.7,Grapple abil
 P-02,P,tangential brake,|t| -= grapple_decel*dt (425),M10 425,same,一致,,低,
 P-03,P,no pendulum in S21,grapple_swing = false -> non-swing branch,M10 no pendulum,same,一致,,低,
 P-04,P,side keys = air strafe,AirMove uses grapple_airAccel 650 / grapple_airSpeedMax 420,M10 650 > 425,same,一致,,低,
-P-05,P,proximity detach,grapple_detachLengthMin / Max 33 / 50,M10 35-53 u,same,一致,,低,
+P-05,P,proximity detach,"pull step: hook-to-body distance < 33 always detaches; between 33 and 50: threshold 33 + (v_toward/800)*1.5*17 (speed-scaled, below 33 when moving away)",M10 35-53 u; N6 g400: released at 45.0-46.7 u approaching at ~600,same,一致,,低,
 P-06,P,press detach clamp to 460,grapple_detachSpeedLoss 300 / Min 460,M10 580 -> 458.7,same,一致,,低,
-P-07,P,low-speed detach timeouts,speed < 250 for 1.5 s air / 0.7 s ground / 1.2 s wall,not measured,not modelled,只有代码,,中,N4-B slow grapple test
-P-08,P,detach when moving away fast,grapple_detachAwaySpeed 500,M10: released 1 command after passing the anchor at radial -28..-214,Grapple ability (fit),未定,5,中,read the passing-anchor rule
-P-09,P,detach vertical boost 200,conditional boost capped at 200,M10: 206 detaches; dvz never +200 (max +0.8),,一致,,低,
-P-10,P,look-away detach on the S21 client,not located,M10: client yes; S3 dedi no,[S21-client] rule in Reference,未定,3,中,locate in the client code
+P-07,P,low-speed detach timeouts,speed < 250 for 1.5 s air / 0.7 s ground / 1.2 s wall,N6: two scene attempts failed (attach hop + step climb any ledge <= 45 u; the rock is too deep for a taller one),not modelled,只有代码,,中,needs a thin wall >= 46 u tall
+P-08,P,detach when moving away fast,no separate passing rule: proximity (speed-scaled) + 90 deg view rule; away speed > 500 is a third rule,N6 Frida: floor pass = proximity branch; M10 passing releases at 86-111 deg = view rule,Grapple ability (fit),一致,,中,
+P-09,P,detach vertical boost 200,vertical boost raises vz to at most detachVerticalMaxSpeed 200 (no boost when vz >= 200),M10: 206 detaches; dvz never +200 (max +0.8),,一致,,低,
+P-10,P,look-away detach on the S21 client,Grapple_DetachRules 0x14066f600: hook direction . view forward < 0 (> 90 deg); extra horizontal test when looking down; in air slow-mo only when moving away,"N6 Frida: 15/15 look-away and rodeo releases from this function; first release 0.025-0.084 s after the hook crosses 90 deg, never before; S3 dedi re-attaches (flicker)",[S21-client] rule in Reference,一致,3,中,"[hyb]: S21 client has it, local S3 dedi does not"
 Z-01,Z,zipline jump-off,damped rope speed capped at ziplineJumpOffSpeed + sqrt(2g*jumpHeight) up,M9/M10; N4-A ziplineJumpOffSpeed = 400,Zipline ability: min(v; 400) + 289.828 (residual 0),一致,,低,
 Z-02,Z,end auto-detach,clamp(v.d; ziplineSpeed; ziplineDetachSpeed) = 600,M9/M10,same (residual 0),一致,,低,
 F-01,F,jump pad launch,PUSH * normalize(h + V*z); PUSH 1150; V 2.0,M4 same fit,JumpPad ability,一致,,低,
@@ -77,7 +77,12 @@ CAM-01,C,view punch spring,two 3-axis damped springs; k 65; c 9; zeta ~0.56 (one
 CAM-02,C,landing view kick,speed-scaled kick; viewkickFallDistMin 10 / Max 70 ft / MaxScale 12; second spring x0.2; x0.2 when landing in water,C3: peaks 1.8-43 deg for 276-1156 u/s inside predicted +-19 % range,M5.5 landing feedback,一致,,中,
 CAM-01b,C,punch vs aim,EyeAngles is virtual; not readable statically,C3: aim pitch change 0.0 in all 26 landings; punch moves camera only,M5.5 CameraFeedback keeps aim and visual kick apart (aim returned unchanged) = same as native,只有实测,,中,
 CAM-02b,C,landing kick x0.2 condition,x0.2 when player in water: byte player+0x1c7 set by a 100 u down trace in PlayerMove every 0.05 s (plays player_enter/leave_water); N2-C first misread it as ducked,C3: duck held at landing -> full kick (2.26-2.40 vs 1.85-2.54 deg),,一致,,低,water landing untested (no water in yard)
-CAM-05,C,strafe roll,sv_rollangle = 0: off in S21,no R5 camera data,not checked,只有代码,,低,
+CAM-05,C,strafe roll,sv_rollangle = 0: off in S21,"N6: strafe at 200 u/s, roll stays at the -0.04 deg baseline",not checked,一致,,低,
 CAM-05b,C,slide tilt,state toward 1 while sliding; scaled by speed; 15 deg; rates 5 / 2.5,C3: straight slide 0.05-0.08 deg; slide with ~30 deg view turn 6.35 deg,M5.5 slide camera,一致,,中,compare with M5.5
 CAM-09,C,slide FOV,slideFOVScale 1.1; lerp in / out 0.25 s,C3: 89 -> 97.9,M5.5 slide camera,一致,,低,
 CAM-10,C,slide eye sink,"eye = lerp(stand, crouch, duck fraction); duck timer 200 ms in slide",C3: eye 64 -> 32 in 0.208-0.213 s,M5.5 slide camera,一致,,中,compare with M5.5
+CAM-07,C,sprint tilt,turn rate -> target roll; rate limit sprinttilt_maxvel 2 x sprinttiltMaxRoll 2 deg; accel 35,N6: 90 deg/s -> 1.007 deg; 180 -> 2.00 (cap); linear ~4 deg/s; ~0.06 s accel-in; none when walking,M5.5 not checked,一致,,低,compare with M5.5
+CAM-11,C,grapple camera roll,"dist factor (0-150) x strength 1 x view-angle factor (0-65 deg) x (1-k) x clamp(phi, +-20); smoothed ~6.667/s","N6 look-away: peak 19.1-19.2 vs formula 18.7-19.9, rms 3.2-3.4; rodeo 13.9 vs ~18.5",M5.5 not checked,一致,,低,rodeo gap not checked
+CAM-13,C,zipline camera roll,same structure as grapple roll toward the nearest rope point; strength 0.7; view 30-50 deg; cap 25,N6: view 30 deg off: 1.0-2.3 (formula 1.6-1.9); 60 deg: -4.5..+4.7 with changing sign (formula ~0.4),,未定,5,低,find the extra term at large view offsets (rope sway?)
+CAM-18,C,cockpit sway on the camera,"setfile cockpitSway* (angle limits +-0.5 deg, origin +-1)","N6 sprint: camera pitch -0.49..+0.18 deg, period 0.27 s; camera position = eye always",,只有实测,,低,"[inf]: sway angles reach the camera, sway origin does not"
+CAM-20,C,view drift,"viewDrift = 1 (on), 40 amplitude / frequency / phase ConVars","N6 idle: pitch +-0.195 deg (5.2 s), yaw +-0.084 deg (3.2 s); camera only",,一致,,低,
