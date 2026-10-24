@@ -7,7 +7,7 @@ G-05,G,crouch decel 1500 / crouch speed 80,speed and deceleration read per stanc
 G-06,G,stop snap ~1 u/s,"WalkMove: after friction and accel, speed < 1 -> v = 0",M2 bracket (0.58; 1.58],fitted 1,一致,,低,
 G-07,G,friction spares the wish-aligned speed,Friction keeps the projection on wishdir up to wishspeed,N4-B keyturn (20 trials): native formula reproduces every command (rms 0.002-0.046 u/s); instant model rms 64-195 u/s; sprint W->D takes 0.233 s and dips to 131 u/s,replay motor: v = s*wishdir (instant); Reference (groundVectorRedirect M5): off-wish part decays at D + band accel along wish = native structure; N4-B per-command rms 0.11-0.60 u/s (native 0.002-0.046; instant 64-195),一致,U,低,Reference already close; optional: exact native Friction (keep wish-aligned speed up to wishspeed) and the Accelerate cap
 G-08,G,input curve m(2 - m),0.5 -> 0.75; 1 -> 1,M1/M2: first command axis 0.5; N4-B: the native model with the curve fits key turns to 0.004 u/s,M10-D2 input layer: not checked,一致,,中,compare Unity input layer
-G-09,G,sprint input x 1.25,before the curve; only matters when m < 1,M4b: sprint scales key turning x0.67,not modelled,未定,5,低,relate to M4b turning
+G-09,G,sprint input x 1.25,before the curve; only matters when m < 1,"keyboard cannot reach m < 1 while sprinting (N4-B fits identically with x1.25 and x1.0); the M4b x0.67 is cl_anglespeedkey 0.67 (view turn with +speed), not movement",not modelled,只有代码,,低,needs analog input (gamepad); see ledger-open/LEDGER-OPEN-5.md
 G-10,G/S,slide decay law and order,max(0; s - slideDecel*ft) * slideVelocityDecay^((1 - 0.75x)*ft),M2: (v - 100*dt)*0.7^dt chosen over the other order,R5MotorV2 same,一致,,低,x term: see S-09
 G-11,G/S,crouch release -> stronger decel,slideWantToStopDecel 400,M10: stronger decel; ends near 335,Reference M10-D1 same,一致,,低,
 G-12,G/S,slide steering,wish component along velocity removed; perpendicular part accelerates at slideAccel*msc,N4-C slide steer: lateral 41.1 u/s^2; full native slide model reproduces every command (rms 0.001 u/s),R5MotorV2: no steering at all,一致,U,中,user decision (UNITY-CHANGE-PROPOSALS G-12 / S-07)
@@ -24,7 +24,7 @@ L-07,L,opposing keys cancel,w = 0 -> no turn,M8 b2,M10-D2,一致,,低,
 L-08,L,window opens only on a jump,t0 = jump time,M8 d: no lurch after walking off,same,一致,,低,
 L-09,L,no multi-tap decay by default,max_tap_count / decay_start 1000; decay 1.0; velocity decay 0,M8 c: 15 taps all effective,same,一致,,低,
 L-10,L,cutoff 1100 on the client,h <= jump_grace_cutoff_speed,"N4-D: lurch at 1000 and 1090 (|dv| 212.79), none at 1110 and 1200 (4.17)",Reference lurchCutoffSpeed 1100 (M6-A1 [src]); replay motor off,一致,,低,
-L-11,L,M8 b1 residual 11.6 u/s,no extra term in lurch,M8 b1 11.6,,未定,5,低,check AirAccelerate and the input curve on that command
+L-11,L,M8 b1 residual 11.6 u/s,"lurch = direction blend that keeps speed (L-01), key-sign wish (L-06), strength 0.7",M8 b1: native rules fit all 5 press commands to <= 0.017 u/s (heading 35.04); the 11.6 was the M8 analysis model,,一致,,低,
 L-12,L,reverse chain stops near 156 deg,each tap is an independent lerp with falling lam,M8 a,same,一致,,低,
 L-13,L,SDK suppresses lurch in mantle-boost state 4,Hook_AirMove_TapStrafe (default on),M8 R3 SG data were taken with mantle boost off,,一致,4,中,keep native vs SDK paths apart in Reference
 J-01,J,V = sqrt(2gH); penalty on height,Jump,M2 height-linear,R5MotorV2 same,一致,,低,
@@ -54,8 +54,8 @@ M-01,M,mantle natural exit,stance max speed x forward (299 sprint),M8: 299,Climb
 M-02,M,mantle top jump,h = 299 then Jump(),M8: 299 and vz 286.7,Climb ability,一致,,低,
 M-03,M,superglide exit 460,299 + full slide boost capped at 460,M8: 460.000,Climb ability (M9-C),一致,,中,why a slide can start after the jump: read Duck's call into Slide_TryBegin
 M-04,M,superglide window (last ~0.085 s),"jumpoff after 0.1 s or progress > 0.5; boundary is a time, matching automantle_jumpoff_duration 0.1 s [native-inf]",M8 sweep: the cut/SG boundary is ~0.1 s before the end at all five heights (fractions 0.74-0.85),Climb ability (fit),一致,,高,mechanism (0.1 s = automantle_jumpoff_duration) is inferred
-M-05,M,mantle jump 328.98 = 1.1 x 299,no 1.1 found,M8: 3 / 12,,未定,5,低,
-M-06,M,walk-approach SG 402.009,not found,M8: 3 / 15,,未定,5,低,
+M-05,M,mantle jump 328.98 = 1.1 x 299,"Jump 0x140a3b550: if the move direction points into the stored surface normal (+0x3630), v -= 30 * normal",M8: 3/12 after a face contact: 299 + 30 = 329 (328.98),,一致,,低,
+M-06,M,walk-approach SG 402.009,"same +30 jump term (M-05), then slide boost min(h + 172.5, 460)","M8: 3/15: 199.5 + 30 = 229.5 >= 200 slide start, + 172.5 = 402.0 (402.009)",,一致,,低,
 M-07,M,no SG after a slide-jump approach,boost cooldown refreshed by the slide start (S-02),M8: 0 / 15,Reference slideBoostRearm 1.8 s,一致,,中,
 M-08,M,native SG vs SDK mantle boost,SDK FSM wraps TraversalMove (default on),M8: 388.7 / 367.42 with SDK; 460 without,,一致,4,高,Reference must state which path it follows
 M-09,M,S21 wall-run off,setfile wallrun = false,M7: wall-run is HSD design,WallRun ability (Fun),一致,,低,
@@ -83,6 +83,6 @@ CAM-09,C,slide FOV,slideFOVScale 1.1; lerp in / out 0.25 s,C3: 89 -> 97.9,M5.5 s
 CAM-10,C,slide eye sink,"eye = lerp(stand, crouch, duck fraction); duck timer 200 ms in slide",C3: eye 64 -> 32 in 0.208-0.213 s,M5.5 slide camera,一致,,中,compare with M5.5
 CAM-07,C,sprint tilt,turn rate -> target roll; rate limit sprinttilt_maxvel 2 x sprinttiltMaxRoll 2 deg; accel 35,N6: 90 deg/s -> 1.007 deg; 180 -> 2.00 (cap); linear ~4 deg/s; ~0.06 s accel-in; none when walking,M5.5 not checked,一致,,低,compare with M5.5
 CAM-11,C,grapple camera roll,"dist factor (0-150) x strength 1 x view-angle factor (0-65 deg) x (1-k) x clamp(phi, +-20); smoothed ~6.667/s","N6 look-away: peak 19.1-19.2 vs formula 18.7-19.9, rms 3.2-3.4; rodeo 13.9 vs ~18.5",M5.5 not checked,一致,,低,rodeo gap not checked
-CAM-13,C,zipline camera roll,same structure as grapple roll toward the nearest rope point; strength 0.7; view 30-50 deg; cap 25,N6: view 30 deg off: 1.0-2.3 (formula 1.6-1.9); 60 deg: -4.5..+4.7 with changing sign (formula ~0.4),,未定,5,低,find the extra term at large view offsets (rope sway?)
+CAM-13,C,zipline camera roll,"rope roll (strength 0.7, view 30-50, cap 25) x speed factor (0.57-1.2 x ziplineSpeed 600) + ziprailMaxCurvatureRollAngle 18 x curvature (+0x223c), clamp maxCameraRoll 40, x ziprail_roll_strength",N6: view 30 deg off: 1.0-2.3 (formula 1.6-1.9); 60 deg: -4.5..+4.7 with changing sign (formula ~0.4),,未定,5,低,"curvature term ruled out (Frida: +0x223c = 0 on straight ropes, 5 runs); add the speed factor to the N6 formula; the 60-deg sign changes are still unexplained"
 CAM-18,C,cockpit sway on the camera,"setfile cockpitSway* (angle limits +-0.5 deg, origin +-1)","N6 sprint: camera pitch -0.49..+0.18 deg, period 0.27 s; camera position = eye always",,只有实测,,低,"[inf]: sway angles reach the camera, sway origin does not"
 CAM-20,C,view drift,"viewDrift = 1 (on), 40 amplitude / frequency / phase ConVars","N6 idle: pitch +-0.195 deg (5.2 s), yaw +-0.084 deg (3.2 s); camera only",,一致,,低,
