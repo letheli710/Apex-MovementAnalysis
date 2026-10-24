@@ -18,7 +18,7 @@
 | [N0-PILOT.md](N0-PILOT.md) | N0 环境和试点：二进制检查、两个客户端的对比、定标、闸门结论 |
 | [convar-defaults/](convar-defaults/README.md) | 35 个原生 ConVar 的默认值（会话「从 rea 获取精确数值」的成果，PR #28） |
 | [NATIVE-MAP.md](NATIVE-MAP.md)、`map/*.csv` | N1 骨架地图：函数、参数读取、setfile 键、SDK 钩子 |
-| [camera/CAMERA-INVENTORY.md](camera/CAMERA-INVENTORY.md)、`map/camera-effects.csv` | N1 / C1 第一人称镜头效果清单，见计划 §5.1；[camera/C3-CAPTURE.md](camera/C3-CAPTURE.md) 是 C3 逐帧实测 |
+| [camera/CAMERA-INVENTORY.md](camera/CAMERA-INVENTORY.md)、`map/camera-effects.csv` | N1 / C1 第一人称镜头效果清单，见计划 §5.1；[camera/C3-CAPTURE.md](camera/C3-CAPTURE.md) 是 C3 逐帧实测；[camera/CAMERA-REFERENCE.md](camera/CAMERA-REFERENCE.md) 是原版与 M5.5 镜头的完整参照（数据、公式、换算） |
 | `n0/`、`n1/` | 各阶段的脚本和输入（只有地址和名字） |
 | `n4/` | N4 实测：[N4A-READBACK.md](n4/N4A-READBACK.md)（setfile 键补读）、[N4B-KEYTURN.md](n4/N4B-KEYTURN.md)（地面急转）、[N4C-HOP-SLIDE.md](n4/N4C-HOP-SLIDE.md)（连跳、滑铲冷却、滑铲转向）、[N4D-REMAINING.md](n4/N4D-REMAINING.md)（清单收尾）和脚本 |
 | `subsystems/N2-*.md` | N2 各子系统的公式提取（P1：G、L、J、S、T、M；P2：钩爪、滑索、跳板；镜头 C2） |
