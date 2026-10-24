@@ -88,7 +88,7 @@ N4-A / N4-B 做完后回来做，顺序可以再定：
 ## N5 之后的阶段顺序（用户 2026-10-23 决定）
 
 1. [x] **N6 补测**（`n6/N6-MEASURE.md`）：P-08、P-10 查清；P-07 第四次场景测出（Gibraltar + 台阶 + 天花板：空中超时 1.5 s）；CAM-05 / 07 / 11 / 20 实测一致，CAM-13 未定，CAM-18 [inf]。原计划：钩爪 P-07（低速超时）、P-08（越过锚点）、P-10（视线离开脱钩）；镜头 CAM-18 / 19（cockpit sway / spring）、冲刺倾斜、钩爪和滑索横滚的逐帧实测
-2. **N7 用到 Unity 上**：按 `n5/REFERENCE-CHANGES.md` 实施，每条先由用户决定；只改 Reference，回放电机不动
+2. [x] **N7 用到 Unity 上**（`n7/N7-UNITY.md`）：用户 2026-10-24 决定 12 条全部按原版改；HSD-Unity 分支 `n7/native-reference`；只改 Reference，回放逐字节不变；待用户试玩（`n7/PLAYTEST-GUIDE-N7.md`）
 3. **N8 传送机制研究**（Alter、Wraith、Loba、Ash）：最后做
 
 - [x] **N5** 汇总报告和 Reference 修改建议 → `N-REPORT.md`、`n5/REFERENCE-CHANGES.md`、`n5/FIT-TO-NATIVE.md`（核对 Unity 后更正 G-07、S-09、L-10、CAM-01b）
