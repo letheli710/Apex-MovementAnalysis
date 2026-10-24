@@ -5,7 +5,7 @@ G-03,G,mid -> sprint accel edge,fixed edge h > msc*speed - 1 = 198.525; no sprin
 G-04,G,band chosen from pre-move speed,GetAccel before Accelerate,M2 same,R5MotorV2 same,一致,,低,
 G-05,G,crouch decel 1500 / crouch speed 80,speed and deceleration read per stance (row stride set at runtime; read-back only reaches the standing row),M2 fit 1500 / 80,fitted constants,一致,,低,
 G-06,G,stop snap ~1 u/s,"WalkMove: after friction and accel, speed < 1 -> v = 0",M2 bracket (0.58; 1.58],fitted 1,一致,,低,
-G-07,G,friction spares the wish-aligned speed,Friction keeps the projection on wishdir up to wishspeed,N4-B keyturn (20 trials): native formula reproduces every command (rms 0.002-0.046 u/s); instant model rms 64-195 u/s; sprint W->D takes 0.233 s and dips to 131 u/s,R5MotorV2 sets v = s*wishdir each command (instant direction),一致,U,高,user decision (UNITY-CHANGE-PROPOSALS G-07)
+G-07,G,friction spares the wish-aligned speed,Friction keeps the projection on wishdir up to wishspeed,N4-B keyturn (20 trials): native formula reproduces every command (rms 0.002-0.046 u/s); instant model rms 64-195 u/s; sprint W->D takes 0.233 s and dips to 131 u/s,replay motor: v = s*wishdir (instant); Reference (groundVectorRedirect M5): off-wish part decays at D + band accel along wish = native structure; N4-B per-command rms 0.11-0.60 u/s (native 0.002-0.046; instant 64-195),一致,U,低,Reference already close; optional: exact native Friction (keep wish-aligned speed up to wishspeed) and the Accelerate cap
 G-08,G,input curve m(2 - m),0.5 -> 0.75; 1 -> 1,M1/M2: first command axis 0.5; N4-B: the native model with the curve fits key turns to 0.004 u/s,M10-D2 input layer: not checked,一致,,中,compare Unity input layer
 G-09,G,sprint input x 1.25,before the curve; only matters when m < 1,M4b: sprint scales key turning x0.67,not modelled,未定,5,低,relate to M4b turning
 G-10,G/S,slide decay law and order,max(0; s - slideDecel*ft) * slideVelocityDecay^((1 - 0.75x)*ft),M2: (v - 100*dt)*0.7^dt chosen over the other order,R5MotorV2 same,一致,,低,x term: see S-09
@@ -23,7 +23,7 @@ L-06,L,wish from keys not axes,require_tap = 1 -> digital keys,M8 b1 equal-weigh
 L-07,L,opposing keys cancel,w = 0 -> no turn,M8 b2,M10-D2,一致,,低,
 L-08,L,window opens only on a jump,t0 = jump time,M8 d: no lurch after walking off,same,一致,,低,
 L-09,L,no multi-tap decay by default,max_tap_count / decay_start 1000; decay 1.0; velocity decay 0,M8 c: 15 taps all effective,same,一致,,低,
-L-10,L,cutoff 1100 on the client,h <= jump_grace_cutoff_speed,"N4-D: lurch at 1000 and 1090 (|dv| 212.79), none at 1110 and 1200 (4.17)",not modelled,一致,,低,
+L-10,L,cutoff 1100 on the client,h <= jump_grace_cutoff_speed,"N4-D: lurch at 1000 and 1090 (|dv| 212.79), none at 1110 and 1200 (4.17)",Reference lurchCutoffSpeed 1100 (M6-A1 [src]); replay motor off,一致,,低,
 L-11,L,M8 b1 residual 11.6 u/s,no extra term in lurch,M8 b1 11.6,,未定,5,低,check AirAccelerate and the input curve on that command
 L-12,L,reverse chain stops near 156 deg,each tap is an independent lerp with falling lam,M8 a,same,一致,,低,
 L-13,L,SDK suppresses lurch in mantle-boost state 4,Hook_AirMove_TapStrafe (default on),M8 R3 SG data were taken with mantle boost off,,一致,4,中,keep native vs SDK paths apart in Reference
@@ -43,7 +43,7 @@ S-04,S,crouch release ends at <= 350,slideMaxStopSpeed,M10: ends near 335,Refere
 S-05,S,slide end speed with duck held,speed < slideStopSpeed 125,M2 e5_slide: last slide command post 124.4-124.9 (< 125); the next crouch command is at ~114 (M10 quoted 112 for that command),R5MotorV2: post s < slideStopSpeed,一致,,低,
 S-07,S,slide steering,see G-12,see G-12 (N4-C),,一致,U,中,see G-12
 S-08,S,duck transition 200 ms in a slide,Duck timer 400 / 200 ms,M2: early slide jump duck = 1 vs 2,not modelled,一致,,低,
-S-09,S,slope slide term,Gravity_HalfStep adds g*n_h*n_z while sliding on ground: along-slope accel g*sin*cos (321 / 352 / 371 at 29 / 35 / 41 deg),M8 R4: 147 + 342*sin(slope) on 29-41 deg,Reference: measured slope rule (M8-B),一致,,中,user decision (UNITY-CHANGE-PROPOSALS S-09)
+S-09,S,slope slide term,Gravity_HalfStep adds g*n_h*n_z while sliding on ground: along-slope accel g*sin*cos (321 / 352 / 371 at 29 / 35 / 41 deg),M8 R4: 147 + 342*sin(slope) on 29-41 deg,Reference: g*n_z*n_h (M6-A4 term; = native) + M8-B duck rule; replay motor flat floor; Fun: HSD slope design (M8-A),一致,,中,none for Reference; the M8 fit 147 + 342*sin is a doc-only fit
 S-10,S,slide start slope limit,ground normal z > 0.7,none,not checked,只有代码,,低,
 T-01,T,dt = frame time,usercmd frametime,M1,same,一致,,低,
 T-02,T,press edge,buttons & ~previous buttons,M3/M8,same,一致,,低,
@@ -73,9 +73,9 @@ Z-01,Z,zipline jump-off,damped rope speed capped at ziplineJumpOffSpeed + sqrt(2
 Z-02,Z,end auto-detach,clamp(v.d; ziplineSpeed; ziplineDetachSpeed) = 600,M9/M10,same (residual 0),一致,,低,
 F-01,F,jump pad launch,PUSH * normalize(h + V*z); PUSH 1150; V 2.0,M4 same fit,JumpPad ability,一致,,低,
 F-02,F,ducked pad launch,client default jumppad_vert_override_ducked_scalar = 1 (Ghidra); effective 0.5 on the local build,M4: ducked V = 1.0 = 2 x 0.5,JumpPad ability,数值差,3,低,[hyb]: the local S3 dedi (SDK) sets 0.5; the real S21 server value is unknown
-CAM-01,C,view punch spring,two 3-axis damped springs; k 65; c 9; zeta ~0.56 (one overshoot),C3: peak 0.15-0.17 s after landing; zero cross 0.46-0.58 s; one overshoot,M5.5 CriticalSmoother (critically damped),一致,U,中,reference only (M5.5 accepted)
+CAM-01,C,view punch spring,two 3-axis damped springs; k 65; c 9; zeta ~0.56 (one overshoot),C3: peak 0.15-0.17 s after landing; zero cross 0.46-0.58 s; one overshoot,M5.5 CriticalSmoother (critically damped; landing pitch kick peaks at pitchPeak 0.06 s vs native ~0.16 s),一致,U,中,reference only (M5.5 accepted)
 CAM-02,C,landing view kick,speed-scaled kick; viewkickFallDistMin 10 / Max 70 ft / MaxScale 12; second spring x0.2; x0.2 when landing in water,C3: peaks 1.8-43 deg for 276-1156 u/s inside predicted +-19 % range,M5.5 landing feedback,一致,,中,
-CAM-01b,C,punch vs aim,EyeAngles is virtual; not readable statically,C3: aim pitch change 0.0 in all 26 landings; punch moves camera only,M5.5 not checked,只有实测,,中,check whether M5.5 landing feedback moves aim
+CAM-01b,C,punch vs aim,EyeAngles is virtual; not readable statically,C3: aim pitch change 0.0 in all 26 landings; punch moves camera only,M5.5 CameraFeedback keeps aim and visual kick apart (aim returned unchanged) = same as native,只有实测,,中,
 CAM-02b,C,landing kick x0.2 condition,x0.2 when player in water: byte player+0x1c7 set by a 100 u down trace in PlayerMove every 0.05 s (plays player_enter/leave_water); N2-C first misread it as ducked,C3: duck held at landing -> full kick (2.26-2.40 vs 1.85-2.54 deg),,一致,,低,water landing untested (no water in yard)
 CAM-05,C,strafe roll,sv_rollangle = 0: off in S21,no R5 camera data,not checked,只有代码,,低,
 CAM-05b,C,slide tilt,state toward 1 while sliding; scaled by speed; 15 deg; rates 5 / 2.5,C3: straight slide 0.05-0.08 deg; slide with ~30 deg view turn 6.35 deg,M5.5 slide camera,一致,,中,compare with M5.5

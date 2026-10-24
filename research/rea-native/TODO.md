@@ -29,7 +29,7 @@
   - [x] C3 逐帧实测 → `camera/C3-CAPTURE.md`：落地 kick（峰值 0.16 s、回弹一次、大小和公式一致）、punch 不动准星、滑铲眼高 0.21 s、滑铲倾斜、FOV × 1.1 都确认。新发现：× 0.2 的条件不是下蹲（CAM-02b）
     - [x] 查玩家 +0x1c7 是什么状态（CAM-02b）→ 水中标志（`PlayerMove` 每 0.05 s 检测，入水 / 出水音效），N2-C §8
     - [ ] cockpit sway / spring（CAM-18 / 19）是否动镜头；冲刺倾斜、钩爪 / 滑索横滚的逐帧实测
-  - [ ] C4 进对照账本（`CAM-`），和 M5.5 镜头对照，只给建议
+  - [x] C4 进对照账本（`CAM-`），和 M5.5 镜头对照，只给建议 → 账本 CAM-01 / 01b / 02 / 02b / 05 / 05b / 09 / 10；M5.5 差别记在 `n5/REFERENCE-CHANGES.md` §3
 - [x] **N3**（P1 部分）对照账本 → `CROSSCHECK-LEDGER.md`、`ledger.csv`（60 条）
   - [x] P2 子系统和镜头 C2 的第一批条目补进账本（现在 78 条）
   - [ ] 用户决定账本 §3.2 的 Unity 修改建议（不自动改）：已记录在 `UNITY-CHANGE-PROPOSALS.md`，等 N4 实测后统一决定
@@ -85,7 +85,9 @@ N4-A / N4-B 做完后回来做，顺序可以再定：
 - [x] 按住下蹲时滑铲的结束速度：在移动后速度 < 125 时结束；112 是下一条蹲走命令（N4-D）
 - [x] 地面停止吸附在哪里 → `WalkMove`：移动后速度 < 1 归零（N4-D）
 - [x] 斜坡滑铲项的公式 → g·sinθ·cosθ，和 M8 拟合差 3 % 以内（N4-D）
-- [ ] **N5** 汇总报告和 Reference 修改建议
+- [x] **N5** 汇总报告和 Reference 修改建议 → `N-REPORT.md`、`n5/REFERENCE-CHANGES.md`、`n5/FIT-TO-NATIVE.md`（核对 Unity 后更正 G-07、S-09、L-10、CAM-01b）
+  - [ ] 更新 `STATIC-VALUES.md` 和 `convar-defaults/`（等另一个会话的 PR #28 合并）
+  - [ ] 用户决定 Reference 修改建议（`UNITY-CHANGE-PROPOSALS.md` 的"决定"一栏）
 
 ---
 
