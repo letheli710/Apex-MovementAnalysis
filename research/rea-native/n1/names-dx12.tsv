@@ -88,3 +88,11 @@
 140b0f6d0	AirSlowMo_TimeScale	N2-G: dt multiplier (airSlowMoSpeed, airslowmo_* ConVars); 1 normally
 140a58ec0	TapStrafe_WindowHint	N2-L: after a lurch, runs WindowHint on the new velocity
 140b09a60	LandSlowdown_Scale	N2-J: 1 - (1 - (t/landSlowdownDuration)^landSlowdownTimePower) * heightFactor * (1 - landSlowdownFrac)
+1406752b0	Grapple_SpeedRamp	N2-P2: lerp(grapple_speedRampMin, Max, t/Time) x (1 - status effect)
+1406755c0	Grapple_PullAccel	N2-P2: tangential -= grapple_decel*dt; along-rope += grapple_accel*dt up to the ramp
+14066f600	Grapple_DetachRules	N2-P2: away speed, low-speed timeouts, detach boosts
+14066fb60	Grapple_DetachSpeedLoss	N2-P2: detachSpeedLoss / Min, impact vertical boost
+140a3ce80	Grapple_DetachLength	N2-P2: reads detachLengthMin/Max and low-speed thresholds
+14074ae50	Zipline_Detach	N2-P2: clamp(v.d, ziplineSpeed, ziplineDetachSpeed); jump-off caps
+14074b590	Zipline_Accel	N2-P2: ziplineAcceleration toward speed scale x ziplineSpeed
+140afc040	SlideTilt_Update	N2-C: slide tilt state toward target with increase/decrease rates

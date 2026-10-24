@@ -11,7 +11,7 @@
 
 用户原话（2026-10-23）："我们现在的首要任务是将移动系统构建出一张全面的地图，让我们深刻地、仔细地、原生地了解这个移动系统。"
 
-- [ ] 用户审阅计划草稿，回答 §10 的问题
+- [ ] 用户审阅计划草稿，回答 §10 的问题（2026-10-23 已答：Frida 允许、C3 改 MoveDiag 同意、Unity 建议先记录；名称、dedi 深度、viewmodel、节奏未答）
 - [x] **N0** 环境和试点：检查二进制，跑 Ghidra 自动分析，用 `sv_gravity` = 750 和 SDK 命名函数定标，读出原生 ConVar 默认值（ConVar 部分见 `convar-defaults/`），结论见 `N0-PILOT.md`
 - [x] **N1** 骨架地图：`NATIVE-MAP.md`、`map/functions.csv`、`map/reads.csv`、`map/sdk-hooks.csv`、`map/setfile-keys.csv`
   - [ ] N1 遗留：8 个 SDK 钩子的地址（`IN_JumpDown` / `IN_JumpUp`、`Glide_*` 等）；51 个没分类的核心函数
@@ -22,16 +22,28 @@
   - [x] L Lurch / tap-strafe → `subsystems/N2-L-LURCH.md`（209.3 夹紧出处已找到）
   - [x] S 滑铲 → `subsystems/N2-S-SLIDE.md`（遗留：斜坡项公式 S-09、按住下蹲时结束速度 125 vs 112 S-05）
   - [x] M 攀越、mantle、SG、墙 → `subsystems/N2-M-TRAVERSAL.md`（部分：SG 窗口 M-04、1.1 × 299、402.009 还没读通；攀墙、自动 mantle 触发条件没读）
-- [ ] **N2** P2 子系统（看用户决定）：P 钩爪、Z 滑索、F 外力类
+- [x] **N2** P2 子系统：P 钩爪、Z 滑索、F 跳板 → `subsystems/N2-P2-GRAPPLE-ZIPLINE-PADS.md`（遗留：P-08 ~ P-10；重力炮、升降梯、JetDrive、喷气没读）
 - [ ] **C 第一人称镜头手感**（camera feel，用户 2026-10-23 加入，计划 §5.1）：随角色动作产生的**全部**镜头效果，不只是跑步晃动、落地震动、滑铲下沉；也包括墙跑、攀爬、跳跃、钩爪、滑索等
   - [x] C1 完整清单：一共有哪些效果、各叫什么、由什么触发、在哪里计算（原生 / 脚本 / 动画）→ `camera/CAMERA-INVENTORY.md`（23 项 + 3 个边界项；跑步晃动还没找到对应参数）
-  - [ ] C2 逐个弄清做法：触发条件、幅度、包络、叠加、帧率关系、是否影响准星 → `subsystems/N2-C-CAMERA.md`
-  - [ ] C3 逐帧实测：按渲染帧记录镜头位置、角度和 FOV（要改 HSD.MoveDiag，先问用户）
+  - [x] C2（第一批）逐个弄清做法 → `subsystems/N2-C-CAMERA.md`：punch 弹簧（k 65、c 9）、落地 kick、横滚汇总（S21 只有滑铲 / 冲刺 / 钩爪滑索横滚生效）。遗留：滑铲倾斜精确公式、冲刺倾斜、眼高曲线、cockpit sway 是否动镜头、是否影响准星
+  - [ ] C3 逐帧实测：按渲染帧记录镜头位置、角度和 FOV（用户 2026-10-23 已同意改 HSD.MoveDiag）
   - [ ] C4 进对照账本（`CAM-`），和 M5.5 镜头对照，只给建议
 - [x] **N3**（P1 部分）对照账本 → `CROSSCHECK-LEDGER.md`、`ledger.csv`（60 条）
-  - [ ] P2 子系统和镜头 C2 做完后补进账本
-  - [ ] 用户决定账本 §3.2 的 Unity 修改建议（不自动改）
-- [ ] **N4** 针对性验证（按需；Frida 需用户批准），待测清单见下一节
+  - [x] P2 子系统和镜头 C2 的第一批条目补进账本（现在 78 条）
+  - [ ] 用户决定账本 §3.2 的 Unity 修改建议（不自动改）：已记录在 `UNITY-CHANGE-PROPOSALS.md`，等 N4 实测后统一决定
+- [ ] **N4** 针对性验证（Frida 用户已允许），待测清单见下一节
+  - [ ] N4-A 批量补读 setfile 键（第一步）
+  - [ ] N4-B 地面按键急转 G-07（第一个实验）
+
+### 后放的事（用户 2026-10-23："不要忘记后放的事情"）
+
+N4-A / N4-B 做完后回来做，顺序可以再定：
+
+- [ ] 读 Horizon 升降梯、Vantage JetDrive、Valkyrie 喷气（setfile `jetpack*`，函数在 0x140afe000–0x140b02000）、重力炮的代码
+- [ ] 镜头 C2 剩下的：滑铲倾斜精确公式（0x140afc040）、冲刺倾斜、眼高曲线（CAM-10）、cockpit sway / spring 是否动镜头（CAM-18 / 19）、镜头效果是否影响准星
+- [ ] superglide 窗口（M-04）：等 N4 测出更精确的边界后再读 `TraversalMove` 状态机
+- [ ] 钩爪 P-08 ~ P-10（越过锚点脱钩、脱钩上抬条件、视线离开脱钩）
+- [ ] N1 遗留：8 个 SDK 钩子的地址、51 个没分类的核心函数
 
 ---
 
@@ -45,6 +57,8 @@
 - [ ] `player_slideBoostCooldown`：预期在 M8 测到的 1.6–2.1 s 范围内（N2-S S-02）
 - [ ] `landSlowdownDuration` / `Frac` / `HeightMin` / `HeightMax` / `TimePower` / `NoSprintFrac`（N2-J J-09）
 - [ ] 蹲姿那一行的 `speed`、`deceleration`：预期 80 / 1500（N2-G G-05）
+- [ ] 镜头键：`viewkickFallDistMin` / `Max` / `MaxScale`、`slideFOVScale` / `LerpInTime` / `LerpOutTime`、`sprinttiltMaxRoll`、`grapple_roll*`、`ziplineRoll*`（N2-C）
+- [ ] `ziplineJumpOffSpeed`：预期 **400**（N2-P2 Z-01）；ConVar `jumppad_vert_override_ducked_scalar`：预期 **0.5**（F-02）
 - [ ] 其余 census 没读过的 setfile 键，共 513 个（`map/setfile-keys.csv`）
 
 **B. 新的行为预言**（需要设计实验，用现有 runner）
@@ -57,6 +71,7 @@
 - [ ] **第一条命令的输入是 0.75，不是 0.5**：输入曲线 m(2 − m)（N2-G G-08），用 M2 起步数据先查
 - [ ] **滑铲中只能转向**：滑铲时按 W 不加速，只有侧向分量起作用（N2-G G-12 / N2-S S-07）
 - [ ] **滑铲加成冷却被每次滑铲刷新**：连续短滑铲时加成迟迟不恢复（N2-S S-02）
+- [ ] **钩爪低速超时脱钩**：速度低于 250 持续 1.5 s（空中）/ 0.7 s（地面）后自动脱钩（N2-P2 P-07）
 
 **C. 还对不上、要细查的**
 
