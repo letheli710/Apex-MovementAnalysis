@@ -507,6 +507,27 @@ string function HSD_MD_Angles( entity player )
 	return "nan,nan"
 }
 
+// Camera tokens for the frame line (rea-native C3): rendered camera position and
+// angles, eye position and angles, the aim vector and the FOV, so view punch,
+// tilt, eye height and FOV changes can be compared with the aim direction.
+string function HSD_MD_CameraTokens( entity player )
+{
+	try
+	{
+		vector cp = player.CameraPosition()
+		vector ca = player.CameraAngles()
+		vector ep = player.EyePosition()
+		vector ea = player.EyeAngles()
+		vector vv = player.GetViewVector()
+		return format( "cpos=%.3f,%.3f,%.3f cang=%.4f,%.4f,%.4f epos=%.3f,%.3f,%.3f eang=%.4f,%.4f,%.4f vv=%.5f,%.5f,%.5f fov=%.3f",
+			cp.x, cp.y, cp.z, ca.x, ca.y, ca.z, ep.x, ep.y, ep.z, ea.x, ea.y, ea.z, vv.x, vv.y, vv.z, player.GetFOV() )
+	}
+	catch ( eCamera )
+	{
+	}
+	return "cpos=nan"
+}
+
 // Samples the predicted local player once per client frame. Edges are found on
 // the sampled ground flag, so an airtime shorter than one frame is invisible.
 void function HSD_MD_ClientSample_Thread()
@@ -545,11 +566,11 @@ void function HSD_MD_ClientSample_Thread()
 
 			if ( HSD_MD_ConVarInt( "hsd_md_cl_trace", 0 ) != 0 )
 			{
-				printt( format( "%s t=%.5f ft=%.5f %s ang=%s in_jump=%d in_duck=%d in_fwd=%d ax_fwd=%.3f ax_right=%.3f",
+				printt( format( "%s t=%.5f ft=%.5f %s ang=%s in_jump=%d in_duck=%d in_fwd=%d ax_fwd=%.3f ax_right=%.3f %s",
 					HSD_MD_Head( "cl", "frame" ), now, FrameTime(), HSD_MD_StateTokens( player ), HSD_MD_Angles( player ),
 					HSD_MD_InputHeld( player, IN_JUMP ), HSD_MD_InputHeld( player, IN_DUCK ),
 					HSD_MD_InputHeld( player, IN_FORWARD ),
-					HSD_MD_Axis( player, true ), HSD_MD_Axis( player, false ) ) )
+					HSD_MD_Axis( player, true ), HSD_MD_Axis( player, false ), HSD_MD_CameraTokens( player ) ) )
 			}
 
 			if ( ground == 0 && spd > peakSpeed )

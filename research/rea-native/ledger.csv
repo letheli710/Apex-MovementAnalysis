@@ -73,7 +73,11 @@ Z-01,Z,zipline jump-off,damped rope speed capped at ziplineJumpOffSpeed + sqrt(2
 Z-02,Z,end auto-detach,clamp(v.d; ziplineSpeed; ziplineDetachSpeed) = 600,M9/M10,same (residual 0),一致,,低,
 F-01,F,jump pad launch,PUSH * normalize(h + V*z); PUSH 1150; V 2.0,M4 same fit,JumpPad ability,一致,,低,
 F-02,F,ducked pad launch,client default jumppad_vert_override_ducked_scalar = 1 (Ghidra); effective 0.5 on the local build,M4: ducked V = 1.0 = 2 x 0.5,JumpPad ability,数值差,3,低,[hyb]: the local S3 dedi (SDK) sets 0.5; the real S21 server value is unknown
-CAM-01,C,view punch spring,two 3-axis damped springs; k 65; c 9; zeta ~0.56 (one overshoot),no R5 camera data,M5.5 CriticalSmoother (critically damped),只有代码,U,中,reference only; C3 frame capture
-CAM-02,C,landing view kick,speed-scaled kick; viewkickFallDistMin 10 / Max 70 ft / MaxScale 12 (N4-A); ducked x0.2,no R5 camera data,M5.5 landing feedback,只有代码,,中,C3 frame capture
+CAM-01,C,view punch spring,two 3-axis damped springs; k 65; c 9; zeta ~0.56 (one overshoot),C3: peak 0.15-0.17 s after landing; zero cross 0.46-0.58 s; one overshoot,M5.5 CriticalSmoother (critically damped),一致,U,中,reference only (M5.5 accepted)
+CAM-02,C,landing view kick,speed-scaled kick; viewkickFallDistMin 10 / Max 70 ft / MaxScale 12; second spring x0.2; x0.2 when player+0x1c7 set,C3: peaks 1.8-43 deg for 276-1156 u/s inside predicted +-19 % range,M5.5 landing feedback,一致,,中,
+CAM-01b,C,punch vs aim,EyeAngles is virtual; not readable statically,C3: aim pitch change 0.0 in all 26 landings; punch moves camera only,M5.5 not checked,只有实测,,中,check whether M5.5 landing feedback moves aim
+CAM-02b,C,landing kick x0.2 condition,x0.2 when byte player+0x1c7 set (read as ducked in N2-C),C3: duck held at landing -> full kick (2.26-2.40 vs 1.85-2.54 deg),,未定,1,低,find what player+0x1c7 is
 CAM-05,C,strafe roll,sv_rollangle = 0: off in S21,no R5 camera data,not checked,只有代码,,低,
-CAM-05b,C,slide tilt,state toward 1 while sliding; scaled by speed; 15 deg; rates 5 / 2.5,no R5 camera data,M5.5 slide camera,只有代码,,中,compare with M5.5; C3
+CAM-05b,C,slide tilt,state toward 1 while sliding; scaled by speed; 15 deg; rates 5 / 2.5,C3: straight slide 0.05-0.08 deg; slide with ~30 deg view turn 6.35 deg,M5.5 slide camera,一致,,中,compare with M5.5
+CAM-09,C,slide FOV,slideFOVScale 1.1; lerp in / out 0.25 s,C3: 89 -> 97.9,M5.5 slide camera,一致,,低,
+CAM-10,C,slide eye sink,"eye = lerp(stand, crouch, duck fraction); duck timer 200 ms in slide",C3: eye 64 -> 32 in 0.208-0.213 s,M5.5 slide camera,一致,,中,compare with M5.5
