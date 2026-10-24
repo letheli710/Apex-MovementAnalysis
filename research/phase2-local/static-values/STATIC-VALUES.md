@@ -18,7 +18,7 @@
 | [setfile] | 玩家设置文件（setfile）里的值。setfile 是编译后的 rpak 资产，本地没有明文，这里的数是运行时读出来的（E0 census，见下文）。 |
 | [script] | `PS:` 下的 `.nut` / `.gnut` 常量，或武器 `.txt` 键值。 |
 | [sdk-cvar] | SDK 源码里注册的 ConVar 默认值。只对 SDK 自己加的机制有效（mantle boost、lurch 截断、ziprail 调参等）。 |
-| [native-cvar] | 引擎原生 ConVar。默认值写在 exe 的注册代码里，用 Ghidra 读出，再用运行时读数核对（见 §5.2）。 |
+| [native-cvar] | 引擎原生 ConVar。默认值写在 exe 的代码里，静态方式**定不下来**（见 §5）。 |
 
 > **关于 setfile 数值的出处。** Phase 1 已确认 setfile 不以文本形式存在（`../../phase1/Movement-Analysis.md` §0）。所以这份表里的 setfile 数值都来自 E0 census：每个会话开始时，用客户端命令 `bridge_classvar_get <key>`（`SDK:game/client/classvar_natives.cpp`）逐个读取当前传奇的 class var，结果写进 `data/<session>/report/census.csv`。读出来的就是 setfile 本身的值，没有拟合。M2 的实测和这些值的误差在 0.1 % 以内（`../m2/PARAMETER-TABLE.md`）。
 >
@@ -247,10 +247,25 @@ SDK 说明了倍率怎么进入移动：`SetupMove` 里是 `modifier(w) × modif
 | `sv_slope_launch` | 0 | 社区功能 | `SDK:game/server/slope_launch.cpp:25` |
 | `sv_source_push_boost` | 1 | 社区功能（Source 式 trigger_push） | `SDK:game/server/source_push.cpp:30` |
 
-### 5.2 引擎原生 ConVar [native-cvar]
+### 5.2 引擎原生 ConVar [native-cvar]：静态无法确定
 
-已移到 REA 原生研究文件夹：[../../rea-native/convar-defaults/](../../rea-native/convar-defaults/README.md)。
-那里有 35 个原生 ConVar 的默认值，每个值都带注册函数地址和 exe 的 SHA-256，并附 dedi 和 dx12 客户端的运行时核对。
+`sv_gravity`、`skip_time`、`skip_speed_reduce`、`skip_speed_retain`、`skip_jump_height_fraction`、`skip_jump_height_speed`、`jump_grace_jump`、`jump_grace_cutoff_speed`、`sv_friction`、`sv_stopspeed`、`sv_airaccelerate`、`sv_maxspeed`、`sv_maxvelocity`。这些名字都在 `<game root>/r5apex.exe` 里，大部分也在 `r5apex_ds.exe` 里（`jump_grace_*` 只在客户端）。
+
+默认值是在代码里注册的，不在数据表里。我试过两种静态方法：
+1. 扫字符串相邻关系；
+2. 扫注册代码附近 RIP 相对的 `lea`。
+
+两种方法给出的值都对不上已知事实，比如 `sv_gravity` 对上的是 "100"，而 M2 实测重力是 749.91 ± 0.71。所以这里**一个数也不报**。要拿精确值有两条路：
+- 运行时在控制台执行 `help <cvar>`，或者用 runner 读取。这是最快的办法。
+- 配置 Ghidra，再用 REA 反编译注册函数。
+
+已经由别的证据确定的只有这些：
+
+| 项 | 值 | 证据 |
+|---|---|---|
+| `sv_gravity` | 750 | M2 实测 749.91；SDK 后备值 750（`SDK:game/server/slide_super_jump.cpp:57`） |
+| `skip_speed_reduce` | 100（"stock"） | 脚本注释（`PS:vscripts/sh_surf_movement.gnut:88-89`）。属于转述，不是读出的默认值 |
+| `jump_grace_cutoff_speed` | 1100（推断） | SDK 注释说 `bridge_lurch_cutoff_speed` 是照它设的（`SDK:game/server/tapstrafe.cpp:31-36`） |
 
 ### 5.3 cfg 文件里的设置
 
