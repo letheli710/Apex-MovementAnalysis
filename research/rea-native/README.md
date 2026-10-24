@@ -19,6 +19,7 @@
 | [NATIVE-MAP.md](NATIVE-MAP.md)、`map/*.csv` | N1 骨架地图：函数、参数读取、setfile 键、SDK 钩子 |
 | [camera/CAMERA-INVENTORY.md](camera/CAMERA-INVENTORY.md)、`map/camera-effects.csv` | N1 / C1 第一人称镜头效果清单，见计划 §5.1 |
 | `n0/`、`n1/` | 各阶段的脚本和输入（只有地址和名字） |
+| `n4/` | N4 实测：[N4A-READBACK.md](n4/N4A-READBACK.md)（setfile 键补读）、[N4B-KEYTURN.md](n4/N4B-KEYTURN.md)（地面急转）和脚本 |
 | `subsystems/N2-*.md` | N2 各子系统的公式提取（P1：G、L、J、S、T、M；P2：钩爪、滑索、跳板；镜头 C2） |
 | `n2/` | N2 的反编译和标注工具（反编译输出只写进 `local/`） |
 | [CROSSCHECK-LEDGER.md](CROSSCHECK-LEDGER.md)、[ledger.csv](ledger.csv) | N3 代码 × 实测 × Unity 对照账本（78 条） |
