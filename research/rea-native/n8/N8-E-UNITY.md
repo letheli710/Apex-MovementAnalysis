@@ -37,12 +37,27 @@
 | Alter 大招 Void Nexus | 没有 | 规则来自脚本（N8-B §5）；本地单人测不了旅行（N8-D §2） |
 | Loba | 搁置 | 默认不做 |
 
-## 4. 请用户决定
+## 4. 用户决定（2026-10-24）
 
-逐条选"改 / 不改"：E-1、E-2、E-3、E-4、E-6。我的建议是：
-- E-1 改（有原生代码和实测两层证据，手感上能感觉到）；
-- E-2、E-3 一起改成 1.0 s；
-- E-4 保留设计值；
-- E-6 标明是设计值。
+> 按你的建议：E-1 改，E-2/E-3 改成 1.0 s，E-4 保留设计值，E-6 标明是设计值，E-5 不改。
 
-E-5 不建议改。
+| # | 决定 | Unity 里怎么做的（分支 `n8e/teleport-native`） |
+|---|---|---|
+| E-1 | 改 | `JumpPadParams.phasedNoLaunch`：本身的 Void 在相位中时，跳板不发射。由 `MovementConfig.padPhasedNoLaunch` 打开（Reference 打开，Fun 继承）；配置之外（回放工具、M4 跳板回放）保持关闭 |
+| E-2 | 改成 1.0 s | `RiftParams.reuseDebounce` 0.5 → 1.0 |
+| E-3 | 改成 1.0 s | 新参数 `PhaseBreachParams.reentryDebounce = 1.0`：离开出口 1.0 s 之后才能再进门 |
+| E-4 | 保留设计值 | 不改 |
+| E-5 | 不改 | 不改 |
+| E-6 | 标明设计值 | `portal` 原语和 Revenant-Wraith 预设的说明写明"design, not S21" |
+
+## 5. 验证
+
+- 新测试 `N8ETeleportTests`（8 个）：
+  - 相位中走过跳板不发射（Reference / Fun）；
+  - 没有 Void、或者相位结束后，跳板照常发射；
+  - Rift 和 Breach 的防抖都是 1.0 s；
+  - 设计值标签。
+- M2 / M1、M3、M4 的回放报告和 M10-W 基线逐字节相同（只有时间戳不同），回放电机没动。
+- EditMode 2027 / 2027、PlayMode 1 / 1。
+- 构建 + smoke：演示 238 / 238 符合预期，赛道一圈 79.12 s（没变）。
+- HSD-Unity PR：https://github.com/letheli710/HSD-Unity/pull/27（提交 `a97b08f`）。

@@ -89,7 +89,7 @@ N4-A / N4-B 做完后回来做，顺序可以再定：
 
 1. [x] **N6 补测**（`n6/N6-MEASURE.md`）：P-08、P-10 查清；P-07 第四次场景测出（Gibraltar + 台阶 + 天花板：空中超时 1.5 s）；CAM-05 / 07 / 11 / 20 实测一致，CAM-13 未定，CAM-18 [inf]。原计划：钩爪 P-07（低速超时）、P-08（越过锚点）、P-10（视线离开脱钩）；镜头 CAM-18 / 19（cockpit sway / spring）、冲刺倾斜、钩爪和滑索横滚的逐帧实测
 2. [x] **N7 用到 Unity 上**（`n7/N7-UNITY.md`）：用户 2026-10-24 决定 12 条全部按原版改；HSD-Unity 分支 `n7/native-reference`；只改 Reference，回放逐字节不变；待用户试玩（`n7/PLAYTEST-GUIDE-N7.md`）
-3. [x] **N8 传送机制研究**（Alter、Wraith、Loba、Ash）：A 共用系统、B 规则、C 原生相位、D 实测、E Unity 对照都完成（`n8/`）；E 的修改建议等用户决定（`n8/N8-E-UNITY.md`）
+3. [x] **N8 传送机制研究**（Alter、Wraith、Loba、Ash）：A 共用系统、B 规则、C 原生相位、D 实测、E Unity 对照都完成（`n8/`）；E 用户已决定（2026-10-24）：E-1 / E-2 / E-3 改、E-6 标明设计值、E-4 / E-5 不改，已在 HSD-Unity `n8e/teleport-native` 实现（`n8/N8-E-UNITY.md` §4–5）
 
 - [x] **N5** 汇总报告和 Reference 修改建议 → `N-REPORT.md`、`n5/REFERENCE-CHANGES.md`、`n5/FIT-TO-NATIVE.md`（核对 Unity 后更正 G-07、S-09、L-10、CAM-01b）
   - [ ] 更新 `STATIC-VALUES.md` 和 `convar-defaults/`（等另一个会话的 PR #28 合并）
