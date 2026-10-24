@@ -1318,6 +1318,48 @@ for _n, (_o, _yw, _pt, _s) in _M10G.items():
     SCHEDULE_YAW[_n] = _yw
     SCHEDULE_PITCH[_n] = _pt
 SCHEDULE_PRE["m10_g"] = _M10_GR_LOG
+# N6 P-07 round 3: the grapple on Gibraltar (grapple_attachVerticalBoost 0, Pathfinder 200), so no attach hop lifts the body
+# over the ~33 u ledge of --geometry h20. Run with --legend gibraltar and without --kit: every reset puts mp_ability_grapple in
+# the tactical slot (refilled, range mod removed) before the M10 grapple logger. Pitch 5.0-6.0 deg down: floor 570-690 u ahead,
+# beyond the ledge (the ray clears its 229 u deep top), within the 850 range.
+_N6_GIB_GRAPPLE = (
+    'entity n6gw = p.GetOffhandWeapon( OFFHAND_TACTICAL )\n'
+    'if ( !IsValid( n6gw ) || n6gw.GetWeaponClassName() != "mp_ability_grapple" )\n'
+    '{\n'
+    '\tif ( IsValid( n6gw ) ) p.TakeOffhandWeapon( OFFHAND_TACTICAL )\n'
+    '\tp.GiveOffhandWeapon( "mp_ability_grapple", OFFHAND_TACTICAL, [] )\n'
+    '}\n'
+    'DevAbilities_RefillPlayer( p, true )\n'
+    'entity n6rg = p.GetOffhandWeapon( OFFHAND_TACTICAL )\n'
+    'if ( IsValid( n6rg ) && n6rg.HasMod( "infinite_abilities_grapple" ) ) n6rg.RemoveMod( "infinite_abilities_grapple" )\n'
+    'pre = " n6tac=" + p.GetOffhandWeapon( OFFHAND_TACTICAL ).GetWeaponClassName()\n')
+_N6GIB = {}
+for _p in (5.0, 5.5, 6.0):
+    _k = "m10_g_n6gib%02d" % round(_p * 10)
+    _N6GIB[_k] = None
+    SCHEDULES[_k] = "wait 72; tap offhand1; wait 3.0s"
+    SCHEDULE_ORIGIN[_k] = (-13723.0, 6500.0, FLOOR_Z)
+    SCHEDULE_YAW[_k] = 0.0
+    SCHEDULE_PITCH[_k] = _p
+    SCHEDULE_PRE[_k] = _N6_GIB_GRAPPLE + _M10_GR_LOG
+# Round 4: the ground pull lifts the body (grapple_initialImpulseOffGround) over the ledge, so a ceiling (the M10 Octane rock
+# pitched 90 deg, underside 80 u above the floor, ~450 u along x centred at x -13800) over the start keeps the body below the
+# ledge top; the eye-height ray (60 u) still passes between the ceiling and the ledge to the floor beyond.
+_N6_CEIL = ('foreach ( entity e in GetEntArrayByScriptName( "hsd_n6_ceil" ) ) e.Destroy()\n'
+            'asset n6rk = $"%s"\n'
+            'if ( !ModelIsPrecached( n6rk ) ) MapEdit_PrecacheModel( n6rk )\n'
+            '{ entity n6ce = CreatePropDynamic( n6rk, <-13800.0, 6500, %.2f>, <90, 0, 0>, SOLID_VPHYSICS, -1.0 ); n6ce.SetScriptName( "hsd_n6_ceil" ) }\n'
+            'pre += " n6ceil=80"\n')
+for _p in (5.0, 5.5):
+    _k = "m10_g_n6ceil%02d" % round(_p * 10)
+    _N6GIB[_k] = None
+    SCHEDULES[_k] = "wait 72; tap offhand1; wait 3.0s"
+    SCHEDULE_ORIGIN[_k] = (-13723.0, 6500.0, FLOOR_Z)
+    SCHEDULE_YAW[_k] = 0.0
+    SCHEDULE_PITCH[_k] = _p
+    SCHEDULE_PRE[_k] = _N6_GIB_GRAPPLE + (_N6_CEIL % (M10_ROCK, FLOOR_Z + 80.0 + 110.0)) + _M10_GR_LOG
+# exact names must win over the "m10_g" prefix (matched in insertion order)
+SCHEDULE_PRE = {**{k: SCHEDULE_PRE[k] for k in _N6GIB}, **{k: v for k, v in SCHEDULE_PRE.items() if k not in _N6GIB}}
 
 # ---- M10 ③ Octane (legend octane --kit, --m10-log). Every m10_o* reset: full health, the pad upgrades (passives) taken away
 # and given per schedule, then a server logger (health, speed_boost severity, stim visual effect; 10 Hz, 10 s). Pads are created
