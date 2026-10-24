@@ -2,7 +2,7 @@
 
 日期 2026-10-24。用户决定：[../n5/REFERENCE-CHANGES.md](../n5/REFERENCE-CHANGES.md) 的 12 条**全部按原版改**。
 
-- HSD-Unity 分支 `n7/native-reference`。
+- HSD-Unity 分支 `n7/native-reference`（[letheli710/HSD-Unity#25](https://github.com/letheli710/HSD-Unity/pull/25)）。
 - 构建在 `HSD-Build\N7\HSD-Practice.exe`，试玩说明见 [PLAYTEST-GUIDE-N7.md](PLAYTEST-GUIDE-N7.md)。
 
 ## 0. 原则
@@ -32,7 +32,7 @@
 
 | 项 | 结果 |
 |---|---|
-| EditMode | 见 §4 |
+| EditMode | **1995 / 1995** |
 | PlayMode | 1 / 1 |
 | 回放 M1 / M2 / M3 / M4 | 和 M10 基线**逐字节相同** |
 | 演示（smoke） | **238 / 238** 判定符合预期（119 个成功、119 个失败案例都失败） |
@@ -63,5 +63,3 @@
   - 测试容差从 3.5 放到 4.0，并注明原因。
   - 如果以后要更精确，应该重新拟合攀爬的接住规则，而不是关掉原生增益。
 - **课程圈速 +0.14 s**（78.98 → 79.12）：自动驾驶的路线是按旧规则调的。滑铲冷却变长、超速连跳不再一下降到 299、地面转向的细节，这些都会影响它。没有逐段分析。
-
-EditMode 最终结果：见本文件末尾的更新。
