@@ -211,3 +211,32 @@ BOOST 之后到落地前，lurch / tap-strafe 被关掉（`mantle_boost_disables
   - 镜头在攀爬时先低头再回正，幅度是否合适（站姿 h120+ 峰值约 4.8°）；
   - 蹲姿高墙的长窗口（约 0.47 s）是否太宽松。
   - **这些曲线和分界都是实测平均值或设计值，还没有试玩过。**
+
+## 9. 调参后不失效（B1-H，用户 2026-10-24）
+
+用户试玩 B1 后觉得手感不错，并提问：以后调整数值，这套会不会失效？
+
+**不会跟着失效的部分**：
+- 窗口用攀爬进度表示，不用秒数。攀爬时长改了，窗口跟着缩放。
+- BOOST 速度从当前参数算出（姿态速度 × 加速系数 + 跳跃高度）。
+- 圆环自己算中心，不受镜头强度影响。
+- 判定阈值（1.5°、进度 0.5）是 SDK 常数。
+
+**原来的两个弱点和改法**：
+1. **类别分界原来写死在高度上**（rise 39 / 63），是按当时的攀爬时长公式手算的。
+   - 改法：分界改成按攀爬时长判断。存的是 R5 三类的实测时长 0.313 / 0.467 / 0.571 s，取中点 0.390 / 0.519 s。
+   - 每次攀爬用自己的 T 选类（`MantleBoostS27.ClassifyByTime`）。
+   - 这样无论 `mantleTimeBase` / `mantleTimePerUnit` 怎么调，每类窗口的秒数都保持 R5 的长度。
+   - 在 Reference 的公式上，分界等于 rise 39.5 / 62.9（原来 39 / 63）。
+2. **原来没有测试读取当前参数**：B1 的测试用的是 R5 的时长，演示、smoke 和圈速都关着 BOOST。
+   - 新增守护测试：
+     - `TheClassFollowsTheMantleTiming`：三组时长参数下，选类都跟着时长走；
+     - `TheLiveConfigsKeepTheStandingWindowInTheR5Range`：Reference 和 Fun 的当前参数下，探测允许的每个攀爬高度，站姿窗口都在 0.09–0.18 s（R5 0.119–0.158）；
+     - `TheLiveConfigsKeepACrouchedWindowOfAtLeastTwoCommands`；
+     - `A2Climb.S27WindowSitsWhereTheCurveSaysOnTheLiveMantle`：真实攀爬（Reference 和改过时长的版本）里，窗口内两帧按跳是 BOOST，窗口前两帧是 FAILED；BOOST 速度等于失败跳的姿态速度 × 加速系数。
+   - 以后改数值，只要让 BOOST 失效，这些测试就会失败。
+
+**已知差别（没改，等用户决定）**：
+- R5 的蹲姿攀爬更长（0.517 / 0.625 / 0.813 s），Unity 的攀爬时长不分站蹲。
+- 所以 Unity 里蹲姿窗口的秒数比 R5 短，例如蹲姿 h80 约 0.05 s，R5 约 0.09 s。
+- 守护测试只要求这个窗口至少两帧。
