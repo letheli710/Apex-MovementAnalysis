@@ -18,5 +18,5 @@
 | G-03 | 冲刺加速边界 | M2 规则 s + a·dt ≥ speed·msc | 固定边界 msc·speed − 1 | 低 | 不需要（M2 已涵盖） | | **改**（N7：固定边界） |
 | J-04 | 超速连跳 | min(h, 299) | max(299, h − 100) | 低 | 以 450 连跳，预期出口 350 | **已确认**（用 405 做的）：405.1 → 305.1 = h − 100，Unity 会给 299（N4C_hop_slide） | **改**（N7：max(299, h − 100)） |
 | J-05 | 空中残余增益 | 没有 | extra air accel 2.0 + 3D 上限 | 低 | 不需要（M2 已吻合） | | **改**（N7：extra air accel 2.0） |
-| CAM-01 | punch 弹簧 | M5.5 临界阻尼平滑 | 欠阻尼弹簧（k 65、c 9、ζ ≈ 0.56） | 参考 | C3 逐帧实测 | **已确认**（`C3_camera` / `C3_drop900` / `C3_jumpland`）：峰值约 0.16 s，约 0.48 s 过零，回弹一次；26 次落地准星都没动（punch 只动镜头），见 `camera/C3-CAPTURE.md` | M5.5 是用户验收过的设计，默认不改 |
+| CAM-01 | punch 弹簧 | M5.5 临界阻尼平滑 | 欠阻尼弹簧（k 65、c 9、ζ ≈ 0.56） | 参考 | C3 逐帧实测 | **已确认**（`C3_camera` / `C3_drop900` / `C3_jumpland`）：峰值约 0.16 s，约 0.48 s 过零，回弹一次；26 次落地准星都没动（punch 只动镜头），见 `camera/C3-CAPTURE.md` | M5.5 是用户验收过的设计，默认不改。**用户决定（2026-10-24）：镜头全部改成原版（N8-CAM），M5.5 原样保留可切换**，见 [camera/CAMERA-REFERENCE.md](camera/CAMERA-REFERENCE.md) |
 | S-09 | 斜坡滑铲 | Reference：g·n_z·n_h（M6-A4 的项，和原生相同）+ M8-B 的"按住下蹲"规则。M8 拟合 147 + 342·sinθ 只写在文档里，Unity 没用（N5 核对更正） | 沿坡水平加速度 g·sinθ·cosθ（重力半步里的滑铲贴地项） | 中 | 不需要（M8 数据在 3 % 以内吻合，`n4/N4D-REMAINING.md` §3） | **已对照** | 不需要改（Reference 已是原生公式） |
