@@ -649,6 +649,25 @@ def _n4d_cut_pre(s):
 for _s in (1000, 1090, 1110, 1200):
     SCHEDULE_PRE["n4d_cut%d" % _s] = _n4d_cut_pre(_s)
     SCHEDULES["n4d_cut%d" % _s] = "wait 72; tap jump; wait 18; tap moveright; wait 216"
+# C3 (rea-native camera feel): frame-by-frame camera capture with the HSD.MoveDiag camera tokens.
+# Drops: the player is lifted by H after the reset and falls (landing view kick vs fall speed; ducked x0.2).
+for _h in (96, 160, 400):
+    SCHEDULE_PRE["c3_drop%d" % _h] = "p.SetOrigin( p.GetOrigin() + <0, 0, %d> )\npre = \" drop=%d\"\n" % (_h, _h)
+    SCHEDULES["c3_drop%d" % _h] = "wait 216"
+# 900 u drops land ~1.55 s after the reset, after the schedule has started, so the duck is held at the landing.
+for _n, _steps in (("c3_drop900", "wait 288"), ("c3_drop900_duck", "down duck; wait 288; up duck; wait 72")):
+    SCHEDULE_PRE[_n] = "p.SetOrigin( p.GetOrigin() + <0, 0, 900> )\npre = \" drop=900\"\n"
+    SCHEDULES[_n] = _steps
+# The runner's settle waits for the ground, so a teleport drop always lands before the schedule starts. The ducked
+# landing is measured on a standing jump instead: duck pressed in the air, held through the landing.
+SCHEDULES["c3_jumpland"] = "wait 72; tap jump; wait 216"
+SCHEDULES["c3_jumpland_duck"] = "wait 72; tap jump; waitair; wait 12; down duck; wait 216; up duck; wait 72"
+SCHEDULE_PRE["c3_drop400_duck"] = "p.SetOrigin( p.GetOrigin() + <0, 0, 400> )\npre = \" drop=400 duck\"\n"
+SCHEDULES["c3_drop400_duck"] = "down duck; wait 216; up duck; wait 72"
+# Slides: straight (eye sink, no tilt) and with the view turned ~30 deg right during the slide (tilt).
+SCHEDULES["c3_slide_straight"] = "wait 72; down speed; down forward; wait 288; down duck; wait 10; up forward; up speed; wait 288; up duck; wait 144"
+SCHEDULES["c3_slide_turn"] = ("set cl_yawspeed 90; wait 72; down speed; down forward; wait 288; down duck; wait 10; up forward; up speed; "
+                              "down right; wait 48; up right; wait 240; up duck; wait 144")
 SCHEDULE_PRE["m8r2_jd_d800_mvy"] = _r2_jd_pre(800, "tg.NonPhysicsMoveTo( tg.GetOrigin() + <0, 300, 0>, 1.0, 0.0, 0.0 )")
 SCHEDULE_PRE["m8r2_jd_d800_mvx"] = _r2_jd_pre(800, "tg.NonPhysicsMoveTo( tg.GetOrigin() + <600, 0, 0>, 1.5, 0.0, 0.0 )")
 # Echo position log (server, 10 Hz, 9 s) for the real-tactical trials
@@ -2001,7 +2020,7 @@ AgentLink_Reply( out )
 
 DEFAULT_ORIGIN_SCHEDULES = {"basic","e1_walk", "e1_sprint", "e1_crouch", "e1_back", "e1_side", "e1_diag", "e1_turn",
                             "e2_strafe", "e2_noinput", "e2_keepfwd", "e4_stand", "e4_hop0", "e4_hop3", "e4_hop43", "e5_slide",
-                            "e5_slidejump02", "e5_slidejump06", "n4b_wd", "n4b_ws", "n4b_ad", "n4b_wwd", "n4c_hop_d0", "n4c_hop_d1", "n4c_slidechain", "n4c_slidechain_ctrl", "n4c_slidesteer", "n4d_cut1000", "n4d_cut1090", "n4d_cut1110", "n4d_cut1200"}
+                            "e5_slidejump02", "e5_slidejump06", "n4b_wd", "n4b_ws", "n4b_ad", "n4b_wwd", "n4c_hop_d0", "n4c_hop_d1", "n4c_slidechain", "n4c_slidechain_ctrl", "n4c_slidesteer", "n4d_cut1000", "n4d_cut1090", "n4d_cut1110", "n4d_cut1200", "c3_drop96", "c3_drop160", "c3_drop400", "c3_drop400_duck", "c3_slide_straight", "c3_slide_turn", "c3_drop900", "c3_drop900_duck", "c3_jumpland", "c3_jumpland_duck"}
 
 
 def origin_for(name, default):

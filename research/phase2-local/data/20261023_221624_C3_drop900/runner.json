@@ -1,0 +1,215 @@
+{
+ "schema": "hsd-runner/2",
+ "label": "C3_drop900",
+ "created": "20261023_221532",
+ "schedules": {
+  "c3_drop900": {
+   "steps": [
+    "wait 240"
+   ],
+   "frames": 240
+  },
+  "c3_drop900_duck": {
+   "steps": [
+    "down duck",
+    "wait 240",
+    "up duck",
+    "wait 60"
+   ],
+   "frames": 300
+  }
+ },
+ "origin": [
+  -14750.0,
+  6500.0,
+  294.92
+ ],
+ "yaw": 0.0,
+ "client_fps": 120.0,
+ "census": true,
+ "legend": "gibraltar",
+ "legend_reply": "{\"changed\":[\"unnamed\"],\"legend\":\"character_gibraltar\",\"ok\":true}",
+ "trials": [
+  {
+   "trial": 900,
+   "run": 90,
+   "batch": 900,
+   "schedule": "c3_drop900",
+   "yaw": 0.0,
+   "origin": [
+    -14750.0,
+    6500.0,
+    294.92
+   ],
+   "schedule_frames": 240,
+   "reset": "[HSD-RESET] ver=1 batch=900 run=90 ent=1 o=-14750,6500,1194.92 vel=0,0,0 yaw=0 ground=0 slide=0 weapon=mp_weapon_melee_survival t=46.85 drop=900",
+   "scheduled": "scheduled trial=900 fc=3237",
+   "sched_lines": [
+    "[HSD-SCHED] ver=1 trial=900 run=90 edge=start frame=0 fc=3444 pt=47.6138 t=48.5653 o=-14750,6500,294.92 yaw=0 settle_frames=207",
+    "[HSD-SCHED] ver=1 trial=900 run=90 edge=end frame=240 fc=3684 pt=49.6144 t=50.5653 o=-14750,6500,294.92"
+   ],
+   "log_gap": false,
+   "measured_fps": 119.96,
+   "ok": true,
+   "why": "",
+   "warmup": true
+  },
+  {
+   "trial": 20221,
+   "run": 20221,
+   "batch": 20221,
+   "schedule": "c3_drop900",
+   "yaw": 0.0,
+   "origin": [
+    -14750.0,
+    6500.0,
+    294.92
+   ],
+   "schedule_frames": 240,
+   "reset": "[HSD-RESET] ver=1 batch=20221 run=20221 ent=1 o=-14750,6500,1194.92 vel=0,0,0 yaw=0 ground=0 slide=0 weapon=mp_weapon_melee_survival t=51.75 drop=900",
+   "scheduled": "scheduled trial=20221 fc=3823",
+   "sched_lines": [
+    "[HSD-SCHED] ver=1 trial=20221 run=20221 edge=start frame=0 fc=4031 pt=52.5071 t=53.457 o=-14750,6500,294.92 yaw=0 settle_frames=208",
+    "[HSD-SCHED] ver=1 trial=20221 run=20221 edge=end frame=240 fc=4271 pt=54.5077 t=55.457 o=-14750,6500,294.92"
+   ],
+   "log_gap": false,
+   "measured_fps": 119.96,
+   "ok": true,
+   "why": "",
+   "warmup": false
+  },
+  {
+   "trial": 20222,
+   "run": 20222,
+   "batch": 20222,
+   "schedule": "c3_drop900",
+   "yaw": 0.0,
+   "origin": [
+    -14750.0,
+    6500.0,
+    294.92
+   ],
+   "schedule_frames": 240,
+   "reset": "[HSD-RESET] ver=1 batch=20222 run=20222 ent=1 o=-14750,6500,1194.92 vel=0,0,0 yaw=0 ground=0 slide=0 weapon=mp_weapon_melee_survival t=56.65 drop=900",
+   "scheduled": "scheduled trial=20222 fc=4411",
+   "sched_lines": [
+    "[HSD-SCHED] ver=1 trial=20222 run=20222 edge=start frame=0 fc=4619 pt=57.4091 t=58.357 o=-14750,6500,294.92 yaw=0 settle_frames=208",
+    "[HSD-SCHED] ver=1 trial=20222 run=20222 edge=end frame=240 fc=4859 pt=59.4102 t=60.357 o=-14750,6500,294.92"
+   ],
+   "log_gap": false,
+   "measured_fps": 119.93,
+   "ok": true,
+   "why": "",
+   "warmup": false
+  },
+  {
+   "trial": 20223,
+   "run": 20223,
+   "batch": 20223,
+   "schedule": "c3_drop900",
+   "yaw": 0.0,
+   "origin": [
+    -14750.0,
+    6500.0,
+    294.92
+   ],
+   "schedule_frames": 240,
+   "reset": "[HSD-RESET] ver=1 batch=20223 run=20223 ent=1 o=-14750,6500,1194.92 vel=0,0,0 yaw=0 ground=0 slide=0 weapon=mp_weapon_melee_survival t=61.6 drop=900",
+   "scheduled": "scheduled trial=20223 fc=4998",
+   "sched_lines": [
+    "[HSD-SCHED] ver=1 trial=20223 run=20223 edge=start frame=0 fc=5205 pt=62.2948 t=63.2903 o=-14750,6500,294.92 yaw=0 settle_frames=207",
+    "[HSD-SCHED] ver=1 trial=20223 run=20223 edge=end frame=240 fc=5445 pt=64.2955 t=65.2952 o=-14750,6500,294.92"
+   ],
+   "log_gap": false,
+   "measured_fps": 119.96,
+   "ok": true,
+   "why": "",
+   "warmup": false
+  },
+  {
+   "trial": 20224,
+   "run": 20224,
+   "batch": 20224,
+   "schedule": "c3_drop900_duck",
+   "yaw": 0.0,
+   "origin": [
+    -14750.0,
+    6500.0,
+    294.92
+   ],
+   "schedule_frames": 300,
+   "reset": "[HSD-RESET] ver=1 batch=20224 run=20224 ent=1 o=-14750,6500,1194.92 vel=0,0,0 yaw=0 ground=0 slide=0 weapon=mp_weapon_melee_survival t=66.5 drop=900",
+   "scheduled": "scheduled trial=20224 fc=5586",
+   "sched_lines": [
+    "[HSD-SCHED] ver=1 trial=20224 run=20224 edge=start frame=0 fc=5791 pt=67.1797 t=68.175 o=-14750,6500,294.92 yaw=0 settle_frames=205",
+    "[HSD-SCHED] ver=1 trial=20224 run=20224 edge=down key=duck frame=0 fc=5791 pt=67.18 t=68.175",
+    "[HSD-SCHED] ver=1 trial=20224 run=20224 edge=up key=duck frame=240 fc=6031 pt=69.1811 t=70.182",
+    "[HSD-SCHED] ver=1 trial=20224 run=20224 edge=end frame=300 fc=6091 pt=69.6811 t=70.682 o=-14750,6500,294.92"
+   ],
+   "log_gap": false,
+   "measured_fps": 119.93,
+   "ok": true,
+   "why": "",
+   "warmup": false
+  },
+  {
+   "trial": 20225,
+   "run": 20225,
+   "batch": 20225,
+   "schedule": "c3_drop900_duck",
+   "yaw": 0.0,
+   "origin": [
+    -14750.0,
+    6500.0,
+    294.92
+   ],
+   "schedule_frames": 300,
+   "reset": "[HSD-RESET] ver=1 batch=20225 run=20225 ent=1 o=-14750,6500,1194.92 vel=0,0,0 yaw=0 ground=0 slide=0 weapon=mp_weapon_melee_survival t=71.9 drop=900",
+   "scheduled": "scheduled trial=20225 fc=6234",
+   "sched_lines": [
+    "[HSD-SCHED] ver=1 trial=20225 run=20225 edge=start frame=0 fc=6439 pt=72.5826 t=73.582 o=-14750,6500,294.92 yaw=0 settle_frames=205",
+    "[HSD-SCHED] ver=1 trial=20225 run=20225 edge=down key=duck frame=0 fc=6439 pt=72.5828 t=73.582",
+    "[HSD-SCHED] ver=1 trial=20225 run=20225 edge=up key=duck frame=240 fc=6679 pt=74.5831 t=75.5822",
+    "[HSD-SCHED] ver=1 trial=20225 run=20225 edge=end frame=300 fc=6739 pt=75.0836 t=76.082 o=-14750,6500,294.92"
+   ],
+   "log_gap": false,
+   "measured_fps": 119.95,
+   "ok": true,
+   "why": "",
+   "warmup": false
+  },
+  {
+   "trial": 20226,
+   "run": 20226,
+   "batch": 20226,
+   "schedule": "c3_drop900_duck",
+   "yaw": 0.0,
+   "origin": [
+    -14750.0,
+    6500.0,
+    294.92
+   ],
+   "schedule_frames": 300,
+   "reset": "[HSD-RESET] ver=1 batch=20226 run=20226 ent=1 o=-14750,6500,1194.92 vel=0,0,0 yaw=0 ground=0 slide=0 weapon=mp_weapon_melee_survival t=77.3 drop=900",
+   "scheduled": "scheduled trial=20226 fc=6882",
+   "sched_lines": [
+    "[HSD-SCHED] ver=1 trial=20226 run=20226 edge=start frame=0 fc=7087 pt=77.9843 t=78.982 o=-14750,6500,294.92 yaw=0 settle_frames=205",
+    "[HSD-SCHED] ver=1 trial=20226 run=20226 edge=down key=duck frame=0 fc=7087 pt=77.9845 t=78.982",
+    "[HSD-SCHED] ver=1 trial=20226 run=20226 edge=up key=duck frame=240 fc=7327 pt=79.9854 t=80.982",
+    "[HSD-SCHED] ver=1 trial=20226 run=20226 edge=end frame=300 fc=7387 pt=80.4855 t=81.482 o=-14750,6500,294.92"
+   ],
+   "log_gap": false,
+   "measured_fps": 119.94,
+   "ok": true,
+   "why": "",
+   "warmup": false
+  }
+ ],
+ "view_cvars": {
+  "cl_yawspeed": "210",
+  "cl_pitchspeed": "225"
+ },
+ "both_cvars": {},
+ "server_cvars": {},
+ "client_exec": []
+}

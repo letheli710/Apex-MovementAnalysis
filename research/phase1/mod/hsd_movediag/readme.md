@@ -24,7 +24,7 @@ Full procedure: `research/phase2-prep/LOCAL-SETUP.md`.
 | ConVar | Default | Effect |
 |---|---|---|
 | `hsd_md_enable` | 1 | master switch |
-| `hsd_md_cl_trace` | 0 | client: one `kind=frame` line per frame |
+| `hsd_md_cl_trace` | 0 | client: one `kind=frame` line per frame; it ends with camera tokens `cpos` / `cang` (camera, with punch and roll), `epos` / `eang` (eye and aim), `vv` (aim vector), `fov` (`cpos=nan` if not readable) |
 | `hsd_md_sv_trace` | 0 | dedi: one `kind=frame` line per server frame per player |
 | `hsd_md_run <n>` | 0 | trial label copied into every line (`run=`); set it on both consoles |
 | `hsd_md_dump_now 1` | 0 | prints the player-settings values once on that engine (`kind=setting`), then resets to 0 |
