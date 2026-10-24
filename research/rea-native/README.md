@@ -25,6 +25,7 @@
 | `n2/` | N2 的反编译和标注工具（反编译输出只写进 `local/`） |
 | [CROSSCHECK-LEDGER.md](CROSSCHECK-LEDGER.md)、[ledger.csv](ledger.csv) | N3 代码 × 实测 × Unity 对照账本（82 条） |
 | [UNITY-CHANGE-PROPOSALS.md](UNITY-CHANGE-PROPOSALS.md) | 待用户决定的 Unity 修改建议（来自账本，实测后统一决定，不自动改） |
+| `n6/` | N6 补测：[N6-MEASURE.md](n6/N6-MEASURE.md)（钩爪脱钩的 Frida 实测、剩下的镜头效果）、Frida 脚本和分析脚本 |
 | `n5/` | N5：[REFERENCE-CHANGES.md](n5/REFERENCE-CHANGES.md)（Reference 修改建议和影响范围）、[FIT-TO-NATIVE.md](n5/FIT-TO-NATIVE.md)（Unity 里可以升级为 [native] 的参数） |
 | `local/` | **只在本机**：反编译原文、Ghidra 导出、大段伪代码。不进 git（见 `.gitignore`） |
 

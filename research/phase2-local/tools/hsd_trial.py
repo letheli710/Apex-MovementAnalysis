@@ -662,6 +662,11 @@ for _n, _steps in (("c3_drop900", "wait 288"), ("c3_drop900_duck", "down duck; w
 # landing is measured on a standing jump instead: duck pressed in the air, held through the landing.
 SCHEDULES["c3_jumpland"] = "wait 72; tap jump; wait 216"
 SCHEDULES["c3_jumpland_duck"] = "wait 72; tap jump; waitair; wait 12; down duck; wait 216; up duck; wait 72"
+# N6 camera: sprint tilt (sprint + view turn at 90 / 180 deg/s) and strafe roll (sv_rollangle 0: expect none)
+SCHEDULES["n6_sprint_turn90"] = "set cl_yawspeed 90; wait 72; down speed; down forward; wait 1.0s; down right; wait 1.0s; up right; wait 0.6s; up forward; up speed; wait 0.5s"
+SCHEDULES["n6_sprint_turn180"] = "set cl_yawspeed 180; wait 72; down speed; down forward; wait 1.0s; down right; wait 1.0s; up right; wait 0.6s; up forward; up speed; wait 0.5s"
+SCHEDULES["n6_walk_turn90"] = "set cl_yawspeed 90; wait 72; down forward; wait 1.0s; down right; wait 1.0s; up right; wait 0.6s; up forward; wait 0.5s"
+SCHEDULES["n6_strafe"] = "wait 72; down moveright; wait 1.0s; up moveright; wait 0.3s; down moveleft; wait 1.0s; up moveleft; wait 0.5s"
 SCHEDULE_PRE["c3_drop400_duck"] = "p.SetOrigin( p.GetOrigin() + <0, 0, 400> )\npre = \" drop=400 duck\"\n"
 SCHEDULES["c3_drop400_duck"] = "down duck; wait 216; up duck; wait 72"
 # Slides: straight (eye sink, no tilt) and with the view turned ~30 deg right during the slide (tilt).
@@ -943,6 +948,9 @@ _M9ZD.update({
     "m9zd_slide_mount_up": ("r130", "s50", 0, "y0u45", "wait 72; down speed; down forward; wait 1.2s; down duck; wait 0.25s; tap use; up duck; "
                             "up forward; up speed; wait 2.0s"),
 })
+# N6 camera: zipline roll. After the 0.5 s mount state the view turns off the rope by 30 / 60 deg (cl_yawspeed 60 / 120 for 0.5 s)
+_M9ZD["m9zd_n6roll30"] = ("r130", "p25", 0, "fx", "set cl_yawspeed 60; wait 72; tap use; wait 0.7s; down right; wait 0.5s; up right; wait 1.5s")
+_M9ZD["m9zd_n6roll60"] = ("r130", "p25", 0, "fx", "set cl_yawspeed 120; wait 72; tap use; wait 0.7s; down right; wait 0.5s; up right; wait 1.5s")
 for _n, (_rope, _pos, _lat, _view, _steps) in _M9ZD.items():
     SCHEDULES[_n] = _steps
     _x = _m9_pos_x(_rope, _pos)
@@ -1299,6 +1307,11 @@ _M10G["m10_g_rel_t16"] = ((-14400.0, 6500.0, FLOOR_Z), 0.0, -10.0, "wait 72; tap
 _M10G["m10_g_rel_t18"] = ((-14400.0, 6500.0, FLOOR_Z), 0.0, -10.0, "wait 72; tap offhand1; wait 1.8s; tap offhand1; wait 3.0s")
 _M10G["m10_g_tether"] = ((-13930.0, 5900.0, FLOOR_Z), 0.0, -75.0, "set cl_yawspeed 120; wait 72; down speed; down forward; wait 1.8s; tap jump; up forward; "
                          "up speed; wait 0.2s; tap offhand1; down moveright; down right; wait 3.0s; up right; up moveright; wait 0.5s")
+# N6 (rea-native P-07): low-speed timeout. Run with --geometry h20 (the rock sunk to a ~33 u ledge, face x -13706). Standing
+# against the ledge face, the hook goes over the ledge to the floor ~750-850 u beyond it (pitch 4.0-4.6 deg down), so the rope
+# pulls the body into the ledge: speed stays below grapple_detachLowSpeedThreshold 250 and the ground timeout (0.7 s) releases it.
+for _p in (4.0, 4.3, 4.6):
+    _M10G["m10_g_n6low%02d" % round(_p * 10)] = ((-13723.0, 6500.0, FLOOR_Z), 0.0, _p, "wait 72; tap offhand1; wait 3.0s")
 for _n, (_o, _yw, _pt, _s) in _M10G.items():
     SCHEDULES[_n] = _s
     SCHEDULE_ORIGIN[_n] = _o
@@ -2020,7 +2033,7 @@ AgentLink_Reply( out )
 
 DEFAULT_ORIGIN_SCHEDULES = {"basic","e1_walk", "e1_sprint", "e1_crouch", "e1_back", "e1_side", "e1_diag", "e1_turn",
                             "e2_strafe", "e2_noinput", "e2_keepfwd", "e4_stand", "e4_hop0", "e4_hop3", "e4_hop43", "e5_slide",
-                            "e5_slidejump02", "e5_slidejump06", "n4b_wd", "n4b_ws", "n4b_ad", "n4b_wwd", "n4c_hop_d0", "n4c_hop_d1", "n4c_slidechain", "n4c_slidechain_ctrl", "n4c_slidesteer", "n4d_cut1000", "n4d_cut1090", "n4d_cut1110", "n4d_cut1200", "c3_drop96", "c3_drop160", "c3_drop400", "c3_drop400_duck", "c3_slide_straight", "c3_slide_turn", "c3_drop900", "c3_drop900_duck", "c3_jumpland", "c3_jumpland_duck"}
+                            "e5_slidejump02", "e5_slidejump06", "n4b_wd", "n4b_ws", "n4b_ad", "n4b_wwd", "n4c_hop_d0", "n4c_hop_d1", "n4c_slidechain", "n4c_slidechain_ctrl", "n4c_slidesteer", "n4d_cut1000", "n4d_cut1090", "n4d_cut1110", "n4d_cut1200", "c3_drop96", "c3_drop160", "c3_drop400", "c3_drop400_duck", "c3_slide_straight", "c3_slide_turn", "c3_drop900", "c3_drop900_duck", "c3_jumpland", "c3_jumpland_duck", "n6_sprint_turn90", "n6_sprint_turn180", "n6_walk_turn90", "n6_strafe"}
 
 
 def origin_for(name, default):
