@@ -56,7 +56,7 @@ ConVar 默认值来自 [convar-defaults/CONVAR-DEFAULTS.md](../convar-defaults/C
 | L-02 | 满强度 0.7 | λ = s × `jump_grace_strength`(0.7) | M3：λ = 0.70000（n = 44） | **一致** |
 | L-03 | 窗口 0.2 / 0.5 s，线性，按时间算 | `graceperiodmin` / `max` = 0.2 / 0.5，按时间 | M3：0.2 s 满强度，线性到 0.5 s 为 0，按时间不按帧，±1 ms | **一致** |
 | L-04 | **夹紧 209.3** | `jump_grace_max`(0.7) × msc(1.15) × `sprintspeed`(260) = **209.3** | M3、M8：209.30，不随入口速度变化 | **一致，出处找到**（convar-defaults 里这一项原来写着"没有 ConVar 出处"） |
-| L-05 | 夹紧随 msc 变化 | 公式里有 msc | 只测过 msc = 1.15 | **新预言**：stim、拿武器等改变 msc 时，夹紧应按比例变化。N4 可测 |
+| L-05 | 夹紧随 msc 变化 | 公式里有 msc | M4 Octane：stim 下夹紧 294.67 = 0.7 × 当前冲刺上限（`m4/octane/OCTANE-PRIMITIVES.md`） | **一致**。N2 起稿时漏看了 M4 的这条结论，HSD 的 `SkillBody` 已经这样实现 |
 | L-06 | 用按键不用轴向 | `require_tap` = 1 时按键合成 | M8 b1：W+A 时方向是等权 45°，不是第一条命令的轴（0.5, −1） | **一致** |
 | L-07 | 相反按键没有 lurch | A+D 时左右 = 0，前后也为 0 → w = 0 → d′ = d·(1 − λ)，方向不变 | M8 b2：A 按住再按 D，没有 lurch | **一致** |
 | L-08 | 窗口只由跳跃打开 | t₀ 是起跳时刻；走下台阶不更新 t₀ | M8 d：走下台阶后不会 lurch | **一致** |
@@ -80,5 +80,5 @@ ConVar 默认值来自 [convar-defaults/CONVAR-DEFAULTS.md](../convar-defaults/C
 ## 5. 对 Unity 的意义（只是建议，不改代码）
 
 - HSD 的 lurch 模型和原生公式的形状一致，可以把参数标签从 [fit] 升级为 [native]。
-- 夹紧值目前是常数 209.3。按原生公式应该是 0.7 × msc × sprintspeed（L-05）。
+- 夹紧值在 HSD 的 `SkillBody` 里已经是 0.7 × 当前冲刺上限（M4），和原生公式一致（L-05）。
 - "按键合成意图"和"相反按键抵消"在 HSD 里已经按 M8 做了（M10-D2），可以对照 §2.2 再核一遍。
