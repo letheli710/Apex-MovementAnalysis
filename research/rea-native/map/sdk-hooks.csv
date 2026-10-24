@@ -18,8 +18,8 @@ jnz,,,byte-patch,game/client/dodge_rules.cpp,client half of the airborne dodge r
 v_GameMovement_Jump,140a3b550,Hook_GameMovement_Jump,detour,game/client/double_jump_power.cpp,client prediction twin of Sparrow's double-jump power
 v_Player_TouchGround,140b09440,Hook_Player_TouchGround,detour,game/client/double_jump_power.cpp,client prediction twin of Sparrow's double-jump power
 v_Player_SuitPowerUpdate,140afdd60,Hook_Player_SuitPowerUpdate,detour,game/client/double_jump_power.cpp,client prediction twin of Sparrow's double-jump power
-v_Glide_Check,,Hook_Glide_Check,detour,game/client/glide_flight.cpp,glide_flight.h implementation.
-v_Glide_Apply,,Hook_Glide_Apply,detour,game/client/glide_flight.cpp,glide_flight.h implementation.
+v_Glide_Check,140afe7b0,Hook_Glide_Check,detour,game/client/glide_flight.cpp,glide_flight.h implementation.
+v_Glide_Apply,140afff90,Hook_Glide_Apply,detour,game/client/glide_flight.cpp,glide_flight.h implementation.
 v_GrappleAnimSelectSequence,140b0dea0,GrappleAnimSelectSequence_Hook,detour,game/client/grapple_rope_diag.cpp,Fixes the Pathfinder grapple-rope hand-origin bug. See
 v_IsPlayingGrappleAnimation_Client,1406729a0,IsPlayingGrappleAnimation_Client_Hook,detour,game/client/grapple_rope_diag.cpp,Fixes the Pathfinder grapple-rope hand-origin bug. See
 v_MovePostThinkAnimSwitch,140b110c0,MovePostThinkAnimSwitch_Hook,detour,game/client/grapple_rope_diag.cpp,Fixes the Pathfinder grapple-rope hand-origin bug. See
@@ -47,7 +47,7 @@ v_SceneView_DrawMonitors,1409a74f0,Hook_SceneView_DrawMonitors,detour,game/clien
 v_SceneView_ResolveMain,140960950,Hook_SceneView_ResolveMain,detour,game/client/sceneview.cpp,Full-resolution scene views (see sceneview.h). Setup runs after the
 v_SceneView_AllocFrameMRTs,1404b4bc0,Hook_SceneView_AllocFrameMRTs,detour,game/client/sceneview.cpp,Full-resolution scene views (see sceneview.h). Setup runs after the
 v_GameMovement_UpdateGroundMoveExtra,140a59ef0,Hook_GameMovement_UpdateGroundMoveExtra,detour,game/client/source_push.cpp,client prediction twin of the Source trigger_push. The map script
-v_UseSelfCheck,,Hook_UseSelfCheck,detour,game/client/titan_use_self.cpp,Call CodeCallback_CanUseEntity with its declared arguments from the
+v_UseSelfCheck,140afa950,Hook_UseSelfCheck,detour,game/client/titan_use_self.cpp,Call CodeCallback_CanUseEntity with its declared arguments from the
 C_GameMovement__ApplyGravityCannonLaunch,140a3af30,Hook_ApplyGravityCannonLaunch,detour,game/client/trigger_cannon.cpp,"gravity-cannon air-control lock, client half. See header."
 C_GameMovement__AirMove,140a48f90,Hook_AirMove,detour,game/client/trigger_cannon.cpp,"gravity-cannon air-control lock, client half. See header."
 v_VisClutter_PlayWeaponFx,14069db50,Hook_PlayWeaponFx,detour,game/client/visual_clutter.cpp,"""Visual clutter"" setting for the S21 client."
@@ -66,6 +66,6 @@ v_C_Player_CanZoom,140b04290,Hook_C_Player_CanZoom,detour,game/client/weapon_aki
 v_C_Player_StartZoom,140b037e0,Hook_C_Player_StartZoom,detour,game/client/weapon_akimbo_activity.cpp,weapon_akimbo_activity.h implementation. See that header.
 v_C_Player_StopZoom,140b03b50,Hook_C_Player_StopZoom,detour,game/client/weapon_akimbo_activity.cpp,weapon_akimbo_activity.h implementation. See that header.
 v_C_WeaponX_RecalcMods,140714510,Hook_C_WeaponX_RecalcMods,detour,game/client/weapon_mod_visual.cpp,weapon_mod_visual.h implementation. See that header.
-v_WeaponWorldProxy_Update,,Hook_WeaponWorldProxy_Update,detour,game/client/weapon_world_proxy.cpp,Skip the weapon world-model proxy update when the weapon's owner is
+v_WeaponWorldProxy_Update,14085f4b0,Hook_WeaponWorldProxy_Update,detour,game/client/weapon_world_proxy.cpp,Skip the weapon world-model proxy update when the weapon's owner is
 v_Zipline_Use,1407496a0,Hook_Zipline_Use,detour,game/client/zipline_disconnect.cpp,client twin of the latest zipline hop-regrab count.
 v_Zipline_JumpOff,14073f280,Hook_Zipline_JumpOff,detour,game/client/zipline_disconnect.cpp,client twin of the latest zipline hop-regrab count.
