@@ -532,6 +532,36 @@ def _m8_sg(name):
     tail = "wait 1.5s; up forward; up speed; " + ("up moveright; " if m.group(1) == "wd" else "") + "wait 1.0s"
     return _M8SG_APP[m.group(1)] + ("waitf %d; " % k if k else "") + _M8SG_VAR[m.group(2)] + tail
 
+# B1 mantle boost (SDK port of the S27 feature; --both-cvar mantle_boost_enabled=1). b1_<app>_<var>_k<K>_p<P>: the M8
+# approaches plus cr (sprint jump, duck held from 0.1 s after the jump = crouched mantle); var as M8 (none = watch only);
+# P = view pitch at the reset (m20 = 20 deg up, p20 = 20 deg down, Source + = down). Yaw as m8_sg_ang / m8_sg_wd.
+_B1_APP = dict(_M8SG_APP)
+_B1_APP["cr"] = "wait 72; down speed; down forward; wait 1.2s; tap jump; wait 0.1s; down duck; waittrav; "
+
+
+def _b1_parse(name):
+    return re.fullmatch(r"b1_(spr|walk|ang|wd|cr)_(sg|mb|none)_k(\d+)_p(m?\d+|p\d+)", name)
+
+
+def _b1(name):
+    m = _b1_parse(name)
+    if not m:
+        return None
+    k = int(m.group(3))
+    tail = ("wait 1.5s; up forward; up speed; " + ("up moveright; " if m.group(1) == "wd" else "")
+            + ("up duck; " if m.group(1) == "cr" else "") + "wait 1.0s")
+    return _B1_APP[m.group(1)] + ("waitf %d; " % k if k else "") + _M8SG_VAR[m.group(2)] + tail
+
+
+def b1_view(name, yaw, pitch):
+    """(yaw, pitch) for a b1_* schedule; other names pass through."""
+    m = _b1_parse(name)
+    if not m:
+        return yaw, pitch
+    ps = m.group(4)
+    pv = -float(ps[1:]) if ps.startswith("m") else float(ps.lstrip("p"))
+    return {"ang": 30.0, "wd": 45.0}.get(m.group(1), yaw), pv
+
 # ---- M8 track R2 (time-boxed feasibility probes, m8/EXPANSION-ASSESSMENT.md). Revenant long climb on the lane-A rock
 # (geometry h<H> up to ~480, or s<H> = two stacked rocks up to ~950): sprint jump into the face as a2_climb, W held 6 s.
 # Pounce into the face: start d u before the face (x -13728 - d at the player origin), view pitch -15 (no speed loss,
@@ -733,7 +763,7 @@ LANE_B = (-14200.0, 5900.0, 294.92)
 # Lane C: y 6800 is flat from x -14825 to -12475 (m3/map/field_fine.json) and 81 u clear of the wall's bounds.
 LANE_C = (-14800.0, 6800.0, 294.92)
 SPAWN_PAD = (-11699.0, 512.0, 1577.046)  # visible firing-range floor (M0/M1)
-SCHEDULE_ORIGIN_PREFIX = {"m8r2_climb": LANE_A, "m8r2_spw": LANE_A, "m8r2_jumpin": (-13878.0, 6500.0, 294.92), "m8r2_jd_": LANE_C, "m8r2_echo": LANE_C, "m8_slope": (-10900.0, 550.0, 1580.03), "m8_lurch_ledge": (-13640.0, 6500.0, 532.80), "m8_lurch_sj": LANE_C, "m8_lurch": LANE_B, "m8_sg_ang": (-14100.0, 6272.0, 294.92), "m8_sg_slide": (-14200.0, 6500.0, 294.92), "m8_sg_": LANE_A, "m8_pad": LANE_C, "m8_djctrl": LANE_C, "m8_lift": LANE_C, "b_alter_stand": (-13856.0, 6500.0, 294.92), "bp_alter": (-13856.0, 6500.0, 294.92), "bp_ash": (-14900.0, 6650.0, 294.92), "b_alter_": (-14306.0, 6500.0, 294.92),
+SCHEDULE_ORIGIN_PREFIX = {"m8r2_climb": LANE_A, "m8r2_spw": LANE_A, "m8r2_jumpin": (-13878.0, 6500.0, 294.92), "m8r2_jd_": LANE_C, "m8r2_echo": LANE_C, "m8_slope": (-10900.0, 550.0, 1580.03), "m8_lurch_ledge": (-13640.0, 6500.0, 532.80), "m8_lurch_sj": LANE_C, "m8_lurch": LANE_B, "b1_ang": (-14100.0, 6272.0, 294.92), "b1_": LANE_A, "m8_sg_ang": (-14100.0, 6272.0, 294.92), "m8_sg_slide": (-14200.0, 6500.0, 294.92), "m8_sg_": LANE_A, "m8_pad": LANE_C, "m8_djctrl": LANE_C, "m8_lift": LANE_C, "b_alter_stand": (-13856.0, 6500.0, 294.92), "bp_alter": (-13856.0, 6500.0, 294.92), "bp_ash": (-14900.0, 6650.0, 294.92), "b_alter_": (-14306.0, 6500.0, 294.92),
                           "b_loba_": (-14900.0, 6650.0, 294.92), "b_ash_": (-14900.0, 6650.0, 294.92), "b_valk_": LANE_C, "a2r_": LANE_A, "g1_": LANE_A, "a2_": LANE_A, "z": (-14550.0, 6800.0, 294.92), "a1_wb": LANE_A, "a1_": LANE_B, "m4b_view": LANE_C, "m4b_pad": LANE_C, "m4_valk": LANE_C, "m4_pounce": LANE_C, "m4_stim": LANE_C, "m4_ctrl": LANE_C, "m4_pad": LANE_C, "m4_lift": LANE_C,
                           "m4_grapple": LANE_A, "x_pad_": SPAWN_PAD, "e8_hop350": LANE_C, "e3_": LANE_B, "e8_fast": LANE_C, "e8_slide": LANE_C, "e6_": LANE_A, "e7_": LANE_A,
                           "e8_drop": LANE_A}
@@ -2096,6 +2126,31 @@ _R2K = [k for k in SCHEDULE_PRE if isinstance(k, str) and k.startswith("m10r2_")
 SCHEDULE_PRE = {**{k: SCHEDULE_PRE[k] for k in _R2K}, **{k: v for k, v in SCHEDULE_PRE.items() if k not in _R2K}}
 
 
+# B1 client per-frame mantle boost logger (--mb-log): the SDK getters the timing ring reads (cl_mantle boost RUI bindings)
+MB_CLIENT = string.Template(r'''
+void functionref() hsd_mb_f = void function() {
+	entity p = GetLocalClientPlayer()
+	int w = 0
+	while ( GetConVarInt( "hsd_md_run" ) != $run && w < 2400 )
+	{
+		WaitFrame()
+		w++
+	}
+	while ( IsValid( p ) && GetConVarInt( "hsd_md_run" ) == $run )
+	{
+		vector ea = p.EyeAngles()
+		vector v = p.GetVelocity()
+		string sl = "[B1-MB] run=$run fc=" + FrameCount() + format( " t=%.5f", Time() ) + " mant=" + p.IsMantling() + " trav=" + p.IsTraversing()
+		sl = sl + " st=" + MantleBoost_GetState() + format( " anim=%.4f prog=%.4f ss=%.4f vao=%.5f cho=%.5f", MantleBoost_GetTraversalAnimFrac(), MantleBoost_GetTraversalProgress(), MantleBoost_GetSweetSpotFrac(), MantleBoost_GetViewAngleRuiOffset(), MantleBoost_GetCrosshairRuiOffset() )
+		sl = sl + format( " ep=%.3f ey=%.3f v=%.3f,%.3f,%.3f z=%.3f", ea.x, ea.y, v.x, v.y, v.z, p.GetOrigin().z )
+		printt( sl )
+		WaitFrame()
+	}
+}
+thread hsd_mb_f()
+AgentLink_Reply( "mb logger run=$run" )
+''')
+
 # M10 client per-frame logger (--m10-log): grapple flags, hook origin, eye height; zipline flag
 M10_CLIENT = string.Template(r'''
 void functionref() hsd_m10_f = void function() {
@@ -2328,6 +2383,8 @@ def get_schedule(name):
                 % (k - 1, tail))
     if name.startswith("m8_sg_"):
         return _m8_sg(name)
+    if name.startswith("b1_"):
+        return _b1(name)
     m = re.fullmatch(r"e3_right_k(\d+)", name)
     if m:
         k = int(m.group(1))
@@ -2518,6 +2575,7 @@ def main(argv):
     ap.add_argument("--client-exec", action="append", default=[],
                     help="M10: client console 'exec <cfg>' after the legend / kit (e.g. user/hsd_m10_classvars)")
     ap.add_argument("--m10-log", action="store_true", help="M10: client [M10-GRC] logger thread per trial")
+    ap.add_argument("--mb-log", action="store_true", help="B1: client [B1-MB] mantle boost logger thread per trial")
     ap.add_argument("--m6-census", action="store_true",
                     help="also exec user/hsd_m6_classvars (client) and the M6 cvar finds on both consoles")
     ap.add_argument("--kit", action="store_true",
@@ -2700,6 +2758,7 @@ def main(argv):
             yaw = SCHEDULE_YAW.get(name, M8_YAW_PREFIX.get(name[:9], a.yaw))
             ox, oy, oz = origin_for(name, tuple(a.origin))
             pitch = SCHEDULE_PITCH.get(name, 0.0)
+            yaw, pitch = b1_view(name, yaw, pitch)
             m9st = _m9_stand_setup(name)
             if m9st:
                 yaw, pitch = m9st[1], m9st[2]
@@ -2713,6 +2772,8 @@ def main(argv):
                 client.eval(STATE_CLIENT.substitute(run=run), check=False)
             if a.m10_log:
                 client.eval(M10_CLIENT.substitute(run=run), check=False)
+            if a.mb_log:
+                client.eval(MB_CLIENT.substitute(run=run), check=False)
             sched = client.eval(SCHED_CLIENT.substitute(
                 steps=", ".join(json.dumps(s) for s in steps), ox=ox, oy=oy, oz=oz,
                 settle_frames=a.settle_frames, settle_timeout=a.settle_timeout, trial=trial, run=run))
