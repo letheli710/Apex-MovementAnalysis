@@ -49,7 +49,7 @@
 
 它还解释了 M8 的另一个现象：**松开下蹲后**，坡上的滑铲只多出约 24 u/s²。因为松蹲后减速从 `slideDecel` 100 换成 `slideWantToStopDecel` 400，多出来的 300 抵掉了大部分坡面加速（约 330 − 300）。
 
-HSD Reference 现在用的是 M8 的拟合（M8-B）。原生公式更简单、适用于所有坡度，已记进 [../UNITY-CHANGE-PROPOSALS.md](../UNITY-CHANGE-PROPOSALS.md)。
+~~HSD Reference 现在用的是 M8 的拟合（M8-B）。~~ N5 核对更正：Reference 用的是 M6-A4 的 g·n_z·n_h，就是原生公式；M8-B 只加了"按住下蹲"的条件。M8 的拟合只写在文档里，见 [../n5/REFERENCE-CHANGES.md](../n5/REFERENCE-CHANGES.md)。
 
 ## 4. N4 之后还开着的
 

@@ -7,6 +7,9 @@ models forward from the measured pre-state with the measured per-command dt and 
           spares the wish-aligned speed up to wishspeed, banded accel, Accelerate cap
           max(|v_old|, wishspeed)
   instant the HSD replay motor: v = s * wishdir every command (M2 speed law)
+  vector  the HSD Reference config (R5MotorV2.GroundVectorRedirect, groundVectorRedirect on):
+          the off-wish part decays at the deceleration, the M2 band accel adds along the
+          wish up to cap - s, |v| <= max(cap, s - D*dt); no input curve
 
 and compare both with the measured post velocity of every ground command for 0.6 s.
 
@@ -114,6 +117,36 @@ def instant_step(v, yaw, fwd, sd, sprint, maxspeed, msc, dt):
     return wx / wl * s, wy / wl * s
 
 
+def vector_step(v, yaw, fwd, sd, sprint, maxspeed, msc, dt):
+    """HSD Reference ground rule (R5MotorV2.GroundVectorRedirect, standing, not ducked)."""
+    s = math.hypot(*v)
+    wx, wy = wish_vec(yaw, fwd, sd)
+    wl = math.hypot(wx, wy)
+    if wl == 0:
+        return instant_step(v, yaw, fwd, sd, sprint, maxspeed, msc, dt)
+    wx, wy = wx / wl, wy / wl
+    D = P["deceleration"]
+    along = max(0.0, v[0] * wx + v[1] * wy)
+    cx, cy = v[0] - along * wx, v[1] - along * wy
+    cl = math.hypot(cx, cy)
+    k = max(0.0, cl - D * dt) / cl if cl > 1e-12 else 0.0
+    vx, vy = along * wx + cx * k, along * wy + cy * k
+    if s < P["lowSpeed"] * msc:
+        a = P["lowAcceleration"] * msc
+    elif not sprint or s + P["sprintAcceleration"] * msc * dt < P["speed"] * msc:
+        a = P["acceleration"] * msc
+    else:
+        a = P["sprintAcceleration"] * msc
+    cap = maxspeed
+    add = min(a * dt, cap - s)
+    if add > 0:
+        vx, vy = vx + wx * add, vy + wy * add
+    n, lim = math.hypot(vx, vy), max(cap, s - D * dt)
+    if n > lim:
+        vx, vy = vx * lim / n, vy * lim / n
+    return vx, vy
+
+
 def key_state(b):
     return b & ga.MOVE_BITS
 
@@ -128,7 +161,7 @@ def analyse_trial(recs):
     if change is None:
         return None
     start = ground[change]
-    v_nat = v_ins = (ground[change - 1]["vx1"], ground[change - 1]["vy1"])
+    v_nat = v_ins = v_vec = (ground[change - 1]["vx1"], ground[change - 1]["vy1"])
     rows, t = [], 0.0
     for r in ground[change:]:
         if t > WINDOW_S:
@@ -136,17 +169,21 @@ def analyse_trial(recs):
         args = (r["yaw"], r["fwd"], r["sd"], bool(r["spr"]), r["ms"], r["msc"], r["dt"])
         v_nat = native_step(v_nat, *args)
         v_ins = instant_step(v_ins, *args)
+        v_vec = vector_step(v_vec, *args)
         meas = (r["vx1"], r["vy1"])
         t += r["dt"]
-        rows.append({"t": round(t, 4), "meas": meas, "native": v_nat, "instant": v_ins,
+        rows.append({"t": round(t, 4), "meas": meas, "native": v_nat, "instant": v_ins, "vector": v_vec,
                      "err_native": math.dist(meas, v_nat), "err_instant": math.dist(meas, v_ins),
+                     "err_vector": math.dist(meas, v_vec),
                      "heading_meas": math.degrees(math.atan2(meas[1], meas[0])), "speed_meas": math.hypot(*meas)})
         # restart each model from the measurement: one-command errors, no drift
-        v_nat = v_ins = meas
+        v_nat = v_ins = v_vec = meas
     return {"start_cmd": start["cmd"], "rows": rows,
             "rms_native": math.sqrt(sum(x["err_native"] ** 2 for x in rows) / len(rows)),
             "rms_instant": math.sqrt(sum(x["err_instant"] ** 2 for x in rows) / len(rows)),
-            "max_native": max(x["err_native"] for x in rows), "max_instant": max(x["err_instant"] for x in rows)}
+            "rms_vector": math.sqrt(sum(x["err_vector"] ** 2 for x in rows) / len(rows)),
+            "max_native": max(x["err_native"] for x in rows), "max_instant": max(x["err_instant"] for x in rows),
+            "max_vector": max(x["err_vector"] for x in rows)}
 
 
 def main(argv):
@@ -171,8 +208,9 @@ def main(argv):
         res.update({"schedule": name, "run": run})
         out["trials"].append(res)
         first = res["rows"][:6]
-        print(f"{name} run {run}: rms native {res['rms_native']:.3f}  instant {res['rms_instant']:.3f} u/s "
-              f"(max {res['max_native']:.2f} / {res['max_instant']:.2f}); heading "
+        print(f"{name} run {run}: rms native {res['rms_native']:.3f}  instant {res['rms_instant']:.3f}  "
+              f"vector {res['rms_vector']:.3f} u/s (max {res['max_native']:.2f} / {res['max_instant']:.2f} / "
+              f"{res['max_vector']:.2f}); heading "
               + " ".join(f"{x['heading_meas']:.1f}" for x in first)
               + "  speed " + " ".join(f"{x['speed_meas']:.1f}" for x in first))
     if a.json:
