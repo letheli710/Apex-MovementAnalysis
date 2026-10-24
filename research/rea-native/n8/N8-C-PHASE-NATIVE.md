@@ -75,4 +75,4 @@ Unity 的 M10-W Wraith 实现，可以按原生的样子把相位做成"时间�
 - 类型 4 / 8 的移动触发区是什么（候选：升空气流、Horizon 升降梯）。
 - `+0x690` 标志是什么（为真时相位无效）。
 - 碰撞组 0x10 的名字：从 `ShouldCollide` 的调用者或碰撞组表确认。
-- 实测（N8-D）：Wraith 战术中踩 Octane 跳板，应该不发射。
+- [x] 实测（N8-D）：Wraith 战术中踩 Octane 跳板，**确认不发射**（3 / 3；对照 6 / 6 正常发射），见 [N8-D-MEASURE.md](N8-D-MEASURE.md)。
