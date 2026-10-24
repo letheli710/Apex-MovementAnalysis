@@ -32,8 +32,8 @@
   - [x] P2 子系统和镜头 C2 的第一批条目补进账本（现在 78 条）
   - [ ] 用户决定账本 §3.2 的 Unity 修改建议（不自动改）：已记录在 `UNITY-CHANGE-PROPOSALS.md`，等 N4 实测后统一决定
 - [ ] **N4** 针对性验证（Frida 用户已允许），待测清单见下一节
-  - [ ] N4-A 批量补读 setfile 键（第一步）
-  - [ ] N4-B 地面按键急转 G-07（第一个实验）
+  - [x] N4-A 批量补读 setfile 键 → `n4/N4A-READBACK.md`（预言 5 / 5 命中）
+  - [x] N4-B 地面按键急转 G-07 → `n4/N4B-KEYTURN.md`（原生公式逐命令吻合；Unity 瞬间转向不符）
 
 ### 后放的事（用户 2026-10-23："不要忘记后放的事情"）
 
@@ -53,22 +53,24 @@ N4-A / N4-B 做完后回来做，顺序可以再定：
 
 **A. 补读数值**（运行时 `bridge_classvar_get`，不需要设计实验，成本最低）
 
-- [ ] `antiMultiJumpTimeMin` / `antiMultiJumpTimeMax` / `antiMultiJumpHeightFrac`：预期 **0.15 / 0.75 / 0.3**（N2-J J-02）
-- [ ] `player_slideBoostCooldown`：预期在 M8 测到的 1.6–2.1 s 范围内（N2-S S-02）
-- [ ] `landSlowdownDuration` / `Frac` / `HeightMin` / `HeightMax` / `TimePower` / `NoSprintFrac`（N2-J J-09）
+- [x] `antiMultiJumpTimeMin` / `antiMultiJumpTimeMax` / `antiMultiJumpHeightFrac`：预期 **0.15 / 0.75 / 0.3**（N2-J J-02）→ **命中**（N4A_classvars）
+- [x] `player_slideBoostCooldown`：预期在 M8 测到的 1.6–2.1 s 范围内（N2-S S-02）→ **2**（N4A_classvars）
+- [x] `landSlowdownDuration` / `Frac` / `HeightMin` / `HeightMax` / `TimePower` / `NoSprintFrac`（N2-J J-09）→ 1 / 0 / 300 / 800 / 2 / 0.7（N4A_classvars）
 - [ ] 蹲姿那一行的 `speed`、`deceleration`：预期 80 / 1500（N2-G G-05）
-- [ ] 镜头键：`viewkickFallDistMin` / `Max` / `MaxScale`、`slideFOVScale` / `LerpInTime` / `LerpOutTime`、`sprinttiltMaxRoll`、`grapple_roll*`、`ziplineRoll*`（N2-C）
-- [ ] `ziplineJumpOffSpeed`：预期 **400**（N2-P2 Z-01）；ConVar `jumppad_vert_override_ducked_scalar`：预期 **0.5**（F-02）
-- [ ] 其余 census 没读过的 setfile 键，共 513 个（`map/setfile-keys.csv`）
+- [x] 镜头键（N4A_classvars 已读，见 `n4/N4A-READBACK.md`）：`viewkickFallDistMin` / `Max` / `MaxScale`、`slideFOVScale` / `LerpInTime` / `LerpOutTime`、`sprinttiltMaxRoll`、`grapple_roll*`、`ziplineRoll*`（N2-C）
+- [x] `ziplineJumpOffSpeed`：预期 **400**（N2-P2 Z-01）→ **命中**
+- [x] ConVar `jumppad_vert_override_ducked_scalar`：客户端原生默认 **1**，本地生效 0.5（SDK dedi）[hyb]，预言只对了一半（F-02）
+- [x] 其余 census 没读过的 setfile 键（Gibraltar 666 个全部读出，`n4/classvars-gibraltar.csv`）
+- [ ] 其他传奇再读一次（按传奇不同的键：喷气、钩爪等）
 
 **B. 新的行为预言**（需要设计实验，用现有 runner）
 
 - [x] ~~lurch 夹紧随 msc 变化~~：M4 Octane 已经测过（stim 下 294.67 = 0.7 × 冲刺上限），和原生公式一致（N2-L L-05）
-- [ ] **地面按键急转**（N3 高影响 G-07）：冲刺中 A↔D、W→D 急转，看速度方向是渐进还是瞬间。原生预期：偏离部分按 1250 减速，意图方向按加速度增长
+- [x] **地面按键急转**（N3 高影响 G-07）→ 已确认（N4B_keyturn）：冲刺中 A↔D、W→D 急转，看速度方向是渐进还是瞬间。原生预期：偏离部分按 1250 减速，意图方向按加速度增长
 - [ ] **超速连跳**：落地 1.0 s 内以 450 起跳，出口应为 **350**（max(v − 100, 299)），不是 299（N2-J J-04）
 - [ ] **lurch 高速截断**：水平速度 > 1100 时不再 lurch（S21 客户端原生，N2-L L-10）
 - [ ] **按住方向键时的摩擦**：意图方向上不超过目标速度的那部分速度不受摩擦，减速只作用在偏离部分（N2-G G-07），用 M2 的 e2 数据先查
-- [ ] **第一条命令的输入是 0.75，不是 0.5**：输入曲线 m(2 − m)（N2-G G-08），用 M2 起步数据先查
+- [x] **第一条命令的输入是 0.75，不是 0.5**（N4B 急转里随原生公式一起吻合）：输入曲线 m(2 − m)（N2-G G-08），用 M2 起步数据先查
 - [ ] **滑铲中只能转向**：滑铲时按 W 不加速，只有侧向分量起作用（N2-G G-12 / N2-S S-07）
 - [ ] **滑铲加成冷却被每次滑铲刷新**：连续短滑铲时加成迟迟不恢复（N2-S S-02）
 - [ ] **钩爪低速超时脱钩**：速度低于 250 持续 1.5 s（空中）/ 0.7 s（地面）后自动脱钩（N2-P2 P-07）

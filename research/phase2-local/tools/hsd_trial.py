@@ -65,6 +65,12 @@ SCHEDULES = {
     "e1_diag": "wait 72; down forward; down moveright; wait 432; up forward; up moveright; wait 288",
     # E1 turning: sprint, then turn right at cl_yawspeed for 1 s while holding forward
     "e1_turn": "wait 72; down speed; down forward; wait 288; down right; wait 144; up right; wait 144; up forward; up speed; wait 288",
+    # N4-B (rea-native ledger G-07): ground key turns. Native Friction spares only the wish-aligned speed, so a key turn
+    # should bend the velocity over ~0.1-0.3 s; the HSD replay motor sets v = s*wishdir (instant).
+    "n4b_wd": "wait 72; down speed; down forward; wait 288; up forward; up speed; down moveright; wait 288; up moveright; wait 216",
+    "n4b_ws": "wait 72; down speed; down forward; wait 288; up forward; up speed; down backward; wait 288; up backward; wait 216",
+    "n4b_ad": "wait 72; down moveleft; wait 288; up moveleft; down moveright; wait 288; up moveright; wait 216",
+    "n4b_wwd": "wait 72; down speed; down forward; wait 288; down moveright; wait 288; up moveright; up forward; up speed; wait 216",
     # E2 air: sprint 2 s, jump, then (a) strafe right + turn right, (b) no input, (c) keep forward
     "e2_strafe": "wait 72; down speed; down forward; wait 288; tap jump; wait 4; up forward; up speed; down moveright; down right; wait 100; up right; up moveright; wait 288",
     "e2_noinput": "wait 72; down speed; down forward; wait 288; tap jump; wait 4; up forward; up speed; wait 288",
@@ -657,7 +663,7 @@ SCHEDULE_PRE["z_"] = _ZIP_RESET
 SCHEDULE_PRE["g3_"] = _ZIP_RESET
 
 # Facing so that the schedule's ground motion runs along +X (Source yaw: 0 = +X, 90 = +Y; right = (sin, -cos)).
-SCHEDULE_YAW = {"g3_hook": 36.87, "g3_hook_use": 36.87, "z7b_air": 90.0, "z7c_air_hold": 90.0, "z7_air": 90.0, "e1_side": 90.0, "e1_back": 180.0, "e1_diag": 45.0,
+SCHEDULE_YAW = {"n4b_wd": 45.0, "n4b_wwd": 45.0, "n4b_ad": 90.0, "g3_hook": 36.87, "g3_hook_use": 36.87, "z7b_air": 90.0, "z7c_air_hold": 90.0, "z7_air": 90.0, "e1_side": 90.0, "e1_back": 180.0, "e1_diag": 45.0,
                 "m4b_swing_side": 20.0, "m4b_swing_turn": 20.0, "m4b_swing_turn_w": 20.0, "m4b_swing_jump": 20.0,
                 "m4b_swing_turn_jump": 20.0, "m4b_swing_cross": 90.0, "m4b_swing_cross_w": 90.0, "m4b_swing_cross_walk": 90.0}
 
@@ -1964,7 +1970,7 @@ AgentLink_Reply( out )
 
 DEFAULT_ORIGIN_SCHEDULES = {"basic","e1_walk", "e1_sprint", "e1_crouch", "e1_back", "e1_side", "e1_diag", "e1_turn",
                             "e2_strafe", "e2_noinput", "e2_keepfwd", "e4_stand", "e4_hop0", "e4_hop3", "e4_hop43", "e5_slide",
-                            "e5_slidejump02", "e5_slidejump06"}
+                            "e5_slidejump02", "e5_slidejump06", "n4b_wd", "n4b_ws", "n4b_ad", "n4b_wwd"}
 
 
 def origin_for(name, default):
