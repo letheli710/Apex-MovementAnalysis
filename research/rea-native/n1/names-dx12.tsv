@@ -96,3 +96,7 @@
 14074ae50	Zipline_Detach	N2-P2: clamp(v.d, ziplineSpeed, ziplineDetachSpeed); jump-off caps
 14074b590	Zipline_Accel	N2-P2: ziplineAcceleration toward speed scale x ziplineSpeed
 140afc040	SlideTilt_Update	N2-C: slide tilt state toward target with increase/decrease rates
+140b0d960	BeginJetDrive_impl	deferred-1: script BeginJetDrive stores speed, accel, target, entity offset, timeout; start = now + 0.2 s
+140aff150	Jetpack_Thrust	deferred-1: jetpackThrust, HorizontalMoveThrust, Afterburner, activation ramp, four tightness half-lives
+140afee50	Jetpack_Vertical	deferred-1: vertical approach with half-life jetpackTightnessUp; post-effect gravity
+140afe040	Jetpack_Activate	deferred-1: jetpackHeightToActivate(Delay)

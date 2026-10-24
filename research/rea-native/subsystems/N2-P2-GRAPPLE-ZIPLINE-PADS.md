@@ -102,3 +102,24 @@ S21 Pathfinder 的 `grapple_swing` = false，所以走非摆荡分支。
 
 - P-08 ~ P-10 的细节；钩爪发射、挂上时的上抬（`grapple_attachVerticalBoost`）。
 - 重力炮、Horizon 升降梯、Vantage JetDrive、Valkyrie 喷气（setfile `jetpack*` 一大组，函数在 0x140afe000–0x140b02000）。
+
+## 7. 补充：外力类（"后放的事"第一项，2026-10-23）
+
+| 机制 | 读到的 [native] | 没读通 |
+|---|---|---|
+| **重力炮** `GravityCannon_Launch` 0x140a3af30 | 过了触发器的启用时间，并且过了玩家的重复发射冷却（玩家 0x350）时：速度**直接替换**为触发器方向 × 触发器速度，清掉地面实体 | 空中控制锁由 SDK `trigger_cannon.cpp` 加在 `AirMove` 上 |
+| **跳板和重力炮共用的冷却** | 跳板发射时把玩家 0x350 设为"现在 + 1 s"，重力炮检查同一个字段 | — 和 SDK 一致性代码里的 1.0 s 吻合 |
+| **Vantage JetDrive** `BeginJetDrive_impl` 0x140b0d960 | 脚本接口 `BeginJetDrive(speed, accel, targetPos, targetEnt, targetEntOffset, timeOut)` 只把参数存进玩家结构，**开始时间 = 现在 + 0.2 s** | 每帧推进的函数（读这些字段的地方）还没找到 |
+| **Valkyrie 喷气** `Jetpack_Thrust` 0x140aff150、`Jetpack_Vertical` 0x140afee50 | 推力分竖直（`jetpackThrust` × g）、水平移动（`jetpackHorizontalMoveThrust`）、加力（`jetpackAfterburnerThrust`）；启动时推力 × `ThrustScaleOnActivation`，在 `ThrustScaleTimeOnActivation` 内线性回到 1；上、下、侧、前后四个"紧度"是**半衰期**（代码用 −ln 2 / 紧度），速度按一阶指数逼近目标；结束后 `jetpackPostEffectTime` 内重力 × `jetpackPostEffectGravity` | 目标速度的完整公式；和 M4 VALK 实测的逐项对照 |
+| **Horizon 升降梯** | 原生里只是一个触发器类型位 `TT_GRAVITY_LIFT` = 4（0x140b3bb40 注册） | 处理这个类型的移动代码没找到；本地 dedi 用的是 SDK 重写的 `trigger_gravity.cpp`。M4 已有实测模型 |
+
+Valkyrie census 值：推力 1.9、启动倍率 1.8 / 0.5 s、紧度 上 0.27 / 下 0.1 / 侧 0.11 / 前后 0.14 s、结束后 3 s 内重力 × 0.45、阻力 0.000125。
+
+SDK 钩子补充：`Glide_Check` 0x140afe7b0、`Glide_Apply` 0x140afff90 在喷气代码区间里（`SDK:game/client/glide_flight.cpp`）。
+
+## 8. 钩爪 P-08 ~ P-10（"后放的事"，第一轮没读通）
+
+判断条件分散在 `Grapple_DetachRules`、`Grapple_DetachSpeedLoss` 和钩爪的大函数里，第一轮只确认了参数（§1.3）。建议改用实验确定：
+- P-08：记录"越过锚点"那条命令的径向速度、和锚点的距离、视角，看是速度阈值（500）还是几何判断；
+- P-09：比较各种脱钩方式脱钩前后的竖直速度，看什么时候加了 200；
+- P-10：在 S21 客户端预测里找"视线离开"脱钩（客户端会、dedi 不会，M10 [hyb]）。

@@ -126,3 +126,8 @@ py -3 n1/build_map.py <raw> <s21-r5sdk/src> map
 ```
 
 `<raw>` 是本机的 `local/n1-raw/`，不进 git（里面有字符串和浮点常量的原始导出）。提交的 `map/*.csv` 只有地址、函数名、参数名和计数。
+
+## 9. 补充（2026-10-23）
+
+- SDK 钩子地址又补上 4 个：`Glide_Check` 0x140afe7b0、`Glide_Apply` 0x140afff90、`UseSelfCheck` 0x140afa950、`WeaponWorldProxy_Update` 0x14085f4b0，现在 66 / 70 有地址。剩下的 `IN_JumpDown` / `IN_JumpUp` 是 SDK 在运行时按按键状态表搜出来的，另外 2 处是字节补丁，静态定位不了。
+- 51 个没分类的核心函数暂不处理：都没有 ConVar / setfile 读取，调用关系也推不出类别，多是小工具函数。

@@ -71,3 +71,17 @@ R5 镜头**没有实测**（C3 还没做），所以只能和 HSD M5.5 的设计
 - 各效果的 setfile 值（`viewkickFallDist*`、`slideFOV*`、`sprinttiltMaxRoll`、`grapple_roll*` 等），N4-A 补读。
 - 滑铲倾斜函数 0x140afc040 的精确公式、冲刺倾斜、眼高变化曲线（CAM-10）、cockpit sway / spring（CAM-18 / 19 是否动镜头）。
 - C3 逐帧实测（要改 HSD.MoveDiag，先问用户）。
+
+## 7. C2 第二批（"后放的事"，2026-10-23）
+
+数值来自 N4-A 补读（`n4/N4A-READBACK.md`）。
+
+| 效果 | 读到的 [native] |
+|---|---|
+| **滑铲倾斜**（`SlideTilt_Update` 0x140afc040） | 目标是一个跟速度方向相关的二维向量：速度 ≤ `slideStopSpeed`（125）时为 0，到 `slide_viewTiltPlayerSpeed`（400）时长度为 1，只在滑铲中生效。状态向量向目标移动，每秒最多 `IncreaseSpeed` 5（变大时）或 `DecreaseSpeed` 2.5（变小时）× frametime。横滚 = 状态在视角侧向上的分量 × `slide_viewTiltSide`（15°）。所以**相对视角斜着滑才会倾斜**，正对前方滑铲不倾斜 |
+| **眼高 / 滑铲下沉**（`ViewHeight?` 0x140a53f30） | 眼睛高度 = lerp(站姿眼高, 蹲姿眼高, 下蹲比例)；空中蹲伏时加一个身体偏移修正。下蹲比例来自 `Duck` 的计时器：平时 400 ms，滑铲时 200 ms。所以**滑铲时镜头在 0.2 s 内下沉**。比例 → 时间的曲线形状在 0x1409d9750，未读 |
+| 落地 kick 的值 | `viewkickFallDistMin` 10、`Max` 70 英尺，`MaxScale` 12。v_min = √(2·750·12·10) ≈ 424 u/s，v_max ≈ 1122 u/s |
+| 滑铲 FOV | × 1.1，进入和退出各 0.25 s |
+| 横滚上限 | 冲刺倾斜 2°，钩爪 20°，滑索 25°，总上限 40° |
+| **是否影响准星** | `EyeAngles`（0x1409fdaf0）是虚函数调用，静态看不出 punch 是否加到瞄准方向上。**留给 C3**：同时记录准星方向和镜头方向就能知道 |
+| cockpit sway / spring（CAM-18 / 19） | 函数已定位（0x1405fc020、0x1407ef190），作用对象（镜头还是第一人称装置）没读出来，留给 C3 |

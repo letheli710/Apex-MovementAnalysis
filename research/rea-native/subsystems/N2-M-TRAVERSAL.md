@@ -81,3 +81,12 @@ M8 实测：mantle 最后约 0.085 s 内按跳，下一条命令按蹲 → 出�
 - `TraversalMove` 的完整状态机（M-04、M-05）。
 - `AutoMantle_Try` / `AutoMantle_Search`：mantle 的触发条件（距离、角度、高度）。
 - `WallClimb_Move`：攀墙的速度和时长（setfile `climb*`），对照 M6-A2、M8 R2 的 Revenant 攀爬。
+
+## 7. SG 窗口（M-04）的第二轮阅读（"后放的事"，2026-10-23）
+
+`TraversalMove` 的进度推进是一个带平滑（3 − 2x 的 smoothstep）的动画状态机。能确认的：
+- 进度 > `automantle_jumpoff_anim_maxfrac`（0.5）时按跳：**下一条命令就执行 mantle 跳**，和 M8"按键后下一条命令结束攀越"一致；
+- 进度 < 0.5 时按跳：等 `automantle_jumpoff_duration`（0.1 s）后才执行；
+- 执行时分两种出口：进度还没过一个阈值（推测是"翻过沿"）→ 墙跳式出口；过了 → 水平 299 + `Jump()`，再按蹲才有 SG。
+
+**M8 的"太早 → 切断"和"最后 0.085 s → SG"的分界**，看来就是上面那个"翻过沿"阈值。它从动画数据里来，静态读不出具体值。改成 N4 实验：记录按键时的攀越进度（`m_traversalProgress` 一类的字段），直接测出分界。
