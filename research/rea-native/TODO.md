@@ -18,9 +18,9 @@
 - [ ] **N2** P1 子系统公式提取：
   - [ ] T 时序和输入（N2-G 已发现输入曲线 m(2 − m) 和冲刺 × 1.25，从这里接着做）
   - [x] G 地面移动 → `subsystems/N2-G-GROUND.md`（遗留：吸附阈值位置 G-06、Friction 里的 x、几个结构体偏移）
-  - [ ] J 跳跃、空中、落地（先查 `AirAccelerate` 的 extra air accel = 2.0 能否解释 M2 的 ≈1.4e-5·vz² 残余增益；连跳惩罚 `skip_time` 1.0 vs 实测 0.75 s）
+  - [x] J 跳跃、空中、落地 → `subsystems/N2-J-JUMP-AIR.md`（M2 的空中残余增益、连跳惩罚、skip 削减都已解释；遗留 `AirMove` 本体、二段跳分支）
   - [x] L Lurch / tap-strafe → `subsystems/N2-L-LURCH.md`（209.3 夹紧出处已找到）
-  - [ ] S 滑铲
+  - [x] S 滑铲 → `subsystems/N2-S-SLIDE.md`（遗留：斜坡项公式 S-09、按住下蹲时结束速度 125 vs 112 S-05）
   - [ ] M 攀越、mantle、SG、墙
 - [ ] **N2** P2 子系统（看用户决定）：P 钩爪、Z 滑索、F 外力类
 - [ ] **C 第一人称镜头手感**（camera feel，用户 2026-10-23 加入，计划 §5.1）：随角色动作产生的**全部**镜头效果，不只是跑步晃动、落地震动、滑铲下沉；也包括墙跑、攀爬、跳跃、钩爪、滑索等
@@ -63,3 +63,5 @@
 - N1：SDK 在客户端的核心移动函数上挂了很多钩子（`map/sdk-hooks.csv`）。N2 每个子系统都要先确认相关钩子默认是否开启、改了什么。
 - N2-L：`convar-defaults/README.md` 里"夹紧 209.3 没有 ConVar 出处"已经过时（出处是 `jump_grace_max` × msc × `sprintspeed`）。那个文件属于 PR #28，合并后再改。
 - N2-L：可测的新预言：lurch 夹紧随 msc 变化（stim、拿武器）。放进 N4。
+- N2-J / N2-S：要用 `bridge_classvar_get` 补读的 setfile 键：`antiMultiJumpTimeMin` / `TimeMax` / `HeightFrac`（预测 0.15 / 0.75 / 0.3）、`player_slideBoostCooldown`、`landSlowdown*`。放进 N4，成本很低。
+- N2-J：可测的新预言：以 450 连跳，出口应为 350（max(v − 100, 299)），不是 299。放进 N4。

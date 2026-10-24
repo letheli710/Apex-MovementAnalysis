@@ -57,8 +57,8 @@
 140a53990	Land_PickAnim	landDistLow/Medium/High, enable_height_based_land_anims
 140a53d50	Duck_SetViewHeight?	viewheight, hull_max
 140a53f30	ViewHeight?	viewheight
-140a54080	Duck	SDK name C_GameMovement::Duck
-140a54890	Slide_TryBegin	slideRequiredStartSpeed(Air), slideSpeedBoost, slide_max_angle_dot, player_slideBoost*
+140a54080	Duck	SDK name; N2-S: duck state 0..3, timer 400 ms (200 ms when the press starts a slide), slideMaxStopSpeed after crouch release
+140a54890	Slide_TryBegin	N2-S: normal z > 0.7, slideRequiredStartSpeed(Air), angle dot; boost min(h + msc*slideSpeedBoost, msc*slideSpeedBoostCap) after player_slideBoostCooldown since last slide start
 140a54e80	PlayerMove	calls FullWalkMove; slide_auto_stand, airslowmo_*, freefall_*
 140a56a00	Skydive_Move	skydive_glide_angle, skyward_launch_obstacle_avoidance
 140a58560	WindowHint	window_hint_*
@@ -87,3 +87,4 @@
 140b09ba0	GetMaxWalkSpeed	N2-L: msc x speed[stance]
 140b0f6d0	AirSlowMo_TimeScale	N2-G: dt multiplier (airSlowMoSpeed, airslowmo_* ConVars); 1 normally
 140a58ec0	TapStrafe_WindowHint	N2-L: after a lurch, runs WindowHint on the new velocity
+140b09a60	LandSlowdown_Scale	N2-J: 1 - (1 - (t/landSlowdownDuration)^landSlowdownTimePower) * heightFactor * (1 - landSlowdownFrac)
