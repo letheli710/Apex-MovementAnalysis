@@ -21,7 +21,7 @@
   - [x] J 跳跃、空中、落地 → `subsystems/N2-J-JUMP-AIR.md`（M2 的空中残余增益、连跳惩罚、skip 削减都已解释；遗留 `AirMove` 本体、二段跳分支）
   - [x] L Lurch / tap-strafe → `subsystems/N2-L-LURCH.md`（209.3 夹紧出处已找到）
   - [x] S 滑铲 → `subsystems/N2-S-SLIDE.md`（遗留：斜坡项公式 S-09、按住下蹲时结束速度 125 vs 112 S-05）
-  - [x] M 攀越、mantle、SG、墙 → `subsystems/N2-M-TRAVERSAL.md`（部分：SG 窗口 M-04、1.1 × 299、402.009 还没读通；攀墙、自动 mantle 触发条件没读）
+  - [x] M 攀越、mantle、SG、墙 → `subsystems/N2-M-TRAVERSAL.md`（部分：SG 窗口 M-04 还没读通；1.1 × 299、402.009 已在 LEDGER-OPEN-5 / N11 解释；攀墙、自动 mantle 触发条件没读）
 - [x] **N2** P2 子系统：P 钩爪、Z 滑索、F 跳板 → `subsystems/N2-P2-GRAPPLE-ZIPLINE-PADS.md`（遗留：P-08 ~ P-10；重力炮、升降梯、JetDrive、喷气没读）
 - [ ] **C 第一人称镜头手感**（camera feel，用户 2026-10-23 加入，计划 §5.1）：随角色动作产生的**全部**镜头效果，不只是跑步晃动、落地震动、滑铲下沉；也包括墙跑、攀爬、跳跃、钩爪、滑索等
   - [x] C1 完整清单：一共有哪些效果、各叫什么、由什么触发、在哪里计算（原生 / 脚本 / 动画）→ `camera/CAMERA-INVENTORY.md`（23 项 + 3 个边界项；跑步晃动还没找到对应参数）
@@ -101,6 +101,8 @@ N4-A / N4-B 做完后回来做，顺序可以再定：
 
 - [x] 原生代码 + SDK 对照 → `n9/N9-NATIVE.md`：升梯原生函数找到（常量和 SDK 相同）；喷气原生常量和 SDK `ApplyJetpack` 相同，Unity 一致；重力炮只做替换速度 + 共享 1 s 冷却，没有相位检查和空中控制锁。账本 F-03 ~ F-07
 - [x] 用户决定（2026-10-25）：L-1 按原版改、L-2 改、C-1 不做（不加重力炮）；Unity 实现见 `n9/N9-NATIVE.md` §7
+- [x] **N11** 用户提出的两组遗留（2026-10-25）→ `n11/N11-OPEN-ITEMS.md`：superglide 402 / 1.1 × 299 = 原生 `Jump` 的 +30 u/s（LEDGER-OPEN-5 已解释，补读了法线谁写）；升梯跳过条件 +0x4838 = Newcastle 城墙跳阶段，`0x140a393b0` = 玩家发射系统
+- [ ] J-1（用户决定）：Unity 加 +30 u/s 起跳规则
 
 ## 暂缓：传送类机制（值得研究，现在不做）
 
