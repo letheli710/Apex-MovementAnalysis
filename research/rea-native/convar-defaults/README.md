@@ -10,7 +10,7 @@
 
 | 发现 | 依据 | 对后续工作的意义 |
 |---|---|---|
-| Lurch 参数：`jump_grace_strength` / `max` = 0.7，`jump_graceperiodmin` / `max` = 0.2 / 0.5 s，`require_tap` 1，`cutoff_speed` 1100 | Ghidra 静态值 + dx12 客户端运行时读数 | 和 M3 实测完全吻合（λ = 0.7；0.2 s 满强度、0.5 s 降到 0）。M3 模型的四个数里只剩夹紧 209.3 u/s 没有 ConVar 出处，留给 N2-L 去代码里找 |
+| Lurch 参数：`jump_grace_strength` / `max` = 0.7，`jump_graceperiodmin` / `max` = 0.2 / 0.5 s，`require_tap` 1，`cutoff_speed` 1100 | Ghidra 静态值 + dx12 客户端运行时读数 | 和 M3 实测完全吻合（λ = 0.7；0.2 s 满强度、0.5 s 降到 0）。M3 模型的夹紧 209.3 u/s 也有出处了：`jump_grace_max` × 移动速度倍率 × `sprintspeed`（N2-L，`../subsystems/N2-L-LURCH.md`） |
 | `jump_grace_*` 只存在于 S21 客户端，dedi（S3）上没有 | dedi 回复 "no cvar or command named …" | 支持"lurch 是 S21 客户端原生、dedi 靠 SDK 移植"。地图上 lurch 应只看客户端 |
 | Skip（落地后再跳）：`skip_time` 1.0，`skip_speed_reduce` 100，`skip_speed_retain` -1，`skip_jump_height_fraction` 1.0，`skip_jump_height_speed` 450 | 静态 + 两边运行时 | 和计划 §6 "连跳惩罚对不上"那一条有关，是对照账本的输入。引擎自带说明在表里 |
 | `sv_friction` 4、`sv_stopspeed` 100、`sv_airaccelerate` 10、`sv_maxspeed` 320 是 Source 遗留值 | 引擎说明写着 "Equivalent player setting is in player settings files" | 实际减速和空中加速来自 setfile（M2 已证明）。N2-G 读地面代码时可以确认这些 ConVar 是不是根本没被读 |
