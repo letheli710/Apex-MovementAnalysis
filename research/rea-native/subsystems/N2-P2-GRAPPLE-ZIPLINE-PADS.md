@@ -111,7 +111,7 @@ S21 Pathfinder 的 `grapple_swing` = false，所以走非摆荡分支。
 | **跳板和重力炮共用的冷却** | 跳板发射时把玩家 0x350 设为"现在 + 1 s"，重力炮检查同一个字段 | — 和 SDK 一致性代码里的 1.0 s 吻合 |
 | **Vantage JetDrive** `BeginJetDrive_impl` 0x140b0d960 | 脚本接口 `BeginJetDrive(speed, accel, targetPos, targetEnt, targetEntOffset, timeOut)` 只把参数存进玩家结构，**开始时间 = 现在 + 0.2 s** | 每帧推进的函数（读这些字段的地方）还没找到 |
 | **Valkyrie 喷气** `Jetpack_Thrust` 0x140aff150、`Jetpack_Vertical` 0x140afee50 | 推力分竖直（`jetpackThrust` × g）、水平移动（`jetpackHorizontalMoveThrust`）、加力（`jetpackAfterburnerThrust`）；启动时推力 × `ThrustScaleOnActivation`，在 `ThrustScaleTimeOnActivation` 内线性回到 1；上、下、侧、前后四个"紧度"是**半衰期**（代码用 −ln 2 / 紧度），速度按一阶指数逼近目标；结束后 `jetpackPostEffectTime` 内重力 × `jetpackPostEffectGravity` | 目标速度的完整公式；和 M4 VALK 实测的逐项对照 |
-| **Horizon 升降梯** | 原生里只是一个触发器类型位 `TT_GRAVITY_LIFT` = 4（0x140b3bb40 注册） | 处理这个类型的移动代码没找到；本地 dedi 用的是 SDK 重写的 `trigger_gravity.cpp`。M4 已有实测模型 |
+| **Horizon 升降梯** | 原生里只是一个触发器类型位 `TT_GRAVITY_LIFT` = 4（0x140b3bb40 注册） | 处理这个类型的移动代码没找到；本地 dedi 用的是 SDK 重写的 `trigger_gravity.cpp`。M4 已有实测模型。**N9 找到了**：`0x140a39420`（分发 `0x140a37390` 的类型 4），常量和 SDK 相同，见 `n9/N9-NATIVE.md` §2 |
 
 Valkyrie census 值：推力 1.9、启动倍率 1.8 / 0.5 s、紧度 上 0.27 / 下 0.1 / 侧 0.11 / 前后 0.14 s、结束后 3 s 内重力 × 0.45、阻力 0.000125。
 
