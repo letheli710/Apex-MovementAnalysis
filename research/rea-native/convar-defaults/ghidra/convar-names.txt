@@ -1,0 +1,51 @@
+# Movement ConVar names to look up in r5apex.exe (DumpConVarRegistrations.java).
+# Collected from the exe's string table; camelCase setfile keys are left out.
+
+# Source-style movement
+sv_gravity
+sv_friction
+sv_stopspeed
+sv_maxspeed
+sv_backspeed
+sv_airaccelerate
+sv_maxvelocity
+
+# Skip (jump right after landing)
+skip_time
+skip_speed_reduce
+skip_speed_retain
+skip_jump_height_fraction
+skip_jump_height_speed
+skip_replenish_double_jump
+
+# Jump grace (tap strafe / lurch)
+jump_grace_jump
+jump_grace_strength
+jump_grace_max
+jump_grace_cutoff_speed
+jump_grace_require_tap
+jump_grace_limit_to_90
+jump_grace_min_tap_period
+jump_grace_max_tap_count
+jump_grace_decay_start_tap_count
+jump_grace_multi_tap_decay
+jump_grace_multi_tap_decay_velocity_based_max_speed
+jump_grace_multi_tap_decay_velocity_based_easing_type
+jump_grace_controller_disable_duration
+jump_graceperiod
+jump_graceperiodmin
+jump_graceperiodmax
+
+# Slide
+player_slideBoostEnabled
+player_slideBoostCooldown
+player_slideSuperJumpEnabled
+slide_super_jump_enabled
+slide_auto_stand
+slide_max_angle_dot
+slide_max_duck_frac_to_start
+slide_step_velocity_reduction
+slide_whileInAir
+
+# Misc
+player_movementBounds_predictionShare
