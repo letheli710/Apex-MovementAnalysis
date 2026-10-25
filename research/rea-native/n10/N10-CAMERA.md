@@ -79,3 +79,12 @@ N6 和 LEDGER-OPEN-5 用的是分支 B 的写法。实测（Frida 用两个只�
 
 - 跑步晃动在 CalcView 里具体是哪一段算的（推断是第一人称动画的镜头挂点），没有逐行读。
 - CAM-11 钩爪横滚在 rodeo（攀在对手身上）时实测 13.9°、公式 18.5° 的差距，这次没查。
+
+## 8. 用户决定（2026-10-25）
+
+> 做 C-10 和 C-11，然后 PR。
+
+Unity 实现（HSD-Unity 分支 `c10/step-bob-zip-roll`，`Camera/Native/NativeCamera.cs`）：
+- **C-10**：跑步晃动（CAM-21）加偏航：中心 +0.36°、幅度 ±0.445°（实测 −0.085 … +0.806°），每两步一个周期；一步的周期按这次实测改成 0.280 s（9 步 2.518 s，N6 是 0.27 s）。俯仰沿用 N6 的值。偏航和俯仰的相位是推断的。"cockpit sway" 的名字和说明改成跑步晃动。
+- **C-11**：滑索横滚（CAM-13，分支 A）：和钩爪横滚共用同一个"朝一个点横滚"的函数，滑索用离眼睛最近的绳上点（经过握点、沿滑行方向的直线上），没有距离系数，视角 30–50°、强度 0.7、封顶 25°；跟随速度 3.0 /s 是从这次实测拟合的（1579 帧，残差 0.42 °/s）。
+- 测试：`NativeCameraTests.ZiplineRollTermFollowsTheNativeFormula`、`ZiplineRollRunsOnlyOnTheRope`（只在滑索上、在封顶以内、下绳后按 3 /s 衰减、模拟逐位相同、准星不动），`ContinuousTermsStayInsideTheirMeasuredBounds` 加了偏航的上下限。
