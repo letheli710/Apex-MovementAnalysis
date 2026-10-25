@@ -92,7 +92,7 @@ N4-A / N4-B 做完后回来做，顺序可以再定：
 3. [x] **N8 传送机制研究**（Alter、Wraith、Loba、Ash）：A 共用系统、B 规则、C 原生相位、D 实测、E Unity 对照都完成（`n8/`）；E 用户已决定（2026-10-24）：E-1 / E-2 / E-3 改、E-6 标明设计值、E-4 / E-5 不改，已在 HSD-Unity `n8e/teleport-native` 实现（`n8/N8-E-UNITY.md` §4–5）
 
 - [x] **N5** 汇总报告和 Reference 修改建议 → `N-REPORT.md`、`n5/REFERENCE-CHANGES.md`、`n5/FIT-TO-NATIVE.md`（核对 Unity 后更正 G-07、S-09、L-10、CAM-01b）
-  - [ ] 更新 `STATIC-VALUES.md` 和 `convar-defaults/`（等另一个会话的 PR #28 合并）
+  - [x] 更新 `STATIC-VALUES.md` 和 `convar-defaults/`（PR #28 已合并，2026-10-24）
   - [ ] 用户决定 Reference 修改建议（`UNITY-CHANGE-PROPOSALS.md` 的"决定"一栏）
 
 ---
