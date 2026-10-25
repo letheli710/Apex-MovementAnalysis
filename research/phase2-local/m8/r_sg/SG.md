@@ -58,7 +58,7 @@ FSM variant (SDK default): state 4 = 388.7 / 367.42 whenever the press is latche
 ## Open questions
 
 1. The exact cut/SG boundary (0.086–0.12 s left, mixed): whether it is a time, an animation fraction or a height gate.
-2. The 402.009 walk-approach SG exit (3/15) and the 328.98 jump-only exit after a face contact.
+2. The 402.009 walk-approach SG exit (3/15) and the 328.98 jump-only exit after a face contact. **Resolved (2026-10-24/25):** native `Jump` adds 30 u/s toward the surface hit on the last move tick (299 + 30; 199.5 + 30 > 200 lets the slide boost apply, + 172.5 = 402.0). See `rea-native/ledger-open/LEDGER-OPEN-5.md` and `rea-native/n11/N11-OPEN-ITEMS.md`.
 3. The slide-boost re-arm time that blocks SG after a slide-jump approach (M2 open question 4).
 4. Lateral SG with a sideways key pressed during the mantle (strafe held before the press but released at the exit) was not run separately; only the W+D-held case.
 

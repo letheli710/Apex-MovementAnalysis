@@ -73,7 +73,7 @@ Track R measured the native SG at H90 / 120 / 150 / 180 / 232 (102 superglides) 
 
 Unity at the measured heights (sprint, press 0.05 s before the end, crouch next): 460.000 at H90 / 120 / 150 / 180 / 232. Traversal times: Unity's mantle starts when the ledge enters the 80 u reach, so the rise is ~79 u above H90; R5 T0 is 0.581–0.602 at H120–H232 but **0.418 s at H90**; Unity 0.531 s at H90 (rise 65) and 0.604–0.610 s at H120–H232 (gap: the R5 mantle at a low ledge starts with a smaller rise; the window and the exit still match).
 
-Not modelled (gaps): the walk-approach 402.009 exits (3/15, unexplained in R5); the slide-jump approach gives no SG in R5 (0/15, slide boost re-arm [inf]) but does in Unity; the 328.98 (1.1 × 299) jump-only exit after a face contact.
+Not modelled (gaps): the walk-approach 402.009 exits (3/15, unexplained in R5); the slide-jump approach gives no SG in R5 (0/15, slide boost re-arm [inf]) but does in Unity; the 328.98 (1.1 × 299) jump-only exit after a face contact. (Both explained later by the native +30 u/s jump term: `rea-native/n11/N11-OPEN-ITEMS.md`; Unity proposal J-1.)
 
 ## 5. Item 6b: wall chains and transitions
 
@@ -205,7 +205,7 @@ The route part is unchanged (1441 commands, (341.586, 146.165, 10), 92.0, 18 eve
 ## 10. Open gaps and parameters for human judgement
 
 - No jump buffer: a hop press one command early is dropped (Reference) or becomes the air jump (Fun). A landing buffer would be a new input rule: user's call.
-- The 11.6 u/s residual of a held key + new press (R5) is not modelled; R5's walk-approach 402 exits and the 1.1 × 299 jump-only exit are unexplained; the slide-jump approach SG is not blocked in Unity (R5 0/15, cause inferred).
+- The 11.6 u/s residual of a held key + new press (R5) is not modelled; R5's walk-approach 402 exits and the 1.1 × 299 jump-only exit were later explained by the native +30 u/s jump term (N11); the slide-jump approach SG is not blocked in Unity (R5 0/15, cause inferred).
 - Unity's mantle at a 90 u ledge takes 0.531 s; R5 0.418 s (the R5 mantle starts with a smaller rise). Window and exit match.
 - Uphill slope slides, slope edges and slope slide jumps are unmeasured in R5 (design values).
 - Fun slope slide is ~1.6× the R5 fit at 30–40° (538–586 vs 318–367 u/s² extra): the HSD friction cut (`downhillFriction` 0.25) on top of the same gravity term. Reference matches R5 within 2–3 %. Setting `downhillFriction` to 1.0 would match R5; left as the M8-A design pending the playtest.
