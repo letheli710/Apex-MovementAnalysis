@@ -28,7 +28,7 @@
   - [x] C2（第一批）逐个弄清做法 → `subsystems/N2-C-CAMERA.md`：punch 弹簧（k 65、c 9）、落地 kick、横滚汇总（S21 只有滑铲 / 冲刺 / 钩爪滑索横滚生效）。遗留：滑铲倾斜精确公式、冲刺倾斜、眼高曲线、cockpit sway 是否动镜头、是否影响准星
   - [x] C3 逐帧实测 → `camera/C3-CAPTURE.md`：落地 kick（峰值 0.16 s、回弹一次、大小和公式一致）、punch 不动准星、滑铲眼高 0.21 s、滑铲倾斜、FOV × 1.1 都确认。新发现：× 0.2 的条件不是下蹲（CAM-02b）
     - [x] 查玩家 +0x1c7 是什么状态（CAM-02b）→ 水中标志（`PlayerMove` 每 0.05 s 检测，入水 / 出水音效），N2-C §8
-    - [ ] cockpit sway / spring（CAM-18 / 19）是否动镜头；冲刺倾斜、钩爪 / 滑索横滚的逐帧实测
+    - [x] cockpit sway / spring（CAM-18 / 19）是否动镜头；冲刺倾斜、钩爪 / 滑索横滚的逐帧实测 → **N10** `n10/N10-CAMERA.md`（2026-10-25）：sway 只动第一人称模型；弹簧在 S21 里为 0；跑步晃动来自 CalcView、和脚步同步、有偏航（CAM-21）；滑索全部走分支 A，CAM-13 一致。Unity 建议 C-10 / C-11 等用户决定
   - [x] C4 进对照账本（`CAM-`），和 M5.5 镜头对照，只给建议 → 账本 CAM-01 / 01b / 02 / 02b / 05 / 05b / 09 / 10；M5.5 差别记在 `n5/REFERENCE-CHANGES.md` §3
 - [x] **N3**（P1 部分）对照账本 → `CROSSCHECK-LEDGER.md`、`ledger.csv`（60 条）
   - [x] P2 子系统和镜头 C2 的第一批条目补进账本（现在 78 条）
