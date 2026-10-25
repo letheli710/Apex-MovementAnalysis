@@ -3,16 +3,7 @@ Usage: aggregate_b1.py <data_dir> [<data_dir> ...] -> prints classes.csv / curve
 import csv, math, os, sys
 from collections import defaultdict
 
-def cls(r):
-    s, h, T = r["schedule"], int(r["height"]), float(r["duration"])
-    app = s.split("_")[1]
-    if app == "cr":
-        if h >= 120:
-            return "crouch_h120_long" if T > 0.72 else "crouch_h120"
-        return "crouch_h%d" % h
-    if app == "wd":
-        return "stand_h120_yaw45"
-    return {80: "stand_h80", 100: "stand_h100"}.get(h, "stand_h120plus")
+from aggregate_b1_cls import cls
 
 runs, curves = [], []
 for d in sys.argv[1:]:
