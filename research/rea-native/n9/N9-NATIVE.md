@@ -105,3 +105,13 @@
 
 - 升梯里另外两个跳过条件：+0x4838 是什么（可能是 Newcastle 跳跃或玩家发射状态），`0x140a393b0` 判断什么。对单人练习都没有影响。
 - 重力炮的 +0x36a8 标志在哪里被读，是不是影响落地或空中移动。
+
+## 7. 用户决定（2026-10-25）
+
+> L1 按着原版行；Forget about the gravity cannon, I think we don't really need this in our project；L2 也该。
+
+| # | 决定 | Unity 里怎么做的（HSD-Unity 分支 `l1/lift-phase-crouch-mantle`） |
+|---|---|---|
+| L-1 | 改成原版 | `GravityLiftParams.phasedNoLift`，由 `MovementConfig.liftPhasedNoLift` 打开（Reference 打开，Fun 继承；配置之外关闭，M4 升梯回放不变）。相位中升梯什么都不做：不上升，也不因悬停弹出。相位中离开升梯：结束升梯状态，没有弹出速度，但 2 s 再进门槛照样开始计时（和 SDK 弹出函数一致）。测试 `N9LiftPhaseTests` |
+| L-2 | 改 | `reentryBlock` 2.0 s 的说明改成 [native] |
+| C-1 | 不做 | Unity 不加重力炮 |
