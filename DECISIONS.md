@@ -28,9 +28,9 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 - **R5 实测和 Unity 复刻**：M0–M10 全部完成并合并。基础移动、lurch / tap strafe、攀爬 / 翻越 / superglide、滑索、各传奇能力（Pathfinder、Octane、Horizon、Valkyrie、Ash、Revenant、Vantage、Wraith、Zipline Gun）都在 Unity 里。
 - **原生代码研究（N 系列）**：N0–N11 完成。用 Ghidra / Frida 读 r5apex 的原生移动代码，和实测逐项对照（对照表 [research/rea-native/CROSSCHECK-LEDGER.md](research/rea-native/CROSSCHECK-LEDGER.md)）。认可的差别都改进了 Reference。
 - **B 系列**：B1（S27 翻越加速移植）完成。
-- **手感对照（F 系列）**：不靠试玩，用同样的 R5 输入把 Unity 和 R5 叠在一起比指标。平地 511 / 513 项一致；攀爬 / 翻越 / superglide 1968 / 2221。叠图页面：https://claude.ai/artifact/P1mjgrbW1Yoiu9HdukTbDv
+- **手感对照（F 系列）**：不靠试玩，用同样的 R5 输入把 Unity 和 R5 叠在一起比指标。平地 511 / 513 项一致；攀爬 / 翻越 / superglide 1968 / 2221；技能 479 / 536。叠图页面：https://claude.ai/artifact/P1mjgrbW1Yoiu9HdukTbDv
 - **基线数字**：EditMode 2108 / 2108，PlayMode 1 / 1；M2/M1、M3、M4 回放和基线逐字节相同；真实按键演示 238 / 238；课程单圈 79.12 s。
-- **下一步候选**：手感对照第 3 批（技能：跳板、升梯、钩爪、兴奋剂、Valkyrie）、第 4 批（镜头曲线）；见最后一节"还没结论的事"。
+- **下一步候选**：手感对照第 4 批（镜头曲线）；钩爪 A-1 要不要补研究；见最后一节"还没结论的事"。
 
 ---
 
@@ -109,6 +109,9 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
   - **[D-31]** C-2 推翻 D-29：按 R5 做减量 superglide（原来的判断用错了时钟，见总表后的说明）。
   - **[D-32]** 两种 superglide 都保留：原生（跳 + 蹲，460）和 S27 翻越加速（只按跳，388.7），菜单里切。
 - **[D-33]** 建这份日志：以后所有节点和决定都记在这里。
+- 手感对照第 3 批（技能，38 个 M4 片段）：按 R5 测试脚本的场景摆好跳板、升梯、测试墙，装上对应传奇。Reference 479 / 536 项一致（89 %）。
+  - 兴奋剂、跳板、升梯、Revenant 猛扑、Valkyrie 喷气基本全部一致。
+  - **A-1** 钩爪往墙上拉时，R5 拉到末尾竖直速度更大，最高点比 Unity 高 15–22 u。等你决定是否先补研究。细节见 `research/feel/FEEL.md` §7。
 
 ---
 
@@ -168,5 +171,6 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 - **旧的 "Revenant-Wraith" 配置**要不要升级到新的 Revenant 能力？（M9）
 - **N10 剩下的镜头项目**：CAM-18 / 19、冲刺和钩爪侧倾的补测。
 - **钩爪侧倾**：钩爪攀在对手身上（rodeo）时，实测侧倾 13.9°，公式给 18.5°，差距没查。（N10）
-- **手感对照的下一批**：技能（跳板、升梯、钩爪、兴奋剂、Valkyrie）、镜头曲线。
+- **A-1 钩爪往上拉的竖直速度**：R5 拉到墙边时竖直速度约 200，Unity 约 150，最高点差 15–22 u。建议先补研究（原生拉力代码或补测往上拉），再决定改不改。（F3）
+- **手感对照的下一批**：镜头曲线。
 - 暂缓清单里的 E1–E3 见 [DEFERRED-DESIGN-TODO.md](DEFERRED-DESIGN-TODO.md)。

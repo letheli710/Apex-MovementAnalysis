@@ -152,6 +152,23 @@ def metrics(tr, inp):
         m["mantle_exit_speed"].append(hspeed(tr, k))
         win = [tr["vz"][i] for i in range(b, n) if tr["t"][i] <= tr["t"][min(n - 1, b)] + 0.1]
         m["mantle_exit_vz"].append(max(win) if win else 0.0)
+    # F3 abilities (pad, lift, grapple, stim, jets, pounce): one value per trial, the same on every trace
+    sp = [math.sqrt(tr["vx"][i] ** 2 + tr["vy"][i] ** 2 + tr["vz"][i] ** 2) for i in range(n)]
+    top = max(range(n), key=lambda i: tr["z"][i])
+    m["peak_speed"] = [max(sp)]
+    m["peak_hspeed"] = [max(hspeed(tr, i) for i in range(n))]
+    m["peak_vz"] = [max(tr["vz"])]
+    m["max_rise"] = [tr["z"][top] - tr["z"][0]]
+    m["rise_time"] = [tr["t"][top] - tr["t"][0]] if m["max_rise"][0] > 5 else []
+    m["air_total"] = [sum(tr["t"][i] - tr["t"][i - 1] for i in range(1, n) if not tr["grounded"][i])]
+    # speed 0.25 s after the last landing (landing slowdown, soft landing)
+    _, land = ground_edges(tr)
+    if land:
+        k = next((i for i in range(land[-1], n) if tr["t"][i] >= tr["t"][land[-1]] + 0.25), None)
+        m["land_after"] = [hspeed(tr, k)] if k is not None else []
+    else:
+        m["land_after"] = []
+    m["travel"] = [math.hypot(tr["x"][n - 1] - tr["x"][0], tr["y"][n - 1] - tr["y"][0])]
     return m
 
 
@@ -184,16 +201,21 @@ TOL = {
     "ground_terminal": (2.0, 0.01), "accel_time90": (FRAME * 3, 0.05), "stop_time": (FRAME * 3, 0.05), "stop_dist": (2.0, 0.05),
     "air_turn": (2.0, 0.0), "air_turn_speed": (3.0, 0.01), "end_speed": (3.0, 0.02),
     "mantle_end": (FRAME * 2, 0.0), "mantle_exit_speed": (3.0, 0.01), "mantle_exit_vz": (5.0, 0.02),
+    "peak_speed": (3.0, 0.01), "peak_hspeed": (3.0, 0.01), "peak_vz": (3.0, 0.01), "max_rise": (2.0, 0.02), "rise_time": (FRAME * 2, 0.02),
+    "air_total": (FRAME * 2, 0.02), "land_after": (3.0, 0.02), "travel": (5.0, 0.02),
 }
 UNIT = {"takeoff_speed": "u/s", "apex_rise": "u", "air_time": "s", "land_speed": "u/s", "slide_peak": "u/s", "slide_time": "s",
         "slide_end_speed": "u/s", "ground_terminal": "u/s", "accel_time90": "s", "stop_time": "s", "stop_dist": "u", "air_turn": "deg",
         "air_turn_speed": "u/s", "end_speed": "u/s", "mantle_end": "s", "mantle_exit_speed": "u/s",
-        "mantle_exit_vz": "u/s"}
+        "mantle_exit_vz": "u/s", "peak_speed": "u/s", "peak_hspeed": "u/s", "peak_vz": "u/s", "max_rise": "u", "rise_time": "s",
+        "air_total": "s", "land_after": "u/s", "travel": "u"}
 NAME_ZH = {"takeoff_speed": "起跳水平速度", "apex_rise": "跳跃高度", "air_time": "滞空时间", "land_speed": "落地前速度",
            "slide_peak": "滑铲峰值速度", "slide_time": "滑铲时长", "slide_end_speed": "滑铲结束速度", "ground_terminal": "地面稳定速度",
            "accel_time90": "加速到 90 % 用时", "stop_time": "停下用时", "stop_dist": "停下距离", "air_turn": "空中转向角（0.15 s 后）",
            "air_turn_speed": "空中转向后速度", "end_speed": "结束时速度",
-           "mantle_end": "翻越结束时刻", "mantle_exit_speed": "翻越出口水平速度", "mantle_exit_vz": "翻越出口竖直速度"}
+           "mantle_end": "翻越结束时刻", "mantle_exit_speed": "翻越出口水平速度", "mantle_exit_vz": "翻越出口竖直速度",
+           "peak_speed": "峰值速度（三维）", "peak_hspeed": "峰值水平速度", "peak_vz": "峰值上升速度", "max_rise": "最大上升高度",
+           "rise_time": "到最高点用时", "air_total": "总滞空时间", "land_after": "落地 0.25 s 后速度", "travel": "水平位移"}
 
 
 def verdict(name, r5, other):
@@ -213,3 +235,6 @@ def verdict(name, r5, other):
 # metrics scored per kind of trial: on a climb trial (one with a wall) R5's ground flag stays set through the wall climb, so the jump
 # metrics compare flags rather than motion there
 CLIMB_METRICS = ("mantle_end", "mantle_exit_speed", "mantle_exit_vz", "end_speed", "stop_time", "stop_dist")
+# F3 ability trials (M4): the flat metrics plus the ability ones
+ABILITY_ONLY = ("peak_speed", "peak_hspeed", "peak_vz", "max_rise", "rise_time", "air_total", "land_after", "travel")
+ABILITY_METRICS = tuple(k for k in TOL if k not in ("mantle_end", "mantle_exit_speed", "mantle_exit_vz"))
