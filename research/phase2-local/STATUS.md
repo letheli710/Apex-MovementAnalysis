@@ -1,5 +1,7 @@
 # STATUS — Phase 2 local (plan M0 → M5)
 
+> **Frozen on 2026-10-26** (covers M0–M10). The current state, later milestones (N, B, F series) and every decision are in [../../DECISIONS.md](../../DECISIONS.md).
+
 | Milestone | State | Acceptance | Report |
 |---|---|---|---|
 | M0 environment and baseline | **done** | game + mod + telemetry run on real data (T0 11/11); Unity project opens (§Unity in SESSION-BASELINE); baseline frozen | [SESSION-BASELINE.md](SESSION-BASELINE.md), [m0/M0-REPORT.md](m0/M0-REPORT.md) |

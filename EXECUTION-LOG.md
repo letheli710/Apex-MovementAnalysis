@@ -1,5 +1,7 @@
 # Execution log — High Speed Doom × Apex movement (local Phase 2)
 
+> **Frozen on 2026-10-26.** Milestones and decisions from here on go to [DECISIONS.md](DECISIONS.md) (the project log, in Chinese), which also summarises this file's 2026-10-20 to 10-23 entries. This file stays as the detailed technical record of that period.
+
 Plan: "High Speed Doom：Apex 移动机制提取与 Unity 转化执行计划" (M0 → M5). Current state: [research/phase2-local/STATUS.md](research/phase2-local/STATUS.md).
 Newest entries at the bottom. Problems are tagged **[ISSUE]** and also listed in the table at the end.
 
