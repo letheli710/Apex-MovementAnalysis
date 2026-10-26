@@ -150,12 +150,12 @@ def convert(session, out_dir):
                 tops.append(c["poz"])
             prev_b, prev_state, prev_g = b, st, g
         relabel(rows, floor)
-        rows_by[tr["run"]] = (tr, rows, cmds)
+        rows_by[tr["run"]] = (tr, rows, cmds, t0)
     top = statistics.median(tops) if tops else None
     hm = re.search(r"_h(\d+)", label)
     if top is None and hm:
         top = floor + int(hm.group(1)) + 5.92                  # no mantle in this session (too low / too high): the A2 exit-z law
-    for run, (tr, rows, cmds) in rows_by.items():
+    for run, (tr, rows, cmds, t0) in rows_by.items():
         sched = tr["schedule"] or "x"
         tid = f"{label}_{sched}_r{run}"
         od = os.path.join(out_dir, tid)
@@ -169,7 +169,7 @@ def convert(session, out_dir):
                "terrain": {"map": "mp_rr_canyonlands_staging_mu1", "course_note": "A2 wall prop on lane A"},
                "world": {"floor_z": floor, "wall": None if top is None else
                          {"face_x": FACE_X, "top_z": top, "y_min": WALL_Y[0], "y_max": WALL_Y[1], "depth": WALL_DEPTH}},
-               "schedule": sched, "session": label}
+               "schedule": sched, "session": label, "t0_game": t0}   # game time of row t = 0 (camera_to_trial.py aligns frames on it)
         json.dump(man, open(os.path.join(od, "trial.json"), "w", encoding="utf-8"), indent=1)
         with open(os.path.join(od, "samples.csv"), "w", newline="", encoding="utf-8") as fh:
             w = csv.DictWriter(fh, COLS)

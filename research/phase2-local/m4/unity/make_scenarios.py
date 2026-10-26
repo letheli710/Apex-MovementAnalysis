@@ -34,7 +34,10 @@ LANE_C = (-14800.0, 6800.0, 294.92)
 PAD = [LANE_C[0] + 300.0, LANE_C[1], LANE_C[2]]      # SCHEDULE_PRE m4_pad_: JumpPad_CreateAtLocation(o + <300, 0, 0>)
 LIFT = [LANE_C[0] + 120.0, LANE_C[1], LANE_C[2]]     # SCHEDULE_PRE m4_lift_: SpaceElevator_PropDeploy(o + <120, 0, 0>)
 WALL = {"point": [-13706.0, 6500.0, 294.92], "normal": [-1.0, 0.0, 0.0],
-        "source": "test_geometry.py M3 test wall: face x ~ -13706 (normal -X), y 6380..6620; lift_grapple_analysis.py WALL_X -13706"}
+        "source": "test_geometry.py M3 test wall: face x ~ -13706 (normal -X), y 6380..6620; lift_grapple_analysis.py WALL_X -13706",
+        # F3 feel comparison: the same wall as a solid box for a game body's world (its grapple hits the world). Face, width and the
+        # 232 u height from test_geometry.py; the 200 u depth is a stand-in (the rock is deeper, only the face is ever reached)
+        "box": {"min": [-13706.0, 6380.0, 294.92], "max": [-13506.0, 6620.0, 526.92]}}
 
 
 def read(trial):

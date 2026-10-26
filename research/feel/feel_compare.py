@@ -13,9 +13,10 @@ import sys
 from collections import defaultdict
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from feel_metrics import (CLIMB_METRICS, TOL, event_offsets, hspeed, load_inputs, load_trace, metrics, path_error, verdict)  # noqa: E402
+from feel_metrics import (ABILITY_METRICS, ABILITY_ONLY, CLIMB_METRICS, TOL, event_offsets, hspeed, load_inputs, load_trace, metrics, path_error, verdict)  # noqa: E402
 
 BODIES = ("replay", "reference", "fun")
+ABILITY_ONLY_SET = set(ABILITY_ONLY)
 
 
 def family(trial_id):
@@ -27,6 +28,22 @@ def family(trial_id):
     for fps in ("_144fps", "_120fps", "_60fps"):
         s = s.replace(fps, "")
     return s
+
+
+def ability_view(traces, inp):
+    """F3: the M4 trials ran on a flat field in R5, with two things the game bodies' flat floor does not have. (1) The field ends: a lift
+    eject with strafe carried R5 off the edge (z -133), so every trace is cut where R5 first drops 5 u below its start height. (2) R5 sets
+    its ground flag while the body slides down the M3 test wall after a grapple, so a row counts as grounded only within 2 u of the
+    start height (the field floor) on every trace."""
+    r5 = traces["r5"]
+    z0 = r5["z"][0]
+    cut = next((i for i, z in enumerate(r5["z"]) if z < z0 - 5), len(r5["z"]))
+    out = {}
+    for k, tr in traces.items():
+        c = {f: v[:cut] for f, v in tr.items()}
+        c["grounded"] = [int(g and z <= z0 + 2) for g, z in zip(c["grounded"], c["z"])]
+        out[k] = c
+    return out, {f: v[:cut] for f, v in inp.items()}
 
 
 def series(tr, step=6):
@@ -53,7 +70,7 @@ def main():
     for td in trial_dirs:
         for name in sorted(os.listdir(td)):
             d = os.path.join(td, name)
-            if not os.path.isfile(os.path.join(d, "trial.json")):
+            if not os.path.isfile(os.path.join(d, "trial.json")) or name.endswith("_REJECTED"):
                 continue
             man = json.load(open(os.path.join(d, "trial.json"), encoding="utf-8"))
             tid = man["trial_id"]
@@ -64,18 +81,23 @@ def main():
             r5 = load_trace(os.path.join(d, "samples.csv"))
             traces = {"r5": r5}
             traces.update({b: load_trace(os.path.join(ud, b + ".csv")) for b in BODIES if os.path.isfile(os.path.join(ud, b + ".csv"))})
+            climb = bool((man.get("world") or {}).get("wall"))
+            ability = not climb and str(man.get("experiment", "")).startswith("M4_")   # F3: the M4 ability trials (scenarios.json)
+            if ability:
+                traces, inp = ability_view(traces, inp)
             ms = {k: metrics(v, inp) for k, v in traces.items()}
             fam = family(tid)
             if man.get("schedule") and man.get("session"):            # F2 climb trials: schedule @ wall height
                 h = man["session"].rsplit("_h", 1)[-1]
                 fam = f"{man['schedule']}@h{h}"
-            res = {"trial": tid, "family": fam, "climb": bool((man.get("world") or {}).get("wall")), "duration": r5["t"][-1], "metrics": ms, "verdict": {}, "path": {}, "events": {}}
+            res = {"trial": tid, "family": fam, "climb": climb, "kind": "climb" if climb else "ability" if ability else "flat",
+                   "duration": r5["t"][-1], "metrics": ms, "verdict": {}, "path": {}, "events": {}}
             for b in BODIES:
                 if b not in traces:
                     continue
                 res["path"][b] = path_error(r5, traces[b])
                 res["verdict"][b] = {}
-                for k in (CLIMB_METRICS if res["climb"] else TOL):
+                for k in scored(res):
                     v, w = verdict(k, ms["r5"][k], ms[b][k])
                     if v:
                         res["verdict"][b][k] = [v, w]
@@ -106,6 +128,10 @@ def main():
         export(results, ser, out_export)
 
 
+def scored(res):
+    return CLIMB_METRICS if res["kind"] == "climb" else ABILITY_METRICS if res["kind"] == "ability" else tuple(k for k in TOL if k not in ABILITY_ONLY_SET)
+
+
 RANK = {"agree": 0, "close": 1, "differ": 2, "count": 3}
 VZH = {"agree": "一致", "close": "接近", "differ": "不一致", "count": "次数不同", None: None}
 
@@ -118,11 +144,11 @@ def export(results, ser, out_dir):
     score, trials, points = [], [], []
     for res in results:
         ms = res["metrics"]
-        for k in (CLIMB_METRICS if res["climb"] else TOL):
+        for k in scored(res):
             n = max(len(ms[b][k]) for b in ms)
             for i in range(n):
                 g = lambda b: round(ms[b][k][i], 4) if b in ms and i < len(ms[b][k]) else None
-                row = {"id": f"{res['trial']}/{k}/{i + 1}", "trial": res["trial"], "family": res["family"], "climb": res["climb"], "metric": k, "metric_zh": NAME_ZH[k], "unit": UNIT[k], "k": i + 1,
+                row = {"id": f"{res['trial']}/{k}/{i + 1}", "trial": res["trial"], "family": res["family"], "climb": res["climb"], "kind": res["kind"], "metric": k, "metric_zh": NAME_ZH[k], "unit": UNIT[k], "k": i + 1,
                        "r5": g("r5"), "replay": g("replay"), "reference": g("reference"), "fun": g("fun")}
                 for b in ("replay", "reference"):
                     row["verdict_" + b] = res["verdict"].get(b, {}).get(k, [None])[0]
@@ -130,7 +156,7 @@ def export(results, ser, out_dir):
                     row["delta_" + b] = None if row[b] is None or row["r5"] is None else round(row[b] - row["r5"], 4)
                 score.append(row)
         worst = {b: max((v for v, _ in res["verdict"][b].values()), key=RANK.get, default="agree") if b in res["verdict"] else None for b in BODIES}
-        trials.append({"trial": res["trial"], "family": res["family"], "climb": res["climb"], "duration": round(res["duration"], 3),
+        trials.append({"trial": res["trial"], "family": res["family"], "climb": res["climb"], "kind": res["kind"], "duration": round(res["duration"], 3),
                        "verdict_reference": worst["reference"], "verdict_replay": worst["replay"], "verdict_fun": worst["fun"],
                        "verdict_reference_zh": VZH[worst["reference"]], "verdict_replay_zh": VZH[worst["replay"]],
                        "path_rms_reference": round(res["path"]["reference"]["path_rms"], 2),
