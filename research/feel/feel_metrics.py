@@ -12,7 +12,7 @@ FRAME = 1 / 144
 
 
 def load_trace(path):
-    tr = {k: [] for k in ("t", "x", "y", "z", "vx", "vy", "vz", "grounded", "sliding", "events")}
+    tr = {k: [] for k in ("t", "x", "y", "z", "vx", "vy", "vz", "grounded", "sliding", "state", "events")}
     with open(path, encoding="utf-8") as fh:
         for r in csv.DictReader(fh):
             tr["t"].append(float(r["t"]))
@@ -20,6 +20,7 @@ def load_trace(path):
                 tr[a].append(float(r[b]))
             tr["grounded"].append(int(r["grounded"] or 0))
             tr["sliding"].append(int(r["sliding"] or 0))
+            tr["state"].append(r.get("state") or "none")
             ev = r.get("events") or ""
             tr["events"].append([e for e in ev.replace(";", "|").split("|") if e])
     return tr
@@ -52,6 +53,15 @@ def event_rows(tr, name):
     return [i for i, ev in enumerate(tr["events"]) if name in ev]
 
 
+def ground_edges(tr):
+    """Takeoff / landing rows from the ground flag (one definition for both sides: Unity raises TAKEOFF only on a jump, R5's events come
+    from the flag). A mantle row counts as airborne (the traversal is kinematic)."""
+    g = [int(x and s != "mantle") for x, s in zip(tr["grounded"], tr["state"])]
+    take = [i for i in range(1, len(g)) if g[i - 1] and not g[i]]
+    land = [i for i in range(1, len(g)) if not g[i - 1] and g[i]]
+    return take, land
+
+
 def segments(flags):
     """[start, end) row ranges where flags is truthy."""
     out, s = [], None
@@ -82,7 +92,7 @@ def metrics(tr, inp):
     n = len(tr["t"])
     m = {}
     # jumps: takeoff speed, apex rise, air time, landing speed
-    take, land = event_rows(tr, "TAKEOFF"), event_rows(tr, "LAND")
+    take, land = ground_edges(tr)
     m["takeoff_speed"], m["apex_rise"], m["air_time"], m["land_speed"] = [], [], [], []
     for a in take:
         b = next((j for j in land if j > a), None)
@@ -132,6 +142,16 @@ def metrics(tr, inp):
         m["air_turn"].append(d)
         m["air_turn_speed"].append(hspeed(tr, k))
     m["end_speed"] = [hspeed(tr, n - 1)]
+    # F2 climb / mantle / superglide: per mantle, the time it ends (from the trial start) and the exit 2 commands after it
+    # (horizontal speed: superglide ~460, mantle jump / walk-off 299; peak vertical speed within 0.1 s: a jump or not). The end, not the
+    # start: R5 sets its traversal flag a few commands after the contact, and logs no state for the wall climb itself
+    m["mantle_end"], m["mantle_exit_speed"], m["mantle_exit_vz"] = [], [], []
+    for a, b in segments([s == "mantle" for s in tr["state"]]):
+        m["mantle_end"].append(tr["t"][min(n - 1, b)])
+        k = min(n - 1, b + 1)
+        m["mantle_exit_speed"].append(hspeed(tr, k))
+        win = [tr["vz"][i] for i in range(b, n) if tr["t"][i] <= tr["t"][min(n - 1, b)] + 0.1]
+        m["mantle_exit_vz"].append(max(win) if win else 0.0)
     return m
 
 
@@ -163,14 +183,17 @@ TOL = {
     "slide_peak": (3.0, 0.01), "slide_time": (FRAME * 3, 0.03), "slide_end_speed": (5.0, 0.02),
     "ground_terminal": (2.0, 0.01), "accel_time90": (FRAME * 3, 0.05), "stop_time": (FRAME * 3, 0.05), "stop_dist": (2.0, 0.05),
     "air_turn": (2.0, 0.0), "air_turn_speed": (3.0, 0.01), "end_speed": (3.0, 0.02),
+    "mantle_end": (FRAME * 2, 0.0), "mantle_exit_speed": (3.0, 0.01), "mantle_exit_vz": (5.0, 0.02),
 }
 UNIT = {"takeoff_speed": "u/s", "apex_rise": "u", "air_time": "s", "land_speed": "u/s", "slide_peak": "u/s", "slide_time": "s",
         "slide_end_speed": "u/s", "ground_terminal": "u/s", "accel_time90": "s", "stop_time": "s", "stop_dist": "u", "air_turn": "deg",
-        "air_turn_speed": "u/s", "end_speed": "u/s"}
+        "air_turn_speed": "u/s", "end_speed": "u/s", "mantle_end": "s", "mantle_exit_speed": "u/s",
+        "mantle_exit_vz": "u/s"}
 NAME_ZH = {"takeoff_speed": "起跳水平速度", "apex_rise": "跳跃高度", "air_time": "滞空时间", "land_speed": "落地前速度",
            "slide_peak": "滑铲峰值速度", "slide_time": "滑铲时长", "slide_end_speed": "滑铲结束速度", "ground_terminal": "地面稳定速度",
            "accel_time90": "加速到 90 % 用时", "stop_time": "停下用时", "stop_dist": "停下距离", "air_turn": "空中转向角（0.15 s 后）",
-           "air_turn_speed": "空中转向后速度", "end_speed": "结束时速度"}
+           "air_turn_speed": "空中转向后速度", "end_speed": "结束时速度",
+           "mantle_end": "翻越结束时刻", "mantle_exit_speed": "翻越出口水平速度", "mantle_exit_vz": "翻越出口竖直速度"}
 
 
 def verdict(name, r5, other):
@@ -185,3 +208,8 @@ def verdict(name, r5, other):
         tol = max(a, rel * abs(x))
         worst = max(worst, abs(y - x) / tol)
     return ("agree" if worst <= 1 else "close" if worst <= 3 else "differ"), worst
+
+
+# metrics scored per kind of trial: on a climb trial (one with a wall) R5's ground flag stays set through the wall climb, so the jump
+# metrics compare flags rather than motion there
+CLIMB_METRICS = ("mantle_end", "mantle_exit_speed", "mantle_exit_vz", "end_speed", "stop_time", "stop_dist")
