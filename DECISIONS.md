@@ -119,6 +119,12 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
   - **K-3** 跑步晃动俯仰幅度三个 R5 会话彼此就不一样（0.53 / 0.60 / 0.73°，Unity 0.67°），先不算差别。
   - 翻越的镜头没有 R5 记录，要补测。细节见 `research/feel/FEEL.md` §8。
 
+### 2026-10-27：EPG 火箭跳实测
+- 起因：Fuse 集束炸弹对脚下打能飞（S28 Knuckle Jumper，本地 S21 没有），改测攻略里说能推人的 EPG-1。报告：[research/epg/EPG-ROCKET-JUMP.md](research/epg/EPG-ROCKET-JUMP.md)。只做研究，Unity 没改。
+  - 本地加载不了能开火的 EPG（引擎没这把枪的武器信息、缺模型、开火回调是空桩），改用服务端模拟开火 + 真手雷对照，29 个条件、每个 ≥5 次。
+  - 爆炸推人是引擎原生击退。EPG 原版推力（30000）站着打推不动；TF2 留下的 `jump_kit` 模式（65000）朝脚下打 Δv ≈ 655，站着飞到 270 u，跳 + 开火同时按 486 u（普通跳 55 u）。
+  - 护盾把伤害全吃掉就完全不推；会自伤（Gibraltar 55）；推力随距离和伤害一起衰减，速度上限约 1000。
+
 ---
 
 ## 决定总表
@@ -182,4 +188,5 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 - **K-2 中小落差落地横滚**：96–400 u 落地 Unity 0.1–0.45°，R5 0.45–2°。改不改？（F4）
 - **K-3 跑步晃动俯仰幅度**：R5 三个会话结果不一样，要同一会话补测再看。（F4）
 - **翻越镜头**：R5 没有翻越时的镜头记录，要补测才能比。（F4）
+- **HSD 要不要做火箭跳**：A. EPG 式物理击退（爆点推向身体中心，随距离衰减，和现有速度相加，上限 1000），或 B. Fuse Knuckle Jumper 式跳跃加成（在自己炸弹旁边按跳给固定的起跳速度）。研究建议先做 A，用 jump_kit 数值，护盾规则和地面门槛先不做。见 [research/epg/EPG-ROCKET-JUMP.md](research/epg/EPG-ROCKET-JUMP.md) §7。（EPG）
 - 暂缓清单里的 E1–E3 见 [DEFERRED-DESIGN-TODO.md](DEFERRED-DESIGN-TODO.md)。

@@ -2201,6 +2201,141 @@ AgentLink_Reply( out )
 '''
 
 
+# ---- EPG rocket jump (research/epg). The local S21 build cannot load mp_weapon_epg ("Couldn't find weapon info"; its loot
+# row is commented out for the missing mdl/weapons/epg, and OnWeaponPrimaryAttack_weapon_epg is a stub), so a shot is
+# emulated on the server: the zoom key (nothing with the fists) runs a pressed-button callback that traces the view like
+# the missile, waits the flight time at projectile_launch_speed 2000 (gravity 0), then calls RadiusDamage with the EPG
+# explosion (65 damage, radius 52/180, damage_flags of the txt) and a chosen force: 30000 = impulse_force_explosions,
+# 65000 = the jump_kit mod. kind frag fires a real frag grenade (fuse 0.05 s) at the traced point instead (real-weapon
+# control; 200 hp so the 100 damage does not kill). Health and shield are set at every reset. Server log lines
+# [EPG-FIRE] (press), [EPG-DET] (detonation, distances from the feet / hull centre) and [EPG-V] (12 server frames after).
+EPG_PRE = r'''
+p.SetMaxHealth( %(hp)d )
+p.SetHealth( %(hp)d )
+p.SetShieldHealthMax( %(shmax)d )
+p.SetShieldHealth( %(sh)d )
+int epgRun = GetConVarInt( "hsd_md_run" )
+entity epgFrag = null
+if ( "%(kind)s" == "frag" )
+{
+	foreach ( entity mw in p.GetMainWeapons() )
+		if ( mw.GetWeaponClassName() == "mp_weapon_frag_grenade" )
+			epgFrag = mw
+	if ( epgFrag == null )
+		epgFrag = p.GiveWeapon( "mp_weapon_frag_grenade", WEAPON_INVENTORY_SLOT_PRIMARY_1, [] )
+}
+table epgState = { shots = 0 }
+void functionref( entity ) epgShot = void function( entity pl ) : ( epgRun, epgFrag, epgState ) {
+	try
+	{
+		if ( GetConVarInt( "hsd_md_run" ) != epgRun || epgState.shots >= 1 )
+			return
+		epgState.shots = epgState.shots + 1
+		vector eye = pl.EyePosition()
+		vector dir = AnglesToForward( pl.EyeAngles() )
+		TraceResults tr = TraceLine( eye, eye + dir * 3000.0, [ pl ], TRACE_MASK_SHOT, TRACE_COLLISION_GROUP_NONE )
+		vector hit = tr.endPos
+		float dist = Distance( eye, hit )
+		float tfire = Time()
+		vector v0 = pl.GetVelocity()
+		vector o0 = pl.GetOrigin()
+		printt( "[EPG-FIRE] run=" + epgRun + " t=" + tfire + " eye=" + eye.x + "," + eye.y + "," + eye.z + " dir=" + dir.x + "," + dir.y + "," + dir.z + " hit=" + hit.x + "," + hit.y + "," + hit.z + " frac=" + tr.fraction + " dist=" + dist + " o=" + o0.x + "," + o0.y + "," + o0.z + " v=" + v0.x + "," + v0.y + "," + v0.z + " ground=" + ( pl.IsOnGround() ? 1 : 0 ) + " slide=" + ( pl.IsSliding() ? 1 : 0 ) + " kind=%(kind)s force=%(force)d" )
+		void functionref() det = void function() : ( pl, hit, tr, dist, epgRun, epgFrag ) {
+			try
+			{
+				if ( "%(kind)s" == "epg" )
+					wait dist / 2000.0
+				vector o1 = pl.GetOrigin()
+				vector c1 = o1 + <0, 0, 36>
+				vector v1 = pl.GetVelocity()
+				int hp1 = pl.GetHealth()
+				int sh1 = pl.GetShieldHealth()
+				float td = Time()
+				vector at = hit + tr.surfaceNormal * 2.0
+				if ( "%(kind)s" == "epg" && %(force)d > 0 )
+					RadiusDamage( at, pl, pl, 65, 65, 52, 180, 0, 0, %(force)d, DF_BULLET | DF_GIB | DF_EXPLOSION, eDamageSourceId.mp_weapon_frag_grenade )
+				if ( "%(kind)s" == "frag" && IsValid( epgFrag ) )
+				{
+					WeaponFireGrenadeParams gp
+					gp.pos = hit + tr.surfaceNormal * 6.0
+					gp.vel = <0, 0, 0>
+					gp.angVel = <0, 0, 0>
+					gp.fuseTime = 0.05
+					gp.scriptTouchDamageType = damageTypes.explosive
+					gp.scriptExplosionDamageType = damageTypes.explosive
+					gp.clientPredicted = false
+					gp.lagCompensated = false
+					gp.useScriptOnDamage = true
+					epgFrag.FireWeaponGrenade( gp )
+				}
+				printt( "[EPG-DET] run=" + epgRun + " t=" + td + " at=" + at.x + "," + at.y + "," + at.z + " o=" + o1.x + "," + o1.y + "," + o1.z + " dfeet=" + Distance( at, o1 ) + " dcenter=" + Distance( at, c1 ) + " dxy=" + Length( <at.x - o1.x, at.y - o1.y, 0> ) + " v=" + v1.x + "," + v1.y + "," + v1.z + " hp=" + hp1 + " sh=" + sh1 + " ground=" + ( pl.IsOnGround() ? 1 : 0 ) )
+				for ( int i = 0; i < 12; i++ )
+				{
+					WaitFrame()
+					vector v = pl.GetVelocity()
+					printt( "[EPG-V] run=" + epgRun + " i=" + i + " t=" + Time() + " v=" + v.x + "," + v.y + "," + v.z + " z=" + pl.GetOrigin().z + " hp=" + pl.GetHealth() + " sh=" + pl.GetShieldHealth() + " ground=" + ( pl.IsOnGround() ? 1 : 0 ) )
+				}
+			}
+			catch ( e2 )
+			{
+				printt( "[EPG-ERR] det " + string( e2 ) )
+			}
+		}
+		thread det()
+	}
+	catch ( e1 )
+	{
+		printt( "[EPG-ERR] shot " + string( e1 ) )
+	}
+}
+AddButtonPressedPlayerInputCallback( p, IN_ZOOM, epgShot )
+void functionref() epgWatch = void function() : ( p, epgRun, epgShot ) {
+	int n = 0
+	while ( GetConVarInt( "hsd_md_run" ) == epgRun && n < 600 )
+	{
+		wait 0.1
+		n++
+	}
+	try { RemoveButtonPressedPlayerInputCallback( p, IN_ZOOM, epgShot ) } catch ( e3 ) { printt( "[EPG-ERR] remove " + string( e3 ) ) }
+}
+thread epgWatch()
+pre = " epg kind=%(kind)s force=%(force)d sh=%(sh)d"
+'''
+
+_EPG_JUMP0 = "down jump; down zoom; waitf 1; up jump; up zoom"
+_EPG_STEPS = {
+    "stand": "wait 72; tap zoom; wait 1.5s",
+    "jk0": "wait 72; " + _EPG_JUMP0 + "; wait 1.5s",
+    "pre3": "wait 72; tap zoom; waitf 2; tap jump; wait 1.5s",       # fire, jump 3 frames later (about the detonation)
+    "spr": "wait 72; down speed; down forward; wait 1.0s; tap zoom; wait 0.6s; up forward; up speed; wait 1.0s",
+    "sprj": "wait 72; down speed; down forward; wait 1.0s; " + _EPG_JUMP0 + "; wait 0.6s; up forward; up speed; wait 1.0s",
+    "slide": "wait 72; down speed; down forward; wait 1.0s; down duck; wait 0.25s; tap zoom; wait 0.6s; up duck; up forward; "
+             "up speed; wait 1.0s",
+    "slidej": "wait 72; down speed; down forward; wait 1.0s; down duck; wait 0.25s; tap jump; up duck; waitf 5; tap zoom; "
+              "wait 0.6s; up forward; up speed; wait 1.0s",
+    "back": "wait 72; down backward; wait 1.0s; " + _EPG_JUMP0 + "; wait 0.6s; up backward; wait 1.0s",
+}
+_EPG_STEPS.update({"jk%d" % k: "wait 72; tap jump; waitf %d; tap zoom; wait 1.5s" % (k - 1) for k in (6, 12, 24, 48)})
+EPG_RE = re.compile(r"epg_(f\d+|frag)_s(\d+)_([a-z]+\d*)_p(\d+)")
+# conditions run in research/epg (each name = force or frag, shield, timing / movement, view pitch down)
+EPG_CONDITIONS = (
+    ["epg_f0_s0_stand_p89", "epg_f30_s0_stand_p89", "epg_f65_s0_stand_p89", "epg_f65_s50_stand_p89", "epg_f65_s100_stand_p89",
+     "epg_f30_s0_jk0_p89", "epg_frag_s0_stand_p89", "epg_frag_s100_stand_p89"]
+    + ["epg_f65_s0_%s_p89" % t for t in ("jk0", "jk6", "jk12", "jk24", "jk48", "pre3")] + ["epg_f0_s0_jk0_p89"]
+    + ["epg_f65_s0_stand_p%d" % pt for pt in (70, 45, 30, 20)] + ["epg_f65_s0_jk0_p70", "epg_f65_s0_jk0_p45"]
+    + ["epg_f65_s0_%s" % c for c in ("spr_p89", "sprj_p89", "sprj_p70", "slide_p89", "slidej_p89", "back_p70")]
+    + ["epg_f0_s0_sprj_p89", "epg_f0_s0_slidej_p89"])
+for _n in EPG_CONDITIONS:
+    _m = EPG_RE.fullmatch(_n)
+    _kind = "frag" if _m.group(1) == "frag" else "epg"
+    _sh = int(_m.group(2))
+    SCHEDULES[_n] = _EPG_STEPS[_m.group(3)]
+    SCHEDULE_PITCH[_n] = float(_m.group(4))
+    SCHEDULE_ORIGIN[_n] = DEFAULT_ORIGIN
+    SCHEDULE_PRE[_n] = EPG_PRE % dict(kind=_kind, force=0 if _kind == "frag" else int(_m.group(1)[1:]) * 1000, sh=_sh,
+                                      shmax=max(_sh, 50), hp=200 if _kind == "frag" else 100)
+
+
 DEFAULT_ORIGIN_SCHEDULES = {"basic","e1_walk", "e1_sprint", "e1_crouch", "e1_back", "e1_side", "e1_diag", "e1_turn",
                             "e2_strafe", "e2_noinput", "e2_keepfwd", "e4_stand", "e4_hop0", "e4_hop3", "e4_hop43", "e5_slide",
                             "e5_slidejump02", "e5_slidejump06", "n4b_wd", "n4b_ws", "n4b_ad", "n4b_wwd", "n4c_hop_d0", "n4c_hop_d1", "n4c_slidechain", "n4c_slidechain_ctrl", "n4c_slidesteer", "n4d_cut1000", "n4d_cut1090", "n4d_cut1110", "n4d_cut1200", "c3_drop96", "c3_drop160", "c3_drop400", "c3_drop400_duck", "c3_slide_straight", "c3_slide_turn", "c3_drop900", "c3_drop900_duck", "c3_jumpland", "c3_jumpland_duck", "n6_sprint_turn90", "n6_sprint_turn180", "n6_walk_turn90", "n6_strafe"}
