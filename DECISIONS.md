@@ -29,7 +29,7 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 - **原生代码研究（N 系列）**：N0–N11 完成。用 Ghidra / Frida 读 r5apex 的原生移动代码，和实测逐项对照（对照表 [research/rea-native/CROSSCHECK-LEDGER.md](research/rea-native/CROSSCHECK-LEDGER.md)）。认可的差别都改进了 Reference。
 - **B 系列**：B1（S27 翻越加速移植）完成。
 - **手感对照（F 系列）**：不靠试玩，用同样的 R5 输入把 Unity 和 R5 叠在一起比指标。平地 511 / 513 项一致；攀爬 / 翻越 / superglide 1968 / 2221；技能 477 / 524（按每个片段每个指标的第一项算，同口径改之前是 473）；镜头 325 / 367（不含待定的 K-5 / K-6）。叠图页面：https://claude.ai/artifact/P1mjgrbW1Yoiu9HdukTbDv
-- **基线数字**：EditMode 2108 / 2108，PlayMode 1 / 1；M2/M1、M3、M4 回放和基线逐字节相同；真实按键演示 238 / 238；课程单圈 79.12 s。
+- **基线数字**：EditMode 2116 / 2116，PlayMode 1 / 1；M2/M1、M3、M4 回放和基线逐字节相同；真实按键演示 238 / 238；课程单圈 79.12 s。
 - **以 R5 为复刻核心**（D-36）：对照里找到的差别原则上改成 R5；改之前那一版和 R5 的差别存在 [R5-DIFF-ARCHIVE.md](R5-DIFF-ARCHIVE.md)。
 - **下一步候选**：K-5 起跳镜头、K-6 翻越镜头要不要做；A-1 剩下的部分要不要继续查；K-7 滑索横滚再测一次；见最后一节"还没结论的事"。
 
