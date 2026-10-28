@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- R6 slope harness: compiles the HSD-Unity R5Replay runtime sources read-only (nothing in HSD-Unity is changed or built
+       there) and steps the Reference game body on the R6 lanes. Build: dotnet build -c Release -o <out> [-p:HsdUnity=<path>] -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>9.0</LangVersion>
+    <Nullable>disable</Nullable>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <NoWarn>CS0618;CS0649;CS0414;CS0169;CS8632;CS0162</NoWarn>
+    <ResolveAssemblyReferenceIgnoreTargetFrameworkAttributeVersionMismatch>true</ResolveAssemblyReferenceIgnoreTargetFrameworkAttributeVersionMismatch>
+    <!-- the HSD-Unity checkout next to this repository -->
+    <HsdUnity Condition="'$(HsdUnity)' == ''">$(MSBuildThisFileDirectory)../../../../../HSD-Unity</HsdUnity>
+    <UnityManaged Condition="'$(UnityManaged)' == ''">C:\Program Files\Unity\Hub\Editor\6000.6.5f1\Editor\Data\Managed\UnityEngine</UnityManaged>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(HsdUnity)/Assets/HSD/R5Replay/Runtime/**/*.cs" />
+    <Compile Include="Program.cs" />
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(UnityManaged)\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>

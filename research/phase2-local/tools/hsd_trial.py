@@ -2183,6 +2183,59 @@ AgentLink_Reply( "m10 logger run=$run" )
 # m10fly and later M10 props: (model, x, y, z, pitch, yaw, roll); spawned with the script name hsd_test_geo after the wall
 M10_GEO = {"m10fly": [(M10_ROCK,) + M10_FLY + (0.0, 0.0, 0.0)]}
 M10_GEO.update(_M10R2_GEO)
+
+# R6 slope slide (research/phase2-local/slope, SLOPE-SLIDE.md): planar lanes of tilted towerblocks in the void north of the
+# range (slope_geo.py). Start points are on a lane surface (the reset plants the player on it); d = distance along X before
+# the lane's first joint (the foot of the up ramp, the top edge of the down ramp).
+import slope_geo as _sg  # noqa: E402
+M10_GEO["r6slope"] = _sg.all_props()
+
+
+def _r6_at(lane, x, dy=0.0):
+    z, _ = _sg.surface_z(lane, x)
+    return (round(x, 1), _sg.LANES[lane][1] + dy, round(z + 1.0, 2))
+
+
+_R6_J = {n: _sg.segments(n)[0]["xb"] for n in _sg.LANES}   # first joint of every lane
+_R6_SLIDE = "wait 72; down speed; down forward; wait 1.0s; down duck; wait %.1fs; up duck; up forward; up speed; wait 1.0s"
+# W and sprint released 0.25 s into the slide (the slide has started; M8: releasing on the duck usercmd starts none): the
+# slide runs on without input, so an uphill slide can show whether it stops or slides back
+_R6_REL = "wait 72; down speed; down forward; wait 1.0s; down duck; wait 0.25s; up forward; up speed; wait %.1fs; up duck; wait 1.0s"
+# slide jump 0.15 s into the slide, duck held through the air and the landing (landing into a slide)
+_R6_JUMP = "wait 72; down speed; down forward; wait 1.0s; down duck; wait 0.15s; tap jump; wait %.1fs; up duck; up forward; up speed; wait 1.0s"
+# duck released D s into the slide (the slide flag stays on with slideWantToStopDecel above slideMaxStopSpeed 350): is the
+# slope term still on? On dn30 the slide is at ~480 by then (pilot), on up20 at ~380 just up the foot
+_R6_DUCKUP = "wait 72; down speed; down forward; wait 1.0s; down duck; wait %.1fs; up duck; wait 3.0s; up forward; up speed; wait 1.0s"
+_R6_RUN = "wait 72; down speed; down forward; wait %.1fs; up forward; up speed; wait 1.0s"
+for _th in (10, 20, 30, 40):
+    _l = "up%d" % _th
+    # pilot (R6_pilot): from 520 u the slide jump landed 34 u before the foot; from 400 it lands on the ramp
+    for _kind, _sched, _d in (("slide", _R6_SLIDE % 4.0, 330.0), ("rel", _R6_REL % 4.0, 330.0), ("jump", _R6_JUMP % 4.0, 400.0)):
+        _n = "r6_%s_%s" % (_l, _kind)
+        SCHEDULES[_n] = _sched
+        SCHEDULE_ORIGIN[_n] = _r6_at(_l, _R6_J[_l] - _d)
+        SCHEDULE_YAW[_n] = 0.0
+for _th in (5, 10, 15, 20, 25, 30):
+    _l = "dn%d" % _th
+    _n = "r6_%s_slide" % _l
+    SCHEDULES[_n] = _R6_SLIDE % 4.0
+    SCHEDULE_ORIGIN[_n] = _r6_at(_l, _R6_J[_l] - 330.0)
+    SCHEDULE_YAW[_n] = 0.0
+for _n, _l, _sched in (("r6_dn30_duckup", "dn30", _R6_DUCKUP % 1.2), ("r6_up20_duckup", "up20", _R6_DUCKUP % 0.3),
+                       ("r6_v20_slide", "v20", _R6_SLIDE % 5.0), ("r6_crest_run", "crest", _R6_RUN % 5.0)):
+    SCHEDULES[_n] = _sched
+    SCHEDULE_ORIGIN[_n] = _r6_at(_l, _R6_J[_l] - 330.0)
+    SCHEDULE_YAW[_n] = 0.0
+# crest slide: sprint up the 10 deg rise and crouch just before the crest (2.3 s of sprint from 300 u before the foot)
+SCHEDULES["r6_crest_slide"] = "wait 72; down speed; down forward; wait 2.3s; down duck; wait 4.0s; up duck; up forward; up speed; wait 1.0s"
+SCHEDULE_ORIGIN["r6_crest_slide"] = _r6_at("crest", _R6_J["crest"] - 300.0)
+SCHEDULE_YAW["r6_crest_slide"] = 0.0
+# lateral (+Y, along the contour) and diagonal (45 deg down, 135 deg up) slides on the 20 deg ramp of lat20 (x 1000..2923)
+for _n, _x, _yw in (("r6_lat20_slide", 1564.0, 90.0), ("r6_diag20d_slide", 1300.0, 45.0), ("r6_diag20u_slide", 2504.0, 135.0)):
+    SCHEDULES[_n] = _R6_SLIDE % 3.0
+    SCHEDULE_ORIGIN[_n] = _r6_at("lat20", _x, -1300.0)
+    SCHEDULE_YAW[_n] = _yw
+
 M10_SPAWN = r'''
 string out = ""
 try
@@ -2708,7 +2761,8 @@ def main(argv):
                          "differ in some class vars (Wraith sprintAcceleration 102 vs 100); '' keeps the spawn legend")
     ap.add_argument("--geometry", default="none",
                     help="comma list: m3 = the test wall on lane A (test_geometry.py); h<H> = the same rock sunk so its top "
-                         "is H u above the floor (M6-A2 ledge heights); m6zip = the M6 ziplines (ZIP_SERVER)")
+                         "is H u above the floor (M6-A2 ledge heights); m6zip = the M6 ziplines (ZIP_SERVER); r6slope = the R6 "
+                         "slope lanes in the void north of the range (slope_geo.py)")
     ap.add_argument("--state-log", action="store_true", help="M6: client [HSD-STATE] logger thread per trial")
     ap.add_argument("--both-cvar", action="append", default=[],
                     help="NAME=VALUE set on the dedi and client consoles for the session, restored afterwards")
