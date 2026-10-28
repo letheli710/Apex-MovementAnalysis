@@ -105,6 +105,33 @@ U-3 里没测到、按保守写的：落地不算换实体（落地的滑铲规�
 
 切回旧版：`R5MotorV2Params.LegacyM2()`（或对任意参数调 `WithLegacyM2Slide()`）；批量回放加 `-legacyM2`，输出和改前的回放基线逐字节相同（`m4/unity/regression_check.py`、`m5/unity/m4_replay_check.py` 仍按旧基线检查这一档）。
 
+### RUD 回放电机的下蹲碰撞体和地面移动（HSD-Unity `rud/replay-unduck-native`，D-49）
+
+"旧版"在这一节指 RPS 合并后的回放电机（HSD-Unity#44）。游戏身体（Reference / Fun）早就是右列的规则，这次没变，只是回放电机跟上。
+
+| 开关（`R5MotorV2Params`） | 旧版（Legacy M2 / RPS） | R5 / Reference | 现在 |
+|---|---|---|---|
+| `airUnduckDrop` 下蹲碰撞体 | 0：没有。空中松开下蹲，高度不变 | 地上按住下蹲 0.2 s 碰撞体变矮；空中松开（起跳 0.08 s 后起）原点下降 16.5 u，头不动（M5 实测，M3 e8 / e3 slide350 共 8 次） | 按 R5 |
+| `groundNativeFriction` 有输入时的地面移动 | M2 规则：速度方向立即转到输入方向（v = s·ŵ） | 原生 WalkMove：Friction + Accelerate，侧向输入着地后 0.1–0.3 s 慢慢转过去（N7 G-07/G-08/G-14） | 按 R5 |
+| `groundVectorRedirect` | false | Reference 设着，但被上一行盖过 | 和 Reference 一样设为 true |
+
+**差多少**（全表 [research/phase2-local/rud/README.md](research/phase2-local/rud/README.md)）：105 个录像里 70 个逐命令轨迹不变，35 个变了。
+- M3 e3 侧向起跳整组：位置误差 rms 例如 24.2 → 2.4 u。
+- e3 滑铲跳 r650 / r651：7.26 → 2.54 / 7.05 → 1.09 u。
+- e8 连跳：8.0 → 0.6–1.4 u。
+- M4 空中控制 / stim：10–20 → 1–2 u。
+
+三个例外（用户同意）：
+- M2 e1_turn ×2：只有"最高速度在第几条命令"变了（299 平台上的浮点噪声），轨迹误差不变。
+- M3 r1237：沙盘比 R5 高约 0.5 u，离地面 2.075 u，刚超出原生 2.0 u 着地探测，晚一条命令着地，丢了一次连跳。
+
+先做过只换 M5 `groundVectorRedirect` 的第一版：e1_turn 速度误差略升，后来按 Reference 实际走的原生 WalkMove 换成现在的版本。
+
+原生着地探测（`CategorizePosition` 0x140a51bc0）：向下 2.0 u，向上速度 > 140 u/s 离地，和 Unity 的 `groundProbe` 2 相同，没改。
+
+切回旧版：`R5MotorV2Params.LegacyM2()`（= `R5Reference()` 加 `WithLegacyM2Slide()` 和 `WithLegacyM2Rud()`），或者对任意参数调 `WithLegacyM2Rud()`。
+批量回放加 `-legacyM2`，输出和最老的回放基线逐字节相同（111/111/90/114）。RPS 那一档（原生滑铲 + 旧地面 / 没有碰撞体）= `R5Reference().WithLegacyM2Rud()`。
+
 ### GN 钩爪脱钩规则（HSD-Unity `gn/grapple-native`，D-50）
 
 "旧版"在这一节指 RPS 合并后的 Reference / Fun 钩爪（HSD-Unity#44），也就是 M10-A 定下、N7 改过一次的脱钩规则，现在叫 **pre-GN**。依据 N13（[research/rea-native/n13/N13-GRAPPLE-DETACH.md](research/rea-native/n13/N13-GRAPPLE-DETACH.md)）和 GN 的 Frida 实测（[research/rea-native/gn/GN-GRAPPLE-NATIVE.md](research/rea-native/gn/GN-GRAPPLE-NATIVE.md)）。Reference 和 Fun 都改（Fun 从 Reference 建，没有自己的钩爪值）；回放电机不用 S21 钩爪，不变。开关都在 `GrappleS21Params`。
@@ -143,7 +170,7 @@ U-3 里没测到、按保守写的：落地不算换实体（落地的滑铲规�
 | K-7 | 滑索横滚、滑索上的眼高 | 横滚 0；眼高 70 | 两次 R5 会话不一样：N6 没有横滚，N10 转开 30–60° 时横滚 −0.7 … −1.4°；滑索上眼高约 65.5 | 要再测一次分清哪个对 |
 | 滑铲下沉 | 眼高降到最低的时间 | 约 0.19 s | 约 0.167 s | 小差别，记下 |
 | F-2 | 原地跳高度 | 比 R5 高 1.8 u（两套电机） | — | 早先记下，没查（F1） |
-| 回放电机 | M2 / M3 回放用的电机 | 滑铲规则 RPS 起已按原生（见第一部分 RPS）；斜坡（R6U）和非滑铲的 N7 项（地面摩擦、空中额外加速等）仍是 M2 / M3 规则 | — | 这次只换滑铲（D-47）；其余要不要换没定 |
+| 回放电机 | M2 / M3 回放用的电机 | 滑铲规则（RPS）、下蹲碰撞体和有输入的地面移动（RUD）已按原生 / Reference（见第一部分）；斜坡（R6U）和其余 N7 项（空中额外加速、冲刺加速边界、跳跃 skip reduce、+30 推墙）仍是 M2 / M3 规则 | — | 已换滑铲（D-47）、碰撞体和地面移动（D-49）；其余要不要换没定 |
 
 ---
 
