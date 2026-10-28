@@ -74,6 +74,20 @@
 
 切回旧版：原生镜头参数 `NativeCameraParams.nativeRollSmooth = false`（旧的 `grappleRollRate` 6.667、`zipRollRate` 3.0 还在）。手感对照用 `CameraFeelBatch -preF7Roll` 跑旧版。
 
+### R6U 斜坡滑铲五条（HSD-Unity `r6u/slope-native`，D-45 / D-46）
+
+"旧版"在这一节指 F7 那一版（HSD-Unity#42）。差别来自 R6 实测（[research/phase2-local/slope/SLOPE-SLIDE.md](research/phase2-local/slope/SLOPE-SLIDE.md)），前后对照在 [R6U-COMPARE.md](research/phase2-local/slope/R6U-COMPARE.md)。五条都只改 Reference；**Fun 和回放电机不变**。开关都在 `R5MotorV2Params`（`[NonSerialized]`，`MovementConfigs.Reference()` 打开，`Fun()` 关回去）。
+
+| # | 旧版 | R5 | 现在 | 差多少（旧版 → 现在，R5） | 切回旧版 |
+|---|---|---|---|---|---|
+| U-1 上坡步长 | 投影到坡面（Source 的做法）：水平前进 = \|v_h\|·dt·cos²θ | 投影后保持长度：水平前进 = \|v_h\|·dt·cosθ（比例 0.9862 / 0.9423 / 0.8693 / 0.7699，10–40°） | 按 R5 | 40° 上坡滑铲距离 84.4 → 124.8（R5 123.6）；比例 0.5868 → 0.7660（R5 0.7699） | `slopeUphillKeepStep = false` |
+| U-2 坡上碰撞体底部 | 方盒：原点在坡面上方 16·tanθ（20° 5.82、40° 13.43），坡脚 / 坡顶按方盒角接触 | 相当于半径 16 的圆底：16·(1/cosθ − 1)（20° 1.03、40° 5.00） | 按 R5：圆底只用在坡面上，接触和法线按原点取；平顶（台阶、边缘）仍是方盒 | 坡上眼高低 4.8（20°）/ 8.5 u（40°）；上坡进入速度差 4–22 → −1…+4 u/s；平地→下坡转折速度差 8–13 → 2–5 u/s | `hullBottomRadius = 0` |
+| U-3 换地面实体时重新开始滑铲 | 没有 | 原生 `SetGroundEntity` 换实体时调 `Slide_TryBegin`：距上次开始 ≥ 2 s 再加速 min(h + 172.5, 460)，计时重置（实测接缝、V 形谷底 398→461 等） | 按 R5，**可选三档**：`Props`（默认，静态关卡几何一个实体，平台算道具）、`Off`（旧版）、`EverySolid`（每个方块一个） | R6 道具坡道上的二次加成时刻 2.09–3.45 s，对 R5 2.10–3.49 s；旧版没有（横向滑铲结束速度 272 → 349，R5 351） | `slideRebeginOnGroundChange = SlideRebegin.Off`；游戏菜单 "Slide re-boost on a new ground" 也能切（PlayerPrefs `hsd.r6u.sliderebegin`） |
+| U-4 坡面项坡度门槛 | n_z < 0.999（> 2.56°）才有滑铲坡面项 | 没有门槛 | 按 R5（移动本身的平地判断保留 0.999） | 只影响 < 2.56° 的缓坡（2° 时滑铲多 26 u/s² 加速）；实测坡度上不变 | `slideSlopeAnyGrade = false` |
+| U-5 `slideSlopeNeedsDuck` | true（M8-B："松开下蹲 → 没有坡面项"） | 坡面项不看下蹲（`Gravity_HalfStep`） | false | 行为不变：松开下蹲后的变化本来就来自 `slideReleaseEnds` 的 400 减速 | `slideSlopeNeedsDuck = true` |
+
+U-3 里没测到、按保守写的：落地不算换实体（落地的滑铲规则不变）；重新开始不算按下蹲（滑铲跳退还不重新计时）；超过 460 时不降速（R5 dn25 底部的逐命令残差说明不降）；没加速的那次不清掉"这次滑铲加速过"的标记。
+
 ---
 
 ## 二、还和 R5 不一样、没有改的
