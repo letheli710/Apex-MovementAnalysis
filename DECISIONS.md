@@ -165,6 +165,41 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
   - 105 个 R5 录像重跑：103 个逐命令轨迹不变，M3 两个 `e8_slide_chain` 更接近 R5（水平速度误差 rms 7.48 → 0.15 u/s，事件时刻误差 12 → 0 条命令；原因是录像最后的松开下蹲），没有变差的。新基线和对照：[research/phase2-local/rps/README.md](research/phase2-local/rps/README.md)；存档：[R5-DIFF-ARCHIVE.md](R5-DIFF-ARCHIVE.md)（RPS 一节）。
   - 游戏身体不变：105 个录像喂给 Reference / Fun 身体，轨迹和改前逐字节相同；真实按键演示 238 / 238，smoke 输出和 R6U 逐行相同，课程单圈 78.88 s 不变。Unity：EditMode 2149 / 2149，PlayMode 1 / 1；build `HSD-Build\RPS`；HSD-Unity [#44](https://github.com/letheli710/HSD-Unity/pull/44)。
 
+### 2026-10-28：回放电机的下蹲碰撞体和地面移动换成 Reference（RUD）
+- 你：先同意把 RPS 留下的边界项 `airUnduckDrop`（空中松开下蹲时原点下降 16.5 u）也换到回放电机（"第一个，我完全同意，就像你说的"）。
+  - 只换这一项时，105 个录像里 7 个变好、3 个按判据变差，所以停下来查原因：
+    - M3 e3 滑铲跳 r650 / r651：着地时刻对了，但水平位置误差 rms 4.0 → 8.4 / 3.7 → 9.1。原因是这时露出了回放电机的另一条旧规则：着地那一条命令速度方向就直接转到按键方向（R5 用约 30 条命令慢慢转过去）。改前着地晚 10 条命令，正好把这个差别盖住了。
+    - M3 r1237：见下面例外 2。
+- 你选了 B："一起换转向"。
+  - **第一版**（HSD-Unity ac14658，没采用）：再换 M5 的 `groundVectorRedirect`（横向速度按减速度衰减）。
+    - e3 整组大幅变好：r650 位置误差 rms 7.26 → 2.54 u、r651 7.05 → 1.36 u，k25 / k58 / k60 这几个从 23–26 u 降到约 2 u。
+    - M2 `e1_turn` r331 / r332 变差：鼠标转身时速度贴在 299 上限，M5 规则每条命令少约 0.044 u/s，速度误差 rms 0.1362 → 0.1372、0.0737 → 0.0756（R5 转身时一直是 299）。
+    - r1237 同下。
+  - 查的时候发现，Reference 里有输入的地面命令走的其实是 N7 的原生 WalkMove（`groundNativeFriction`，G-07/G-08/G-14），它优先于 M5 的 `groundVectorRedirect`；Reference 的参数来源也写着 "superseded by groundNativeFriction"。所以"原生的转向"就是 `groundNativeFriction`。
+  - **第二版**（采用）：回放电机打开 `groundNativeFriction`，和 Reference 完全一致。
+    - e3 比第一版再好 20–40%（例如 r651 1.36 → 1.09，k1 r601 0.69 → 0.47）。
+    - e1_turn 的轨迹误差回到和改前一样。
+- 你："第二版接受。既然他们的数据更相似，那就用第二版。"，并要求把第一版和三个例外都记下来。
+  - **[D-49]** 回放电机的两项默认值改成 Reference，没写新物理代码，只改 `R5MotorV2Params.R5Reference()`：
+    - 下蹲碰撞体 `airUnduckDrop` 16.5：地上按住下蹲 0.2 s 后碰撞体变矮；空中松开（起跳 0.08 s 后起）原点下降 16.5 u。
+    - 有输入时的地面移动 `groundNativeFriction`：原生 WalkMove。
+    - `groundVectorRedirect` 也和 Reference 一样设着（被上一项盖过）。
+    - 斜坡（R6U）和其余 N7 项（空中额外加速、冲刺加速边界、跳跃 skip reduce、+30 推墙）没动。
+  - 旧电机仍是 **Legacy M2**：`LegacyM2()` = RPS 的旧滑铲规则 + `WithLegacyM2Rud()`（关掉这两项）；`BatchReplay -legacyM2` 仍逐字节复现最老的回放基线（M2/M1 111/111、M1 首猜 111/111、M3 90/90、M4 114/114）。
+  - 105 个录像重跑（改前 = RPS 基线）：70 个逐命令轨迹不变，35 个变了；32 个变好或持平。
+    - M3 e3 侧向起跳整组：位置误差 rms 例如 24.2 → 2.4 u，速度误差 rms 56 → 5 u/s。
+    - e3 滑铲跳 r650 / r651：7.26 → 2.54 / 7.05 → 1.09 u，着地时刻误差 10 → 0 条命令。
+    - e8 连跳：8.0 → 0.6–1.4 u。
+    - M4 空中控制 / stim 空中：10–20 → 1–2 u。
+    - M4 跳板下蹲：8.1 → 3.9、6.0 → 1.4 u。
+  - **接受的三个例外**（按判据算"变差"，原因都查清了）：
+    1. M2 `e1_turn` r331 / r332：事件时刻误差 28 → 182、50 → 196 条命令。唯一变的是"最高速度出现在第几条命令"：速度贴在 299 的平台上，取最大值落在哪一条由 1e-13 级的浮点噪声决定。轨迹误差和改前一样（位置 rms 0.739 / 0.576、速度 rms 0.136 / 0.074 不变）。
+    2. M3 `e8_hop350_d0` r1237：位置最大误差 20.2 → 26.6 u，最高点误差 16.7 → 17.1 u（位置 rms 7.92 → 6.26 是变好的）。连跳中 R5 第 498 条命令着地、下一条就起跳；沙盘比 R5 高约 0.5 u，离地面 2.075 u，刚超出原生 2.0 u 的着地探测，晚一条命令着地，那次起跳就丢了。同条件的 r1236 8.02 → 0.62 u。不调参数去掩盖。
+  - 原生着地探测查清：`CategorizePosition`（r5apex_dx12 0x140a51bc0）向下探测 **2.0 u**，向上速度 > 140 u/s 就离地，和 Unity 的 `groundProbe` 2 相同，没改。
+  - 新基线和对照：[research/phase2-local/rud/README.md](research/phase2-local/rud/README.md)（`rud_check.py`；第一版的对照表也在那里）；存档：[R5-DIFF-ARCHIVE.md](R5-DIFF-ARCHIVE.md)（RUD 一节）。
+  - 游戏身体不变：105 个录像喂给 Reference / Fun 身体，轨迹和改前逐字节相同（各 105 / 105）。
+    - Unity 回归：真实按键演示 238 / 238，smoke 输出和 RPS build 逐行相同，课程单圈 78.88 s 不变；EditMode 2150 / 2150（多 1 个检查报告行的新测试），PlayMode 1 / 1；build `HSD-Build\RUD`；HSD-Unity [#45](https://github.com/letheli710/HSD-Unity/pull/45)。
+
 ---
 
 ## 决定总表
@@ -218,6 +253,7 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 | D-45 | 10-28 | 斜坡 U-1 / U-2 / U-4 / U-5（R6 实测） | Reference 按 R5：上坡步长保持长度、坡上圆底半径 16（接触和法线按原点）、滑铲坡面项没有门槛、`slideSlopeNeedsDuck` = false；Fun、回放电机不变；旧版存档 | `R5MotorV2Params.slopeUphillKeepStep` / `hullBottomRadius` / `slideSlopeAnyGrade` / `slideSlopeNeedsDuck` | HSD-Unity `r6u/slope-native` |
 | D-46 | 10-28 | 斜坡 U-3：换地面实体时重新开始滑铲 | 按 R5（≥ 2 s 再加速一次，不降速），可选三档：R5（默认，关卡几何一个实体、平台是道具）/ 关（旧版）/ 每个方块 | `R5MotorV2Params.slideRebeginOnGroundChange`（`SlideRebegin`）、`ConvexSolid.prop`；菜单 PlayerPrefs `hsd.r6u.sliderebegin` | HSD-Unity `r6u/slope-native` |
 | D-47 | 10-28 | 回放电机要不要换成 M10 / N7 的滑铲规则（"还没结论的事"里的一条） | 换成原生（和 Reference 一致），只换 7 个滑铲开关；旧规则存成 Legacy M2，可逐字节复现旧回放基线；回放基线重定（只有 2 个 M3 滑铲连招变了，更接近 R5） | `R5MotorV2Params` 滑铲开关默认值、`LegacyM2()` / `WithLegacyM2Slide()`、`BatchReplay -legacyM2` | HSD-Unity `rps/replay-slide-native` （#44） |
+| D-49 | 10-28 | 回放电机的下蹲碰撞体和地面转向（RPS 留下的边界项） | 换成 Reference：`airUnduckDrop` 16.5 + 原生 WalkMove（`groundNativeFriction`）；先做的 M5 `groundVectorRedirect` 版（第一版）没采用；旧电机仍是 Legacy M2；回放基线重定（35 个变，3 个例外：e1_turn ×2 平台噪声、r1237 着地探测边界） | `R5MotorV2Params.R5Reference()`、`WithLegacyM2Rud()`、`BatchReplay -legacyM2` | HSD-Unity `rud/replay-unduck-native`（#45） |
 
 **D-29 → D-31（C-2 为什么推翻）**：第一次决定时以为 Unity 的 102.5 ms 窗口已经盖住了 R5 的减量段，所以"简化 = 不改代码"。后来按 Unity 自己的翻越时钟重排（Unity 的翻越比 R5 长约 25 ms），发现减量段其实在窗口外面，原来的 Reference 在这段是"切到台面"，并不是"给完整 460"。你随后要求继续做 C-2 并合并。细节见 `research/feel/FEEL.md` §6.4 和 `Climb/README.md`。
 
