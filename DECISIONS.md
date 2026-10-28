@@ -163,7 +163,7 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 - 你："你建议（主要的贴合原生的）老的归档"，确认"对，合并后派"。
   - **[D-47]** 回放电机（R5 录像逐命令复现用的那套）的 7 个滑铲开关改成原生，和 Reference 一致：松开下蹲、2 s 加速冷却（从上次开始算）、早跳退还要下蹲过渡没完、过渡从下一条命令算、350 下限只抬 297.5–350、滑铲转向 50。斜坡（R6U）和非滑铲的 N7 项没动。旧规则存成 **Legacy M2**（`R5MotorV2Params.LegacyM2()`、`BatchReplay -legacyM2`），能逐字节复现改前全部回放输出。
   - 105 个 R5 录像重跑：103 个逐命令轨迹不变，M3 两个 `e8_slide_chain` 更接近 R5（水平速度误差 rms 7.48 → 0.15 u/s，事件时刻误差 12 → 0 条命令；原因是录像最后的松开下蹲），没有变差的。新基线和对照：[research/phase2-local/rps/README.md](research/phase2-local/rps/README.md)；存档：[R5-DIFF-ARCHIVE.md](R5-DIFF-ARCHIVE.md)（RPS 一节）。
-  - 游戏身体不变：105 个录像喂给 Reference / Fun 身体，轨迹和改前逐字节相同；真实按键演示 238 / 238，smoke 输出和 R6U 逐行相同，课程单圈 78.88 s 不变。Unity：EditMode 2149 / 2149，PlayMode 1 / 1；build `HSD-Build\RPS`。
+  - 游戏身体不变：105 个录像喂给 Reference / Fun 身体，轨迹和改前逐字节相同；真实按键演示 238 / 238，smoke 输出和 R6U 逐行相同，课程单圈 78.88 s 不变。Unity：EditMode 2149 / 2149，PlayMode 1 / 1；build `HSD-Build\RPS`；HSD-Unity [#44](https://github.com/letheli710/HSD-Unity/pull/44)。
 
 ---
 
@@ -217,7 +217,7 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 | D-44 | 10-27 | FOV 设置 | 菜单按 Apex 的 FOV 数值（4:3 水平，70–110）显示和输入；默认不变（竖直 70° = Apex 86） | `CameraFeedbackSettings.VerticalFromApex` / `ApexFov`，PlayerPrefs 键不变 | HSD-Unity `f7/roll-fov` |
 | D-45 | 10-28 | 斜坡 U-1 / U-2 / U-4 / U-5（R6 实测） | Reference 按 R5：上坡步长保持长度、坡上圆底半径 16（接触和法线按原点）、滑铲坡面项没有门槛、`slideSlopeNeedsDuck` = false；Fun、回放电机不变；旧版存档 | `R5MotorV2Params.slopeUphillKeepStep` / `hullBottomRadius` / `slideSlopeAnyGrade` / `slideSlopeNeedsDuck` | HSD-Unity `r6u/slope-native` |
 | D-46 | 10-28 | 斜坡 U-3：换地面实体时重新开始滑铲 | 按 R5（≥ 2 s 再加速一次，不降速），可选三档：R5（默认，关卡几何一个实体、平台是道具）/ 关（旧版）/ 每个方块 | `R5MotorV2Params.slideRebeginOnGroundChange`（`SlideRebegin`）、`ConvexSolid.prop`；菜单 PlayerPrefs `hsd.r6u.sliderebegin` | HSD-Unity `r6u/slope-native` |
-| D-47 | 10-28 | 回放电机要不要换成 M10 / N7 的滑铲规则（"还没结论的事"里的一条） | 换成原生（和 Reference 一致），只换 7 个滑铲开关；旧规则存成 Legacy M2，可逐字节复现旧回放基线；回放基线重定（只有 2 个 M3 滑铲连招变了，更接近 R5） | `R5MotorV2Params` 滑铲开关默认值、`LegacyM2()` / `WithLegacyM2Slide()`、`BatchReplay -legacyM2` | HSD-Unity `rps/replay-slide-native` |
+| D-47 | 10-28 | 回放电机要不要换成 M10 / N7 的滑铲规则（"还没结论的事"里的一条） | 换成原生（和 Reference 一致），只换 7 个滑铲开关；旧规则存成 Legacy M2，可逐字节复现旧回放基线；回放基线重定（只有 2 个 M3 滑铲连招变了，更接近 R5） | `R5MotorV2Params` 滑铲开关默认值、`LegacyM2()` / `WithLegacyM2Slide()`、`BatchReplay -legacyM2` | HSD-Unity `rps/replay-slide-native` （#44） |
 
 **D-29 → D-31（C-2 为什么推翻）**：第一次决定时以为 Unity 的 102.5 ms 窗口已经盖住了 R5 的减量段，所以"简化 = 不改代码"。后来按 Unity 自己的翻越时钟重排（Unity 的翻越比 R5 长约 25 ms），发现减量段其实在窗口外面，原来的 Reference 在这段是"切到台面"，并不是"给完整 460"。你随后要求继续做 C-2 并合并。细节见 `research/feel/FEEL.md` §6.4 和 `Climb/README.md`。
 
