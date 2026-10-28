@@ -29,7 +29,7 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 - **原生代码研究（N 系列）**：N0–N11 完成。用 Ghidra / Frida 读 r5apex 的原生移动代码，和实测逐项对照（对照表 [research/rea-native/CROSSCHECK-LEDGER.md](research/rea-native/CROSSCHECK-LEDGER.md)）。认可的差别都改进了 Reference。
 - **B 系列**：B1（S27 翻越加速移植）完成。
 - **手感对照（F 系列）**：不靠试玩，用同样的 R5 输入把 Unity 和 R5 叠在一起比指标。平地 511 / 513 项一致；攀爬 / 翻越 / superglide 1968 / 2221；技能 477 / 524（按每个片段每个指标的第一项算，同口径改之前是 473）；镜头 325 / 367（不含待定的 K-5 / K-6）。叠图页面：https://claude.ai/artifact/P1mjgrbW1Yoiu9HdukTbDv
-- **基线数字**（R6U 起）：EditMode 2149 / 2149，PlayMode 1 / 1；M2/M1、M3、M4 回放和基线逐字节相同；真实按键演示 238 / 238；课程单圈 78.88 s。
+- **基线数字**（RPS 起）：EditMode 2149 / 2149，PlayMode 1 / 1；M2/M1、M3、M4 回放按新基线 [research/phase2-local/rps](research/phase2-local/rps/README.md)（回放电机滑铲按原生；`-legacyM2` 和旧基线逐字节相同）；真实按键演示 238 / 238；课程单圈 78.88 s。
 - **以 R5 为复刻核心**（D-36）：对照里找到的差别原则上改成 R5；改之前那一版和 R5 的差别存在 [R5-DIFF-ARCHIVE.md](R5-DIFF-ARCHIVE.md)。
 - **下一步候选**：K-5 起跳镜头、K-6 翻越镜头要不要做；A-1 剩下的部分要不要继续查；K-7 滑索横滚再测一次；见最后一节"还没结论的事"。
 
@@ -159,6 +159,12 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
   - 练习地图上 U-3（R5 档）会触发的只有平台和坡道相接的 4 处：J 发射坡顶的平台两头、L 滑索场的上坡道接平台、终点平台接 X 连招坡、ZG2 平台接坡道。贴地滑过去才算，而且只有滑铲已经超过 2 s 才会再加速；91 个 Reference 演示和课程单圈里一次都没有触发（"每个方块"档也没有）。
   - Unity：EditMode 2149 / 2149，PlayMode 1 / 1；M2/M1、M3、M4 回放和基线逐字节相同；真实按键演示 238 / 238，91 个 Reference 演示的轨迹和改前完全一样；课程单圈 79.12 → 78.88 s，来自 U-1（L 滑索场的上坡道走得快了；单关 U-1 回到 79.14）；build `HSD-Build\R6U`。
 
+### 2026-10-28：回放电机的滑铲规则换成原生（RPS）
+- 你："你建议（主要的贴合原生的）老的归档"，确认"对，合并后派"。
+  - **[D-47]** 回放电机（R5 录像逐命令复现用的那套）的 7 个滑铲开关改成原生，和 Reference 一致：松开下蹲、2 s 加速冷却（从上次开始算）、早跳退还要下蹲过渡没完、过渡从下一条命令算、350 下限只抬 297.5–350、滑铲转向 50。斜坡（R6U）和非滑铲的 N7 项没动。旧规则存成 **Legacy M2**（`R5MotorV2Params.LegacyM2()`、`BatchReplay -legacyM2`），能逐字节复现改前全部回放输出。
+  - 105 个 R5 录像重跑：103 个逐命令轨迹不变，M3 两个 `e8_slide_chain` 更接近 R5（水平速度误差 rms 7.48 → 0.15 u/s，事件时刻误差 12 → 0 条命令；原因是录像最后的松开下蹲），没有变差的。新基线和对照：[research/phase2-local/rps/README.md](research/phase2-local/rps/README.md)；存档：[R5-DIFF-ARCHIVE.md](R5-DIFF-ARCHIVE.md)（RPS 一节）。
+  - 游戏身体不变：105 个录像喂给 Reference / Fun 身体，轨迹和改前逐字节相同；真实按键演示 238 / 238，smoke 输出和 R6U 逐行相同，课程单圈 78.88 s 不变。Unity：EditMode 2149 / 2149，PlayMode 1 / 1；build `HSD-Build\RPS`。
+
 ---
 
 ## 决定总表
@@ -211,6 +217,7 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 | D-44 | 10-27 | FOV 设置 | 菜单按 Apex 的 FOV 数值（4:3 水平，70–110）显示和输入；默认不变（竖直 70° = Apex 86） | `CameraFeedbackSettings.VerticalFromApex` / `ApexFov`，PlayerPrefs 键不变 | HSD-Unity `f7/roll-fov` |
 | D-45 | 10-28 | 斜坡 U-1 / U-2 / U-4 / U-5（R6 实测） | Reference 按 R5：上坡步长保持长度、坡上圆底半径 16（接触和法线按原点）、滑铲坡面项没有门槛、`slideSlopeNeedsDuck` = false；Fun、回放电机不变；旧版存档 | `R5MotorV2Params.slopeUphillKeepStep` / `hullBottomRadius` / `slideSlopeAnyGrade` / `slideSlopeNeedsDuck` | HSD-Unity `r6u/slope-native` |
 | D-46 | 10-28 | 斜坡 U-3：换地面实体时重新开始滑铲 | 按 R5（≥ 2 s 再加速一次，不降速），可选三档：R5（默认，关卡几何一个实体、平台是道具）/ 关（旧版）/ 每个方块 | `R5MotorV2Params.slideRebeginOnGroundChange`（`SlideRebegin`）、`ConvexSolid.prop`；菜单 PlayerPrefs `hsd.r6u.sliderebegin` | HSD-Unity `r6u/slope-native` |
+| D-47 | 10-28 | 回放电机要不要换成 M10 / N7 的滑铲规则（"还没结论的事"里的一条） | 换成原生（和 Reference 一致），只换 7 个滑铲开关；旧规则存成 Legacy M2，可逐字节复现旧回放基线；回放基线重定（只有 2 个 M3 滑铲连招变了，更接近 R5） | `R5MotorV2Params` 滑铲开关默认值、`LegacyM2()` / `WithLegacyM2Slide()`、`BatchReplay -legacyM2` | HSD-Unity `rps/replay-slide-native` |
 
 **D-29 → D-31（C-2 为什么推翻）**：第一次决定时以为 Unity 的 102.5 ms 窗口已经盖住了 R5 的减量段，所以"简化 = 不改代码"。后来按 Unity 自己的翻越时钟重排（Unity 的翻越比 R5 长约 25 ms），发现减量段其实在窗口外面，原来的 Reference 在这段是"切到台面"，并不是"给完整 460"。你随后要求继续做 C-2 并合并。细节见 `research/feel/FEEL.md` §6.4 和 `Climb/README.md`。
 
@@ -224,7 +231,7 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 
 记录里写着"等你决定"、后来没看到明确结论的。要么还没定，要么定了没记下来，回顾时请确认：
 
-- **回放电机要不要换成 M10 的新滑铲规则**：换了会让 2 个 M3 滑铲连招片段更准，但回放基线会变。（M10）
+- ~~回放电机要不要换成 M10 的新滑铲规则~~：10-28 换了，见 D-47。回放电机里斜坡和非滑铲的 N7 项（地面摩擦、空中额外加速等）仍是旧规则，要不要也换没定。
 - **F-2**：一次原地跳 Unity 比 R5 高 1.8 u（两套电机都是）。（F1）
 - ~~LS / RAS~~：10-27 定了，见 D-40。
 - ~~旧的 "Revenant-Wraith" 配置~~：10-27 定了，当历史保留，见 D-39。
