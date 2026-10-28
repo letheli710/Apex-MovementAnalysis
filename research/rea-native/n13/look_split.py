@@ -13,12 +13,19 @@ Per run:
   3. the camera-roll peak of the N12 native model (n12/rodeo_roll.py, SmoothCD) as measured (hybrid: client + dedi re-attach) and
      with the grapple off from the client's first release on (client only), cut either at the logged flag or at the view rule
      (nat_h0) -- the true client command lies between the two.
+GN (2026-10-28): h = 22 (player +0x1de8, Frida), so nat_h22 is the native rule; with --write <camera trials dir> every run also writes
+camera_client.csv into its camera trial folder (feel/camera_to_trial.py output, folder name ending _r<run>): the client-only roll
+(cut at the nat_h22 rule) on the client frames, t = seconds after the Q press (first act); feel/camera_compare.py then uses it as R5's
+grapple roll (F-1: the measured roll of these clips is the hybrid client + S3 dedi).
 Standard library only. Part of rea-native N13 (N13-GRAPPLE-DETACH.md).
 """
 import os, re, glob, math, bisect, sys, copy
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', 'n12'))
+WRITE = None
+if '--write' in sys.argv:
+    i = sys.argv.index('--write'); WRITE = sys.argv[i + 1]; del sys.argv[i:i + 2]
 _argv, sys.argv = sys.argv, sys.argv[:1]
 import rodeo_roll as rr                      # parses the client logs of the cwd session on import
 sys.argv = _argv
@@ -53,23 +60,27 @@ def view_rule(run, G, fire, P, pull):
         o, e = vec(k['o']), vec(k['epos'])
         tests = {'eye90': dot(f, [P[j] - e[j] for j in range(3)]) < 0,
                  'unity': dot(f, [P[0] - o[0], P[1] - o[1], P[2] - o[2] - 70]) < 0}
-        for h in (0, 36, 69):
+        for h in (0, 22, 36, 69):
             tests['nat_h%d' % h] = dot(f, [P[0] - o[0], P[1] - o[1], P[2] + LIFT - o[2] - h - 1]) < 0
         for name, b in tests.items():
             if b and name not in first: first[name] = t - fire
     return first
 
 
-def roll_peak(run, cut):
+def model_rows(run, cut):
     keep = rr.gr[run]
     if cut is not None:
         rr.gr[run] = copy.deepcopy(keep)
         for k in rr.gr[run]:
             if float(k['t']) >= cut: k['act'] = k['att'] = 'false'
     try:
-        rows = rr.replay(run, 1, 1)
+        return rr.replay(run, 1, 1)
     finally:
         rr.gr[run] = keep
+
+
+def roll_peak(run, cut):
+    rows = model_rows(run, cut)
     m = max(rows, key=lambda r: abs(r[2]))
     meas = max(rows, key=lambda r: abs(r[3]))
     return abs(m[2]), m[0], abs(meas[3]), meas[0]
@@ -87,13 +98,21 @@ for run in sys.argv[1:] or sorted(rr.gr, key=int):
     print('  client att : ' + intervals(G, 'att', fire))
     print('  dedi   att : ' + intervals(S, 'att', fire) + '   dedi pull: ' + intervals(S, 'pull', fire))
     vr = view_rule(run, G, fire, P, t_att + 0.2)
-    print('  view rule first frame: ' + '  '.join('%s %.3f' % (k, vr[k]) for k in ('eye90', 'unity', 'nat_h0', 'nat_h36', 'nat_h69') if k in vr)
+    print('  view rule first frame: ' + '  '.join('%s %.3f' % (k, vr[k]) for k in ('eye90', 'unity', 'nat_h0', 'nat_h22', 'nat_h36', 'nat_h69') if k in vr)
           + ('   measured client release %.3f' % (rel - fire) if rel else ''))
     off = t_att - fire
     p, tp, m, tm = roll_peak(run, None)
     print('  roll peak: measured %.2f @%.2f  model hybrid %.2f @%.2f' % (m, tm + off, p, tp + off), end='')
-    for name, cut in (('client-only (cut at flag)', rel), ('client-only (cut at rule)', fire + vr['nat_h0'] if 'nat_h0' in vr else None)):
+    for name, cut in (('client-only (cut at flag)', rel), ('client-only (cut at rule)', fire + vr['nat_h22'] if 'nat_h22' in vr else None)):
         if cut is None: continue
         p2, tp2, _, _ = roll_peak(run, cut)
         print('  %s %.2f @%.2f' % (name, p2, tp2 + off), end='')
     print()
+    if WRITE and 'nat_h22' in vr:
+        dirs = [d for d in glob.glob(os.path.join(WRITE, '*_r%s' % run)) if os.path.isdir(d)]
+        if dirs:
+            with open(os.path.join(dirs[0], 'camera_client.csv'), 'w', encoding='utf-8', newline=chr(10)) as f:
+                f.write('t_press,roll' + chr(10))
+                for r in model_rows(run, fire + vr['nat_h22']):
+                    f.write('%.5f,%.4f' % (r[0] + off, r[2]) + chr(10))
+            print('  wrote %s' % os.path.join(dirs[0], 'camera_client.csv'))
