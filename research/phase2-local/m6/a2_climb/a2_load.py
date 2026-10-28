@@ -184,12 +184,17 @@ def join(cmds, frames):
     return st
 
 
+# Callers that replay the recorded usercmds (feel/camera_to_trial.py) may also take the trials that failed the runner fps check: the
+# commands are logged one by one, so the replay does not depend on the frame rate.
+INCLUDE_UNSCORED = False
+
+
 def load(folder):
     with open(os.path.join(folder, "runner.json"), encoding="utf-8") as fh:
         runner = json.load(fh)
     frames, _, states = _parse_hsd(folder, "client")
     _, sv_evts, _ = _parse_hsd(folder, "server")
-    scored = [t for t in runner["trials"] if t.get("ok") and not t.get("warmup")]
+    scored = [t for t in runner["trials"] if (t.get("ok") or INCLUDE_UNSCORED) and not t.get("warmup")]
     win = []
     for t in scored:
         fr = frames.get(t["run"], [])

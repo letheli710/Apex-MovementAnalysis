@@ -694,6 +694,8 @@ for _n, _steps in (("c3_drop900", "wait 288"), ("c3_drop900_duck", "down duck; w
 SCHEDULES["c3_jumpland"] = "wait 72; tap jump; wait 216"
 SCHEDULES["c3_jumpland_duck"] = "wait 72; tap jump; waitair; wait 12; down duck; wait 216; up duck; wait 72"
 # N6 camera: sprint tilt (sprint + view turn at 90 / 180 deg/s) and strafe roll (sv_rollangle 0: expect none)
+# F6 (2026-10-27): K-3 re-capture, a long straight sprint in one session (step bob without turns)
+SCHEDULES["f6_sprint_straight"] = "wait 72; down speed; down forward; wait 3.0s; up forward; up speed; wait 0.8s"
 SCHEDULES["n6_sprint_turn90"] = "set cl_yawspeed 90; wait 72; down speed; down forward; wait 1.0s; down right; wait 1.0s; up right; wait 0.6s; up forward; up speed; wait 0.5s"
 SCHEDULES["n6_sprint_turn180"] = "set cl_yawspeed 180; wait 72; down speed; down forward; wait 1.0s; down right; wait 1.0s; up right; wait 0.6s; up forward; up speed; wait 0.5s"
 SCHEDULES["n6_walk_turn90"] = "set cl_yawspeed 90; wait 72; down forward; wait 1.0s; down right; wait 1.0s; up right; wait 0.6s; up forward; wait 0.5s"
@@ -2203,7 +2205,7 @@ AgentLink_Reply( out )
 
 DEFAULT_ORIGIN_SCHEDULES = {"basic","e1_walk", "e1_sprint", "e1_crouch", "e1_back", "e1_side", "e1_diag", "e1_turn",
                             "e2_strafe", "e2_noinput", "e2_keepfwd", "e4_stand", "e4_hop0", "e4_hop3", "e4_hop43", "e5_slide",
-                            "e5_slidejump02", "e5_slidejump06", "n4b_wd", "n4b_ws", "n4b_ad", "n4b_wwd", "n4c_hop_d0", "n4c_hop_d1", "n4c_slidechain", "n4c_slidechain_ctrl", "n4c_slidesteer", "n4d_cut1000", "n4d_cut1090", "n4d_cut1110", "n4d_cut1200", "c3_drop96", "c3_drop160", "c3_drop400", "c3_drop400_duck", "c3_slide_straight", "c3_slide_turn", "c3_drop900", "c3_drop900_duck", "c3_jumpland", "c3_jumpland_duck", "n6_sprint_turn90", "n6_sprint_turn180", "n6_walk_turn90", "n6_strafe"}
+                            "e5_slidejump02", "e5_slidejump06", "n4b_wd", "n4b_ws", "n4b_ad", "n4b_wwd", "n4c_hop_d0", "n4c_hop_d1", "n4c_slidechain", "n4c_slidechain_ctrl", "n4c_slidesteer", "n4d_cut1000", "n4d_cut1090", "n4d_cut1110", "n4d_cut1200", "c3_drop96", "c3_drop160", "c3_drop400", "c3_drop400_duck", "c3_slide_straight", "c3_slide_turn", "c3_drop900", "c3_drop900_duck", "c3_jumpland", "c3_jumpland_duck", "f6_sprint_straight", "n6_sprint_turn90", "n6_sprint_turn180", "n6_walk_turn90", "n6_strafe"}
 
 
 def origin_for(name, default):
