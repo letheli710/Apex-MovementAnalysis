@@ -38,15 +38,32 @@ def cam_row(r, t, fov0):
             round(r["cang"][2], 4), round(r["epos"][2] - r["o"][2], 3), round(r["fov"] / fov0, 5), r["ground"], r["slide"]]
 
 
+def landing_cmds(session):
+    """R5's landing commands of fast falls (client first-time MOVE-TRACE: airborne before, |vz| > 250 before, vz 0 after), in time order.
+    The landing view kick is seeded with MD5_PseudoRandom(this command number) (F6 K-1 / K-2)."""
+    seen, out = set(), []
+    for r in C.L._parse_mt(session, "client", lambda plat, cmd: True):
+        if r["cmd"] in seen:
+            continue
+        seen.add(r["cmd"])
+        if not r["ground"] and r["vz"] < -250 and abs(r["pvz"]) < 1e-3:
+            out.append(r["cmd"])
+    return out
+
+
 def drops(session, out_dir, frames, runner, floor):
-    """One synthetic trial per R5 drop landing (see the module doc)."""
+    """One synthetic trial per R5 drop landing (see the module doc). Its command numbers are shifted so that the landing row carries R5's
+    landing command number (the kick seed); every fast-fall landing of the session is matched in time order."""
     names = {str(t["run"]): t["schedule"] for t in runner["trials"] if t.get("ok") and not t.get("warmup")}
     label = runner.get("label", os.path.basename(session))
+    lands, li = landing_cmds(session), 0
     out = []
     for i in range(1, len(frames)):
         p, q = frames[i - 1], frames[i]
         if not (p["ground"] == 0 and q["ground"] == 1 and p["vel_z"] < -250):
             continue
+        land_cmd = lands[li] if li < len(lands) else None
+        li += 1
         run = next((r["run"] for r in frames[i:i + 400] if names.get(r["run"], "").startswith("c3_drop")), None)
         if run is None or any(o["run"] == run for o in out):
             continue
@@ -55,16 +72,18 @@ def drops(session, out_dir, frames, runner, floor):
         duck = sched.endswith("_duck")
         t_land = (2 * h / G) ** 0.5                                   # free fall from rest (the half-step gravity lands within a command)
         n = int(round((t_land + 2.0) / DT))
+        k_land = next(k for k in range(n) if floor + h - 0.5 * G * ((k + 1) * DT) ** 2 <= floor)
+        cmd0 = (land_cmd - k_land) if land_cmd is not None else 1000
         tid = f"{label}_{sched}_r{run}"
         od = os.path.join(out_dir, tid)
         os.makedirs(od, exist_ok=True)
         man = {"contract": "hsdmove-trial/2", "trial_id": tid, "source": "r5flowstate", "experiment": label, "recorded_side": "cl",
                "producer": "research/feel/camera_to_trial.py: synthetic drop (no input) for the R5 drop landing of run " + run,
                "space": {"axes": "source_zup_righthanded", "length_unit": "u", "meters_per_unit": 0.0254, "angle_unit": "deg"},
-               "initial_state": {"cmd": 1000, "pos": [p["o"][0], p["o"][1], floor + h], "vel": [0.0, 0.0, 0.0], "grounded": 0,
+               "initial_state": {"cmd": cmd0, "pos": [p["o"][0], p["o"][1], floor + h], "vel": [0.0, 0.0, 0.0], "grounded": 0,
                                  "angles": {"pitch": 0.0, "yaw": 0.0}, "buttons_held": 4 if duck else 0},
                "world": {"floor_z": floor}, "schedule": sched, "session": label, "camera_align": "landing",
-               "r5_land_vz": p["vel_z"], "drop_height": h}
+               "r5_land_vz": p["vel_z"], "drop_height": h, "r5_land_cmd": land_cmd}
         json.dump(man, open(os.path.join(od, "trial.json"), "w", encoding="utf-8"), indent=1)
         with open(os.path.join(od, "samples.csv"), "w", newline="", encoding="utf-8") as fh:
             w = csv.DictWriter(fh, C.COLS)
@@ -72,7 +91,7 @@ def drops(session, out_dir, frames, runner, floor):
             for k in range(n):
                 t = (k + 1) * DT
                 z = max(floor, floor + h - 0.5 * G * t * t)
-                w.writerow({"step": k, "t": round(t, 6), "dt": round(DT, 6), "cmd": 1000 + k, "n_cmds": 1, "in_fwd": 0, "in_right": 0,
+                w.writerow({"step": k, "t": round(t, 6), "dt": round(DT, 6), "cmd": cmd0 + k, "n_cmds": 1, "in_fwd": 0, "in_right": 0,
                             "in_yaw": 0.0, "in_pitch": 0.0, "in_jump": 0, "in_duck": int(duck), "in_sprint": 0, "buttons": 4 if duck else 0,
                             "cmd_fwd": 0, "cmd_side": 0, "movescale": 1.15, "maxspeed": 199.525, "pressed": "", "released": "",
                             "pos_x": p["o"][0], "pos_y": p["o"][1], "pos_z": round(z, 3), "vel_x": 0, "vel_y": 0,
@@ -87,12 +106,40 @@ def drops(session, out_dir, frames, runner, floor):
             for r in fr:
                 w.writerow(cam_row(r, r["t"] - t0 + t_land, fov0))
         out.append({"run": run, "trial": tid})
-    print(f"  {len(out)} drop landings as synthetic trials")
+    print(f"  {len(out)} drop landings as synthetic trials ({li} fast-fall landings in the frames, {len(lands)} in MOVE-TRACE)")
     return [o["trial"] for o in out]
 
 
 def wrap(a):
     return (a + 180.0) % 360.0 - 180.0
+
+
+# The zipline of the m9zd_* schedules (phase2-local/tools/hsd_trial.py M9_ROPES "r130": y, x0, h0 above the floor, x1, h1)
+ROPE_R130 = (6500.0, -14600.0, 130.0, -13000.0, 130.0)
+
+C.L.INCLUDE_UNSCORED = True   # the C3 slide trials failed the fps check (107–116 fps) but their commands are complete (C3-CAPTURE §0)
+
+
+USE = 0x20
+
+
+def restore_use(trial_dir, floor):
+    """The N10_zip usercmd log has no Use bit although R5 mounts the rope (the N6 rides show Use one command before the lift): put it back
+    on the command before the first lift-off from the floor without a jump, so the replayed body grabs the rope too."""
+    path = os.path.join(trial_dir, "samples.csv")
+    with open(path, encoding="utf-8") as fh:
+        rows = list(csv.DictReader(fh))
+    if not rows or any(int(r["buttons"]) & USE for r in rows):
+        return
+    k = next((i for i in range(1, len(rows)) if float(rows[i]["pos_z"]) > floor + 1 and float(rows[i - 1]["pos_z"]) <= floor + 1
+              and not int(rows[i]["in_jump"]) and not int(rows[i - 1]["in_jump"])), None)
+    if k is None:
+        return
+    rows[k - 1]["buttons"] = str(int(rows[k - 1]["buttons"]) | USE)
+    with open(path, "w", newline="", encoding="utf-8") as fh:
+        w = csv.DictWriter(fh, list(rows[0].keys()))
+        w.writeheader()
+        w.writerows(rows)
 
 
 def convert(session, out_dir):
@@ -107,6 +154,12 @@ def convert(session, out_dir):
     for tid in written:
         d = os.path.join(out_dir, tid)
         man = json.load(open(os.path.join(d, "trial.json"), encoding="utf-8"))
+        if man.get("schedule", "").startswith("m9zd"):                 # the rope for the Unity world (FeelReplay.World rails)
+            y, x0, h0, x1, h1 = ROPE_R130
+            floor = man["world"]["floor_z"]
+            man["world"]["rails"] = [{"name": "r130", "attach_radius": 48, "points": [[x0, y, floor + h0], [x1, y, floor + h1]]}]
+            json.dump(man, open(os.path.join(d, "trial.json"), "w", encoding="utf-8"), indent=1)
+            restore_use(d, floor)
         with open(os.path.join(d, "samples.csv"), encoding="utf-8") as fh:
             t_end = float(list(csv.DictReader(fh))[-1]["t"])
         t0 = man["t0_game"]
