@@ -21,7 +21,7 @@
 | `slideJumpFloorLowFrac` | 0.85（只抬 297.5–350） | 0（规则 H1：一律 ≥ 350） | N7 J-07 [native] |
 | `slideSteerAccel` | 50·msc | 0 | N7 G-12 [native] |
 
-没动的：斜坡开关（R6U U-1…U-5：`slopeUphillKeepStep`、`hullBottomRadius`、`slideRebeginOnGroundChange`、`slideSlopeAnyGrade`、`slideSlopeNeedsDuck`），非滑铲的 N7 项（`groundNativeFriction`、`extraAirAccel`、`sprintAccelFixedEdge`、`groundJumpSkipReduce`、`jumpSurfacePush`），以及 M5 的 `airUnduckDrop`（空中松开下蹲时原点下降 16.5 u，是下蹲碰撞体的规则，不算滑铲规则；Reference 开、回放电机关）。`slideBoostRefundWindow` 两边都是 0.4，`slideMaxJumpSpeedWindow` 两边都是 +∞。
+没动的：斜坡开关（R6U U-1…U-5：`slopeUphillKeepStep`、`hullBottomRadius`、`slideRebeginOnGroundChange`、`slideSlopeAnyGrade`、`slideSlopeNeedsDuck`），非滑铲的 N7 项（`groundNativeFriction`、`extraAirAccel`、`sprintAccelFixedEdge`、`groundJumpSkipReduce`、`jumpSurfacePush`），以及 M5 的 `airUnduckDrop`（空中松开下蹲时原点下降 16.5 u，是下蹲碰撞体的规则，不算滑铲规则；Reference 开、回放电机关）。RUD（D-49）起回放电机也打开了下蹲碰撞体和原生地面移动，新基线在 [`../rud/`](../rud/README.md)；本目录的基线只作为 RUD 的"改前"留档。`slideBoostRefundWindow` 两边都是 0.4，`slideMaxJumpSpeedWindow` 两边都是 +∞。
 
 ## 改前 / 改后（逐录像，sim − R5）
 
