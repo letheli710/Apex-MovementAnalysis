@@ -29,7 +29,7 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 - **原生代码研究（N 系列）**：N0–N11 完成。用 Ghidra / Frida 读 r5apex 的原生移动代码，和实测逐项对照（对照表 [research/rea-native/CROSSCHECK-LEDGER.md](research/rea-native/CROSSCHECK-LEDGER.md)）。认可的差别都改进了 Reference。
 - **B 系列**：B1（S27 翻越加速移植）完成。
 - **手感对照（F 系列）**：不靠试玩，用同样的 R5 输入把 Unity 和 R5 叠在一起比指标。平地 511 / 513 项一致；攀爬 / 翻越 / superglide 1968 / 2221；技能 477 / 524（按每个片段每个指标的第一项算，同口径改之前是 473）；镜头 325 / 367（不含待定的 K-5 / K-6）。叠图页面：https://claude.ai/artifact/P1mjgrbW1Yoiu9HdukTbDv
-- **基线数字**：EditMode 2123 / 2123，PlayMode 1 / 1；M2/M1、M3、M4 回放和基线逐字节相同；真实按键演示 238 / 238；课程单圈 79.12 s。
+- **基线数字**（R6U 起）：EditMode 2149 / 2149，PlayMode 1 / 1；M2/M1、M3、M4 回放和基线逐字节相同；真实按键演示 238 / 238；课程单圈 78.88 s。
 - **以 R5 为复刻核心**（D-36）：对照里找到的差别原则上改成 R5；改之前那一版和 R5 的差别存在 [R5-DIFF-ARCHIVE.md](R5-DIFF-ARCHIVE.md)。
 - **下一步候选**：K-5 起跳镜头、K-6 翻越镜头要不要做；A-1 剩下的部分要不要继续查；K-7 滑索横滚再测一次；见最后一节"还没结论的事"。
 
@@ -148,6 +148,17 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
   - 爆炸推人是引擎原生击退。EPG 原版推力（30000）站着打推不动；《泰坦陨落》留下的 `jump_kit` 模式（65000）朝脚下打 Δv ≈ 655，站着飞到 270 u，跳 + 开火同时按 486 u（普通跳 55 u）。
   - 护盾把伤害全吃掉就完全不推；会自伤（Gibraltar 55）；推力随距离和伤害一起衰减，速度上限约 1000。
 
+### 2026-10-27：斜坡滑铲实测（R6）
+- R5 本地 133 次试验，5–40°，上坡 / 下坡 / 转折 / 横向：原生坡面公式 g·n_z·n_水平 逐命令成立，没有坡度门槛（M8 的拟合作废）；上坡减到 125 结束、不倒滑；转折处不离地；换地面实体时滑铲会再加速一次（原生 `SetGroundEntity` → `Slide_TryBegin`）。和 Unity 对照找到 5 条差别 U-1–U-5。报告：[research/phase2-local/slope/SLOPE-SLIDE.md](research/phase2-local/slope/SLOPE-SLIDE.md)（research #67）。
+
+### 2026-10-28：斜坡按 R5 改（R6U）
+- 你："按照R5的改，U3的归档（在folder中可选）"。
+  - **[D-45]** U-1 上坡步长、U-2 坡上圆底（半径 16）、U-4 坡面项没有门槛、U-5 `slideSlopeNeedsDuck` 清理，Reference 都改成 R5；Fun 和回放电机不变。用 R6 的 R5 试验重跑：上坡滑铲距离 10–40° 从 215 / 148 / 110 / 84 变成 223 / 166 / 137 / 125（R5 222 / 165 / 136 / 124），平地→下坡转折的速度差从 8–13 降到 2–5 u/s。对照 [R6U-COMPARE.md](research/phase2-local/slope/R6U-COMPARE.md)。
+  - **[D-46]** U-3 换地面实体时重新开始滑铲（≥ 2 s 再加速一次，最多到 460，不降速），做成三档：R5（默认：静态关卡几何算一个实体，只有平台这类道具各算一个）、关（旧版）、每个方块都算。游戏菜单可切换（PlayerPrefs）。R6 的道具坡道上二次加成的时刻和 R5 相差 ≤ 0.04 s。
+  - 旧版都存在 [R5-DIFF-ARCHIVE.md](R5-DIFF-ARCHIVE.md)（R6U 一节），开关和切换写在 HSD-Unity `Abilities/SlopeSlide/README.md`。
+  - 练习地图上 U-3（R5 档）会触发的只有平台和坡道相接的 4 处：J 发射坡顶的平台两头、L 滑索场的上坡道接平台、终点平台接 X 连招坡、ZG2 平台接坡道。贴地滑过去才算，而且只有滑铲已经超过 2 s 才会再加速；91 个 Reference 演示和课程单圈里一次都没有触发（"每个方块"档也没有）。
+  - Unity：EditMode 2149 / 2149，PlayMode 1 / 1；M2/M1、M3、M4 回放和基线逐字节相同；真实按键演示 238 / 238，91 个 Reference 演示的轨迹和改前完全一样；课程单圈 79.12 → 78.88 s，来自 U-1（L 滑索场的上坡道走得快了；单关 U-1 回到 79.14）；build `HSD-Build\R6U`。
+
 ---
 
 ## 决定总表
@@ -198,6 +209,8 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 | D-42 | 10-27 | 钩爪 / 滑索横滚平滑（N12 C-12，你批准） | 改成原生：两者共用一个临界阻尼弹簧（ω 6.667），钩头飞行中也算目标；旧版（各自一阶 6.667 / 3.0）存档 | `NativeCameraParams.nativeRollSmooth`（默认 true；false = 旧版） | HSD-Unity `f7/roll-fov` |
 | D-43 | 10-27 | 跳板二段跳反馈 | 只动表现层：准星下方的可用 / 倒计时 / 按太早 / 触发提示，触发音，原生镜头向下沉 1.2°（[design]，等试玩） | `HsdHud.PadCentre`、`PadJumpCue`、`NativeCameraParams.padJumpKickPitch` | HSD-Unity `f7/roll-fov` |
 | D-44 | 10-27 | FOV 设置 | 菜单按 Apex 的 FOV 数值（4:3 水平，70–110）显示和输入；默认不变（竖直 70° = Apex 86） | `CameraFeedbackSettings.VerticalFromApex` / `ApexFov`，PlayerPrefs 键不变 | HSD-Unity `f7/roll-fov` |
+| D-45 | 10-28 | 斜坡 U-1 / U-2 / U-4 / U-5（R6 实测） | Reference 按 R5：上坡步长保持长度、坡上圆底半径 16（接触和法线按原点）、滑铲坡面项没有门槛、`slideSlopeNeedsDuck` = false；Fun、回放电机不变；旧版存档 | `R5MotorV2Params.slopeUphillKeepStep` / `hullBottomRadius` / `slideSlopeAnyGrade` / `slideSlopeNeedsDuck` | HSD-Unity `r6u/slope-native` |
+| D-46 | 10-28 | 斜坡 U-3：换地面实体时重新开始滑铲 | 按 R5（≥ 2 s 再加速一次，不降速），可选三档：R5（默认，关卡几何一个实体、平台是道具）/ 关（旧版）/ 每个方块 | `R5MotorV2Params.slideRebeginOnGroundChange`（`SlideRebegin`）、`ConvexSolid.prop`；菜单 PlayerPrefs `hsd.r6u.sliderebegin` | HSD-Unity `r6u/slope-native` |
 
 **D-29 → D-31（C-2 为什么推翻）**：第一次决定时以为 Unity 的 102.5 ms 窗口已经盖住了 R5 的减量段，所以"简化 = 不改代码"。后来按 Unity 自己的翻越时钟重排（Unity 的翻越比 R5 长约 25 ms），发现减量段其实在窗口外面，原来的 Reference 在这段是"切到台面"，并不是"给完整 460"。你随后要求继续做 C-2 并合并。细节见 `research/feel/FEEL.md` §6.4 和 `Climb/README.md`。
 
