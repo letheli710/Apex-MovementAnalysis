@@ -29,10 +29,10 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 - **原生代码研究（N 系列）**：N0–N11 完成。用 Ghidra / Frida 读 r5apex 的原生移动代码，和实测逐项对照（对照表 [research/rea-native/CROSSCHECK-LEDGER.md](research/rea-native/CROSSCHECK-LEDGER.md)）。认可的差别都改进了 Reference。
 - **B 系列**：B1（S27 翻越加速移植）完成。
 - **手感对照（F 系列）**：不靠试玩，用同样的 R5 输入把 Unity 和 R5 叠在一起比指标。平地 511 / 513 项一致；攀爬 / 翻越 / superglide 1968 / 2221；技能 477 / 524（按每个片段每个指标的第一项算，同口径改之前是 473）；镜头 325 / 367（不含待定的 K-5 / K-6）。叠图页面：https://claude.ai/artifact/P1mjgrbW1Yoiu9HdukTbDv
-- **基线数字**（RPS 起）：EditMode 2149 / 2149，PlayMode 1 / 1；M2/M1、M3、M4 回放按新基线 [research/phase2-local/rps](research/phase2-local/rps/README.md)（回放电机滑铲按原生；`-legacyM2` 和旧基线逐字节相同）；真实按键演示 238 / 238；课程单圈 78.88 s。
+- **基线数字**（RPS 起）：EditMode 2156 / 2156（GN + RUD），PlayMode 1 / 1；M2/M1、M3、M4 回放按新基线 [research/phase2-local/rps](research/phase2-local/rps/README.md)（回放电机滑铲按原生；`-legacyM2` 和旧基线逐字节相同）；真实按键演示 238 / 238；课程单圈 78.88 s。
 - **以 R5 为复刻核心**（D-36）：对照里找到的差别原则上改成 R5；改之前那一版和 R5 的差别存在 [R5-DIFF-ARCHIVE.md](R5-DIFF-ARCHIVE.md)。
-- **10-27 – 10-28 新做完的**（详见时间线）：F6 按 R5 复刻、N12 钩爪横滚查清、F7 横滚平滑改原生 + 二段跳反馈 + FOV、EPG 火箭跳实测、R6 斜坡滑铲实测、R6U 斜坡按 R5 改、RPS 回放电机滑铲换原生。两个仓库都没有开着的 PR。最新 build：`HSD-Build\RPS`。
-- **下一步候选**：钩爪比 R5 早脱钩（和 A-1 剩下的部分同一类）要不要查；回放电机的 `airUnduckDrop` 要不要开；K-5 起跳镜头、K-6 翻越镜头要不要做；K-7 滑索横滚再测一次；《泰坦陨落2》研究（D-48）。见最后一节"还没结论的事"。
+- **10-27 – 10-28 新做完的**（详见时间线）：F6 按 R5 复刻、N12 钩爪横滚查清、F7 横滚平滑改原生 + 二段跳反馈 + FOV、EPG 火箭跳实测、R6 斜坡滑铲实测、R6U 斜坡按 R5 改、RPS 回放电机滑铲换原生、RUD 回放电机碰撞体和地面移动、GN 钩爪脱钩全部按原生。最新 build：`HSD-Build\GN`。
+- **下一步候选**：G-6 钩爪撞上上抬加不加（D-50）；回放电机的 `airUnduckDrop` 要不要开；K-5 起跳镜头、K-6 翻越镜头要不要做；K-7 滑索横滚再测一次；《泰坦陨落2》研究（D-48）。见最后一节"还没结论的事"。
 
 ---
 
@@ -226,6 +226,25 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
   - 游戏身体不变：105 个录像喂给 Reference / Fun 身体，轨迹和改前逐字节相同（各 105 / 105）。
     - Unity 回归：真实按键演示 238 / 238，smoke 输出和 RPS build 逐行相同，课程单圈 78.88 s 不变；EditMode 2150 / 2150（多 1 个检查报告行的新测试），PlayMode 1 / 1；build `HSD-Build\RUD`；HSD-Unity [#45](https://github.com/letheli710/HSD-Unity/pull/45)。
 
+### 2026-10-28：钩爪脱钩全部按原生（GN）
+- 你："我说对于'勾爪'这一块，我们全部按原生的去做。1. 对于现版本，以及原生和现版本转换带来的影响，这些都放在 decision 里头。2. 对原先代码进行归档。这样如果以后还要用，或者觉得不适合的话，我们还有更改的余地。"
+  - **[D-50]** Reference（Fun 从 Reference 建，一起变）的钩爪脱钩规则全部换成原生。依据 N13（research #72）和这次的 Frida 实测。旧规则叫 **pre-GN**，每条一个开关，`GrappleS21Params.SetGnDetach(false)` 一次全切回去；游戏 Esc 菜单 "Grapple detach rules (GN)" 也能切（PlayerPrefs `hsd.gn.grapple`）。切回旧版时，105 个录像喂给游戏身体的 315 个输出文件和改前逐字节相同。回放电机不用这套钩爪，不变。
+  - **现版本（旧）和原生，逐条**：
+    - **G-1 接近脱钩的距离**：旧版量钩点到身体竖线段 [原点, 原点 + 72] 的距离（挂上后 wind-up 里 ≤ 45 就脱）；原生量钩点到"原点"和"眼睛"两个点的较近距离，挂上后每条命令都查。钩点在身体高度范围内时线段距离更小，所以旧版早脱。**影响**：往墙上拉晚 1 条命令脱钩（M4 hold 241 → 242，同一个场景）。
+    - **G-2 接近斜坡**：阈值 33 u，接近越快放得越早，最多 50 u；旧版接近速度除以 800，原生除以 400（ConVar `grapple_speedRampMax_human`）。**影响**：只在接近速度 267–533 u/s 时不同（阈值最多大 17 u），慢慢贴近钩点会早一点放；测过的片段都不在这个速度区间，没变化。
+    - **G-3 方向**：旧版视线规则从"原点 + 70"看钩点，速度朝"原点 + 36"量；原生都按绳子方向，从原点上方 23（Frida 读到的 h = 22，再加 1）指向钩点上方 25。**影响**：视线离开、rodeo 的脱钩时刻不变。钩点很高（仰角约 50°）时，仰着头原地转 180° 不再脱钩，要把视角放平；演示 `m10a_look_away` 因此改成边转边放平。演示里绕钩点的 tether 多绕了一段（198° → 313°），侧键、跳钩的峰值 / 出口速度多 2–12 u/s。
+    - **G-4 低速超时**：旧版是"速率 |v| < 250"持续一段时间就脱；原生是"朝绳子的径向速度 ≤ 250"。**影响**：绕着钩点横飞、贴着挡板横移（速度大但不朝钩点）现在会超时脱钩，以前不会；直线被挡住时不变。
+    - **#7 低速时限**（这次另外找出来的）：旧版碰到墙 / 天花板用 1.2 s、在地面高度用 0.7 s、其余 1.5 s；原生按"有没有地面实体"选，R5 拉动时一直没有地面（ground = 0），所以一律 1.5 s。**影响**：N6 天花板 8 个片段，拉动到脱钩 1.20 s → 1.50 s（R5 1.508–1.517 s）。
+    - **G-5 "远离钩点 > 500 u/s"脱钩**：旧版一直开着；原生只在钩子没有父实体时开。Frida 实测：钩在岩石（脚本建的道具）上时父实体就是那块岩石，钩在地面（世界几何）上时为空。所以**钩在世界上开、钩在道具或绳子上关**（N13 原来推断的正好反了）。**影响**：测过的片段都没触发。练习地图上只有平台类方块和绳子算道具。
+    - **G-6 撞上时上抬**：原生客户端代码在世界钩点接近脱钩时把竖直速度抬到 300（Frida 在地面钩上看到 vz 299）；但本地录下来的轨迹没有跳（混合版本：本地 S3 服务器或这一条命令的移动把它抹掉了），世界上的墙没测过。**按任务没加**，开关 `impactBoost` 做好了、都关着，见"还没结论的事"。
+  - **对照场景也按 R5 改了**（N13 的 S-1 / S-2）：岩石挡身体的面 x −13704.6、后倾 1.86°，钩点在过实测钩点（x −13697.9）的平行面上，算道具。只给手感对照用，回放电机的场景文件不动。镜头对照的 R5 横滚，视线离开 / rodeo 改用"只有客户端"的模型（N13 F-1）。
+  - **结果**（R5 / 改前 / 现在）：
+    - A-1 往墙上拉，脱钩命令 244, 243, 201, 201 / 241, 241, 199, 199 / **245, 245, 202, 202**；最高点 155.3, 154.9, 117.3, 116.8 / 145.0, 145.0, 111.3, 111.8 / **155.7, 155.7, 116.3, 116.6**。比预计（244, 244, 201, 201）晚 1 条：同一个新场景用旧规则就是 244, 244, 202, 202，这 1 条出在场景和拉力的近似上，没有调。没有一个片段离 R5 更远。
+    - 视线离开 ×4 横滚峰值：R5 只有客户端 12.75–13.0°（实测 19.2° 是混合版本），Unity 12.8°（不变）；rodeo ×8：11.0–11.9° 对 11.2–11.5°。
+    - N6 天花板：1.20 → 1.50 s（R5 1.51 s）。
+  - 回归：回放电机和 RPS 基线逐字节相同；EditMode 2155 / 2155（GN 分支），和 RUD（#45）合在一起 2156 / 2156；PlayMode 1 / 1；真实按键演示 238 / 238（数值变化见上）；课程单圈 78.88 s 不变（地面路线不用钩爪）；build `HSD-Build\GN`。
+  - 文档：[research/rea-native/gn/GN-GRAPPLE-NATIVE.md](research/rea-native/gn/GN-GRAPPLE-NATIVE.md)；存档 [R5-DIFF-ARCHIVE.md](R5-DIFF-ARCHIVE.md)（GN 一节）；开关说明 HSD-Unity `Abilities/Grapple/README.md`；HSD-Unity [#46](https://github.com/letheli710/HSD-Unity/pull/46)，research [#74](https://github.com/letheli710/Apex-MovementAnalysis/pull/74)。
+
 ---
 
 ## 决定总表
@@ -281,6 +300,7 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 | D-46 | 10-28 | 斜坡 U-3：换地面实体时重新开始滑铲 | 按 R5（≥ 2 s 再加速一次，不降速），可选三档：R5（默认，关卡几何一个实体、平台是道具）/ 关（旧版）/ 每个方块 | `R5MotorV2Params.slideRebeginOnGroundChange`（`SlideRebegin`）、`ConvexSolid.prop`；菜单 PlayerPrefs `hsd.r6u.sliderebegin` | HSD-Unity `r6u/slope-native` |
 | D-47 | 10-28 | 回放电机要不要换成 M10 / N7 的滑铲规则（"还没结论的事"里的一条） | 换成原生（和 Reference 一致），只换 7 个滑铲开关；旧规则存成 Legacy M2，可逐字节复现旧回放基线；回放基线重定（只有 2 个 M3 滑铲连招变了，更接近 R5） | `R5MotorV2Params` 滑铲开关默认值、`LegacyM2()` / `WithLegacyM2Slide()`、`BatchReplay -legacyM2` | HSD-Unity `rps/replay-slide-native` （#44） |
 | D-49 | 10-28 | 回放电机的下蹲碰撞体和地面转向（RPS 留下的边界项） | 换成 Reference：`airUnduckDrop` 16.5 + 原生 WalkMove（`groundNativeFriction`）；先做的 M5 `groundVectorRedirect` 版（第一版）没采用；旧电机仍是 Legacy M2；回放基线重定（35 个变，3 个例外：e1_turn ×2 平台噪声、r1237 着地探测边界） | `R5MotorV2Params.R5Reference()`、`WithLegacyM2Rud()`、`BatchReplay -legacyM2` | HSD-Unity `rud/replay-unduck-native`（#45） |
+| D-50 | 10-28 | 钩爪脱钩规则（N13 的 G-1…G-6） | 全部按原生：接近距离取原点 / 眼睛较近者、斜坡 400、视线和速度按绳子方向量、低速按径向速度、拉动中低速时限一律 1.5 s、远离 > 500 只在世界钩点；撞上上抬（G-6）没加、待定；旧版存档可切回 | `GrappleS21Params.SetGnDetach(false)`（或单个开关 `nativeProxDistance` / `detachRampMax` / `nativeRopeDir` / `nativeLowSpeed` / `nativeLowSpeedTimer` / `awayOnlyWorldHooks`）；Esc 菜单 "Grapple detach rules (GN)"（PlayerPrefs `hsd.gn.grapple`）；`FeelBatch` / `CameraFeelBatch -preGn` | HSD-Unity `gn/grapple-native` （[#46](https://github.com/letheli710/HSD-Unity/pull/46)）；research [#74](https://github.com/letheli710/Apex-MovementAnalysis/pull/74) |
 =======
 | D-42 | 10-27 | 钩爪 / 滑索横滚平滑（N12 C-12，你批准） | 改成原生：两者共用一个临界阻尼弹簧（ω 6.667），钩头飞行中也算目标；旧版（各自一阶 6.667 / 3.0）存档 | `NativeCameraParams.nativeRollSmooth`（默认 true；false = 旧版） | HSD-Unity#42，research #68 |
 | D-43 | 10-27 | 跳板二段跳反馈 | 只动表现层：准星下方的可用 / 倒计时 / 按太早 / 触发提示，触发音，原生镜头向下沉 1.2°（[design]，等试玩） | `HsdHud.PadCentre`、`PadJumpCue`、`NativeCameraParams.padJumpKickPitch` | HSD-Unity#42，research #68 |
@@ -310,11 +330,12 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 - ~~N10 剩下的镜头项目~~：N10（research #56）已经做完，见 D-41。
 - ~~钩爪侧倾~~：N12 查清（rodeo 是钩岩石后转圈，不是攀在对手身上；差距来自我们的平滑模型和门控），F7 按原生改了，见 D-42。
 - ~~A-1、K-1、K-2、K-3、翻越镜头~~：10-27 已处理，见 D-34 – D-38。
-- **A-1 剩下的部分**：最高点还低 5–10 u。Unity 接近钩点时早约 2 条命令脱钩；R5 撞墙那一下竖直速度多约 12 u/s（可能是 `grapple_impactVerticalBoost`）。要不要继续查？（F6）
+- ~~A-1 剩下的部分~~：10-28 查清（N13：脱钩距离规则 + 对照场景的钩点和斜面）并按原生改了，见 D-50。最高点差 0.4–1.0 u，脱钩晚 1–2 条命令（场景近似）。
 - **K-5 起跳时的镜头动作**：R5 起跳后镜头先向下 1.3–2.5°（0.10 s）、再向上约 1.7°（0.57 s），横滚 +0.5–1.1°，Unity 没有。只量过短滞空，长滞空时什么样不知道。做不做？（F6）
 - **K-6 翻越时的镜头动作**：R5 翻 120 u 的墙时镜头向下约 5°（撞墙后约 0.2 s），Unity 没有（只有 S27 翻越加速打开时有）。做不做？（F6）
 - **K-7 滑索横滚**：两次 R5 会话不一样（N6 没有，N10 转开 30–60° 时 −0.7 … −1.4°），Unity 是 0；滑索上 R5 眼高约 65.5，Unity 70。要再测一次。（F6）
-- **钩爪比 R5 早脱钩**（F7 对照时看到）：视线离开时 Unity 约 1.05 s 就脱钩，R5 到 1.5 s 还挂着；rodeo 也早一点。所以 Unity 钩爪横滚峰值比 R5 低（12.8° 对 19.2°、11.4° 对 13.9°）。和 A-1 剩下的部分是同一类问题（脱钩规则；本地 dedi 的重挂也有影响）。要不要查？（F7）
+- ~~钩爪比 R5 早脱钩~~：10-28 查清（N13：R5 的"挂到 1.5 s"是本地 dedi 重挂，只有客户端时 Unity 一致）并把脱钩规则全部按原生改了，见 D-50。
+- **G-6 钩爪撞上时上抬**：原生客户端在世界钩点（不是道具）接近脱钩时把竖直速度抬到 300，本地轨迹看不到，世界上的墙没测过。要不要加（开关 `impactBoost`，现在都关）等你定。（GN）
 - **HSD 要不要做火箭跳**：A. EPG 式物理击退（爆点推向身体中心，随距离衰减，和现有速度相加，上限 1000），或 B. Fuse Knuckle Jumper 式跳跃加成（在自己炸弹旁边按跳给固定的起跳速度）。研究建议先做 A，用 jump_kit 数值，护盾规则和地面门槛先不做。见 [research/epg/EPG-ROCKET-JUMP.md](research/epg/EPG-ROCKET-JUMP.md) §7。（EPG）
 - **回放电机的 `airUnduckDrop`**（空中松开下蹲时原点下降 16.5 u，下蹲碰撞体规则）：Reference 开着、回放电机关着。RPS 只换了滑铲开关，这一项算不算滑铲由你定，回放电机要不要也开？（RPS）
 - **《泰坦陨落2》研究**：第一步装 Northstar 并验证能自动跑测，第一个实验是 EPG 真实开火（D-48）。什么时候开始等你定。

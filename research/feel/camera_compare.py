@@ -279,14 +279,24 @@ def main():
         inp, fl = inputs(d), flags(d)
         ms = {"r5": metrics(r5, inp, sched, fl), "reference": metrics(ref, inp, sched, fl)}
         press = grapple_press(d) if hooks else None
+        r5_roll = None
         if press is not None:
-            ms["r5"].update(grapple_roll(r5, press, r5))
-            ms["reference"].update(grapple_roll(ref, press, r5))
+            # GN F-1: the measured roll of the look-away / rodeo clips is the hybrid (S21 client + local S3 dedi re-attaching); when
+            # rea-native/n13/look_split.py --write left the client-only model (cut at the native view rule) in the trial folder, it is R5's roll
+            cc = os.path.join(d, "camera_client.csv")
+            if os.path.exists(cc):
+                rows = list(csv.DictReader(open(cc, encoding="utf-8")))
+                r5_roll = {"t": [press + float(r["t_press"]) for r in rows], "roll": [float(r["roll"]) for r in rows]}
+            src = r5_roll or r5
+            ms["r5"].update(grapple_roll(src, press, src))
+            ms["reference"].update(grapple_roll(ref, press, src))
         keys = [k for k in TOL if k in ms["r5"] or k in ms["reference"]]
         for b in ms:
             for k in keys:
                 ms[b].setdefault(k, [])
         res = {"trial": man["trial_id"], "family": family(man), "metrics": ms, "verdict": {"reference": {}}}
+        if r5_roll is not None:
+            res["r5_roll_ref"] = "client-only model (N13 F-1, look_split.py)"
         for k in keys:
             v, w = verdict(k, ms["r5"][k], ms["reference"][k])
             if v:

@@ -403,6 +403,13 @@ R5 的落地 kick 每次有随机成分（C3 §2），同一高度的 R5 片段�
 2. Unity `CameraFeelBatch.Run -trials <dir> -out <new>`，再加 `-preF7Roll` 跑一次旧版到 `<pre>`。
 3. `camera_compare.py <new 或 pre> <trials_out> --json <out>`。
 
+## 10b. GN：钩爪脱钩按原生（2026-10-28，D-50）
+
+- 对照场景：M4 钩爪片段用 [../rea-native/gn/scenarios_gn.json](../rea-native/gn/scenarios_gn.json)（`feel_rock`：R5 那块岩石，挡身体的面后倾 1.86°，钩点在过记录钩点的平行面上，算道具）。`m4/unity/scenarios.json` 不动（回放电机用）。
+- 镜头对照（F-1）：`../rea-native/n13/look_split.py --write <镜头片段目录>` 给视线离开、rodeo 片段写"只有客户端"的横滚（`camera_client.csv`），`camera_compare.py` 有这个文件就用它当 R5 的钩爪横滚（结果里标 `r5_roll_ref`）。
+- N6 天花板片段（`m10_g_n6ceil*`）：`make_gn_inputs.py <镜头片段目录>` 加天花板和台阶（`world.boxes`）。
+- 旧版：`FeelBatch` / `CameraFeelBatch` 加 `-preGn`。结果见 [../rea-native/gn/GN-GRAPPLE-NATIVE.md](../rea-native/gn/GN-GRAPPLE-NATIVE.md) §5。
+
 ## 11. 下一批（还没做）
 
 - K-5 / K-6 / K-7、A-1 剩下的部分，等用户决定。

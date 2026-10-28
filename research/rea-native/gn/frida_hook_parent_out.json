@@ -1,0 +1,14 @@
+{
+ "session": "20261028_111333_GN_hook_parent",
+ "script": "frida_hook_parent.js",
+ "note": "Frida messages (times = seconds since the script loaded); trial order: 900 (warm-up), 22001, 22002 m10_g_d400 (M3 rock prop), 22003, 22004 m10_g_g400_spr (floor), 22005 m10_g_rodeo, 22006 m10_g_look180",
+ "h1de8": 22,
+ "hooks": [
+  {"t": 133.946, "trials": "d400 x3", "p148": {"h": "0x11fba", "idx": 8122, "serialOk": true}, "p1560": "none"},
+  {"t": 152.157, "trials": "g400_spr x2", "p148": "none", "p1560": "none"},
+  {"t": 165.404, "trials": "rodeo, look180", "p148": {"h": "0x11fba", "idx": 8122, "serialOk": true}, "p1560": "none"}
+ ],
+ "proximity_detach_vz": {"d400": [211.105, 210.951, 212.350], "g400_spr": [299.226, 299.226]},
+ "max_away_speed": 0,
+ "rules_detach": "rodeo / look180: 0x14066f600 returned 1 (view rule), the client re-attached every ~0.1 s (local S3 dedi)"
+}
