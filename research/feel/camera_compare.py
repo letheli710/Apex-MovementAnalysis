@@ -20,14 +20,16 @@ TOL = {"kick_peak": ANG, "kick_t_peak": (FRAME * 2, 0.10), "kick_t_zero": (FRAME
        "slide_eye_min": (1.0, 0.0), "slide_t_eye": (FRAME * 3, 0.10), "slide_roll": ANG, "slide_fov": (0.005, 0.0),
        "turn_roll_peak": ANG, "turn_roll_end": ANG, "bob_pitch_p2p": (0.05, 0.10), "bob_yaw_p2p": (0.05, 0.10), "bob_period": (FRAME * 3, 0.05),
        "jump_kick_peak": ANG, "jump_kick_t_peak": (FRAME * 2, 0.10), "jump_kick_roll": ANG, "mantle_pitch_peak": ANG,
-       "mantle_t_peak": (FRAME * 3, 0.10), "eye_stand": (1.0, 0.0), "eye_sprint": (1.0, 0.0), "zip_roll_peak": ANG, "zip_roll_end": ANG}
+       "mantle_t_peak": (FRAME * 3, 0.10), "eye_stand": (1.0, 0.0), "eye_sprint": (1.0, 0.0), "zip_roll_peak": ANG, "zip_roll_end": ANG,
+       "grapple_roll_peak": ANG, "grapple_roll_t_peak": (FRAME * 3, 0.10), "grapple_roll_rms": (0.5, 0.0)}
 NAME_ZH = {"kick_peak": "落地 kick 俯仰峰值", "kick_t_peak": "kick 到峰值用时", "kick_t_zero": "kick 回到零的时刻", "kick_roll": "落地后横滚峰值",
            "slide_eye_min": "滑铲眼高最低", "slide_t_eye": "滑铲眼高下沉用时", "slide_roll": "滑铲横滚峰值", "slide_fov": "滑铲 FOV 倍数",
            "turn_roll_peak": "转向横滚峰值", "turn_roll_end": "转向结束时横滚", "bob_pitch_p2p": "跑步晃动俯仰幅度（峰峰）",
            "bob_yaw_p2p": "跑步晃动偏航幅度（峰峰）", "bob_period": "跑步晃动周期", "jump_kick_peak": "起跳 kick 俯仰峰值",
            "jump_kick_t_peak": "起跳 kick 到峰值用时", "jump_kick_roll": "起跳 kick 横滚峰值", "mantle_pitch_peak": "翻越时镜头俯仰峰值",
            "mantle_t_peak": "翻越俯仰峰值时刻（起跳后）", "eye_stand": "站立眼高", "eye_sprint": "冲刺眼高", "zip_roll_peak": "滑索横滚峰值",
-           "zip_roll_end": "滑索转向结束时横滚"}
+           "zip_roll_end": "滑索转向结束时横滚", "grapple_roll_peak": "钩爪横滚峰值", "grapple_roll_t_peak": "钩爪横滚到峰值用时（按 Q 后）",
+           "grapple_roll_rms": "钩爪横滚和 R5 的逐帧差（rms）"}
 UNIT = {k: ("s" if k.endswith(("t_peak", "t_zero", "t_eye", "period")) else "u" if k.startswith(("slide_eye", "eye_")) else "×" if k == "slide_fov" else "deg")
         for k in TOL}
 COLS = ("pitch", "yaw", "roll", "eye", "fov")
@@ -99,6 +101,29 @@ def bob(tr, a, b):
     out = {"bob_pitch_p2p": per("pitch", 0.28), "bob_yaw_p2p": per("yaw", 0.56)}
     if len(ups) >= 3:
         out["bob_period"] = [(ups[-1] - ups[0]) / (len(ups) - 1)]
+    return out
+
+
+OFFHAND1 = 1 << 21
+
+
+def grapple_press(trial_dir):
+    """F7: the time of the first tactical (Q) press of a grapple trial."""
+    rows = list(csv.DictReader(open(os.path.join(trial_dir, "samples.csv"), encoding="utf-8")))
+    return next((float(r["t"]) for r in rows if int(r["buttons"]) & OFFHAND1), None)
+
+
+def grapple_roll(tr, press, other=None):
+    """F7 C-12: the roll from the Q press to 1.6 s after it (N12 §3's window): its signed peak, the time of the peak after the press and,
+    with <other> (R5's trace), the rms of the difference on this trace's rows (the other trace sampled at the nearest row)."""
+    idx = [i for i in range(len(tr["t"])) if press <= tr["t"][i] <= press + 1.6]
+    if not idx:
+        return {}
+    pk = max(idx, key=lambda i: abs(tr["roll"][i]))
+    out = {"grapple_roll_peak": [tr["roll"][pk]], "grapple_roll_t_peak": [tr["t"][pk] - press]}
+    if other is not None:
+        d = [tr["roll"][i] - other["roll"][at(other, tr["t"][i])] for i in idx]
+        out["grapple_roll_rms"] = [math.sqrt(sum(x * x for x in d) / len(d))]
     return out
 
 
@@ -248,8 +273,15 @@ def main():
             if lr is not None and lu is not None:
                 dt = ref["t"][lu] - r5["t"][lr]
                 r5["t"] = [t + dt for t in r5["t"]]
+        hooks = man.get("world", {}).get("hooks")
+        if hooks is not None and not hooks:                             # F7: a grapple trial where R5's hook never attached (N12 y90)
+            continue
         inp, fl = inputs(d), flags(d)
         ms = {"r5": metrics(r5, inp, sched, fl), "reference": metrics(ref, inp, sched, fl)}
+        press = grapple_press(d) if hooks else None
+        if press is not None:
+            ms["r5"].update(grapple_roll(r5, press, r5))
+            ms["reference"].update(grapple_roll(ref, press, r5))
         keys = [k for k in TOL if k in ms["r5"] or k in ms["reference"]]
         for b in ms:
             for k in keys:

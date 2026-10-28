@@ -1,4 +1,5 @@
-"""F4: R5 camera sessions (C3 drops / jump landing / slides, N6 / N10 sprint turns) as hsdmove-trial/2 folders plus the R5 camera per frame.
+"""F4: R5 camera sessions (C3 drops / jump landing / slides, N6 / N10 sprint turns; F7: N6 / N12 grapple) as hsdmove-trial/2 folders plus
+the R5 camera per frame.
 
 Usage: camera_to_trial.py <out_dir> <session_dir> [<session_dir> ...]
   <session_dir>  a raw local session with the HSD.MoveDiag camera tokens (C3-CAPTURE §0), e.g. research/phase2-local/data/20261023_221239_C3_camera
@@ -17,8 +18,10 @@ Raw logs stay local; the output folders are derived data and are not committed.
 stdlib only.
 """
 import csv
+import glob
 import json
 import os
+import re
 import shutil
 import sys
 
@@ -142,8 +145,37 @@ def restore_use(trial_dir, floor):
         w.writerows(rows)
 
 
+GRC = re.compile(r"([A-Za-z_]+)=(\S+)")
+
+
+def grapple_hooks(session):
+    """F7: the client [M10-GRC] lines (game time t, attached flag, hook entity position) of a grapple session, in time order."""
+    out = []
+    for f in glob.glob(os.path.join(session, "platform", "logs", "client", "*", "*.log")):
+        for line in open(f, encoding="utf-8", errors="replace"):
+            if "[M10-GRC]" in line:
+                k = dict(GRC.findall(line))
+                if k.get("att") == "true" and "t" in k and "hook" in k:
+                    out.append((float(k["t"]), [float(x) for x in k["hook"].split(",")]))
+    return sorted(out)
+
+
+def add_hooks(man, hooks, t_end):
+    """F7: the grapple trials (m10_g_*, n12_*): Pathfinder's kit and the hook points R5 attached at in the trial's span (to 1 u), which
+    the Unity replay's grapple hits instead of the rock it does not have (CameraFeelReplay RecordedHookSurface)."""
+    t0 = man["t0_game"]
+    pts = []
+    for t, h in hooks:
+        if t0 <= t <= t0 + t_end and not any(max(abs(a - b) for a, b in zip(h, p)) < 1.0 for p in pts):
+            pts.append(h)
+    man["world"]["legend"] = "pathfinder"
+    man["world"]["hooks"] = pts
+    return len(pts)
+
+
 def convert(session, out_dir):
     written = C.convert(session, out_dir)
+    hooks = grapple_hooks(session)
     frames = sorted((r for v in A.load(session).values() for r in v if r["cang"] and r["eang"] and r["epos"] and r["o"]), key=lambda r: r["t"])
     runner = json.load(open(os.path.join(session, "runner.json"), encoding="utf-8"))
     for tid in [w for w in written if "_c3_drop" in w]:               # the post-landing windows: replaced by the synthetic drops
@@ -162,6 +194,9 @@ def convert(session, out_dir):
             restore_use(d, floor)
         with open(os.path.join(d, "samples.csv"), encoding="utf-8") as fh:
             t_end = float(list(csv.DictReader(fh))[-1]["t"])
+        if man.get("schedule", "").startswith(("m10_g_", "n12_")) and hooks:
+            add_hooks(man, hooks, t_end)
+            json.dump(man, open(os.path.join(d, "trial.json"), "w", encoding="utf-8"), indent=1)
         t0 = man["t0_game"]
         fr = [r for r in frames if t0 <= r["t"] <= t0 + t_end + 1e-6]
         if not fr:
