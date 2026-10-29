@@ -287,6 +287,14 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
   - 回归：EditMode 2157 / 2157（新增 `G6ImpactBoostIsOptInAndOnlyOnWorldHooks`），PlayMode 1 / 1；回放电机和 RUD 基线逐字节相同（`rud_check.py`：222 / 90 / 114）；`FeelBatch` 105 个录像的游戏身体（reference / fun 210 个文件）默认和 `-preGn` 都和 GN 版逐字节相同；`-impactBoost` 也全部相同（这 105 个里只有 M4 的 4 个钩爪片段，钩的是道具岩石，不上抬；打开后的效果由单元测试检查：墙钩跳到 300 再减重力，道具钩不变）；真实按键演示 238 / 238、课程单圈 78.88 s，smoke 输出和 GN build 逐行相同；build `HSD-Build\G6`（只多了菜单按钮）。
   - 文档：[research/rea-native/g6/G6-IMPACT-BOOST.md](research/rea-native/g6/G6-IMPACT-BOOST.md)；存档 [R5-DIFF-ARCHIVE.md](R5-DIFF-ARCHIVE.md)（G6 一节，二节 G-6 行）；开关说明 HSD-Unity `Abilities/Grapple/README.md`；HSD-Unity [#48](https://github.com/letheli710/HSD-Unity/pull/48)，research [#78](https://github.com/letheli710/Apex-MovementAnalysis/pull/78)。
 
+### 2026-10-29：《泰坦陨落2》研究：蹬墙跑和二段跳的原版规则（TF2）
+
+- TF2 研究计划 T0–T6 完成（研究文件夹 `TF2-Research/`，不在本仓库）：TF2 和 Apex 的移动代码几乎同源，差别主要是数值、Apex 收紧的连跳、关掉的蹬墙跑和二段跳。TF2 本地私服逐帧实测（T5）把大部分静态结论核对了一遍。
+- 蹬墙跑：你 10-28 定了以"TF2 规则 + R5 残留数值"（B）为基准、TF2 原版（A）做预设 [D-57]。R5 里 Apex 新增的蹬墙键和提速系数、参考高度都读清了（R5 静态），写成规格 `TF2-Research/wallrun/WALLRUN-B-SPEC.md`。
+- 10-29 你按建议批准了 P-01（蹬墙跑 TF2 规则模式）、P-02（TF2 二段跳）、P-05（TF2 侧倾）；P-03（TF2 连跳）低优先；P-04（兴奋剂）、P-06（挂墙，留存）暂不做 [D-58]。
+- Unity：分支 `tf2/wallrun-rules`（0bfbb0e），三个都是可选开关，默认关；Reference、Fun、回放不变（FeelBatch M1 / M2 / M3 + M4 和 origin/main 逐字节相同）。EditMode 2181 / 2181（新加 13 个 TF2 测试），PlayMode 1 / 1。
+- 同一天还做了 T-1 / T-7（EPG 真实开火的火箭跳、投掷物击退，只研究）：击退规则和 R5 #64 的模拟同一套，`jump_kit` 推力相同；TF2 飞得更高是重力和爆炸半径造成的。HSD 火箭跳（D-56）怎么做仍等你定。
+
 ---
 
 ## 决定总表
@@ -348,6 +356,8 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 | D-53 | 10-29 | K-5 起跳镜头、K-6 翻越镜头、多个镜头动作的叠加 | 按原生加：起跳往 punch 弹簧加冲量（`0x140a349c0`）；每次翻越都加翻越动画镜头（B1 曲线）；横滚相加后折回 ±180°、不封顶（原来夹 ±40°）；其余本来就是相加 | `NativeCameraParams.jumpPunch` / `traversalCamera` / `rollWrap`，`SetCam2(false)` 全部切回；`CameraFeelBatch -preCam2` | HSD-Unity `cam2/camera-combo`（[#47](https://github.com/letheli710/HSD-Unity/pull/47)）；research [#77](https://github.com/letheli710/Apex-MovementAnalysis/pull/77) |
 | D-54 | 10-29 | K-7 滑索横滚和眼高（复测） | N6 片段没上绳，N10 对；按原生加滑索视角偏移（Perlin 噪声 + ω 4 弹簧，眼睛下沉 5–9 u）和水平投影的绳上点 | `NativeCameraParams.zipViewOffset` / `zipRopeHorizontal`，`SetCam2(false)` | 同上 |
 | D-55 | 10-28 | F-2 原地跳 Unity 比 R5 高 1.8 u | 不是移动代码，不改：测试工具的重置在 dedi 上算成落地，0.72 s 后起跳触发原生 antiMultiJump 降高（282.0 → 277.3 u/s），客户端被纠正；真实玩的时候没有这种重置 | 不改（Unity 两套电机都按"片段开头的重置不算落地"） | [research/feel/F2-STANDING-JUMP.md](research/feel/F2-STANDING-JUMP.md)；本表 |
+| D-57 | 10-28 | 蹬墙跑以哪个版本为准（TF2 研究 T3） | B = TF2 规则 + R5 残留数值为基准；A = TF2 原版规则和 MP 数值做成可开关的预设；M7 设计版保留 | `WallRunParams.rules`（`M7Design` / `Tf2`）+ `Tf2WallRunParams.B()` / `A()` | `TF2-Research/wallrun/T3-REPORT.md` §5；本表 D-58 |
+| D-58 | 10-29 | TF2 研究的 Unity 提案（T6） | 按建议批准：P-01 蹬墙跑 TF2 规则模式（B / A）、P-02 TF2 二段跳（vz 300、扣 180 加 180）、P-05 TF2 侧倾（B 10°、A 15°），都默认关；P-03 TF2 连跳低优先、还没做；P-04 兴奋剂 ×1.8 和 P-06 挂墙暂不做（挂墙留存，以后可能做成道具或被动） | Esc 菜单 "Wall-run rules (P-01)"（`hsd.tf2.wallrun` 0 M7 / 1 B / 2 A）、"TF2 wall-run view tilt (P-05)"（`hsd.tf2.tilt`）、"Double jump rule (P-02)"（`hsd.tf2.djump`）；`DoubleJumpParams.rule` / `Tf2()` | HSD-Unity 分支 `tf2/wallrun-rules`；`TF2-Research/TF2-REPORT.md` §5、§7 |
 
 **D-29 → D-31（C-2 为什么推翻）**：第一次决定时以为 Unity 的 102.5 ms 窗口已经盖住了 R5 的减量段，所以"简化 = 不改代码"。后来按 Unity 自己的翻越时钟重排（Unity 的翻越比 R5 长约 25 ms），发现减量段其实在窗口外面，原来的 Reference 在这段是"切到台面"，并不是"给完整 460"。你随后要求继续做 C-2 并合并。细节见 `research/feel/FEEL.md` §6.4 和 `Climb/README.md`。
 
