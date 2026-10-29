@@ -245,6 +245,13 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
   - 回归：回放电机和 RPS 基线逐字节相同；EditMode 2155 / 2155（GN 分支），和 RUD（#45）合在一起 2156 / 2156；PlayMode 1 / 1；真实按键演示 238 / 238（数值变化见上）；课程单圈 78.88 s 不变（地面路线不用钩爪）；build `HSD-Build\GN`。
   - 文档：[research/rea-native/gn/GN-GRAPPLE-NATIVE.md](research/rea-native/gn/GN-GRAPPLE-NATIVE.md)；存档 [R5-DIFF-ARCHIVE.md](R5-DIFF-ARCHIVE.md)（GN 一节）；开关说明 HSD-Unity `Abilities/Grapple/README.md`；HSD-Unity [#46](https://github.com/letheli710/HSD-Unity/pull/46)，research [#74](https://github.com/letheli710/Apex-MovementAnalysis/pull/74)。
 
+### 2026-10-28：F-2 原地跳高 1.8 u 查清（不是移动代码）
+- 你："检测是不是底层上导致的，如果不是记录一下就好"
+  - **[D-55]** 不是底层，Unity 不改。R5 那次跳得矮，是测试工具每个片段开头在 dedi 上重置玩家：dedi 把重置算成一次落地，0.72 s 后起跳，原生"刚落地又跳"的高度惩罚（`antiMultiJump`，0.75 s 内生效）把起跳速度从 282.0 压到 277.3。客户端预测不知道这次落地，按完整高度跳，起跳后第 8 条命令被 dedi 纠正，录下来的就矮了。
+  - 证据：这个 session 的 4 次原地跳，dedi 上"重置到起跳"的时间和用起跳速度反推的"距上次落地"每次差不到 1 ms；从 dedi 的起跳状态往下算，最高点和 R5 录像差 0.001 u。重置后 0.84 s 才跳的 M4 原地跳（2 次）没有惩罚，最高点 54.80 u，Unity 完全重合。全部 99 次 R5 跳跃里只有这两次 M2 原地跳被纠正。
+  - 起跳速度、重力半步、贴地、原点 / 眼睛、帧率、采样这几项都逐条核过，两边一样。
+  - 文档：[research/feel/F2-STANDING-JUMP.md](research/feel/F2-STANDING-JUMP.md)。
+
 
 ### 2026-10-29：起跳 / 翻越镜头、滑索复测、多个镜头动作怎么叠加（CAM2）
 - 你："K-6（翻越镜头）这个可以加"，"K-5（起跳镜头）这个可以添加"，"K-7（滑索横滚和眼高）复测"；还问："我们单个的镜头移动有了，如果将多个动作都触发到了，镜头会如何？ R5是如何做的？"
@@ -316,6 +323,7 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 | D-51 | 10-28 | 钩爪撞上时上抬（G-6，GN 留下的） | 先关着、留作待定：原生客户端在世界钩点会抬到 300，但本地录像是混合版本看不到，世界上的墙也没测过，没法对照；等有只有客户端的实测或《泰坦陨落2》的对照再定 | 不改（`GrappleS21Params.impactBoost` 保持关） | 本表；R5-DIFF-ARCHIVE 二节 G-6 行 |
 | D-53 | 10-29 | K-5 起跳镜头、K-6 翻越镜头、多个镜头动作的叠加 | 按原生加：起跳往 punch 弹簧加冲量（`0x140a349c0`）；每次翻越都加翻越动画镜头（B1 曲线）；横滚相加后折回 ±180°、不封顶（原来夹 ±40°）；其余本来就是相加 | `NativeCameraParams.jumpPunch` / `traversalCamera` / `rollWrap`，`SetCam2(false)` 全部切回；`CameraFeelBatch -preCam2` | HSD-Unity `cam2/camera-combo`（[#47](https://github.com/letheli710/HSD-Unity/pull/47)）；research [#77](https://github.com/letheli710/Apex-MovementAnalysis/pull/77) |
 | D-54 | 10-29 | K-7 滑索横滚和眼高（复测） | N6 片段没上绳，N10 对；按原生加滑索视角偏移（Perlin 噪声 + ω 4 弹簧，眼睛下沉 5–9 u）和水平投影的绳上点 | `NativeCameraParams.zipViewOffset` / `zipRopeHorizontal`，`SetCam2(false)` | 同上 |
+| D-55 | 10-28 | F-2 原地跳 Unity 比 R5 高 1.8 u | 不是移动代码，不改：测试工具的重置在 dedi 上算成落地，0.72 s 后起跳触发原生 antiMultiJump 降高（282.0 → 277.3 u/s），客户端被纠正；真实玩的时候没有这种重置 | 不改（Unity 两套电机都按"片段开头的重置不算落地"） | [research/feel/F2-STANDING-JUMP.md](research/feel/F2-STANDING-JUMP.md)；本表 |
 
 **D-29 → D-31（C-2 为什么推翻）**：第一次决定时以为 Unity 的 102.5 ms 窗口已经盖住了 R5 的减量段，所以"简化 = 不改代码"。后来按 Unity 自己的翻越时钟重排（Unity 的翻越比 R5 长约 25 ms），发现减量段其实在窗口外面，原来的 Reference 在这段是"切到台面"，并不是"给完整 460"。你随后要求继续做 C-2 并合并。细节见 `research/feel/FEEL.md` §6.4 和 `Climb/README.md`。
 
@@ -330,7 +338,7 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 记录里写着"等你决定"、后来没看到明确结论的。要么还没定，要么定了没记下来，回顾时请确认：
 
 - ~~回放电机要不要换成 M10 的新滑铲规则~~：10-28 换了，见 D-47。回放电机里斜坡和非滑铲的 N7 项（地面摩擦、空中额外加速等）仍是旧规则，要不要也换没定。
-- **F-2**：一次原地跳 Unity 比 R5 高 1.8 u（两套电机都是）。（F1）
+- **F-2**：一次原地跳 Unity 比 R5 高 1.8 u（两套电机都是）。（F1）〔10-28 查了：不是移动代码。测试工具的重置在 dedi 上算成落地，0.72 s 后起跳触发原生 antiMultiJump 降高，客户端被 dedi 纠正；Unity 不改，见 D-55〕
 - ~~LS / RAS~~：10-27 定了，见 D-40。
 - ~~旧的 "Revenant-Wraith" 配置~~：10-27 定了，当历史保留，见 D-39。
 - ~~N10 剩下的镜头项目~~：N10（research #56）已经做完，见 D-41。
