@@ -693,6 +693,10 @@ for _n, _steps in (("c3_drop900", "wait 288"), ("c3_drop900_duck", "down duck; w
 # landing is measured on a standing jump instead: duck pressed in the air, held through the landing.
 SCHEDULES["c3_jumpland"] = "wait 72; tap jump; wait 216"
 SCHEDULES["c3_jumpland_duck"] = "wait 72; tap jump; waitair; wait 12; down duck; wait 216; up duck; wait 72"
+# CAM2 (K-5 jump camera, combinations): a long-airtime jump off the 232 u rock top (geometry m3; start as m8_lurch_ledge, walk
+# 0.35 s then jump, the jump arc carries over the edge at x -13500) and a jump pressed on the landing command (bunny hop)
+SCHEDULES["cam2_ledge_jump"] = "wait 72; down forward; wait 0.35s; tap jump; waitland; up forward; wait 1.5s"
+SCHEDULES["cam2_jump_relaunch"] = "wait 72; tap jump; waitair; waitland; tap jump; wait 216"
 # N6 camera: sprint tilt (sprint + view turn at 90 / 180 deg/s) and strafe roll (sv_rollangle 0: expect none)
 # F6 (2026-10-27): K-3 re-capture, a long straight sprint in one session (step bob without turns)
 SCHEDULES["f6_sprint_straight"] = "wait 72; down speed; down forward; wait 3.0s; up forward; up speed; wait 0.8s"
@@ -765,7 +769,7 @@ LANE_B = (-14200.0, 5900.0, 294.92)
 # Lane C: y 6800 is flat from x -14825 to -12475 (m3/map/field_fine.json) and 81 u clear of the wall's bounds.
 LANE_C = (-14800.0, 6800.0, 294.92)
 SPAWN_PAD = (-11699.0, 512.0, 1577.046)  # visible firing-range floor (M0/M1)
-SCHEDULE_ORIGIN_PREFIX = {"m8r2_climb": LANE_A, "m8r2_spw": LANE_A, "m8r2_jumpin": (-13878.0, 6500.0, 294.92), "m8r2_jd_": LANE_C, "m8r2_echo": LANE_C, "m8_slope": (-10900.0, 550.0, 1580.03), "m8_lurch_ledge": (-13640.0, 6500.0, 532.80), "m8_lurch_sj": LANE_C, "m8_lurch": LANE_B, "b1_ang": (-14100.0, 6272.0, 294.92), "b1_": LANE_A, "m8_sg_ang": (-14100.0, 6272.0, 294.92), "m8_sg_slide": (-14200.0, 6500.0, 294.92), "m8_sg_": LANE_A, "m8_pad": LANE_C, "m8_djctrl": LANE_C, "m8_lift": LANE_C, "b_alter_stand": (-13856.0, 6500.0, 294.92), "bp_alter": (-13856.0, 6500.0, 294.92), "bp_ash": (-14900.0, 6650.0, 294.92), "b_alter_": (-14306.0, 6500.0, 294.92),
+SCHEDULE_ORIGIN_PREFIX = {"m8r2_climb": LANE_A, "m8r2_spw": LANE_A, "m8r2_jumpin": (-13878.0, 6500.0, 294.92), "m8r2_jd_": LANE_C, "m8r2_echo": LANE_C, "m8_slope": (-10900.0, 550.0, 1580.03), "m8_lurch_ledge": (-13640.0, 6500.0, 532.80), "cam2_ledge": (-13640.0, 6500.0, 532.80), "m8_lurch_sj": LANE_C, "m8_lurch": LANE_B, "b1_ang": (-14100.0, 6272.0, 294.92), "b1_": LANE_A, "m8_sg_ang": (-14100.0, 6272.0, 294.92), "m8_sg_slide": (-14200.0, 6500.0, 294.92), "m8_sg_": LANE_A, "m8_pad": LANE_C, "m8_djctrl": LANE_C, "m8_lift": LANE_C, "b_alter_stand": (-13856.0, 6500.0, 294.92), "bp_alter": (-13856.0, 6500.0, 294.92), "bp_ash": (-14900.0, 6650.0, 294.92), "b_alter_": (-14306.0, 6500.0, 294.92),
                           "b_loba_": (-14900.0, 6650.0, 294.92), "b_ash_": (-14900.0, 6650.0, 294.92), "b_valk_": LANE_C, "a2r_": LANE_A, "g1_": LANE_A, "a2_": LANE_A, "z": (-14550.0, 6800.0, 294.92), "a1_wb": LANE_A, "a1_": LANE_B, "m4b_view": LANE_C, "m4b_pad": LANE_C, "m4_valk": LANE_C, "m4_pounce": LANE_C, "m4_stim": LANE_C, "m4_ctrl": LANE_C, "m4_pad": LANE_C, "m4_lift": LANE_C,
                           "m4_grapple": LANE_A, "x_pad_": SPAWN_PAD, "e8_hop350": LANE_C, "e3_": LANE_B, "e8_fast": LANE_C, "e8_slide": LANE_C, "e6_": LANE_A, "e7_": LANE_A,
                           "e8_drop": LANE_A}
@@ -984,6 +988,8 @@ _M9ZD.update({
 # N6 camera: zipline roll. After the 0.5 s mount state the view turns off the rope by 30 / 60 deg (cl_yawspeed 60 / 120 for 0.5 s)
 _M9ZD["m9zd_n6roll30"] = ("r130", "p25", 0, "fx", "set cl_yawspeed 60; wait 72; tap use; wait 0.7s; down right; wait 0.5s; up right; wait 1.5s")
 _M9ZD["m9zd_n6roll60"] = ("r130", "p25", 0, "fx", "set cl_yawspeed 120; wait 72; tap use; wait 0.7s; down right; wait 0.5s; up right; wait 1.5s")
+# CAM2 (K-7 retest): the same mount with the view left along the rope (no turn), as the control for m9zd_n6roll30 / 60
+_M9ZD["m9zd_cam2_straight"] = ("r130", "p25", 0, "fx", "wait 72; tap use; wait 2.7s")
 for _n, (_rope, _pos, _lat, _view, _steps) in _M9ZD.items():
     SCHEDULES[_n] = _steps
     _x = _m9_pos_x(_rope, _pos)
@@ -2403,7 +2409,7 @@ for _n in EPG_CONDITIONS:
 
 DEFAULT_ORIGIN_SCHEDULES = {"basic","e1_walk", "e1_sprint", "e1_crouch", "e1_back", "e1_side", "e1_diag", "e1_turn",
                             "e2_strafe", "e2_noinput", "e2_keepfwd", "e4_stand", "e4_hop0", "e4_hop3", "e4_hop43", "e5_slide",
-                            "e5_slidejump02", "e5_slidejump06", "n4b_wd", "n4b_ws", "n4b_ad", "n4b_wwd", "n4c_hop_d0", "n4c_hop_d1", "n4c_slidechain", "n4c_slidechain_ctrl", "n4c_slidesteer", "n4d_cut1000", "n4d_cut1090", "n4d_cut1110", "n4d_cut1200", "c3_drop96", "c3_drop160", "c3_drop400", "c3_drop400_duck", "c3_slide_straight", "c3_slide_turn", "c3_drop900", "c3_drop900_duck", "c3_jumpland", "c3_jumpland_duck", "f6_sprint_straight", "n6_sprint_turn90", "n6_sprint_turn180", "n6_walk_turn90", "n6_strafe"}
+                            "e5_slidejump02", "e5_slidejump06", "n4b_wd", "n4b_ws", "n4b_ad", "n4b_wwd", "n4c_hop_d0", "n4c_hop_d1", "n4c_slidechain", "n4c_slidechain_ctrl", "n4c_slidesteer", "n4d_cut1000", "n4d_cut1090", "n4d_cut1110", "n4d_cut1200", "c3_drop96", "c3_drop160", "c3_drop400", "c3_drop400_duck", "c3_slide_straight", "c3_slide_turn", "c3_drop900", "c3_drop900_duck", "c3_jumpland", "c3_jumpland_duck", "cam2_jump_relaunch", "f6_sprint_straight", "n6_sprint_turn90", "n6_sprint_turn180", "n6_walk_turn90", "n6_strafe"}
 
 
 def origin_for(name, default):
