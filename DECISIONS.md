@@ -29,10 +29,10 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 - **原生代码研究（N 系列）**：N0–N11 完成。用 Ghidra / Frida 读 r5apex 的原生移动代码，和实测逐项对照（对照表 [research/rea-native/CROSSCHECK-LEDGER.md](research/rea-native/CROSSCHECK-LEDGER.md)）。认可的差别都改进了 Reference。
 - **B 系列**：B1（S27 翻越加速移植）完成。
 - **手感对照（F 系列）**：不靠试玩，用同样的 R5 输入把 Unity 和 R5 叠在一起比指标。平地 511 / 513 项一致；攀爬 / 翻越 / superglide 1968 / 2221；技能 477 / 524（按每个片段每个指标的第一项算，同口径改之前是 473）；镜头 325 / 367（不含待定的 K-5 / K-6）。叠图页面：https://claude.ai/artifact/P1mjgrbW1Yoiu9HdukTbDv
-- **基线数字**（RPS 起）：EditMode 2156 / 2156（GN + RUD），PlayMode 1 / 1；M2/M1、M3、M4 回放按新基线 [research/phase2-local/rps](research/phase2-local/rps/README.md)（回放电机滑铲按原生；`-legacyM2` 和旧基线逐字节相同）；真实按键演示 238 / 238；课程单圈 78.88 s。
+- **基线数字**（RPS 起）：EditMode 2157 / 2157（GN + RUD + G6），PlayMode 1 / 1；M2/M1、M3、M4 回放按新基线 [research/phase2-local/rps](research/phase2-local/rps/README.md)（回放电机滑铲按原生；`-legacyM2` 和旧基线逐字节相同）；真实按键演示 238 / 238；课程单圈 78.88 s。
 - **以 R5 为复刻核心**（D-36）：对照里找到的差别原则上改成 R5；改之前那一版和 R5 的差别存在 [R5-DIFF-ARCHIVE.md](R5-DIFF-ARCHIVE.md)。
-- **10-27 – 10-28 新做完的**（详见时间线）：F6 按 R5 复刻、N12 钩爪横滚查清、F7 横滚平滑改原生 + 二段跳反馈 + FOV、EPG 火箭跳实测、R6 斜坡滑铲实测、R6U 斜坡按 R5 改、RPS 回放电机滑铲换原生、RUD 回放电机碰撞体和地面移动、GN 钩爪脱钩全部按原生。最新 build：`HSD-Build\GN`。
-- **下一步候选**：G-6 钩爪撞上上抬加不加（D-50）〔10-28 已定：先关着、留作待定，见 D-51〕；回放电机的 `airUnduckDrop` 要不要开〔10-28 已做完：D-49〕；K-5 起跳镜头、K-6 翻越镜头要不要做；K-7 滑索横滚再测一次；《泰坦陨落2》研究（D-48）。见最后一节"还没结论的事"。
+- **10-27 – 10-28 新做完的**（详见时间线）：F6 按 R5 复刻、N12 钩爪横滚查清、F7 横滚平滑改原生 + 二段跳反馈 + FOV、EPG 火箭跳实测、R6 斜坡滑铲实测、R6U 斜坡按 R5 改、RPS 回放电机滑铲换原生、RUD 回放电机碰撞体和地面移动、GN 钩爪脱钩全部按原生、G6 钩爪撞上上抬实测（默认关、可选开关）。最新 build：`HSD-Build\G6`。
+- **下一步候选**：G-6 钩爪撞上上抬加不加（D-50）〔10-28 已定：先关着、留作待定，见 D-51；10-29 实测后定为默认关 + 可选开关，见 D-52〕；回放电机的 `airUnduckDrop` 要不要开〔10-28 已做完：D-49〕；K-5 起跳镜头、K-6 翻越镜头要不要做；K-7 滑索横滚再测一次；《泰坦陨落2》研究（D-48）。见最后一节"还没结论的事"。
 
 ---
 
@@ -264,6 +264,29 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
   - 新发现（没改）：下滑索时原生还有一个很大的 punch（向下 12–14°）；二段跳原生也有 punch（3.9–6.2°），HSD 跳板二段跳现在是 F7 设计的 1.2°。见"还没结论的事"。
   - 回归：回放电机 M1–M4 的 429 个报告文件和 main 逐字节相同（只有两个 index.md 的生成时间不同）；游戏身体（Reference / Fun）喂 R5 录像的 315 个输出逐字节相同；`-preCam2` 的镜头输出和 main 在 166 个旧片段上逐字节相同；EditMode 2167 / 2167（新增 `Cam2CameraTests` 11 个），PlayMode 1 / 1；真实按键演示 238 / 238；课程单圈 78.88 s 不变；build `HSD-Build\CAM2`。
   - 文档：[research/rea-native/cam2/CAM2-CAMERA.md](research/rea-native/cam2/CAM2-CAMERA.md)；镜头参照 [research/rea-native/camera/CAMERA-REFERENCE.md](research/rea-native/camera/CAMERA-REFERENCE.md) §3.9（改正）、§3.10–3.12、§8（叠加规则）；对照 [research/feel/FEEL.md](research/feel/FEEL.md) §12；存档 [R5-DIFF-ARCHIVE.md](R5-DIFF-ARCHIVE.md)（CAM2 一节）；HSD-Unity [#47](https://github.com/letheli710/HSD-Unity/pull/47)，research [#77](https://github.com/letheli710/Apex-MovementAnalysis/pull/77)。
+
+### 2026-10-29：钩爪撞上时上抬实测，默认关、加可选开关（G6）
+- 你先定了"添加，然后将老版本'归档'，新版本使用。然后记录一下这个选项"。做之前先在 R5 上实测（世界上的墙、Frida 只看客户端），结果和 GN 的推断不一样，停下来报告。你看完后改成："关留客选项开关在 decision markdown 里头记录一下"。
+  - **[D-52]** Reference（和 Fun）默认**仍然没有**撞上上抬，取代 D-51 的"待定"。上抬做成**可选开关**，打开 = 照客户端代码加上，**不是 R5 的实际移动**。
+  - **原生规则**（Ghidra，r5apex_dx12，`Grapple_DetachSpeedLoss` `0x14066fb60` 的接近脱钩分支 `0x14066fe4c`）：
+    - 条件：接近脱钩成立、正在拉、钩子**没有父实体**（钩在世界几何上，不是道具 / 绳子）、vz < 300。
+    - 做法：vz += `grapple_impactVerticalBoost` 300，再封顶 `grapple_impactVerticalMaxSpeed` 300，也就是 vz = min(vz + 300, 300)；vz 已经 ≥ 300 时不动。
+    - 次数：这条命令就是脱钩命令，所以每次拉最多一次。
+    - 代码里没有"在地面上不加"的条件。
+  - **实测**（[research/rea-native/g6/G6-IMPACT-BOOST.md](research/rea-native/g6/G6-IMPACT-BOOST.md)）：
+    - 找到一面世界几何的墙（射线扫描，hitEnt = worldspawn）：x −11921.5、y ≈ 7400，从地面到 z ≈ 450 是平的竖直面。新日程 `m10_g_ww400_p5` / `m10_g_ww400_p0` / `m10_g_ww_spr`。
+    - 录像（不挂 Frida，120 fps，9 个里 8 个过）：世界墙 ×6，脱钩那帧 vz 181–218 → 每帧只减重力 6.25，脱钩后最多再升 20–30 u（抛物线）；地面钩 ×2：vz 0、ground = 1。**没有一个片段跳**（要是上抬生效，脱钩那帧应该到约 294）。
+    - Frida（只读，只有客户端）：世界墙脱钩那条命令，钩子父实体为空，pull step 里 vz **185.1 → 300**（上抬确实算了）；钩爪更新返回后整个速度 ×0.677；但**同一条命令的 PlayerMove 从 185.1 开始、算完 178.9**——上抬和缩放都被丢掉，之后 23 条移动都是正常重力。所以客户端自己预测的轨迹也没有上抬。GN 看到的"vz 299"就是这个只在 pull step 里存在的中间值，不是"本地 dedi 把它纠正掉了"。
+    - 没解释的一点：热身那一次钩在同一面墙上，父实体却是 0x11fbc（有实体），没有上抬，也没查是什么。第 2 个试验时客户端崩了（Frida 挂着），Frida 只有这两条。
+  - **为什么默认关**：按 D-36 以 R5 为准，R5 的实际移动里没有这一下；加上反而让每次钩世界墙都多跳一下，离 R5 更远。
+  - **可选开关**（记下来，以后想要"客户端代码那一下"时用）：
+    - 名字：`GrappleS21Params.impactBoost`（`impactBoostSpeed` 300、`impactBoostMax` 300），所有配置默认 `false`。
+    - 打开：游戏 Esc 菜单 "Grapple impact boost (G-6)"（只在原生钩爪规则下显示；PlayerPrefs `hsd.g6.impact`，1 = 开，默认 0；演示和 smoke 一律关）；`FeelBatch -impactBoost`；代码里设 `impactBoost = true`。
+    - 打开后：钩在世界上、接近脱钩时 vz = min(vz + 300, 300)，在地面上也加（GN 版多的那个"离开地面"条件是推断，按原生代码去掉了）；道具、绳子上不加。**不是 R5 的实际移动**。
+    - 关回去 = 默认，输出和 GN 版逐字节相同。`SetGnDetach(true / false)` 都不动它，`-preGn` 也不上抬。
+  - 回归：EditMode 2157 / 2157（新增 `G6ImpactBoostIsOptInAndOnlyOnWorldHooks`），PlayMode 1 / 1；回放电机和 RUD 基线逐字节相同（`rud_check.py`：222 / 90 / 114）；`FeelBatch` 105 个录像的游戏身体（reference / fun 210 个文件）默认和 `-preGn` 都和 GN 版逐字节相同；`-impactBoost` 也全部相同（这 105 个里只有 M4 的 4 个钩爪片段，钩的是道具岩石，不上抬；打开后的效果由单元测试检查：墙钩跳到 300 再减重力，道具钩不变）；真实按键演示 238 / 238、课程单圈 78.88 s，smoke 输出和 GN build 逐行相同；build `HSD-Build\G6`（只多了菜单按钮）。
+  - 文档：[research/rea-native/g6/G6-IMPACT-BOOST.md](research/rea-native/g6/G6-IMPACT-BOOST.md)；存档 [R5-DIFF-ARCHIVE.md](R5-DIFF-ARCHIVE.md)（G6 一节，二节 G-6 行）；开关说明 HSD-Unity `Abilities/Grapple/README.md`；HSD-Unity [#48](https://github.com/letheli710/HSD-Unity/pull/48)，research [#78](https://github.com/letheli710/Apex-MovementAnalysis/pull/78)。
+
 ---
 
 ## 决定总表
@@ -320,7 +343,8 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 | D-48 | 10-27 | EPG 真实开火的火箭跳 | 本地 R5 加载不了能开火的 EPG，只做了服务端模拟 + 真手雷对照；真实开火留到之后的《泰坦陨落2》研究（Northstar 本地私服）里做，和模拟结果对照 | — | research #64；工作区 `TODO.md` 的 TF2 研究 T-1 |
 | D-49 | 10-28 | 回放电机的下蹲碰撞体和地面转向（RPS 留下的边界项） | 换成 Reference：`airUnduckDrop` 16.5 + 原生 WalkMove（`groundNativeFriction`）；先做的 M5 `groundVectorRedirect` 版（第一版）没采用；旧电机仍是 Legacy M2；回放基线重定（35 个变，3 个例外：e1_turn ×2 平台噪声、r1237 着地探测边界） | `R5MotorV2Params.R5Reference()`、`WithLegacyM2Rud()`、`BatchReplay -legacyM2` | HSD-Unity `rud/replay-unduck-native`（#45） |
 | D-50 | 10-28 | 钩爪脱钩规则（N13 的 G-1…G-6） | 全部按原生：接近距离取原点 / 眼睛较近者、斜坡 400、视线和速度按绳子方向量、低速按径向速度、拉动中低速时限一律 1.5 s、远离 > 500 只在世界钩点；撞上上抬（G-6）没加、待定；旧版存档可切回 | `GrappleS21Params.SetGnDetach(false)`（或单个开关 `nativeProxDistance` / `detachRampMax` / `nativeRopeDir` / `nativeLowSpeed` / `nativeLowSpeedTimer` / `awayOnlyWorldHooks`）；Esc 菜单 "Grapple detach rules (GN)"（PlayerPrefs `hsd.gn.grapple`）；`FeelBatch` / `CameraFeelBatch -preGn` | HSD-Unity `gn/grapple-native` （[#46](https://github.com/letheli710/HSD-Unity/pull/46)）；research [#74](https://github.com/letheli710/Apex-MovementAnalysis/pull/74) |
-| D-51 | 10-28 | 钩爪撞上时上抬（G-6，GN 留下的） | 先关着、留作待定：原生客户端在世界钩点会抬到 300，但本地录像是混合版本看不到，世界上的墙也没测过，没法对照；等有只有客户端的实测或《泰坦陨落2》的对照再定 | 不改（`GrappleS21Params.impactBoost` 保持关） | 本表；R5-DIFF-ARCHIVE 二节 G-6 行 |
+| D-51 | 10-28 | 钩爪撞上时上抬（G-6，GN 留下的）〔10-29：见 D-52（实测 R5 丢掉上抬，默认仍关，加可选开关）〕 | 先关着、留作待定：原生客户端在世界钩点会抬到 300，但本地录像是混合版本看不到，世界上的墙也没测过，没法对照；等有只有客户端的实测或《泰坦陨落2》的对照再定 | 不改（`GrappleS21Params.impactBoost` 保持关） | 本表；R5-DIFF-ARCHIVE 二节 G-6 行 |
+| D-52 | 10-29 | 钩爪撞上时上抬（G-6）：实测后定 | 默认关（= R5：客户端 pull step 算出 vz 300，但同一条命令的移动把它丢掉，世界墙和地面钩都不跳）；做成可选开关，打开 = 照客户端代码 vz = min(vz + 300, 300)（世界钩点、接近脱钩、每次拉一次），不是 R5 的实际移动 | `GrappleS21Params.impactBoost`（默认 false，不在 `SetGnDetach` 里）；Esc 菜单 "Grapple impact boost (G-6)"（PlayerPrefs `hsd.g6.impact`）；`FeelBatch -impactBoost` | HSD-Unity [#48](https://github.com/letheli710/HSD-Unity/pull/48)；research [#78](https://github.com/letheli710/Apex-MovementAnalysis/pull/78)；[research/rea-native/g6/G6-IMPACT-BOOST.md](research/rea-native/g6/G6-IMPACT-BOOST.md) |
 | D-53 | 10-29 | K-5 起跳镜头、K-6 翻越镜头、多个镜头动作的叠加 | 按原生加：起跳往 punch 弹簧加冲量（`0x140a349c0`）；每次翻越都加翻越动画镜头（B1 曲线）；横滚相加后折回 ±180°、不封顶（原来夹 ±40°）；其余本来就是相加 | `NativeCameraParams.jumpPunch` / `traversalCamera` / `rollWrap`，`SetCam2(false)` 全部切回；`CameraFeelBatch -preCam2` | HSD-Unity `cam2/camera-combo`（[#47](https://github.com/letheli710/HSD-Unity/pull/47)）；research [#77](https://github.com/letheli710/Apex-MovementAnalysis/pull/77) |
 | D-54 | 10-29 | K-7 滑索横滚和眼高（复测） | N6 片段没上绳，N10 对；按原生加滑索视角偏移（Perlin 噪声 + ω 4 弹簧，眼睛下沉 5–9 u）和水平投影的绳上点 | `NativeCameraParams.zipViewOffset` / `zipRopeHorizontal`，`SetCam2(false)` | 同上 |
 | D-55 | 10-28 | F-2 原地跳 Unity 比 R5 高 1.8 u | 不是移动代码，不改：测试工具的重置在 dedi 上算成落地，0.72 s 后起跳触发原生 antiMultiJump 降高（282.0 → 277.3 u/s），客户端被纠正；真实玩的时候没有这种重置 | 不改（Unity 两套电机都按"片段开头的重置不算落地"） | [research/feel/F2-STANDING-JUMP.md](research/feel/F2-STANDING-JUMP.md)；本表 |
@@ -352,7 +376,7 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 - **二段跳 punch**：原生二段跳 punch 3.9–6.2°（`0x140a34c00`）；HSD 跳板二段跳现在是 F7 设计的 1.2° 小凸起。换不换成原生？（CAM2）
 - **滑铲跳落地 kick**：Unity 比 R5 大约 1.5 倍（1.7–2.3° 对 1.1–1.7°，CAM2 之前就大），原因没查。（CAM2）
 - ~~钩爪比 R5 早脱钩~~：10-28 查清（N13：R5 的"挂到 1.5 s"是本地 dedi 重挂，只有客户端时 Unity 一致）并把脱钩规则全部按原生改了，见 D-50。
-- **G-6 钩爪撞上时上抬**：原生客户端在世界钩点（不是道具）接近脱钩时把竖直速度抬到 300，本地轨迹看不到，世界上的墙没测过。要不要加（开关 `impactBoost`，现在都关）等你定。（GN）〔10-28 你定了：先关着，留作待定；等有能对照的实测（只有客户端的录像、或《泰坦陨落2》）再说。见 D-51〕
+- ~~**G-6 钩爪撞上时上抬**~~：原生客户端在世界钩点（不是道具）接近脱钩时把竖直速度抬到 300，本地轨迹看不到，世界上的墙没测过。要不要加（开关 `impactBoost`，现在都关）等你定。（GN）〔10-28 你定了：先关着，留作待定；等有能对照的实测（只有客户端的录像、或《泰坦陨落2》）再说。见 D-51〕〔10-29 实测后定了：R5 实际不跳，默认关，留可选开关，见 D-52〕
 - **HSD 要不要做火箭跳**：A. EPG 式物理击退（爆点推向身体中心，随距离衰减，和现有速度相加，上限 1000），或 B. Fuse Knuckle Jumper 式跳跃加成（在自己炸弹旁边按跳给固定的起跳速度）。研究建议先做 A，用 jump_kit 数值，护盾规则和地面门槛先不做。见 [research/epg/EPG-ROCKET-JUMP.md](research/epg/EPG-ROCKET-JUMP.md) §7。（EPG）
 - **回放电机的 `airUnduckDrop`**（空中松开下蹲时原点下降 16.5 u，下蹲碰撞体规则）：Reference 开着、回放电机关着。RPS 只换了滑铲开关，这一项算不算滑铲由你定，回放电机要不要也开？（RPS）〔10-28 已做完：回放电机开了，地面移动也一起换成原生 WalkMove，见 D-49〕
 - **《泰坦陨落2》研究**：第一步装 Northstar 并验证能自动跑测，第一个实验是 EPG 真实开火（D-48）。什么时候开始等你定。

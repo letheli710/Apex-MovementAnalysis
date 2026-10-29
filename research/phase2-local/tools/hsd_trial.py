@@ -1356,6 +1356,11 @@ _M10G["m10_g_tether"] = ((-13930.0, 5900.0, FLOOR_Z), 0.0, -75.0, "set cl_yawspe
 # pulls the body into the ledge: speed stays below grapple_detachLowSpeedThreshold 250 and the ground timeout (0.7 s) releases it.
 for _p in (4.0, 4.3, 4.6):
     _M10G["m10_g_n6low%02d" % round(_p * 10)] = ((-13723.0, 6500.0, FLOOR_Z), 0.0, _p, "wait 72; tap offhand1; wait 3.0s")
+# G-6 (rea-native g6): pulls into a WORLD wall (worldspawn, no parent entity; g6/wall_scan.py): the firing-range face at
+# x -11921.5 (y 7400, normal (-0.996, -0.090, 0.001), flat from the floor to z ~450), 400 u ahead along +X; no geometry needed.
+for _n, _pt in (("ww400_p5", -5.0), ("ww400_p0", 0.0)):
+    _M10G["m10_g_" + _n] = ((-12321.5, 7400.0, FLOOR_Z), 0.0, _pt, "wait 72; tap offhand1; wait 3.5s")
+_M10G["m10_g_ww_spr"] = ((-12721.5, 7400.0, FLOOR_Z), 0.0, -5.0, "wait 72; down speed; down forward; wait 1.0s; tap offhand1; up forward; up speed; wait 3.5s")
 for _n, (_o, _yw, _pt, _s) in _M10G.items():
     SCHEDULES[_n] = _s
     SCHEDULE_ORIGIN[_n] = _o
