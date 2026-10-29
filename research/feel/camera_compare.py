@@ -58,7 +58,13 @@ def kick(tr, li):
     t0, p0 = tr["t"][li - 1], tr["pitch"][li - 1]
     idx = [i for i in range(li - 1, len(tr["t"])) if tr["t"][i] - t0 <= 1.0]
     pk = max(idx, key=lambda i: abs(tr["pitch"][i] - p0))
-    zero = next((tr["t"][i] - t0 for i in idx if i > pk and (tr["pitch"][i] - p0) * (tr["pitch"][pk] - p0) < 0), None)
+    # CAM2: after a jump the frame before the landing sits in the jump punch's tail (a few tenths of a degree on both bodies), so the
+    # crossing is taken against the level before the takeoff when the body left the ground within 1.5 s before the landing
+    pz = p0
+    tk = [i for i in range(1, li) if tr["ground"][i - 1] and not tr["ground"][i] and t0 - tr["t"][i] <= 1.5]
+    if tk:
+        pz = tr["pitch"][tk[-1] - 1]
+    zero = next((tr["t"][i] - t0 for i in idx if i > pk and (tr["pitch"][i] - pz) * (tr["pitch"][pk] - pz) < 0), None)
     roll = max(abs(tr["roll"][i]) for i in idx if tr["t"][i] - t0 <= 0.6)
     return {"kick_peak": [tr["pitch"][pk] - p0], "kick_t_peak": [tr["t"][pk] - t0], "kick_t_zero": [zero] if zero is not None else [],
             "kick_roll": [roll]}
@@ -144,12 +150,24 @@ def first_takeoff(fl):
     return t0 if t0 is not None else next((t for t, ev, *_ in fl if "TAKEOFF" in ev), None)
 
 
+def cam_takeoff(tr, t_hint, win=0.15):
+    """CAM2: the body's own takeoff on its camera rows (ground 1 -> 0) nearest the usercmd TAKEOFF. R5's camera rows run ~0.04 s ahead of
+    the usercmd timeline and the jump punch starts on the next frame, so a baseline taken at the usercmd takeoff was already inside the
+    kick (that is where F6's 'down then up 1.7' came from). Returns (t, index of the last ground frame); the hint when none is near."""
+    cand = [i for i in range(1, len(tr["t"])) if tr["ground"][i - 1] and not tr["ground"][i] and abs(tr["t"][i] - t_hint) <= win]
+    if not cand:
+        return t_hint, max(0, at(tr, t_hint) - 1)
+    i = min(cand, key=lambda i: abs(tr["t"][i] - t_hint))
+    return tr["t"][i], i - 1
+
+
 def takeoff_kick(tr, fl):
-    """F4 K-5: the camera kick at the jump takeoff: pitch and roll change from the frame before, within 0.25 s."""
+    """F4 K-5: the camera kick at the jump takeoff: pitch and roll change from the frame before, within 0.25 s (CAM2: on the body's own
+    camera takeoff, see cam_takeoff)."""
     t0 = first_takeoff(fl)
     if t0 is None:
         return {}
-    i0 = max(0, at(tr, t0) - 1)
+    t0, i0 = cam_takeoff(tr, t0)
     p0, r0 = tr["pitch"][i0], tr["roll"][i0]
     idx = [i for i in range(i0, len(tr["t"])) if tr["t"][i] - t0 <= 0.25]
     pk = max(idx, key=lambda i: tr["pitch"][i] - p0)
@@ -158,11 +176,11 @@ def takeoff_kick(tr, fl):
 
 
 def mantle_hump(tr, fl):
-    """F4 K-6: the pitch hump of the mantle after the jump, 0.25-1.2 s after the takeoff."""
+    """F4 K-6: the pitch hump of the mantle after the jump, 0.25-1.2 s after the takeoff (CAM2: the body's own camera takeoff)."""
     t0 = first_takeoff(fl)
     if t0 is None:
         return {}
-    i0 = max(0, at(tr, t0) - 1)
+    t0, i0 = cam_takeoff(tr, t0)
     idx = [i for i in range(i0, len(tr["t"])) if 0.25 <= tr["t"][i] - t0 <= 1.2]
     if not idx:
         return {}
@@ -194,25 +212,33 @@ def eyes(tr, fl):
     return out
 
 
-def metrics(tr, inp, sched, fl=None):
+def rope_ride_end(trial_dir, floor):
+    """CAM2 K-7: the last R5 command time with the origin on a rope (> floor + 20); None = R5 never left the floor (the N6_camera zipline
+    trials: the Use press was lost, R5 stood under the rope, so they are no zipline reference)."""
+    rows = list(csv.DictReader(open(os.path.join(trial_dir, "samples.csv"), encoding="utf-8")))
+    on = [float(r["t"]) for r in rows if float(r["pos_z"]) > floor + 20]
+    return on[-1] if on else None
+
+
+def metrics(tr, inp, sched, fl=None, ride_end=None):
     m = {}
     if fl:
         m.update(eyes(tr, fl))
-        if sched.startswith(("c3_jumpland", "b1_")):
+        if sched.startswith(("c3_jumpland", "b1_", "cam2_", "e5_slidejump")):
             m.update(takeoff_kick(tr, fl))
         if sched.startswith("b1_") and "_none_" in sched:
             m.update(mantle_hump(tr, fl))
-        if sched.startswith("m9zd"):
+        if sched.startswith("m9zd") and ride_end is not None:
             ys = [y for _, _, y, _, _ in inp]
             moving = [i for i in range(1, len(ys)) if abs(ys[i] - ys[i - 1]) > 1e-6]
-            if moving:
+            if moving and ride_end >= inp[moving[-1]][0] + 0.3:     # CAM2: R5 still on the rope through the window (no detach punch in it)
                 a, b = inp[moving[0]][0], inp[moving[-1]][0]
                 idx = [i for i in range(len(tr["t"])) if a <= tr["t"][i] <= b + 0.3]
                 if idx:
                     m["zip_roll_peak"] = [max((tr["roll"][i] for i in idx), key=abs)]
                     m["zip_roll_end"] = [tr["roll"][at(tr, b)]]
     li = landing(tr)
-    if li is not None and (sched.startswith("c3_drop") or sched.startswith("c3_jumpland")):
+    if li is not None and sched.startswith(("c3_drop", "c3_jumpland", "cam2_", "e5_slidejump")):
         m.update(kick(tr, li))
     if "slide" in sched:
         press = next((t for (t, _, _, d, _), (_, _, _, d0, _) in zip(inp[1:], inp) if d and not d0), None)
@@ -277,7 +303,12 @@ def main():
         if hooks is not None and not hooks:                             # F7: a grapple trial where R5's hook never attached (N12 y90)
             continue
         inp, fl = inputs(d), flags(d)
-        ms = {"r5": metrics(r5, inp, sched, fl), "reference": metrics(ref, inp, sched, fl)}
+        ride_end = None
+        if sched.startswith("m9zd"):
+            ride_end = rope_ride_end(d, man.get("world", {}).get("floor_z", 294.92))
+            if ride_end is None:
+                continue                                                # CAM2: R5 never mounted (N6_camera m9zd): not a zipline trial
+        ms = {"r5": metrics(r5, inp, sched, fl, ride_end), "reference": metrics(ref, inp, sched, fl, ride_end)}
         press = grapple_press(d) if hooks else None
         r5_roll = None
         if press is not None:
