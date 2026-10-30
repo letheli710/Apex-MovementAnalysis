@@ -1,0 +1,337 @@
+<title>HSD 版本线路图</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;900&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a transit map read bottom-up. The black trunk is Main; coloured side lines are whole versions that still run (switchable);
+   short stubs off a station are options that were measured or dropped; squares are builds. A sticky inspector shows one station's full record. */
+:root{
+  --bg:#f4f4ef; --panel:#ffffff; --ink:#1a201e; --muted:#5d6762; --line:#d6dbd6; --grid:#e7eae6;
+  --trunk:#1a201e; --chosen:#0aa5b8; --chosen-bg:#e0f5f7;
+  --t-replay:#8b9590; --t-legacy:#a0742a; --t-fun:#d9622b; --t-m55:#3d6fd6; --t-sg:#2f8a55; --t-tf2:#8a46c4;
+  --old:#a0742a; --old-bg:#f7efdf; --alt:#5d6762; --alt-bg:#eff1ef; --gap:#bf3a2c; --gap-bg:#fbe3df; --pend:#8a46c4; --pend-bg:#f1e6fa;
+  --display:"Noto Serif SC","Songti SC",serif;
+  --body:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121614; --panel:#1a201d; --ink:#e4e9e6; --muted:#9aa49f; --line:#303935; --grid:#1f2623;
+  --trunk:#e4e9e6; --chosen:#3fd0e0; --chosen-bg:#13303a;
+  --t-replay:#7f8a85; --t-legacy:#d9a54e; --t-fun:#f08a55; --t-m55:#7d9df0; --t-sg:#5cc786; --t-tf2:#c294f0;
+  --old:#d9a54e; --old-bg:#332914; --alt:#a3ada8; --alt-bg:#232a27; --gap:#ef7d70; --gap-bg:#3e1f1b; --pend:#c294f0; --pend-bg:#2c2140; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121614; --panel:#1a201d; --ink:#e4e9e6; --muted:#9aa49f; --line:#303935; --grid:#1f2623;
+  --trunk:#e4e9e6; --chosen:#3fd0e0; --chosen-bg:#13303a;
+  --t-replay:#7f8a85; --t-legacy:#d9a54e; --t-fun:#f08a55; --t-m55:#7d9df0; --t-sg:#5cc786; --t-tf2:#c294f0;
+  --old:#d9a54e; --old-bg:#332914; --alt:#a3ada8; --alt-bg:#232a27; --gap:#ef7d70; --gap-bg:#3e1f1b; --pend:#c294f0; --pend-bg:#2c2140; color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:14px;line-height:1.55}
+.wrap{max-width:1360px;margin:0 auto;padding-block:28px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:22px}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance}
+h1{font-size:clamp(26px,3.6vw,38px);font-weight:900}
+p{margin:0}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--chosen)}
+.lede{max-width:80ch;color:var(--muted)} .lede b{color:var(--ink)}
+header{display:grid;gap:12px}
+.legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:6px 18px;font-size:12.5px;color:var(--muted)}
+.legend div{display:flex;gap:8px;align-items:center}
+.legend svg{flex:none}
+.legend b{color:var(--ink);font-weight:500}
+.stats{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px;color:var(--muted)}
+.stats b{font-family:var(--mono);color:var(--ink);font-size:15px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,400px);gap:22px;align-items:start}
+.mapbox{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 0}
+.map{position:relative;min-width:680px}
+.map svg{position:absolute;inset:0;overflow:visible}
+.lbl{position:absolute;left:300px;right:10px;display:flex;align-items:center;gap:8px;font:inherit;color:inherit;background:none;border:0;padding:0 6px;text-align:left;cursor:pointer;border-radius:6px;min-width:0}
+.lbl:hover,.lbl:focus-visible{background:var(--chosen-bg);outline:none}
+.lbl[aria-current="true"]{background:var(--chosen-bg);box-shadow:inset 3px 0 0 var(--chosen)}
+.lbl .id{font-family:var(--mono);font-size:11px;color:var(--muted);flex:none;width:52px}
+.lbl .t{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.lbl .t small{color:var(--muted);font-size:12px;margin-left:6px}
+.lbl.build{cursor:default}
+.lbl.build:hover{background:none}
+.lbl.build .t{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.lbl.tf2 .id{color:var(--t-tf2)}
+.lbl.pend .t{color:var(--pend)}
+.era{position:absolute;left:300px;right:10px;font-family:var(--display);font-size:13px;color:var(--muted);border-bottom:1px dashed var(--line);display:flex;align-items:flex-end;padding:0 6px 2px}
+.date{position:absolute;left:4px;width:34px;font-family:var(--mono);font-size:10.5px;color:var(--muted);text-align:right}
+.cap{position:absolute;left:300px;font-family:var(--mono);font-size:12px;letter-spacing:.12em;color:var(--muted);padding:0 6px}
+/* inspector */
+.insp{position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px);background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;display:grid;gap:10px;max-height:calc(100vh - 24px);overflow:auto}
+.insp .id{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap}
+.insp h3{font-size:19px}
+.pick{background:var(--chosen-bg);border:2px solid var(--chosen);border-radius:8px;padding:8px 10px;font-size:13.5px}
+.pick::before{content:"选中 · 在 Main 上";display:block;font-size:11px;color:var(--muted);margin-bottom:2px}
+.pick.pend{background:var(--pend-bg);border-color:var(--pend)} .pick.pend::before{content:"待定 / 今天定的，还没写进 DECISIONS"}
+.pick.sup{border-style:dashed} .pick.sup::before{content:"当时选中，后来被取代 / 改动"}
+.vs{display:grid;gap:6px}
+.vs h4{margin:4px 0 0;font-size:12px;color:var(--muted);font-weight:500;letter-spacing:.04em}
+.v{border:1px solid var(--line);border-left-width:4px;border-radius:6px;padding:6px 9px;display:grid;gap:2px;font-size:12.5px}
+.v b{font-weight:500}
+.v span{color:var(--muted)}
+.v.old{border-left-color:var(--old);background:var(--old-bg)} .v.alt{border-left-color:var(--alt);background:var(--alt-bg)}
+.v.sup{border-left-color:var(--alt);background:var(--alt-bg);opacity:.8} .v.gap{border:1.5px dashed var(--gap);background:var(--gap-bg)} .v.pend{border-left-color:var(--pend);background:var(--pend-bg)}
+.kv{display:grid;gap:4px;font-size:12.5px;border-top:1px dashed var(--line);padding-top:8px}
+.kv div{overflow-wrap:anywhere} .kv b{font-weight:500}
+.err{font-size:12.5px;background:var(--gap-bg);border-radius:6px;padding:5px 8px}
+.err::before{content:"误差 / 遗留：";color:var(--gap)}
+.track-info{font-size:12.5px;color:var(--muted)}
+footer{font-size:12px;color:var(--muted)}
+@media (max-width:980px){.layout{grid-template-columns:1fr}.insp{position:static;max-height:none}}
+@media (max-width:560px){.map{min-width:560px}}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">High Speed Doom · 留档 · 10-20 → 10-30</div>
+  <h1>HSD 版本线路图</h1>
+  <p class="lede">像地铁图一样<b>从下往上</b>读：黑色主干是 <b>Main</b>，每一站是一次决定或一个版本。还活着、能切回去的旧版本画成<b>彩色平行线</b>，一直延伸到今天；测过但没选、被淘汰的方案画成主干旁边的<b>断头短枝</b>；方块是 build。点任何一站，右边显示它的完整记录：选了什么、平行的版本和数据、为什么、怎么切回去。</p>
+  <div class="legend" id="legend"></div>
+  <div class="stats" id="stats"></div>
+</header>
+<div class="layout">
+  <div class="mapbox"><div class="map" id="map"></div></div>
+  <aside class="insp" id="insp" aria-live="polite"></aside>
+</div>
+<footer>依据：DECISIONS.md（main 上 D-01–D-55，PR #79 分支上 D-57–D-65）、R5-DIFF-ARCHIVE.md、HSD-Build 文件夹的 build 时间，以及 10-30 这次对话里你定的事。站点按日期排，同一天里大致按先后。断头短枝上的"?"表示现有文件里找不到那个选项的数据（缺档）。</footer>
+</div>
+
+<script>
+const D=[
+ {id:"D-01",d:"10-20",era:"M0–M3 搭环境和基础移动",t:"Unity 工程放在哪",pick:"在工作区新建 Unity 工程",
+  v:[["L","old","旧工程 High Speed Test 01","只读，作废"]],why:"不动原工程，新工程从零按实测搭",rec:"EXECUTION-LOG 10-20"},
+ {id:"D-02",d:"10-20",t:"实测帧率（主控定的）",pick:"客户端固定 <b>120 fps</b>，帧率当实验变量",
+  v:[["R","alt","不固定","外部有约 138 fps 上限，帧间隔不稳"]],why:"稳定、可重复",sw:"hsd_launch.ps1 启动参数 / fps_max",rec:"EXECUTION-LOG 10-20"},
+ {id:"D-03",d:"10-21",era:"M4–M6 传奇能力、第一版、镜头",t:"加 M4b：逐命令转视角",pick:"加，测钩爪摆动",
+  v:[["R","alt","实测结论","钩爪不是钟摆，是沿绳加速 + 横向刹车"]],rec:"M4-REPORT §5"},
+ {id:"D-04",d:"10-21",t:"研究范围和用词",pick:"以 R5Flowstate S21 为准；tap strafe 只算单次按键 lurch",v:[],rec:"M4-REPORT"},
+ {id:"D-05",d:"10-21",t:"M5.5 镜头",pick:"认可（\"自然、流畅\"），方法写成 fps-camera-design skill",sup:"10-24 默认改成原生镜头（D-18），M5.5 留作可切换",
+  v:[],rec:"HSD-Unity#6、#7"},
+ {id:"D-06",d:"10-21",t:"主线",pick:"M5.5 定为主线，两个仓库从这里建 main",v:[],rec:"EXECUTION-LOG 10-21"},
+ {id:"D-07",d:"10-21",t:"做哪些传奇能力（M6-B）",pick:"做 Valkyrie 喷气、Ash 相位突破",
+  v:[["R","alt","Loba、Alter","搁置（Alter 本地触发不了，只有源码结论）→ SHELVED-ABILITIES.md"],["R","sup","\"不再做新的逆向\"","10-23 被 D-15 推翻"]],rec:"HSD-Unity#10"},
+ {id:"D-08",d:"10-22",era:"M7–M9 HSD 原创动作和移动库",t:"跑墙、抓边悬挂、二段跳（M7-A）",pick:"HSD 设计：<b>Reference 关、Fun 开</b>",
+  v:[["R","alt","R5 S21","没有这三个动作（没有原型可测）"]],sw:"游戏内 7 / 8 / 9；MovementConfig.hsd",rec:"HSD-Unity#11"},
+ {id:"D-09",d:"10-22",t:"三个设计问题",pick:"暂缓到游戏接近完成",
+  v:[["R","alt","E1","两种二段跳能否同时装备"],["R","alt","E2","Fun 斜坡加速度：Fun 538–586 u/s² 对 R5 拟合 318–367（约 1.6 倍）"],["R","alt","E3","跳跃输入缓冲"]],rec:"DEFERRED-DESIGN-TODO.md"},
+ {id:"D-10",d:"10-22",t:"跳板起飞后能不能 lurch",pick:"<b>Reference 按 R5：不能</b>",
+  v:[["L","old","M5.5 行为：能","保留在 Fun 里"]],sw:"padLaunchOpensLurchWindow（Reference false，Fun true）",rec:"HSD-Unity#18"},
+ {id:"D-11",d:"10-22",t:"Ash 冲刺",pick:"不做",v:[["R","gap","做的方案","当时的取舍数据没记"]],rec:"M10-REPORT"},
+ {id:"D-12",d:"10-22",t:"Wraith 传送门",pick:"做（M10-W）",v:[],rec:"HSD-Unity#22"},
+ {id:"D-13",d:"10-23",era:"M10 完成，开始原生代码研究",t:"S21 客户端和本地服务端不一致时",pick:"Reference 跟 <b>S21 客户端</b>（有社区证据时），标 [S21-client]",
+  v:[["R","alt","跟本地服务端","没选：本地 dedi 是混合版本"],["R","gap","两边具体差多少","没有汇总表，散在各报告"]],sw:"天花板滑行 p.ceilingSurf 等",rec:"M10-REPORT"},
+ {id:"D-14",d:"10-23",t:"技能代码结构",pick:"一个技能一个文件夹 + 中文 README",v:[],rec:"HSD-Unity#24"},
+ {id:"D-15",d:"10-23",t:"原生代码研究",pick:"做完整原生移动地图解释实测；建议先记下，确认后统一决定",
+  v:[["L","sup","D-07 \"不再做新逆向\"","被这条推翻"]],rec:"research #29–#40"},
+ {id:"D-16",d:"10-23",t:"原生研究顺序",pick:"N6 补测 → N7 改 Unity → N8 传送最后",v:[],rec:"rea-native"},
+ {id:"D-17",d:"10-24",era:"N 系列：按原版改 Reference",t:"N7：12 项修改建议",pick:"<b>全部改成原版</b>：地面摩擦和加速、空中额外加速、滑铲冷却 2 s、滑铲跳下限、滑铲转向等",
+  v:[["L","old","旧版：M2–M10 实测拟合值","逐项旧值在 n7/N7-UNITY.md"],["R","alt","课程单圈","78.98 → 79.12 s"]],err:"N7 后试玩你感觉不出差别",sw:"Reference 里的开关，清单 N7-UNITY.md",rec:"HSD-Unity#25，research #43"},
+ {id:"D-18",d:"10-24",t:"镜头模型",pick:"默认用<b>原生镜头</b>",
+  v:[["L","old","M5.5 镜头","原样保留在 Camera/M55/，菜单能切回"]],sw:"菜单 \"Camera model\"",rec:"HSD-Unity#26，research #46"},
+ {id:"D-19",d:"10-24",t:"传送类能力（N8-E）",pick:"E-1 相位中不被跳板弹起；E-2 / E-3 重入间隔 1.0 s；E-6 旧传送门标成设计",
+  v:[["R","alt","E-4、E-5","保持不变"],["L","gap","旧的重入间隔","DECISIONS 没写旧值"]],sw:"padPhasedNoLaunch；reuseDebounce / reentryDebounce 1.0",rec:"HSD-Unity#27，research #49"},
+ {id:"D-20",d:"10-24",t:"S27 翻越加速（B1）",pick:"移植进来，<b>默认开</b>（只按跳，388.7）",
+  v:[["L","old","原生 superglide","跳 + 蹲 460（关掉 S27 时）"]],why:"你喜欢这个手感",sw:"菜单 \"Mantle boost (B1)\"，hsd.b1.mantleboost",rec:"HSD-Unity#28、#29，research #50、#51"},
+ {id:"D-21",d:"10-25",t:"重力升梯和相位（N9）",pick:"相位中的身体不受升梯影响",v:[["R","alt","重力炮","不做（项目用不到）"]],sw:"liftPhasedNoLift",rec:"HSD-Unity#32"},
+ {id:"D-22",d:"10-25",t:"蹲着翻越的时长",pick:"按 R5：<b>0.517 / 0.625 / 0.813 s</b>",
+  v:[["L","gap","旧版时长","和站姿同一公式，旧值没写进 DECISIONS"]],err:"留下了蹲姿翻越镜头时刻对不上的问题（见最上面待写入）",sw:"crouchedMantleTime",rec:"HSD-Unity#32"},
+ {id:"D-23",d:"10-25",t:"J-1 起跳朝墙推",pick:"Reference 按原版：<b>+30 u/s</b>（superglide 402 的来源）",
+  v:[["L","old","旧版 0","M8 实测 328.98 / 402.009 解释不了"],["R","alt","回放电机","仍是 0"]],sw:"p.jumpSurfacePush",rec:"HSD-Unity#33，research #55"},
+ {id:"D-24",d:"10-25",t:"N10 镜头",pick:"C-10 跑步晃动加偏航（步长 0.280 s）；C-11 滑索侧倾按原版 A 分支",v:[["L","gap","旧版","没写旧值"]],rec:"HSD-Unity#34"},
+ {id:"D-25",d:"10-25",era:"F 系列：叠图手感对照",t:"手感怎么验收",pick:"<b>同样的 R5 输入，Unity 和 R5 叠图比指标</b>",
+  v:[["L","old","真人试玩","没有动画，感觉不可靠"]],rec:"HSD-Unity#35，research #57"},
+ {id:"D-26",d:"10-25",t:"F-1 滑铲跳退还时间边界",pick:"下蹲过渡<b>从下一条命令</b>开始算",
+  v:[["L","old","从按下那条命令算","边界早一条命令"],["R","alt","R5 实测","0.201 s 退还，0.215 s 不退"]],sw:"slideDuckTransitionFromNextCommand",rec:"HSD-Unity#35"},
+ {id:"D-27",d:"10-26",t:"C-1 台沿探测死区",pick:"修（bug）",v:[["L","old","旧版","墙顶 80–98 u 时既不翻越也不攀爬"]],rec:"HSD-Unity#37，research #59"},
+ {id:"D-28",d:"10-26",t:"C-5 走路翻越出口速度",pick:"按 R5：<b>199.525</b>",v:[["L","gap","旧出口速度","没写"]],sw:"mantleExitWalkSpeed",rec:"HSD-Unity#37"},
+ {id:"D-29",d:"10-26",t:"C-2 superglide 窗口前沿（第一次）",pick:"保持简化，不改代码",sup:"被 D-31 推翻",
+  v:[["R","alt","当时的理解","以为 Unity 102.5 ms 窗口已经盖住 R5 的减量段"]],rec:"research #59"},
+ {id:"D-30",d:"10-26",t:"C-3、C-4",pick:"都不改",v:[["R","alt","C-3","翻越时长公式和 R5 一致"],["R","alt","C-4","R5 402 由命令内部碰墙时刻决定，模拟不了，取多数结果 200"]],rec:"FEEL.md §6.4"},
+ {id:"D-31",d:"10-26",t:"C-2 superglide 窗口前沿（推翻 D-29）",pick:"按 R5 做减量 superglide：离翻越结束 102.5–117 ms，水平 <b>385 → 425</b>",
+  v:[["L","sup","D-29 简化版","这一段其实是\"切到台面\"，不是给 460"],["R","alt","Fun","不做（0 = 关）"]],why:"按 Unity 自己的翻越时钟重排后发现减量段在窗口外（Unity 翻越比 R5 长约 25 ms）",sw:"superglideReducedBand：Reference 0.015，Fun 0",rec:"HSD-Unity#38，research #60"},
+ {id:"D-32",d:"10-26",t:"两种 superglide",pick:"<b>都保留</b>，互斥",v:[["L","alt","原生","跳 + 蹲，460"],["R","alt","S27 翻越加速","只按跳，388.7（默认开时拿不到 460）"]],rec:"HSD-Unity#39"},
+ {id:"D-33",d:"10-26",t:"项目日志",pick:"所有决定和节点记在 DECISIONS.md",v:[["L","old","EXECUTION-LOG、STATUS","冻结，留指针"]],rec:"research #61"},
+ {id:"D-34",d:"10-27",era:"F6–F7：以 R5 为复刻核心",t:"A-1 钩爪往墙上拉",pick:"按 R5：钩子从真实眼高打出，横向一直刹（向下和朝视线的部分不刹）",
+  v:[["L","old","旧版","从身体上方 60 u 打出；只在追上目标时刹；最高点比 R5 <b>低 15–22 u</b>"],["R","alt","F6 后","低 5–10 u；GN 后差 0.4–1.0 u"]],sw:"NativeGrapple() 的 nativeEye、nativeCrossBrake",rec:"HSD-Unity#41"},
+ {id:"D-35",d:"10-27",t:"K-1 / K-2 落地 kick 随机数",pick:"用 <b>R5 自己的随机数</b>（命令号 MD5）",
+  v:[["L","old","Unity 哈希","同一高度每次一样；900 u 落地 32°"],["R","alt","R5","34–43°，每次不同；改后逐次对上 32 / 34"]],sw:"NativeCameraParams.r5Random",rec:"HSD-Unity#41"},
+ {id:"D-36",d:"10-27",t:"复刻原则",pick:"<b>以 R5 为复刻核心</b>，差别原则上改成 R5，旧版存档",v:[],sw:"R5-DIFF-ARCHIVE.md",rec:"research #65"},
+ {id:"D-37",d:"10-27",t:"K-3 跑步晃动俯仰",pick:"幅度 <b>0.25°</b>，渐入每秒 20",
+  v:[["L","old","旧版","0.335°，渐入每秒 4（把转向混进去了）"],["R","alt","R5","0.22–0.26°，三个会话一致"]],sw:"swayPitchAmp、swayFade",rec:"HSD-Unity#41"},
+ {id:"D-38",d:"10-27",t:"K-4 眼高",pick:"站立 <b>70</b>，冲刺降 6，蹲 / 滑 32",
+  v:[["L","old","旧版 64","是冲刺中量的，被当成站立"],["R","alt","R5","viewheight 70，sprintViewOffset −6"]],sw:"NativeEyeParams.PreF4()",rec:"HSD-Unity#41"},
+ {id:"D-39",d:"10-27",t:"旧的 Revenant-Wraith 预设",pick:"用 Revenant S21 / Wraith S21",v:[["L","old","旧预设","当历史保留，配置不动"]]},
+ {id:"D-40",d:"10-27",t:"LS / RAS",pick:"Reference 保持原生 lurch 模型",v:[["R","alt","照视频复现 LS / RAS","没有具体视频，不做（L-11 一致，反向 lurch 3° 以内）"]]},
+ {id:"D-41",d:"10-27",t:"N10 剩下的镜头项目",pick:"早已完成，划掉",v:[],rec:"research #56"},
+ {id:"D-42",d:"10-27",t:"C-12 钩爪 / 滑索横滚平滑",pick:"原生：共用一个临界阻尼弹簧 ω 6.667",
+  v:[["L","old","旧版一阶平滑","钩爪 6.667 / 滑索 3.0；rodeo 峰值 19.0–19.3°，rms 3.3–3.8°"],["R","alt","R5","rodeo 13.9°；改后 13.7–13.9°，rms 0.24–0.45°"]],sw:"nativeRollSmooth",rec:"HSD-Unity#42，research #68"},
+ {id:"D-43",d:"10-27",t:"跳板二段跳反馈",pick:"HUD 提示 + 触发音 + 镜头下沉 <b>1.2°</b>（设计，等试玩）",
+  v:[["R","alt","R5 原生 punch","3.9–6.2°（CAM2 后来发现）"]],sup:"镜头部分今天改成 R5 原版（见最上面）",sw:"padJumpKickPitch",rec:"HSD-Unity#42"},
+ {id:"D-44",d:"10-27",t:"FOV 设置",pick:"菜单按 Apex FOV 数值 70–110；默认竖直 70° = Apex 86",v:[["R","alt","视频常用","104–110，可以自己调"]],rec:"HSD-Unity#42"},
+ {id:"D-45",d:"10-28",era:"R6U / RPS / RUD / GN：一项项按原生",t:"斜坡 U-1 / U-2 / U-4 / U-5",pick:"Reference 按 R5",
+  v:[["L","old","旧版","上坡 cos²θ、方盒底；40° 上坡滑铲 <b>84.4</b>"],["R","alt","R5 实测","123.6；改后 124.8"],["R","alt","Fun、回放电机","不变"]],sw:"slopeUphillKeepStep / hullBottomRadius / slideSlopeAnyGrade / slideSlopeNeedsDuck",rec:"HSD-Unity#43，research #69"},
+ {id:"D-46",d:"10-28",t:"斜坡 U-3 换地面实体时再滑铲",pick:"<b>Props</b>（默认：关卡一个实体、平台算道具）",
+  v:[["L","old","Off（旧版）","横向滑铲结束速度 272"],["R","alt","R5","351；改后 349"],["R","alt","EverySolid","每个方块一个实体（可选）"]],sw:"slideRebeginOnGroundChange；菜单 hsd.r6u.sliderebegin",rec:"HSD-Unity#43"},
+ {id:"D-47",d:"10-28",t:"回放电机滑铲规则（RPS）",pick:"7 个滑铲开关换成原生",
+  v:[["L","old","Legacy M2","e8_slide_chain 速度 rms <b>7.48</b>，最大 66.3"],["R","alt","改后","rms 0.23 / 0.26，最大 0.6 / 0.7；103 个录像逐字节不变"]],sw:"LegacyM2()，BatchReplay -legacyM2",rec:"HSD-Unity#44，research #70"},
+ {id:"D-48",d:"10-27",t:"EPG 真实开火的火箭跳",pick:"本地只做服务端模拟 + 真手雷对照",
+  v:[["L","alt","本地 R5 真开火","做不到：引擎没加载、模型缺失"],["R","alt","TF2 T-1（10-29）","原版推力 17500 不能火箭跳；jump_kit 65000 和 R5 同一套"]],rec:"research #64"},
+ {id:"D-49",d:"10-28",t:"回放电机下蹲碰撞体 + 地面移动（RUD）",pick:"第二版：<b>原生 WalkMove</b> + airUnduckDrop 16.5",
+  v:[["L","old","RPS 旧版","M3 e3 侧向起跳位置误差 rms <b>24.2 u</b>"],["R","sup","第一版：M5 vector redirect","没采用：e1_turn 速度误差略升"],["R","alt","改后","2.4 u；35 个变、3 个例外（e1_turn ×2 浮点噪声、r1237 着地探测边界）"]],sw:"R5Reference()，WithLegacyM2Rud()",rec:"HSD-Unity#45，research #73"},
+ {id:"D-50",d:"10-28",t:"钩爪脱钩规则（GN）",pick:"全部按原生（G-1–G-5、#7）",
+  v:[["L","old","pre-GN","hold 1701 脱钩 241 / 最高 145.0；天花板拉到脱钩 1.20 s"],["R","alt","R5","244 / 155.3；1.508–1.517 s"],["R","alt","改后","245 / 155.7；1.50 s"]],err:"脱钩晚 1 条命令（对照场景近似）",sw:"SetGnDetach(false)；菜单 hsd.gn.grapple",rec:"HSD-Unity#46，research #74"},
+ {id:"D-51",d:"10-28",t:"G-6 撞上上抬（第一次）",pick:"先关着，留作待定",sup:"10-29 实测后由 D-52 定下",v:[["R","alt","原因","本地录像是混合版本，看不到"]]},
+ {id:"D-52",d:"10-29",era:"CAM2 / G6 / F-2",t:"G-6 撞上上抬（实测后）",pick:"<b>默认关</b> = R5 实际移动",
+  v:[["R","alt","打开（可选开关）","照客户端代码 vz = min(vz + 300, 300)"],["R","alt","R5 实测","客户端算出 300，同一条命令的移动丢掉；8 条录像都没跳"]],sw:"impactBoost；菜单 hsd.g6.impact",rec:"HSD-Unity#48，research #78"},
+ {id:"D-53",d:"10-29",t:"K-5 起跳镜头、K-6 翻越镜头、叠加",pick:"按原生加",
+  v:[["L","old","pre-CAM2","起跳 0°；翻越 0°（非 S27）；横滚夹 ±40°"],["R","alt","R5","起跳 2.4–3.9°；120 u 翻越 4.5–5.3°；相加折回 ±180°"],["R","alt","改后","起跳 2.5–3.7°；翻越 4.6°；镜头指标 326 → 332 / 361"]],err:"蹲着翻越的镜头时刻还对不上",sw:"SetCam2(false)",rec:"HSD-Unity#47，research #77"},
+ {id:"D-54",d:"10-29",t:"K-7 滑索横滚和眼高",pick:"按原生：视角偏移（Perlin + ω 4）+ 水平投影",
+  v:[["L","old","旧版","眼高 70、横滚 0；滑索指标 2 / 10"],["R","alt","R5 / 改后","眼高 65.5–65.9；横滚 −1.44…+0.28 / −1.41…+0.34；10 / 10"],["R","alt","N6 旧数据","那几个片段根本没上绳"]],sw:"zipViewOffset / zipRopeHorizontal",rec:"HSD-Unity#47"},
+ {id:"D-55",d:"10-28",t:"F-2 原地跳高 1.8 u",pick:"<b>不改</b>：测试工具造成",
+  v:[["R","alt","查到的原因","重置在 dedi 上算成落地，0.72 s 后起跳触发 antiMultiJump 降高 282.0 → 277.3"],["R","alt","改 Unity 降高","没选：真实玩的时候没有这种重置"]],rec:"research #76"},
+ {id:"D-56",d:"10-29",era:"TF2 研究（PR #79 未合并）",t:"HSD 火箭跳（编号预留）",pick:"等你定",wait:true,
+  v:[["L","alt","A：EPG 式物理击退","推向身体中心、随距离衰减、上限 1000；研究建议先做，jump_kit 65000"],["R","alt","B：Fuse 式跳跃加成","在自己炸弹旁按跳给固定起跳速度"]],rec:"EPG-ROCKET-JUMP.md §7"},
+ {id:"D-57",d:"10-28",t:"蹬墙跑以哪个版本为准",pick:"<b>B</b> = TF2 规则 + R5 残留数值",pr:true,
+  v:[["L","old","M7 设计版","保留"],["R","alt","A","TF2 原版规则和 MP 数值，可开关预设"]],sw:"WallRunParams.rules；Tf2WallRunParams.B() / A()",rec:"T3-REPORT §5，PR #79"},
+ {id:"D-58",d:"10-29",t:"TF2 的 Unity 提案（T6）",pick:"P-01 蹬墙跑 TF2 模式、P-02 TF2 二段跳、P-05 侧倾，默认关",pr:true,
+  v:[["R","alt","P-03 连跳","低优先，没做"],["R","alt","P-04 兴奋剂 ×1.8、P-06 挂墙","暂不做（挂墙留存）"]],sw:"hsd.tf2.wallrun / tilt / djump",rec:"TF2-REPORT §5、§7，PR #79"},
+ {id:"D-59",d:"10-29",t:"HSD 的方向",pick:"最终是 PvE；技能和道具先研究机制存档，数值等战斗框架建好再调",pr:true,v:[]},
+ {id:"D-60",d:"10-29",t:"泰坦",pick:"先研究机动和核心，数值以后调",pr:true,v:[["R","pend","泰坦清单抉择列","还空着"]]},
+ {id:"D-61",d:"10-29",t:"伤害体系",pick:"统一血量 / 伤害；占位：铁驭 100、士兵 100、泰坦 2500、炮塔 300",pr:true,v:[["R","alt","TF2","泰坦是铁驭 75–125 倍"]]},
+ {id:"D-62",d:"10-29",t:"参照哪个游戏",pick:"Apex 有原型的按 Apex；TF2 明显更好做时按 TF2",pr:true,
+  v:[["L","alt","按 Apex","破片、电弧星、铝热剂、扫描、分身、地图透视、Fuse、Rampart"],["R","alt","按 TF2","隐身、A 型墙、重力星、炸药包、悬停、相位回溯、智能手枪、蜘蛛雷、哨戒炮"]]},
+ {id:"D-63",d:"10-29",t:"素材",pick:"只借规则和数值，不用模型、贴图、声音、动画",pr:true,v:[]},
+ {id:"D-64",d:"10-29",t:"开关默认值",pick:"抛物线显示默认开（和 Apex 一致）",pr:true,v:[["R","alt","窗户辅助","默认关（T-11，不在这次范围）"]]},
+ {id:"D-65",d:"10-29",t:"扩展道具去向和不做的项",pick:"按 PILOT-LIST §0；可玩版全部做了，数值多为占位",pr:true,
+  v:[["R","alt","不做","钩爪、兴奋剂、相位移动、脉冲刀、电烟雾、挂墙（留存）等 12 项"]]},
+ {id:"今天 ①",d:"10-30",era:"今天定的（还没写进 DECISIONS）",t:"回放电机",pick:"<b>到此为止</b>：只当回归检查的尺子，不再换规则；D-47 / D-49 原样留档",pend:true,
+  v:[["L","alt","继续换剩下的","斜坡 U-1–U-5、+30 推墙、空中额外加速、冲刺加速边界、skip reduce、lurch 上限"],["R","alt","为什么停","玩家用不到；每换一次要重定整套基线；游戏身体和 R5 的比较叠图已经在做"]]},
+ {id:"今天 ②",d:"10-30",t:"K-8 下滑索 punch",pick:"<b>按 R5 加</b>，留开关",pend:true,
+  v:[["L","old","Unity 现在","没有"],["R","alt","R5 原生","俯仰 (10 + 3·r₁)·20，实测向下 12–14°、横滚 ±1–5°"]],rec:"等 PR #49 合并后做"},
+ {id:"今天 ③",d:"10-30",t:"二段跳",pick:"三种都保留；<b>TF2 二段跳做成道具包</b>；三种的镜头都用 R5 原版 punch",pend:true,
+  v:[["L","old","跳板二段跳镜头 1.2°","D-43 设计，留成开关存档"],
+     ["L","alt","Octane 跳板（R5 实测）","vz +201.8，或慢时设成 409；水平 ±240；起飞 0.108 s 后"],
+     ["R","alt","HSD 二段跳（M7，Fun）","vz 至少 259.8；往按键转一半；离地 0.1 s 后"],
+     ["R","alt","TF2 二段跳（P-02）","vz 300；水平 −180 / +180；离地马上能用"],
+     ["R","alt","R5 原生 punch","俯仰 (4.5 + r₁)·20 ≈ 3.9–6.2°"]],rec:"等 PR #49 合并后做（同一批文件）"},
+ {id:"今天 ④",d:"10-30",t:"拟合原则",pick:"尽量拟合 R5；差零点几个百分比不追，但要写出差在哪里",pend:true,v:[]},
+ {id:"今天 ⑤",d:"10-30",t:"滑铲跳落地 kick",pick:"先查原因，再按 R5",pend:true,
+  v:[["L","old","Unity","1.7–2.3°（CAM2 前就大约 1.5 倍）"],["R","alt","R5","1.1–1.7°"]]},
+ {id:"今天 ⑥",d:"10-30",t:"蹲着翻越的镜头时刻",pick:"改用蹲姿的实际翻越时长选镜头曲线，再对照",pend:true,
+  v:[["L","old","Unity","h120 蹲 0.29 s 到峰；h160 蹲没有驼峰"],["R","alt","R5","h120 蹲 0.52–0.60 s；h160 蹲 0.99 s"]],err:"B1 翻越加速也读这套曲线，改后要跑 B1 / B1-H 回归"}
+];
+// builds placed after a station: [afterId, name, time, lane]
+const BUILDS=[["D-06","M5 / M55","10-21"],["D-07","M6 · M6C · M6B","10-21"],["D-08","M7A","10-22"],["D-09","M8A · M8B · M8C · M9A–C","10-22"],
+ ["D-12","M10D · M10A–C · M10W · M10","10-23"],["D-14","M10R","10-23"],["D-17","N7","10-24"],["D-18","N8CAM","10-24"],["D-19","N8E","10-24"],
+ ["D-20","B1 · B1H · LS","10-24"],["D-22","L1C","10-25"],["D-23","J1","10-25"],["D-24","C10","10-25"],["D-26","F1C","10-25"],["D-28","F3C","10-25"],
+ ["D-31","C2","10-25"],["D-33","F5","10-26"],["D-38","F6","10-27"],["D-44","F7","10-27"],["D-46","R6U","10-27"],["D-47","RPS","10-28"],
+ ["D-49","RUD","10-28"],["D-50","GN","10-28"],["D-55","CAM2 · G6（最新 Apex build）","10-29"],["D-58","TF2WR","10-29","tf2"],["D-65","TF2X（等你试玩）","10-29","tf2"]];
+// whole versions that still run beside Main
+const TRACKS=[
+ {k:"replay",name:"回放电机",col:"--t-replay",x:40,from:"D-02",fromX:"trunk",to:"今天 ①",cap:"冻结：只当尺子",info:"M1 起用 R5 录像逐命令重放的那套电机，每个 PR 的回归检查都靠它。D-47 换了滑铲、D-49 换了碰撞体和地面移动，今天定到此为止。"},
+ {k:"legacy",name:"Legacy M2",col:"--t-legacy",x:72,from:"D-47",fromX:40,to:null,info:"回放电机改之前的旧规则，BatchReplay -legacyM2 能逐字节复现最老的回放基线。"},
+ {k:"fun",name:"Fun 配置",col:"--t-fun",x:104,from:"D-06",fromX:"trunk",to:null,info:"M5 起和 Reference 并行：在 Reference 上加 HSD 设计（跑墙、挂墙、二段跳，D-08），跳板后能 lurch（D-10）、不做减量 superglide（D-31）。"},
+ {k:"m55",name:"M5.5 镜头",col:"--t-m55",x:136,from:"D-18",fromX:"trunk",to:null,info:"D-05 你认可的镜头。D-18 起默认换成原生镜头，M5.5 原样保留，菜单 Camera model 能切回。"},
+ {k:"sg",name:"原生 superglide 460",col:"--t-sg",x:168,from:"D-20",fromX:"trunk",to:null,info:"D-20 起游戏默认开 S27 翻越加速（只按跳 388.7）。关掉 S27 就走这条：原生跳 + 蹲 460（D-32 两者互斥）。"},
+ {k:"tf2",name:"TF2 分支（PR #79 / #49 未合并）",col:"--t-tf2",x:212,from:"D-57",fromX:"trunk",to:null,dashed:true,info:"10-28 起 TF2 研究的决定和 Unity 实现都在分支上：研究仓库 tf2/wallrun-decisions（PR #79）、HSD-Unity tf2/wallrun-rules（PR #49）。合并后并回 Main。"}
+];
+const TRUNK=250;
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+
+// build the station list, oldest first
+const S=[]; let era=null;
+D.forEach(x=>{
+ if(x.era&&x.era!==era){S.push({type:"era",text:x.era});era=x.era;}
+ S.push({type:"st",x,lane:x.pr?"tf2":"trunk"});
+ BUILDS.filter(b=>b[0]==x.id).forEach(b=>S.push({type:"build",name:b[1],d:b[2],lane:b[3]||"trunk"}));
+});
+const H={era:30,st:34,build:22}; const PAD_T=46, PAD_B=40;
+let total=PAD_T+PAD_B; S.forEach(s=>total+=H[s.type]);
+// y from bottom: oldest at the bottom
+let y=total-PAD_B; const yOf={};
+S.forEach(s=>{const h=H[s.type]; s.y=y-h/2; s.h=h; y-=h; if(s.type=="st")yOf[s.x.id]=s.y;});
+const topY=PAD_T-14, botY=total-PAD_B+8;
+const laneX=l=>l=="tf2"?TRACKS.find(t=>t.k=="tf2").x:TRUNK;
+
+function draw(){
+ const map=document.getElementById("map"); map.style.height=total+"px";
+ const C=k=>css(k);
+ let g="";
+ // date ticks (first station of each day)
+ let lastD=null, dates="";
+ S.forEach(s=>{const d=s.type=="st"?s.x.d:null; if(d&&d!==lastD){dates+=`<div class="date" style="top:${s.y-7}px">${d}</div>`;lastD=d;}});
+ // tracks
+ TRACKS.forEach(t=>{
+  const y0=yOf[t.from]; const x0=t.fromX=="trunk"?TRUNK:t.fromX; const y1=t.to?yOf[t.to]:topY;
+  const col=C(t.col), dash=t.dashed?'stroke-dasharray="7 5"':"";
+  g+=`<path d="M${x0},${y0} C${x0},${y0-18} ${t.x},${y0-10} ${t.x},${y0-28} L${t.x},${y1}" fill="none" stroke="${col}" stroke-width="4" ${dash} stroke-linecap="round"/>`;
+  if(t.to) g+=`<line x1="${t.x-9}" y1="${y1}" x2="${t.x+9}" y2="${y1}" stroke="${col}" stroke-width="4" stroke-linecap="round"/><text x="${t.x+12}" y="${y1+4}" font-size="10.5" fill="${col}" font-family="var(--mono)">${t.cap}</text>`;
+  else g+=`<path d="M${t.x-6},${y1+8} L${t.x},${y1} L${t.x+6},${y1+8}" fill="none" stroke="${col}" stroke-width="3"/>`;
+  if(t.k=="tf2") g+=`<path d="M${t.x},${y1} C${t.x},${y1-14} ${TRUNK},${y1-6} ${TRUNK},${y1-22}" fill="none" stroke="${col}" stroke-width="2" stroke-dasharray="3 4"/><text x="${t.x-4}" y="${y1-26}" font-size="10" fill="${col}" text-anchor="end" font-family="var(--mono)">待合并 →</text>`;
+  // vertical name
+  g+=`<text transform="translate(${t.x-7},${y0-40}) rotate(-90)" font-size="11" fill="${col}" font-family="var(--body)">${t.name}</text>`;
+ });
+ // trunk: two black rails
+ g+=`<line x1="${TRUNK-4}" y1="${botY}" x2="${TRUNK-4}" y2="${topY}" stroke="${C("--trunk")}" stroke-width="3"/><line x1="${TRUNK+4}" y1="${botY}" x2="${TRUNK+4}" y2="${topY}" stroke="${C("--trunk")}" stroke-width="3"/>`;
+ g+=`<path d="M${TRUNK-12},${topY+10} L${TRUNK},${topY-4} L${TRUNK+12},${topY+10}" fill="none" stroke="${C("--trunk")}" stroke-width="3"/>`;
+ let labels="";
+ S.forEach((s,i)=>{
+  if(s.type=="era"){labels+=`<div class="era" style="top:${s.y-s.h/2}px;height:${s.h}px">↑ ${s.text}</div>`;return;}
+  if(s.type=="build"){const x=laneX(s.lane);g+=`<rect x="${x-5}" y="${s.y-5}" width="10" height="10" fill="${C("--bg")}" stroke="${s.lane=="tf2"?C("--t-tf2"):C("--trunk")}" stroke-width="2"/>`;
+   labels+=`<div class="lbl build" style="top:${s.y-s.h/2}px;height:${s.h}px"><span class="id">build</span><span class="t">${s.name}</span></div>`;return;}
+  const x=s.x, cx=laneX(s.lane);
+  // stubs: to the right of the station, up to 5
+  const vs=x.v.slice(0,5); vs.forEach((v,j)=>{
+    const sx=cx+14+j*7, ex=sx+4, ey=s.y-9-((j%2)*4);
+    const col=v[1]=="old"?C("--old"):v[1]=="gap"?C("--gap"):v[1]=="pend"?C("--pend"):C("--alt");
+    g+=`<line x1="${cx}" y1="${s.y}" x2="${sx+3}" y2="${ey}" stroke="${col}" stroke-width="1.6" opacity=".9"/>`;
+    if(v[1]=="sup"||(v[1]=="alt"&&false)) g+=`<path d="M${sx},${ey-3} l6,6 M${sx+6},${ey-3} l-6,6" stroke="${col}" stroke-width="1.6"/>`;
+    else if(v[1]=="gap") g+=`<text x="${sx+3}" y="${ey-2}" font-size="10" fill="${col}" text-anchor="middle" font-weight="700">?</text>`;
+    else if(v[1]=="old") g+=`<circle cx="${sx+3}" cy="${ey}" r="2.8" fill="${C("--panel")}" stroke="${col}" stroke-width="1.6"/>`;
+    else g+=`<circle cx="${sx+3}" cy="${ey}" r="2.2" fill="${col}"/>`;
+  });
+  // station
+  const pend=x.pend||x.wait, sup=!!x.sup&&!pend;
+  const ring=pend?C("--pend"):s.lane=="tf2"?C("--t-tf2"):C("--trunk");
+  const fill=pend?C("--panel"):sup?C("--panel"):C("--chosen");
+  g+=`<circle cx="${cx}" cy="${s.y}" r="${pend?7:6.5}" fill="${fill}" stroke="${ring}" stroke-width="2.6" ${pend?'stroke-dasharray="3 2"':""}/>`;
+  const short=x.t.length>26?x.t:x.t;
+  labels+=`<button class="lbl ${s.lane=="tf2"?"tf2":""} ${pend?"pend":""}" id="st-${i}" data-i="${i}" style="top:${s.y-s.h/2}px;height:${s.h}px"><span class="id">${x.id}</span><span class="t">${short}<small>${x.pick.replace(/<[^>]+>/g,"").slice(0,34)}${x.pick.replace(/<[^>]+>/g,"").length>34?"…":""}</small></span></button>`;
+ });
+ labels+=`<div class="cap" style="top:${topY-30}px">▲ LATEST · MAIN · 10-30</div><div class="cap" style="top:${botY+6}px">▼ OLDEST · 10-20</div>`;
+ map.innerHTML=`<svg width="100%" height="${total}" aria-hidden="true">${g}</svg>${dates}${labels}`;
+}
+
+const kindName={old:"旧版（多数留了开关）",alt:"平行的选项 / 测量",sup:"被取代",gap:"缺档",pend:"待定"};
+function show(i){
+ const s=S[i]; if(!s||s.type!="st")return; const x=s.x;
+ document.querySelectorAll(".lbl[aria-current]").forEach(b=>b.removeAttribute("aria-current"));
+ const b=document.getElementById("st-"+i); if(b)b.setAttribute("aria-current","true");
+ const pend=x.pend||x.wait;
+ const groups=["old","alt","sup","gap","pend"].map(k=>{const vs=x.v.filter(v=>v[1]==k);if(!vs.length)return"";
+  return `<h4>${kindName[k]}</h4>${vs.map(v=>`<div class="v ${k}"><b>${v[2]}</b><span>${v[3]}</span></div>`).join("")}`}).join("");
+ const forks=TRACKS.filter(t=>t.from==x.id||t.to==x.id).map(t=>`<div class="track-info"><b style="color:var(${t.col})">● ${t.name}</b>${t.from==x.id?" 从这一站分出：":" 在这一站停下："}${t.info}</div>`).join("");
+ document.getElementById("insp").innerHTML=`
+  <div class="id"><span>${x.id}</span><span>${x.d}</span>${x.pr?"<span style='color:var(--t-tf2)'>TF2 分支 · PR #79</span>":""}</div>
+  <h3>${x.t}</h3>
+  <div class="pick ${pend?"pend":""} ${x.sup&&!pend?"sup":""}">${x.pick}</div>
+  ${x.err?`<div class="err">${x.err}</div>`:""}
+  ${groups?`<div class="vs">${groups}</div>`:`<div class="track-info">这一站只有一个结果，没有平行版本。</div>`}
+  ${forks}
+  <div class="kv">${x.why?`<div><b>为什么：</b>${x.why}</div>`:""}${x.sup?`<div><b>后来：</b>${x.sup}</div>`:""}${x.sw?`<div><b>开关 / 切回：</b>${x.sw}</div>`:""}${x.rec?`<div><b>记录：</b>${x.rec}</div>`:""}</div>`;
+}
+draw();
+document.getElementById("map").addEventListener("click",e=>{const b=e.target.closest("button.lbl");if(b)show(+b.dataset.i);});
+addEventListener("resize",()=>{const cur=document.querySelector(".lbl[aria-current]");draw();if(cur)show(+cur.dataset.i);});
+const sw=(c,dash)=>`<svg width="34" height="12"><line x1="2" y1="6" x2="32" y2="6" stroke="var(${c})" stroke-width="4" ${dash?'stroke-dasharray="6 4"':""} stroke-linecap="round"/></svg>`;
+document.getElementById("legend").innerHTML=
+ `<div><svg width="34" height="14"><line x1="13" y1="0" x2="13" y2="14" stroke="var(--trunk)" stroke-width="3"/><line x1="21" y1="0" x2="21" y2="14" stroke="var(--trunk)" stroke-width="3"/><circle cx="17" cy="7" r="5" fill="var(--chosen)" stroke="var(--trunk)" stroke-width="2"/></svg><span><b>Main</b> 和选中的那一站</span></div>`+
+ TRACKS.map(t=>`<div>${sw(t.col,t.dashed)}<span><b>${t.name}</b></span></div>`).join("")+
+ `<div><svg width="34" height="14"><line x1="4" y1="11" x2="20" y2="4" stroke="var(--old)" stroke-width="1.6"/><circle cx="21" cy="4" r="3" fill="var(--panel)" stroke="var(--old)" stroke-width="1.6"/></svg><span>短枝·空心：旧版，多数留了开关能切回</span></div>`+
+ `<div><svg width="34" height="14"><line x1="4" y1="11" x2="20" y2="4" stroke="var(--alt)" stroke-width="1.6"/><circle cx="21" cy="4" r="2.4" fill="var(--alt)"/></svg><span>短枝·实心：平行的选项或测量数据</span></div>`+
+ `<div><svg width="34" height="14"><line x1="4" y1="11" x2="18" y2="6" stroke="var(--gap)" stroke-width="1.6"/><text x="22" y="9" font-size="11" fill="var(--gap)" font-weight="700">?</text></svg><span>短枝·问号：缺档，数据没记下</span></div>`+
+ `<div><svg width="34" height="14"><circle cx="17" cy="7" r="5.5" fill="var(--panel)" stroke="var(--pend)" stroke-width="2.4" stroke-dasharray="3 2"/></svg><span>紫色虚线站：待定 / 今天定的还没写进 DECISIONS</span></div>`+
+ `<div><svg width="34" height="14"><rect x="12" y="2" width="10" height="10" fill="var(--bg)" stroke="var(--trunk)" stroke-width="2"/></svg><span>方块：build 版本（HSD-Build 里的文件夹）</span></div>`;
+const st=S.filter(s=>s.type=="st").map(s=>s.x);
+document.getElementById("stats").innerHTML=`<span><b>${st.length}</b> 个站（决定）</span><span><b>${S.filter(s=>s.type=="build").length}</b> 组 build</span><span><b>${TRACKS.length}</b> 条还在运行的平行版本线</span><span><b>${st.filter(x=>x.v.some(v=>v[1]=="gap")).length}</b> 站有缺档</span><span><b>${st.filter(x=>x.pend||x.wait).length}</b> 站待定 / 待写入</span>`;
+show(S.length-1);
+</script>

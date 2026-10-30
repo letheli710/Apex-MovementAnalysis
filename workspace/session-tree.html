@@ -1,0 +1,219 @@
+<title>HSD 会话推进树</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;900&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a growth tree read bottom-up — rows are hand-off steps (oldest at the bottom), columns are workstreams; SVG edges show who took over from whom. */
+:root{
+  --bg:#f2f3ef; --panel:#ffffff; --ink:#1c2320; --muted:#5b6660; --line:#d3d9d3; --accent:#0f6b5c;
+  --merged:#2f7d4f; --merged-bg:#e2f0e7; --open:#b06a00; --open-bg:#fcecd2;
+  --none:#b23a2e; --none-bg:#f8e1dd; --run:#7a3fb0; --run-bg:#efe5f8;
+  --e-hand:#0f6b5c; --e-fork:#7a3fb0; --e-next:#8a948e;
+  --display:"Noto Serif SC","Songti SC",serif;
+  --body:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#131816; --panel:#1b221f; --ink:#e3e9e5; --muted:#99a49e; --line:#313b36; --accent:#4fc2a9;
+  --merged:#6cc58f; --merged-bg:#1e3327; --open:#eaa84a; --open-bg:#3b2b12; --none:#ef7d70; --none-bg:#40201c;
+  --run:#c39af0; --run-bg:#2e2240; --e-hand:#4fc2a9; --e-fork:#c39af0; --e-next:#6f7a74; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#131816; --panel:#1b221f; --ink:#e3e9e5; --muted:#99a49e; --line:#313b36; --accent:#4fc2a9;
+  --merged:#6cc58f; --merged-bg:#1e3327; --open:#eaa84a; --open-bg:#3b2b12; --none:#ef7d70; --none-bg:#40201c;
+  --run:#c39af0; --run-bg:#2e2240; --e-hand:#4fc2a9; --e-fork:#c39af0; --e-next:#6f7a74; color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:14.5px;line-height:1.55}
+.wrap{max-width:1440px;margin:0 auto;padding-block:28px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:28px}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance}
+h1{font-size:clamp(26px,3.6vw,38px);font-weight:900}
+h2{font-size:21px;font-weight:600}
+p{margin:0}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.lede{max-width:78ch;color:var(--muted)} .lede b{color:var(--ink)}
+header{display:grid;gap:10px}
+.key{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;color:var(--muted);align-items:center}
+.key span{display:inline-flex;align-items:center;gap:6px}
+.ln{width:26px;height:0;border-top:2px solid}
+.ln.hand{border-color:var(--e-hand)} .ln.fork{border-color:var(--e-fork);border-top-style:dashed} .ln.next{border-color:var(--e-next);border-top-style:dotted}
+.pr{display:inline-flex;align-items:center;font-family:var(--mono);font-size:11px;padding:1px 6px;border-radius:4px;text-decoration:none;white-space:nowrap;line-height:1.5}
+.pr.M{background:var(--merged-bg);color:var(--merged)} .pr.O{background:var(--open-bg);color:var(--open);font-weight:600;outline:1.5px solid var(--open)}
+.pr.N{background:var(--none-bg);color:var(--none)}
+.pr:focus-visible{outline:2px solid var(--accent)}
+/* tree */
+.treebox{overflow-x:auto;padding-bottom:6px}
+.tree{position:relative;display:grid;grid-template-columns:76px repeat(5,minmax(210px,1fr));gap:14px 16px;min-width:1180px}
+.colh{font-size:12px;letter-spacing:.06em;color:var(--muted);border-bottom:2px solid var(--ink);padding-bottom:4px;font-weight:500;align-self:end}
+.day{font-family:var(--mono);font-size:12px;color:var(--muted);text-align:right;padding-top:10px;border-right:1px solid var(--line);padding-right:10px}
+.day b{display:block;color:var(--ink);font-size:13px}
+svg.edges{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+svg.edges path{fill:none;stroke-width:2}
+.card{position:relative;z-index:1;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:grid;gap:7px;align-self:start;min-width:0}
+.card.root{border-top:4px solid var(--accent)}
+.card.qa{border-top:4px solid var(--e-next);opacity:.92}
+.card.now{border-top:4px solid var(--run)}
+.card h3{font-size:15.5px;line-height:1.35}
+.meta{font-family:var(--mono);font-size:11px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 10px}
+.st{font-family:var(--body);font-size:11.5px;padding:0 7px;border-radius:999px;border:1px solid currentColor}
+.st.done{color:var(--merged)} .st.open{color:var(--open)} .st.run{color:var(--run)} .st.gap{color:var(--none)} .st.qa{color:var(--muted)}
+.what{font-size:13px}
+.from{font-size:12px;color:var(--muted)}
+.prs{display:flex;flex-wrap:wrap;gap:3px}
+.kids{display:grid;gap:5px;border-top:1px dashed var(--line);padding-top:7px}
+.kid{display:grid;gap:2px;padding-left:10px;border-left:2px solid var(--line);font-size:12.5px}
+.kid.open{border-left-color:var(--open)} .kid.run{border-left-color:var(--run)} .kid.gap{border-left-color:var(--none)} .kid.done{border-left-color:var(--merged)}
+.kid .kt{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.more{font-size:11.5px;color:var(--muted)}
+.warn{font-size:12px;color:var(--none);background:var(--none-bg);border-radius:5px;padding:4px 8px}
+.note{font-size:12px;color:var(--open);background:var(--open-bg);border-radius:5px;padding:4px 8px}
+/* summary strip */
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;display:grid;gap:2px}
+.stat .n{font-family:var(--mono);font-size:24px;font-weight:600;font-variant-numeric:tabular-nums}
+.stat .l{font-size:12.5px;color:var(--muted)}
+/* PR ledger */
+.ledger{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:16px}
+.repo{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:grid;gap:10px;min-width:0}
+.repo h3{font-size:16px}
+.grid{display:flex;flex-wrap:wrap;gap:3px}
+.legend{display:flex;gap:12px;font-size:12px;color:var(--muted);flex-wrap:wrap}
+section{display:grid;gap:12px}
+footer{font-size:12px;color:var(--muted)}
+@media (max-width:760px){
+  .treebox{overflow:visible}
+  .tree{display:flex;flex-direction:column;min-width:0;gap:12px}
+  .colh,.day,svg.edges{display:none}
+  .card::before{content:attr(data-when);font-family:var(--mono);font-size:11px;color:var(--muted)}
+}
+@media (prefers-reduced-motion:no-preference){.card{transition:box-shadow .15s}.card:hover{box-shadow:0 2px 10px rgba(0,0,0,.08)}}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">High Speed Doom · 会话与 PR · 截至 2026-10-30</div>
+  <h1>HSD 会话推进树</h1>
+  <p class="lede">从下往上读：最底下是 10-20 第一个会话，最上面是现在。每张卡是一个<b>主会话</b>（你直接在里面下指令的那种），卡里列出它<b>派出去的下属会话</b>和产出的 <b>PR</b>。连线表示后一个会话是怎么接手的。上下文续接、btw 小问题这类分叉只记个数，不单独画。</p>
+  <div class="key">
+    <span><i class="ln hand"></i>接手（新会话读交接文件 / 报告继续做）</span>
+    <span><i class="ln fork"></i>分叉（从上一个会话复制出来继续）</span>
+    <span><i class="ln next"></i>同一件事的下一步（新开会话）</span>
+    <span><a class="pr M">R12</a> 已合并</span>
+    <span><a class="pr O">U49</a> 开着</span>
+    <span><span class="pr N">无 PR</span> 成果没进仓库</span>
+    <span>R = 研究仓库 Apex-MovementAnalysis · U = HSD-Unity</span>
+  </div>
+</header>
+
+<section aria-label="总数"><div class="summary" id="summary"></div></section>
+
+<section>
+  <h2>推进树</h2>
+  <div class="treebox"><div class="tree" id="tree"><svg class="edges" id="edges" aria-hidden="true"></svg></div></div>
+</section>
+
+<section>
+  <h2>PR 总账</h2>
+  <div class="legend"><span><span class="pr M">#</span> 已合并</span><span><span class="pr O">#</span> 开着</span><span>鼠标停在编号上看标题，点开去 GitHub</span></div>
+  <div class="ledger" id="ledger"></div>
+</section>
+
+<footer>依据：Claude 桌面应用里这个项目的 91 个会话（含已归档）及其父子关系、会话记录里的首条指令和 PR 链接、两个仓库全部 128 个 PR（gh pr list）。PR 归到哪个主会话是按会话记录和创建时间判断的；上下文续接和分叉会话会带着父会话的历史，所以只算在父会话名下。</footer>
+</div>
+
+<script>
+const PRS={"R": [{"n": 1, "s": "M", "t": "M0: local environment baseline and first real T0 smoke"}, {"n": 2, "s": "M", "t": "M1: automated movement loop on real game data + first Unity replay"}, {"n": 3, "s": "M", "t": "M2: base movement parameters from real trials, mapped to Unity"}, {"n": 4, "s": "M", "t": "M3: advanced movement tech (tap strafe, climb/wall bounce, mantle boost, landing links)"}, {"n": 5, "s": "M", "t": "M4 + M4b: legend movement primitives, view control, grapple swing"}, {"n": 6, "s": "M", "t": "M5: skill slots, reference/fun configs, playable build, final report"}, {"n": 7, "s": "M", "t": "M5.5: movement feedback & playability (docs, grapple range check)"}, {"n": 8, "s": "M", "t": "M6-A: advanced movement research (lurch/tap strafe, climb/mantle/superglide, zipline, grapple handoff)"}, {"n": 9, "s": "M", "t": "M6-B: legend mobility research (Valkyrie, Ash, Loba, Alter) and comparison"}, {"n": 10, "s": "M", "t": "M6-C: combination playground notes, design notes, playtest guide; M6 summary"}, {"n": 11, "s": "M", "t": "Record shelved abilities: Loba and Alter"}, {"n": 12, "s": "M", "t": "M6-B build docs: Valkyrie jets + Ash Phase Breach"}, {"n": 13, "s": "M", "t": "M7-A: plan, Unity build docs and playtest guide"}, {"n": 14, "s": "M", "t": "M8: plan, M8-A docs, technique research"}, {"n": 15, "s": "M", "t": "M8 track R: R5 measurements (pad DJ, lift, SG, slope, lurch)"}, {"n": 16, "s": "M", "t": "M8-B docs and expansion assessment"}, {"n": 17, "s": "M", "t": "M8-C docs, R2 probe, M8 summary"}, {"n": 18, "s": "M", "t": "M9: plan, deferred design TODO, M9-B docs, technique library"}, {"n": 19, "s": "M", "t": "M9 track R measurements and M9-A docs"}, {"n": 20, "s": "M", "t": "M9-C docs, D2 candidates, M9 summary"}, {"n": 21, "s": "M", "t": "M10: plan, technique library, grapple measurements, M10-D docs"}, {"n": 22, "s": "M", "t": "M10 track R measurements and M10-A docs"}, {"n": 23, "s": "M", "t": "M10-B docs and E2 next-batch assessment"}, {"n": 24, "s": "M", "t": "M10 track R2 measurements and M10-C docs"}, {"n": 25, "s": "M", "t": "M10-W/D4 docs and M10 summary"}, {"n": 26, "s": "M", "t": "Log M10-R skill-folder restructure"}, {"n": 27, "s": "M", "t": "Add static movement value table with sources"}, {"n": 28, "s": "M", "t": "rea-native: native ConVar defaults with runtime cross-check"}, {"n": 29, "s": "M", "t": "REA native research: plan, TODO and N0 pilot"}, {"n": 30, "s": "M", "t": "REA native research N1: movement skeleton map and camera inventory"}, {"n": 31, "s": "M", "t": "REA native research N2: ground and lurch formulas"}, {"n": 32, "s": "M", "t": "REA native research N2: jump, air, landing and slide"}, {"n": 33, "s": "M", "t": "REA native research: N2 timing/traversal and N3 ledger"}, {"n": 34, "s": "M", "t": "REA native research: N2 grapple/zipline/pads and camera C2"}, {"n": 35, "s": "M", "t": "REA native research N4: setfile read-back and ground key-turn test"}, {"n": 36, "s": "M", "t": "REA native research: deferred static reading and N4-C experiments"}, {"n": 37, "s": "M", "t": "REA native research: finish the N4 checklist"}, {"n": 38, "s": "M", "t": "rea-native C3: per-frame camera capture and results"}, {"n": 39, "s": "M", "t": "rea-native CAM-02b: player+0x1c7 is the in-water flag"}, {"n": 40, "s": "M", "t": "rea-native N5: summary report, Reference change list, fit-to-native table"}, {"n": 41, "s": "M", "t": "rea-native N6: grapple detach (Frida) and remaining camera effects"}, {"n": 42, "s": "M", "t": "rea-native N6: P-07 low-speed grapple timeout measured (air 1.5 s)"}, {"n": 43, "s": "M", "t": "rea-native N7: Reference changes applied to Unity"}, {"n": 44, "s": "M", "t": "rea-native N8: teleport research plan"}, {"n": 45, "s": "M", "t": "rea-native N8-B: teleport ability rules"}, {"n": 46, "s": "M", "t": "rea-native: native vs M5.5 camera reference (N8-CAM)"}, {"n": 47, "s": "M", "t": "rea-native N8-D: Alter ultimate / tactical in the local build"}, {"n": 48, "s": "M", "t": "rea-native: resolve 4 of the 5 open ledger items"}, {"n": 49, "s": "M", "t": "rea-native N8-E: teleport rules vs Unity (proposals)"}, {"n": 50, "s": "M", "t": "B1: S27 mantle boost research (gate, ring, per-class curves)"}, {"n": 51, "s": "M", "t": "B1-H: mantle boost hardening against retuning"}, {"n": 52, "s": "M", "t": "STATIC-VALUES: native ConVar defaults now in rea-native/convar-defaults"}, {"n": 53, "s": "M", "t": "rea-native N9: gravity lift, Valkyrie jets, gravity cannon"}, {"n": 54, "s": "M", "t": "N9 decisions and B1 crouched mantle time"}, {"n": 55, "s": "M", "t": "N11: superglide 402 / 1.1×299 and the lift's two skip checks"}, {"n": 56, "s": "M", "t": "N10: camera leftovers (cockpit sway / spring, step bob, zipline roll)"}, {"n": 57, "s": "M", "t": "F1: R5 feel comparison, metrics and first batch (M1-M3)"}, {"n": 58, "s": "M", "t": "F2: climb / mantle / superglide feel comparison (494 R5 runs)"}, {"n": 59, "s": "M", "t": "F2: C-1 / C-5 fixed, C-2 / C-3 / C-4 research"}, {"n": 60, "s": "M", "t": "FEEL §6.4: C-2 follow-up, reduced band on Unity's clock"}, {"n": 61, "s": "M", "t": "DECISIONS.md: project log of milestones and decisions"}, {"n": 62, "s": "M", "t": "F3 / F4: feel comparison of abilities and camera"}, {"n": 63, "s": "M", "t": "DECISIONS: feel batches 3 and 4 merged"}, {"n": 64, "s": "M", "t": "EPG 火箭跳实测（本地 S21）"}, {"n": 65, "s": "M", "t": "F6: replicate R5 (A-1, K-1..K-4), archive of the pre-F6 differences, comparison gaps filled"}, {"n": 66, "s": "M", "t": "N12: CAM-11 rodeo 钩爪横滚 13.9° vs 18.5° 查清"}, {"n": 67, "s": "M", "t": "R6 斜坡滑铲：上坡、缓坡、坡度变化、横向（R5 实测 + Unity Reference 对照）"}, {"n": 68, "s": "M", "t": "F7: rope-roll smoothing to native (D-42), pad double-jump feedback (D-43), Apex FOV (D-44)"}, {"n": 69, "s": "M", "t": "R6U: slopes as R5 in Unity Reference — archive, decisions, before/after compare"}, {"n": 70, "s": "M", "t": "RPS: replay motor slide rules to native, new replay baseline (D-47)"}, {"n": 71, "s": "M", "t": "DECISIONS：10-27 / 10-28 的详细记录（N12、EPG、R6）和 D-48"}, {"n": 72, "s": "M", "t": "N13: Unity 钩爪为什么比 R5 早脱钩（只研究）"}, {"n": 73, "s": "M", "t": "RUD: replay motor duck hull + native ground move = Reference, new replay baseline (D-49)"}, {"n": 74, "s": "M", "t": "GN: 钩爪脱钩按原生（D-50）：Frida 父实体、对照场景、F-1"}, {"n": 75, "s": "M", "t": "DECISIONS：修 #74 留下的冲突标记、标注已解决的待定项、D-51（G-6 先关着）"}, {"n": 76, "s": "M", "t": "F-2: standing jump +1.8 u is a dedi reset artifact, not movement code (D-55)"}, {"n": 77, "s": "M", "t": "CAM2: K-5 / K-6 camera, K-7 zipline retest, camera combination rules (D-53 / D-54)"}, {"n": 78, "s": "M", "t": "G6: grapple impact boost (G-6) measured — R5 discards it; default off, opt-in switch (D-52)"}, {"n": 79, "s": "O", "t": "DECISIONS：TF2 研究，蹬墙跑 B / A（D-57）和 T6 提案（D-58）"}], "U": [{"n": 1, "s": "M", "t": "M1: R5 trial loader, reference motor, replayer, batch replay, tests"}, {"n": 2, "s": "M", "t": "M2: R5MotorV2 (measured R5 movement model) behind IMotor"}, {"n": 3, "s": "M", "t": "M3: lurch, ground re-jump cap, slide chain, WallBounce / MantleBoost primitives"}, {"n": 4, "s": "M", "t": "M4: movement-ability primitives behind an R5MotorV2 seam"}, {"n": 5, "s": "M", "t": "M5: skill slots, reference/fun configs, playable practice game"}, {"n": 6, "s": "M", "t": "M5.5: physics-decoupled FPS camera, grapple and ability visuals, Movement Demo"}, {"n": 7, "s": "M", "t": "Add fps-camera-design skill (M5.5 camera pipeline)"}, {"n": 8, "s": "M", "t": "M6-A: world foundation, continuous lurch, climb/mantle/superglide, ziplines, M6 practice area"}, {"n": 9, "s": "M", "t": "M6-C: combination course, cross-family chains, course fuzz, playtest feedback entry"}, {"n": 10, "s": "M", "t": "M6-B: Valkyrie measured jets + Ash Phase Breach route tool"}, {"n": 11, "s": "M", "t": "M7-A: wall-run, ledge hang, configurable double jump (HSD designs)"}, {"n": 12, "s": "M", "t": "M8-A: jump arbitration, slope slide, zipline fixes"}, {"n": 13, "s": "M", "t": "M8-B: bunny hop, lurch chains, superglide grid, wall chains"}, {"n": 14, "s": "M", "t": "M8-C: Octane pad double jump, Horizon lift + Spacewalk"}, {"n": 15, "s": "M", "t": "M9-B: Revenant pounce + long climb, D1 mantle check"}, {"n": 16, "s": "M", "t": "M9-A: zipline mid-rope / air mount fixes from R5, mount hint, technique checks"}, {"n": 17, "s": "M", "t": "M9-C: Vantage Echo, D1 superglide fix, R5 lurch numbers, Revenant climb inputs"}, {"n": 18, "s": "M", "t": "M10-D: per-key direction input; pad launch lurch follows R5 in Reference"}, {"n": 19, "s": "M", "t": "M10-A: Pathfinder grapple to R5 S21 measurements, grapple yard"}, {"n": 20, "s": "M", "t": "M10-B: Pathfinder Zipline Gun on the existing rope system"}, {"n": 21, "s": "M", "t": "M10-C: Octane stim/pad/ceiling surf, slide rules from R5"}, {"n": 22, "s": "M", "t": "M10-W: Wraith S21 portal and Into the Void, speed-boost rule"}, {"n": 23, "s": "M", "t": "M10-D4: fix ground redirect never braking against the wish"}, {"n": 24, "s": "M", "t": "M10-R: one folder per movement skill, with a README each"}, {"n": 25, "s": "M", "t": "N7: native movement rules in Reference"}, {"n": 26, "s": "M", "t": "N8-CAM: native S21 camera as the default, M5.5 kept"}, {"n": 27, "s": "M", "t": "N8-E: native teleport rules in Reference (pad phase check, 1.0 s re-entry)"}, {"n": 28, "s": "M", "t": "B1: S27 mantle boost with the angle gate and the crosshair timing ring"}, {"n": 29, "s": "M", "t": "B1-H: mantle boost survives retuning (class by mantle time, guard tests)"}, {"n": 30, "s": "M", "t": "Legend select page: S21 legend kits, grapple-first fill-in"}, {"n": 31, "s": "M", "t": "Pounce README: cite the M9-B measurement grid"}, {"n": 32, "s": "M", "t": "N9 decisions: lift ignores a phased body, R5 crouched mantle time"}, {"n": 33, "s": "M", "t": "J-1: native +30 u/s jump push into the last-hit wall"}, {"n": 34, "s": "M", "t": "C-10 / C-11: native step bob yaw and zipline roll"}, {"n": 35, "s": "M", "t": "F1: feel overlay tooling + F-1 slide-jump refund boundary"}, {"n": 36, "s": "M", "t": "F2: feel overlays for climb, mantle and superglide"}, {"n": 37, "s": "M", "t": "F2 C-1 / C-5: ledge probe dead zone, walk-speed mantle exit"}, {"n": 38, "s": "M", "t": "F2 C-2: reduced superglide just before the jump window (Reference)"}, {"n": 39, "s": "M", "t": "Climb README: native superglide vs S27 mantle boost, and the switch"}, {"n": 40, "s": "M", "t": "F3 / F4: feel replay for the M4 ability trials and the native camera"}, {"n": 41, "s": "M", "t": "F6: replicate R5 in Reference (grapple, landing-kick random, eye height, step bob)"}, {"n": 42, "s": "M", "t": "F7: native rope-roll smoothing, pad double-jump feedback, Apex FOV setting"}, {"n": 43, "s": "M", "t": "R6U: Reference slopes as R5 (U-1..U-5, D-45/D-46)"}, {"n": 44, "s": "M", "t": "RPS: replay motor slides by the native rules, Legacy M2 archived (D-47)"}, {"n": 45, "s": "M", "t": "RUD: replay motor duck hull + native ground move = Reference (D-49)"}, {"n": 46, "s": "M", "t": "GN: 钩爪脱钩规则全部按原生（D-50），旧版存档可切回"}, {"n": 47, "s": "M", "t": "CAM2: native jump punch, traversal camera, zipline view offset, roll wrap (D-53 / D-54)"}, {"n": 48, "s": "M", "t": "G6: G-6 grapple impact boost as an opt-in switch, default off (D-52)"}, {"n": 49, "s": "O", "t": "TF2：蹬墙跑 TF2 规则、二段跳、侧倾 + TF2X 战斗道具可玩版"}]};
+const RURL="https://github.com/letheli710/Apex-MovementAnalysis/pull/", UURL="https://github.com/letheli710/HSD-Unity/pull/";
+const prMap={}; PRS.R.forEach(p=>prMap["R"+p.n]=p); PRS.U.forEach(p=>prMap["U"+p.n]=p);
+const rng=(p,a,b)=>Array.from({length:b-a+1},(_,i)=>p+(a+i));
+const chip=k=>{const p=prMap[k];if(!p)return"";const url=(k[0]=="R"?RURL:UURL)+p.n;return `<a class="pr ${p.s}" href="${url}" target="_blank" rel="noopener" title="${k} · ${p.s=="M"?"已合并":"开着"} · ${p.t.replace(/"/g,"&quot;")}">${k}</a>`};
+const chips=ks=>ks.map(chip).join("");
+const COLS=["Apex 实测 + 复刻","原生代码（REA）","手感对照 / 盘点","TF2 主线","TF2 分叉"];
+// rows: 1 = oldest (bottom)
+const ROWS=[
+ {r:1,d:"10-20",to:"10-23"},{r:2,d:"10-23"},{r:3,d:"10-23",to:"10-25"},{r:4,d:"10-25",to:"10-27"},
+ {r:5,d:"10-27",to:"10-28"},{r:6,d:"10-28"},{r:7,d:"10-29",t:"凌晨"},{r:8,d:"10-29",t:"下午"},{r:9,d:"10-29",to:"10-30"},{r:10,d:"10-30",t:"现在"}];
+const C=[
+ {id:"A",col:1,r:1,span:1,cls:"root",st:["done","全部合并"],title:"Apex 单机服数据测试",when:"10-20 → 10-23",
+  what:"项目起点。M0 环境 → M1 自动跑测 → M2 参数 → M3 技巧 → M4 传奇 → M5 第一版 → M5.5 镜头 → M6–M10 移动库和更多传奇，M10-R 技能文件夹。",
+  prs:[...rng("R",1,26),...rng("U",1,24)],more:"17 个上下文续接 / 分叉（每次上下文用完就续一个）"},
+ {id:"B",col:2,r:2,cls:"root",st:["done","合并"],title:"从 rea 获取精确数值",when:"10-23",from:"接 A：实测做完，想直接从代码读精确值",
+  what:"第一次用 REA 读静态数值表。",prs:["R27"],more:"4 个分叉"},
+ {id:"D",col:1,r:3,cls:"root",st:["done","全部合并"],title:"Boost UI and Research（B1）",when:"10-24",from:"从 C 分叉",
+  what:"S27 翻越加速移植 B1 + B1-H 加固。",prs:["R50","R51","U28","U29"]},
+ {id:"C",col:2,r:3,cls:"root",st:["done","全部合并"],title:"REA 安装后研究方向",when:"10-23 → 10-25",from:"接 B",
+  what:"原生代码研究 N0–N8：ConVar 默认值、移动骨架、公式、对照表、N7 改 Reference、N8 传送 + 原生镜头。",
+  prs:[...rng("R",28,49),"R52","U25","U26","U27"],more:"14 个续接 / 分叉（7 个已归档）"},
+ {id:"E",col:3,r:3,cls:"qa",st:["qa","问答"],title:"REA 使用情况",when:"10-24",what:"问答：之前的研究用没用到 REA。没有产出。",more:"1 个分叉"},
+ {id:"F",col:3,r:4,cls:"root",st:["done","全部合并"],title:"REA 对比研究",when:"10-25 → 10-27（10-29 收尾）",from:"从 C 分叉接手",
+  what:"N9–N11 收尾，图例选择页、J-1、C-10；F1–F6 叠图手感对照；DECISIONS.md 项目日志诞生（R61）。",
+  prs:[...rng("R",53,63),"R65",...rng("U",30,41)],more:"7 个上下文续接"},
+ {id:"G",col:2,r:5,span:4,cls:"root",st:["done","全部合并"],title:"核心接受和发布器",when:"10-27 → 10-29",from:"接 F：先写 RESEARCH-OVERVIEW 盘点，再当调度",
+  what:"Leader：把 F 系列留下的问题拆成独立会话并验收。自己提交了两次日志 PR。",prs:["R71","R75"],
+  kids:[["EPG 火箭跳本地实测",["R64"]],["钩爪 rodeo 侧倾（N12）",["R66"]],["斜坡滑铲补测（R6）",["R67"]],["横滚平滑 + 二段跳反馈 + FOV（F7）",["R68","U42"]],
+        ["斜坡按 R5 改（R6U）",["R69","U43"]],["回放电机滑铲原生（RPS）",["R70","U44"]],["钩爪早脱钩研究（N13）",["R72"]],["回放电机 airUnduckDrop（RUD）",["R73","U45"]],
+        ["钩爪脱钩全部原生（GN）",["R74","U46"]],["F-2 原地跳高查根源",["R76"]],["起跳 / 翻越镜头 + 滑索横滚（CAM2）",["R77","U47"]],["G-6 撞墙上抬（G6）",["R78","U48"]]],
+  more:"另有 5 个 btw 问答分叉"},
+ {id:"H",col:4,r:6,cls:"qa",st:["qa","问答"],title:"TTF2 REA 与 Apex 底层差异",when:"10-28",
+  what:"问答：TF2 用什么工具做 REA，两边底层是不是同一个。引出 TF2 研究。",more:"1 个 btw（VKP 是什么）"},
+ {id:"I",col:4,r:7,cls:"root",st:["gap","无 PR"],title:"TF2 研究计划",when:"10-29 凌晨",from:"接 H：按 TF2-PLAN.md 开始",
+  what:"T0 装 Northstar、T1–T5 静态值 + 实测跑通。成果在 TF2-Research，不在任何仓库。",prs:[],nopr:"成果在 TF2-Research（未进 git）",more:"1 个 btw、1 个归档副本"},
+ {id:"J",col:4,r:8,cls:"root",st:["open","PR 开着"],title:"TF2 研究阶段计划",when:"10-29 下午",from:"接 I：读 HANDOFF-T5.md",
+  what:"T6 报告和提案 P-01..P-06；你批准 P-01 / 02 / 05；开出 U49 + R79（蹬墙跑 TF2 规则、二段跳、侧倾）。",prs:["U49","R79"],more:"1 个 btw（已归档）"},
+ {id:"K",col:5,r:9,cls:"root",st:["gap","无 PR"],title:"btw：你的结论是什么？",when:"10-29",from:"从 J 分叉",
+  what:"T-1 / T-7 EPG 真实开火 + 投掷物击退，R-1 读 R5 蹬墙公式。",
+  kids:[["TF2 D-1 / D-2 蹬墙系数 f 和参考高度",[],"gap","成果在 TF2-Research"]]},
+ {id:"L",col:4,r:9,cls:"root",st:["open","PR 开着"],title:"btw：TF2 还有什么值得研究？",when:"10-29 → 10-30",from:"从 J 分叉，后来成了 TF2 扩展的 Leader",
+  what:"Overnight N1–N6（窗户辅助、钩爪对照、泰坦设置）；研究标准；铁驭 / 泰坦扩展清单；派出 W1–W5。",
+  kids:[["W1 靶子（AI 和假人）",[],"gap","成果在 TF2-Research"],["W2 技能和投掷物",[],"gap","成果在 TF2-Research"],["W3 增益和特殊武器",[],"gap","成果在 TF2-Research"],
+        ["W4 Apex 原型 8 项（本地 R5）",[],"gap","成果在 TF2-Research"],["W5 TF2X 可玩版（五个阶段）",["U49","R79"],"open"],
+        ["W5 面板优化（中英文菜单）",[],"run","04:11 停下，改动还没提交"]],
+  more:"另有 7 个 btw 分叉（1 个已归档）"},
+ {id:"N",col:3,r:10,cls:"now",st:["run","进行中"],title:"项目盘点（本会话）",when:"10-30",from:"读全部仓库、PR、会话",
+  what:"全局地图 + 这棵推进树。下一步是收敛。"}
+];
+const EDGES=[["A","B","next"],["B","C","hand"],["C","D","fork"],["C","F","fork"],["F","G","hand"],["H","I","next"],["I","J","hand"],["J","K","fork"],["J","L","fork"],["G","N","next"],["L","N","next"]];
+
+const tree=document.getElementById("tree");
+const NR=ROWS.length; const gr=r=>NR-r+2; // grid row (row 1 = header)
+let html=`<div class="colh" style="grid-column:1;grid-row:1">日期</div>`+COLS.map((c,i)=>`<div class="colh" style="grid-column:${i+2};grid-row:1">${c}</div>`).join("");
+ROWS.forEach(x=>html+=`<div class="day" style="grid-column:1;grid-row:${gr(x.r)}"><b>${x.d}</b>${x.to?"→ "+x.to:(x.t||"")}</div>`);
+const kidHtml=k=>{const [t,ks,cls,note]=k;const c=cls||(ks.some(x=>prMap[x]&&prMap[x].s=="O")?"open":"done");
+ return `<div class="kid ${c}"><div class="kt">${t} ${ks.length?chips(ks):`<span class="pr N">无 PR</span>`}</div>${note?`<div class="more">${note}</div>`:""}</div>`};
+C.forEach(c=>{
+ const top=gr(c.r+(c.span||1)-1), rows=c.span||1;
+ html+=`<article class="card ${c.cls}" id="c-${c.id}" data-when="${c.when}" style="grid-column:${c.col+1};grid-row:${top} / span ${rows}">
+  <div class="meta"><span>${c.when}</span><span class="st ${c.st[0]}">${c.st[1]}</span></div>
+  <h3>${c.title}</h3>
+  ${c.from?`<div class="from">↑ ${c.from}</div>`:""}
+  <div class="what">${c.what}</div>
+  ${c.prs&&c.prs.length?`<div class="prs">${chips(c.prs)}</div>`:""}
+  ${c.nopr?`<div class="warn">${c.nopr}</div>`:""}
+  ${c.kids?`<div class="kids">${c.kids.map(kidHtml).join("")}</div>`:""}
+  ${c.more?`<div class="more">${c.more}</div>`:""}
+ </article>`;});
+tree.insertAdjacentHTML("beforeend",html);
+
+function drawEdges(){
+ const svg=document.getElementById("edges"); const box=tree.getBoundingClientRect();
+ if(getComputedStyle(svg).display=="none")return;
+ const col={hand:"var(--e-hand)",fork:"var(--e-fork)",next:"var(--e-next)"},dash={hand:"",fork:"6 4",next:"2 4"};
+ svg.innerHTML=EDGES.map(([a,b,k])=>{
+  const A=document.getElementById("c-"+a).getBoundingClientRect(),B=document.getElementById("c-"+b).getBoundingClientRect();
+  const x1=A.left+A.width/2-box.left,y1=A.top-box.top,x2=B.left+B.width/2-box.left,y2=B.bottom-box.top;
+  const my=(y1+y2)/2;
+  return `<path d="M${x1},${y1} C${x1},${my} ${x2},${my} ${x2},${y2+6}" stroke="${col[k]}" stroke-dasharray="${dash[k]}"/><circle cx="${x2}" cy="${y2+6}" r="3.5" fill="${col[k]}"/>`;
+ }).join("");
+}
+addEventListener("resize",drawEdges); document.fonts&&document.fonts.ready.then(drawEdges); setTimeout(drawEdges,50);
+
+// summary
+const all=[...PRS.R.map(p=>({...p,k:"R"})),...PRS.U.map(p=>({...p,k:"U"}))];
+const open=all.filter(p=>p.s=="O");
+const stats=[[C.filter(c=>c.cls!="qa").length+"","主会话（有产出的）"],["91","会话总数（含续接、分叉、btw）"],
+ [all.filter(p=>p.s=="M").length+" / "+all.length,"PR 已合并"],[open.length+"",`开着的 PR：${open.map(p=>p.k+p.n).join("、")}`],
+ ["8","下属会话成果只在 TF2-Research（无 PR）"]];
+document.getElementById("summary").innerHTML=stats.map(s=>`<div class="stat"><span class="n">${s[0]}</span><span class="l">${s[1]}</span></div>`).join("");
+
+// ledger
+const owner={};C.forEach(c=>{(c.prs||[]).forEach(k=>owner[k]=c.title);(c.kids||[]).forEach(k=>k[1].forEach(x=>owner[x]=owner[x]||c.title+" → "+k[0]))});
+document.getElementById("ledger").innerHTML=[["R","研究仓库 Apex-MovementAnalysis",RURL],["U","HSD-Unity",UURL]].map(([k,name,url])=>{
+ const ps=PRS[k];return `<div class="repo"><h3>${name}</h3><div class="meta"><span>${ps.length} 个 PR</span><span>${ps.filter(p=>p.s=="M").length} 已合并</span><span>${ps.filter(p=>p.s=="O").length} 开着</span></div>
+ <div class="grid">${ps.map(p=>`<a class="pr ${p.s}" href="${url+p.n}" target="_blank" rel="noopener" title="${k}${p.n} · ${p.t.replace(/"/g,"&quot;")}${owner[k+p.n]?" · 来自："+owner[k+p.n]:""}">${p.n}</a>`).join("")}</div></div>`}).join("");
+</script>

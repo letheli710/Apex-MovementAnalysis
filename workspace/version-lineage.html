@@ -1,0 +1,244 @@
+<title>HSD 版本溯源</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;900&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: the user's drawing. Two black rails = Main (the version in use), running bottom (oldest) to top (latest).
+   Each topic is a blue band crossing the rails: the cyan cell on the rails is the topic's current version, the cells to its
+   left are the earlier versions it grew out of (nearest = the one just before), the cells to its right are parallel versions
+   still kept and what is still to decide. Every cell carries its phase, data and why it changed. */
+:root{
+  --bg:#f3f4f0; --panel:#ffffff; --ink:#1a201e; --muted:#5c6661; --line:#d5dad5;
+  --rail:#1a201e; --band:#2f63d6; --band-bg:#edf2fd; --cur:#08a2b6; --cur-bg:#dff5f7;
+  --old-bg:#ffffff; --alt:#6d7772; --pend:#8a46c4; --pend-bg:#f1e6fa; --gap:#bf3a2c; --gap-bg:#fbe3df;
+  --pM:#c26a1c; --pN:#2d7d4a; --pS:#2f63d6; --pR:#08a2b6; --pT:#8a46c4; --pU:#bf3a2c;
+  --display:"Noto Serif SC","Songti SC",serif;
+  --body:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121614; --panel:#1a201d; --ink:#e4e9e6; --muted:#9aa49f; --line:#303935;
+  --rail:#e4e9e6; --band:#7d9df0; --band-bg:#1b2337; --cur:#3fd0e0; --cur-bg:#12303a;
+  --old-bg:#1a201d; --alt:#a3ada8; --pend:#c294f0; --pend-bg:#2c2140; --gap:#ef7d70; --gap-bg:#3e1f1b;
+  --pM:#eb9a52; --pN:#5cc786; --pS:#7d9df0; --pR:#3fd0e0; --pT:#c294f0; --pU:#ef7d70; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121614; --panel:#1a201d; --ink:#e4e9e6; --muted:#9aa49f; --line:#303935;
+  --rail:#e4e9e6; --band:#7d9df0; --band-bg:#1b2337; --cur:#3fd0e0; --cur-bg:#12303a;
+  --old-bg:#1a201d; --alt:#a3ada8; --pend:#c294f0; --pend-bg:#2c2140; --gap:#ef7d70; --gap-bg:#3e1f1b;
+  --pM:#eb9a52; --pN:#5cc786; --pS:#7d9df0; --pR:#3fd0e0; --pT:#c294f0; --pU:#ef7d70; color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:14px;line-height:1.55}
+.wrap{max-width:1500px;margin:0 auto;padding-block:28px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:24px}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance}
+h1{font-size:clamp(26px,3.6vw,38px);font-weight:900}
+h2{font-size:20px}
+p{margin:0}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--cur)}
+.lede{max-width:82ch;color:var(--muted)} .lede b{color:var(--ink)}
+header{display:grid;gap:12px}
+/* phases: the two main lines of the project */
+.phases{display:grid;gap:8px}
+.lines{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,560px),1fr));gap:12px}
+.pline{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:grid;gap:8px;min-width:0}
+.pline h3{font-size:15px}
+.psteps{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.ps{display:inline-flex;gap:6px;align-items:center;font-size:12.5px;padding:3px 9px;border-radius:999px;border:1.5px solid currentColor;white-space:nowrap}
+.ps small{font-family:var(--mono);font-size:10.5px;opacity:.85}
+.arrow{color:var(--muted)}
+.ph{display:inline-block;font-family:var(--mono);font-size:10.5px;font-weight:600;padding:0 6px;border-radius:3px;color:var(--panel);white-space:nowrap}
+.ph.M{background:var(--pM)} .ph.N{background:var(--pN)} .ph.S{background:var(--pS)} .ph.R{background:var(--pR)} .ph.T{background:var(--pT)} .ph.U{background:var(--pU)}
+.c-M{color:var(--pM)} .c-N{color:var(--pN)} .c-S{color:var(--pS)} .c-R{color:var(--pR)} .c-T{color:var(--pT)} .c-U{color:var(--pU)}
+/* now card */
+.now{background:var(--cur-bg);border:2px solid var(--cur);border-radius:12px;padding:12px 14px;display:grid;gap:6px}
+.now ul{margin:0;padding-left:1.2em;display:grid;gap:2px;font-size:13px}
+/* the ladder */
+.colheads,.band{display:grid;grid-template-columns:minmax(0,1fr) minmax(250px,300px) minmax(0,.8fr);column-gap:14px}
+.colheads{font-size:12px;color:var(--muted);letter-spacing:.04em;padding:0 12px}
+.colheads div:nth-child(1){text-align:right}
+.colheads div:nth-child(2){text-align:center;font-family:var(--mono);color:var(--ink);font-weight:600}
+.ladder{position:relative;display:grid;gap:18px;padding-block:8px}
+.rails{position:absolute;top:0;bottom:0;pointer-events:none;z-index:1}
+.band .cell{z-index:2}
+.rails i{position:absolute;top:0;bottom:0;width:4px;background:var(--rail);border-radius:2px}
+.cap{text-align:center;font-family:var(--mono);font-size:12px;letter-spacing:.12em;color:var(--muted)}
+.band{position:relative;border:2.5px solid var(--band);background:var(--band-bg);border-radius:16px;padding:12px;align-items:start}
+.band .topic{position:absolute;top:-12px;left:16px;background:var(--band);color:var(--panel);font-family:var(--display);font-size:13.5px;font-weight:600;padding:1px 10px;border-radius:999px;z-index:2}
+.band .topic small{font-family:var(--body);font-weight:400;opacity:.85;margin-left:6px}
+.olds{display:flex;flex-direction:row-reverse;gap:8px;overflow-x:auto;padding:6px 2px 4px;min-width:0;scrollbar-width:thin}
+.alts{display:grid;gap:8px;padding-top:6px;min-width:0}
+.cell{flex:0 0 200px;background:var(--old-bg);border:1px solid var(--line);border-radius:8px;padding:7px 9px;display:grid;gap:3px;align-content:start;position:relative}
+.olds .cell::after{content:"→";position:absolute;right:-10px;top:10px;color:var(--muted);font-size:12px}
+.olds .cell:first-child::after{content:none}
+.cell .h{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.cell .d{font-family:var(--mono);font-size:10.5px;color:var(--muted)}
+.cell .n{font-size:13px;font-weight:500;line-height:1.35}
+.cell .x{font-size:12px;color:var(--muted);overflow-wrap:anywhere}
+.cell .x b{color:var(--ink);font-weight:500}
+.cell .w{font-size:11.5px;color:var(--ink);border-top:1px dashed var(--line);padding-top:3px}
+.cell .w::before{content:"为什么改 ";color:var(--muted)}
+.cell .s{font-family:var(--mono);font-size:10.5px;color:var(--muted);overflow-wrap:anywhere}
+.cell.alt{border-left:4px solid var(--alt)}
+.cell.pend{border:1.5px dashed var(--pend);background:var(--pend-bg)}
+.cell.gap{border:1.5px dashed var(--gap);background:var(--gap-bg)}
+.cell.cur{background:var(--cur-bg);border:3px solid var(--cur);z-index:1;padding:9px 11px}
+.cell.cur .n{font-family:var(--display);font-size:15px;font-weight:600}
+.cell.cur::before{content:"现在 · Main";font-family:var(--mono);font-size:10.5px;color:var(--cur);font-weight:600;letter-spacing:.06em}
+.cell.cur.branch{border-style:dashed}
+.cell.cur.branch::before{content:"在分支上 · PR #49 / #79 未合并"}
+.cell.cur.none{background:var(--panel);border-color:var(--pend);border-style:dashed}
+.cell.cur.none::before{content:"Main 上还没有";color:var(--pend)}
+.tag{font-size:10.5px;padding:0 5px;border-radius:3px;background:var(--panel);border:1px solid var(--line);color:var(--muted)}
+.cell.alt .tag{color:var(--alt)} .cell.pend .tag{color:var(--pend);border-color:var(--pend)} .cell.gap .tag{color:var(--gap);border-color:var(--gap)}
+.alts:empty::before{content:"没有平行版本";font-size:12px;color:var(--muted)}
+footer{font-size:12px;color:var(--muted)}
+.feed{display:grid;gap:8px}
+.feedbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.feedbar select,.feedbar button{font:inherit;font-size:13px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--ink)}
+.feedbar button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.ev{display:grid;grid-template-columns:150px minmax(0,1fr);gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.ev .when{font-family:var(--mono);font-size:11px;color:var(--muted);display:grid;gap:2px;align-content:start;overflow-wrap:anywhere}
+.ev .body{display:grid;gap:2px;min-width:0}
+.ev .top{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:12px;color:var(--muted)}
+.ev .nm{font-weight:500}
+.ev .x{font-size:12.5px;color:var(--muted);overflow-wrap:anywhere}
+.kind{font-size:10.5px;padding:0 6px;border-radius:999px;border:1px solid currentColor}
+.livebadge{font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:999px;border:1px solid currentColor}
+.howto{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:grid;gap:6px;font-size:13px}
+.howto code{font-family:var(--mono);font-size:12px}
+.howto pre{margin:0;overflow-x:auto;background:var(--bg);border-radius:6px;padding:8px;font-size:11.5px}
+@media (max-width:600px){.ev{grid-template-columns:1fr}}
+
+@media (max-width:900px){
+  .colheads{display:none}
+  .rails{display:none}
+  .band{grid-template-columns:1fr;row-gap:8px;padding-top:18px}
+  .band .curcol{order:1}.band .olds{order:2}.band .alts{order:3}
+  .olds{flex-direction:column;overflow:visible}
+  .olds .cell::after{content:none}
+  .olds::before{content:"更早的版本（从近到远）";font-size:11.5px;color:var(--muted)}
+  .alts::before{font-size:11.5px;color:var(--muted)}
+  .alts:not(:empty)::before{content:"平行的版本 / 还要定的"}
+  .cell{flex:none}
+}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">High Speed Doom · 版本溯源 · 实时日志 <span class="livebadge" id="live">快照</span></div>
+  <h1>HSD 版本溯源</h1>
+  <p class="lede">中间两条黑线是 <b>Main</b>，也就是现在在用的版本，从下（最早）往上（最新）。每一条<b>蓝色横带</b>是一个功能。横带正中、压在黑线上的<b>青色框</b>是这个功能现在的版本；<b>左边</b>是它一路走来的旧版本，紧挨着的是上一版，越往左越早；<b>右边</b>是还保留着的平行版本，和还没定的下一步。每个框都标了它出自哪个阶段、当时的数据、为什么改。这样每个现在的版本都能一路追到它的来源。<b>这一页由共享日志驱动</b>：每个会话做了决定、拿到数据、出了新版本，就往日志里写一条，页面自动更新。</p>
+</header>
+
+<section class="phases" aria-label="两条主线">
+  <div class="lines">
+    <div class="pline"><h3>主线一：R5（Apex）研究</h3>
+      <div class="psteps">
+        <span class="ps c-M"><span class="ph M">M</span>正线 M0–M10 实测<small>10-20→23</small></span><span class="arrow">→</span>
+        <span class="ps c-N"><span class="ph N">N</span>REA 原生代码 N0–N13<small>10-23→28</small></span><span class="arrow">→</span>
+        <span class="ps c-S"><span class="ph S">副</span>副线 B1 · C · J · K · F1–F5<small>10-24→26</small></span><span class="arrow">→</span>
+        <span class="ps c-R"><span class="ph R">R5</span>按 R5 复刻 F6 → G6<small>10-27→29</small></span>
+      </div></div>
+    <div class="pline"><h3>主线二：TF2 研究（中途又反过来补 R5）</h3>
+      <div class="psteps">
+        <span class="ps c-T"><span class="ph T">TF2</span>T0–T6 · W1–W5 · TF2X<small>10-28→30</small></span><span class="arrow">↔</span>
+        <span class="ps c-N"><span class="ph N">N</span>反过来测 R5：R-1 蹬墙公式 · D-1/D-2 · W4 Apex 原型<small>10-29</small></span><span class="arrow">→</span>
+        <span class="ps c-U"><span class="ph U">今天</span>今天定的，还没写进 DECISIONS<small>10-30</small></span>
+      </div></div>
+  </div>
+</section>
+
+<section class="now" aria-label="现在的 Main">
+  <h2>现在的 Main 是什么</h2>
+  <ul>
+    <li><b>Apex 部分</b>：Reference 配置 = 尽量贴合 R5 native 的那一版（D-36），Apex 最新 build <code>HSD-Build\G6</code>。</li>
+    <li><b>TF2 部分</b>：10-30 04:56 已合并进 Main（HSD-Unity#49、research#79）：蹬墙跑 TF2 规则、TF2 二段跳、侧倾、TF2X 战斗道具，build <code>HSD-Build\TF2X</code>。</li>
+    <li>每个功能的旧版本都没删：代码里留了开关，差别记在 <code>R5-DIFF-ARCHIVE.md</code>，决定记在 <code>DECISIONS.md</code>，过程记在这份日志。</li>
+  </ul>
+</section>
+
+<section aria-label="版本溯源">
+  <div class="colheads"><div>← 更早的版本（紧挨着的是上一版）</div><div>▲ LATEST · MAIN</div><div>平行保留的版本 / 还要定的 →</div></div>
+  <div class="ladder" id="ladder"></div>
+</section>
+
+<section class="feed" aria-label="日志">
+  <h2>日志（最新在上）</h2>
+  <div class="feedbar">
+    <select id="f-topic" aria-label="按功能筛选"><option value="">全部功能</option></select>
+    <button id="f-sess" aria-pressed="false">只看会话写入的（不含整理的旧档）</button>
+  </div>
+  <div id="feed" class="feed"></div>
+</section>
+
+<section class="howto" aria-label="怎么写日志">
+  <h2>会话怎么往日志里写</h2>
+  <p>每做一个决定、拿到一份数据、出一个新版本、合并一个 PR，就用 <code>ArtifactData</code> 往这个页面的 <code>log</code> 集合写一条（<code>set</code>，新文档不用 if_version）。文档 id：<code>日期-会话短名-主题</code>，例如 <code>2026-10-30-cam-k8</code>。一个决定的每个选项各写一条：选中的 role=version，没选的 role=parallel。这样旧版本和没选的都留档。完整规则在工作区根目录的 <code>CLAUDE.md</code>。</p>
+<pre>{
+  "topic": "镜头",            // 已有的功能名，或者新功能名（会自动多一条横带）
+  "role": "version",          // version 新的现在版本 | parallel 平行保留 / 没选 | pending 还要定 | note 只进日志
+  "kind": "decision",         // decision | data | version | milestone | issue | plan
+  "phase": "U",               // M 正线 | N REA | S 副线 | R 按 R5 复刻 | T TF2 | U 10-30 以后
+  "date": "10-30", "sortDate": "2026-10-30", "order": 1,
+  "name": "K-8 下滑索 punch 按 R5 加",
+  "data": "Unity 0° → 12–14°（R5 12–14°）",
+  "why": "D-36：以 R5 为准", "sw": "NativeCameraParams.zipDetachPunch",
+  "rec": "HSD-Unity#50, D-66", "session": "会话短名",
+  "ts": "2026-10-30T08:00:00Z", "resolved": false
+}</pre>
+  <p>一个"还要定"的事定下来以后，把那一条 <code>update</code> 成 <code>"resolved": true</code>（不删），再写一条新的 version。</p>
+</section>
+
+<footer>旧档部分整理自研究仓库 DECISIONS.md、R5-DIFF-ARCHIVE.md、TODO.md、TF2-Research 报告（标"seed 10-30"）。之后的条目由各会话写入。页面连不上数据库时显示内嵌的快照。</footer>
+</div>
+<script>
+const SEED=[["t01-01",{"topic":"地面移动","topicSub":"摩擦、加速、空中控制","role":"version","phase":"M","date":"10-20","sortDate":"2026-10-20","order":1,"name":"M2 实测拟合","data":"17 种条件，每种 ≥ 5 次；R5MotorV2 终速误差 <b>0.000 %</b>；M1 回放误差 32 → <b>1.4 u</b>","why":"第一次实测","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t01-02",{"topic":"地面移动","topicSub":"摩擦、加速、空中控制","role":"version","phase":"M","date":"10-23","sortDate":"2026-10-23","order":2,"name":"M10-D4 修地面转向","data":"修了反向输入不减速的缺陷；课程单圈 80.55 → <b>78.98 s</b>","why":"发现 bug","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t01-03",{"topic":"地面移动","topicSub":"摩擦、加速、空中控制","role":"version","phase":"N","date":"10-24","sortDate":"2026-10-24","order":3,"name":"N7 原生规则（D-17）","data":"原生 Friction + Accelerate、空中额外加速 2.0、冲刺加速边界、超速跳减 100；课程单圈 78.98 → <b>79.12 s</b>","why":"REA 读到原生代码，给每个数值找到来源；你说\"全部改成原版\"","sw":"开关清单 n7/N7-UNITY.md","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t01-04",{"topic":"地面移动","topicSub":"摩擦、加速、空中控制","role":"parallel","phase":"R","date":"10-28","sortDate":"2026-10-28","order":4,"name":"回放电机也换成原生 WalkMove","data":"RUD（D-49），见\"回放电机\"那一条","why":"","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t01-05",{"topic":"地面移动","topicSub":"摩擦、加速、空中控制","role":"parallel","phase":"N","date":"10-24","sortDate":"2026-10-24","order":5,"name":"试玩反馈","data":"N7 后你感觉不出差别","why":"","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t02-01",{"topic":"传奇能力","topicSub":"技能库","role":"version","phase":"M","date":"10-21","sortDate":"2026-10-21","order":6,"name":"M4 移动原件","data":"兴奋剂、跳板、升梯、喷气、钩爪、落地减速、Horizon 七类","why":"","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t02-02",{"topic":"传奇能力","topicSub":"技能库","role":"version","phase":"M","date":"10-21","sortDate":"2026-10-21","order":7,"name":"M6-B","data":"只做 Valkyrie 喷气、Ash 相位突破（D-07）","why":"","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t02-03",{"topic":"传奇能力","topicSub":"技能库","role":"version","phase":"M","date":"10-22→23","sortDate":"2026-10-22","order":8,"name":"M8-C · M9 · M10","data":"Octane 跳板二段跳 123 次实测；Revenant、Vantage、Zipline Gun、Octane、Wraith","why":"","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t02-04",{"topic":"传奇能力","topicSub":"技能库","role":"version","phase":"N","date":"10-24→25","sortDate":"2026-10-24","order":9,"name":"N8-E · N9 原生规则（D-19、D-21）","data":"相位中不被跳板弹起、不受升梯；重入间隔 <b>1.0 s</b>；手感对照技能 <b>477 / 524</b>","why":"原生代码里五个传送能力共用一个相位状态","sw":"padPhasedNoLaunch、liftPhasedNoLift","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t02-05",{"topic":"传奇能力","topicSub":"技能库","role":"parallel","phase":"M","date":"10-21","sortDate":"2026-10-21","order":10,"name":"搁置","data":"Loba、Alter（本地触发不了）、Ash 冲刺、重力炮 → SHELVED-ABILITIES.md","why":"","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t02-06",{"topic":"传奇能力","topicSub":"技能库","role":"parallel","phase":"M","date":"10-27","sortDate":"2026-10-27","order":11,"name":"旧 Revenant-Wraith 预设","data":"当历史保留（D-39）","why":"","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t03-01",{"topic":"滑铲","topicSub":"游戏身体","role":"version","phase":"M","date":"10-20","sortDate":"2026-10-20","order":12,"name":"M2 / M3 规则","data":"每次按下蹲都加速；加速过的滑铲跳一律 ≥ 350（规则 H1）；松开下蹲照样滑；不能转向","why":"第一次实测","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t03-02",{"topic":"滑铲","topicSub":"游戏身体","role":"version","phase":"M","date":"10-23","sortDate":"2026-10-23","order":13,"name":"M10-D1 实测规则","data":"松开下蹲 ≤ 350 结束；退还窗 0.225 s；350 下限只到 0.8 s；1.8 s 内不再加速；单圈 80.82 → 80.55 s","why":"更多实测","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t03-03",{"topic":"滑铲","topicSub":"游戏身体","role":"version","phase":"N","date":"10-24","sortDate":"2026-10-24","order":14,"name":"N7 原生","data":"退还 = 0.4 s 内且下蹲过渡没完；只把 297.5–350 抬到 350；冷却 2 s 从上次开始算；转向 50","why":"REA 原生代码","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t03-04",{"topic":"滑铲","topicSub":"游戏身体","role":"version","phase":"S","date":"10-25","sortDate":"2026-10-25","order":15,"name":"F1-1 过渡边界（D-26）","data":"下蹲过渡从<b>下一条命令</b>算：0.201 s 退还、0.215 s 不退；平地对照 <b>511 / 513</b>","why":"叠图对照发现边界早一条命令","sw":"slideDuckTransitionFromNextCommand","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t03-05",{"topic":"滑铲","topicSub":"游戏身体","role":"parallel","phase":"R","date":"10-28","sortDate":"2026-10-28","order":16,"name":"回放电机也换原生滑铲","data":"RPS（D-47），旧规则留成 Legacy M2","why":"","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t03-06",{"topic":"滑铲","topicSub":"游戏身体","role":"pending","phase":"R","date":"—","sortDate":"2026-10-30","order":17,"name":"滑铲下沉时间","data":"Unity 约 0.19 s，R5 约 0.167 s，记下没改","why":"","sw":"","kind":"decision","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t04-01",{"topic":"翻越和 superglide","topicSub":"","role":"version","phase":"M","date":"10-20","sortDate":"2026-10-20","order":18,"name":"M3","data":"翻越加速窗口：最后 <b>133 ms</b>","why":"","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t04-02",{"topic":"翻越和 superglide","topicSub":"","role":"version","phase":"M","date":"10-21","sortDate":"2026-10-21","order":19,"name":"M6-A","data":"superglide 原生 <b>460</b>","why":"","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t04-03",{"topic":"翻越和 superglide","topicSub":"","role":"version","phase":"S","date":"10-24","sortDate":"2026-10-24","order":20,"name":"B1 S27 翻越加速（D-20）","data":"只按跳 <b>388.7</b>，默认开；你喜欢这个手感","why":"你想要 S27 的手感","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t04-04",{"topic":"翻越和 superglide","topicSub":"","role":"version","phase":"N","date":"10-25","sortDate":"2026-10-25","order":21,"name":"N11 / J-1 + 蹲姿时长（D-22、D-23）","data":"起跳朝墙推 30 u/s，superglide <b>402</b> 的来源；蹲着翻越 0.517 / 0.625 / 0.813 s","why":"REA 找到 402 的来源","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t04-05",{"topic":"翻越和 superglide","topicSub":"","role":"version","phase":"S","date":"10-26","sortDate":"2026-10-26","order":22,"name":"F2 对照 C-1 / C-5 / C-2 第一次","data":"C-1 台沿死区修掉；C-5 走路出口 199.525；C-2 先定\"保持简化\"（D-29）","why":"494 个 R5 片段叠图","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t04-06",{"topic":"翻越和 superglide","topicSub":"","role":"version","phase":"S","date":"10-26","sortDate":"2026-10-26","order":23,"name":"减量 superglide + 两种并存（D-31、D-32）","data":"离翻越结束 102.5–117 ms：水平 <b>385 → 425</b>；攀爬对照 <b>1968 / 2221</b>","why":"按 Unity 自己的时钟重排，发现 D-29 判断用错了时钟，推翻","sw":"superglideReducedBand；菜单 Mantle boost","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t04-07",{"topic":"翻越和 superglide","topicSub":"","role":"parallel","phase":"M","date":"10-21","sortDate":"2026-10-21","order":24,"name":"原生 superglide 460","data":"关掉 S27 时走这条（和 S27 互斥）","why":"","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t04-08",{"topic":"翻越和 superglide","topicSub":"","role":"parallel","phase":"M","date":"10-26","sortDate":"2026-10-26","order":25,"name":"Fun","data":"不做减量段","why":"","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t04-09",{"topic":"翻越和 superglide","topicSub":"","role":"pending","phase":"U","date":"10-30","sortDate":"2026-10-30","order":26,"name":"蹲着翻越的镜头时刻","data":"见\"镜头\"那一条","why":"","sw":"","kind":"decision","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t05-01",{"topic":"Lurch / tap strafe","topicSub":"","role":"version","phase":"M","date":"10-20","sortDate":"2026-10-20","order":27,"name":"M3 模型","data":"0.2 s 全强度、0.5 s 消失、上限 209.3（102 次，60 / 120 / 144 fps）","why":"第一次实测","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t05-02",{"topic":"Lurch / tap strafe","topicSub":"","role":"version","phase":"M","date":"10-21","sortDate":"2026-10-21","order":28,"name":"M4 / M6-A1","data":"上限 = 0.7 × 冲刺上限；连续 lurch；1100 u/s 以上不 lurch","why":"","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t05-03",{"topic":"Lurch / tap strafe","topicSub":"","role":"version","phase":"M","date":"10-22","sortDate":"2026-10-22","order":29,"name":"跳板后能不能 lurch（D-10）","data":"Reference 按 R5 不能","why":"","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t05-04",{"topic":"Lurch / tap strafe","topicSub":"","role":"version","phase":"N","date":"10-24→27","sortDate":"2026-10-24","order":30,"name":"原生来源 + LS / RAS 结案（D-40）","data":"数值不变，来源换成原生 jump_grace_*；对照 L-11 一致，反向 lurch 3° 以内","why":"REA 确认拟合值就是原生值；没有要复现的视频","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t05-05",{"topic":"Lurch / tap strafe","topicSub":"","role":"parallel","phase":"M","date":"10-22","sortDate":"2026-10-22","order":31,"name":"Fun：跳板后能 lurch","data":"保留 M5.5 的行为","why":"","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t06-01",{"topic":"手感怎么验收","topicSub":"方法本身","role":"version","phase":"M","date":"10-21","sortDate":"2026-10-21","order":32,"name":"真人试玩","data":"M5 第一版：动作很难感觉到；N7 后：感觉不出差别","why":"—","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t06-02",{"topic":"手感怎么验收","topicSub":"方法本身","role":"version","phase":"S","date":"10-25→26","sortDate":"2026-10-25","order":33,"name":"叠图对照 F1–F4（D-25）","data":"平地 511 / 513、攀爬 1968 / 2221、技能 479 / 536、镜头 107 / 149","why":"没有动画，真人感觉不可靠","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t06-03",{"topic":"手感怎么验收","topicSub":"方法本身","role":"version","phase":"R","date":"10-27","sortDate":"2026-10-27","order":34,"name":"以 R5 为复刻核心（D-36）","data":"对照找到的差别原则上改成 R5；改前的版本存进 R5-DIFF-ARCHIVE.md","why":"F6 时你定的","sw":"R5-DIFF-ARCHIVE.md","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t06-04",{"topic":"手感怎么验收","topicSub":"方法本身","role":"pending","phase":"U","date":"10-30","sortDate":"2026-10-30","order":35,"name":"拟合原则（今天）","data":"尽量拟合 R5；差零点几个百分比不追，但要写出差在哪里","why":"","sw":"","kind":"decision","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t07-01",{"topic":"斜坡","topicSub":"","role":"version","phase":"M","date":"10-21","sortDate":"2026-10-21","order":36,"name":"M6-A4 设计斜坡","data":"按源码 + 设计，R5 没测过","why":"","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t07-02",{"topic":"斜坡","topicSub":"","role":"version","phase":"M","date":"10-22","sortDate":"2026-10-22","order":37,"name":"M8-B 拟合","data":"下坡滑铲 147 + 342·sinθ（只测了 29–41°）；Fun 约 1.6 倍","why":"","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t07-03",{"topic":"斜坡","topicSub":"","role":"version","phase":"R","date":"10-27","sortDate":"2026-10-27","order":38,"name":"R6 实测","data":"133 次 5–40°：原生 g·n_z·n_水平 逐命令成立；M8 拟合作废（5° 给 177，实测 65.1）","why":"你让补测上坡和缓坡","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t07-04",{"topic":"斜坡","topicSub":"","role":"version","phase":"R","date":"10-28","sortDate":"2026-10-28","order":39,"name":"R6U 按 R5（D-45、D-46）","data":"40° 上坡滑铲 84.4 → <b>124.8</b>（R5 123.6）；课程单圈 79.12 → <b>78.88 s</b>","why":"\"按照 R5 的改，U3 归档可选\"","sw":"slopeUphillKeepStep 等；菜单 hsd.r6u.sliderebegin","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t07-05",{"topic":"斜坡","topicSub":"","role":"parallel","phase":"R","date":"10-28","sortDate":"2026-10-28","order":40,"name":"U-3 三档","data":"Props（默认）/ Off（旧版）/ EverySolid","why":"","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t07-06",{"topic":"斜坡","topicSub":"","role":"parallel","phase":"M","date":"10-22","sortDate":"2026-10-22","order":41,"name":"Fun 斜坡","data":"1.6 倍加速度，E2 暂缓","why":"","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t07-07",{"topic":"斜坡","topicSub":"","role":"parallel","phase":"R","date":"10-28","sortDate":"2026-10-28","order":42,"name":"回放电机","data":"仍是旧斜坡","why":"","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t08-01",{"topic":"回放电机","topicSub":"用来检查有没有改坏的尺子","role":"version","phase":"M","date":"10-21","sortDate":"2026-10-21","order":43,"name":"M1 第一次回放","data":"误差 32 u","why":"","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t08-02",{"topic":"回放电机","topicSub":"用来检查有没有改坏的尺子","role":"version","phase":"M","date":"10-21","sortDate":"2026-10-21","order":44,"name":"M2 R5MotorV2","data":"误差 1.4 u；回放基线 111 / 111 / 90 / 114（后来叫 Legacy M2）","why":"","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t08-03",{"topic":"回放电机","topicSub":"用来检查有没有改坏的尺子","role":"version","phase":"R","date":"10-28","sortDate":"2026-10-28","order":45,"name":"RPS 滑铲原生（D-47）","data":"e8 滑铲连招速度误差 rms 7.48 → <b>0.23</b>","why":"你同意","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t08-04",{"topic":"回放电机","topicSub":"用来检查有没有改坏的尺子","role":"version","phase":"R","date":"10-28","sortDate":"2026-10-28","order":46,"name":"RUD 第二版（D-49）","data":"下蹲碰撞体 + 原生 WalkMove：e3 侧向起跳 24.2 → <b>2.4 u</b>；3 个例外记录在案","why":"\"第一个，我完全同意\"","sw":"R5Reference()；-legacyM2 切回","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t08-05",{"topic":"回放电机","topicSub":"用来检查有没有改坏的尺子","role":"parallel","phase":"R","date":"10-28","sortDate":"2026-10-28","order":47,"name":"RUD 第一版：M5 redirect","data":"没采用：e1_turn 速度误差略升","why":"","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t08-06",{"topic":"回放电机","topicSub":"用来检查有没有改坏的尺子","role":"parallel","phase":"M","date":"10-21","sortDate":"2026-10-21","order":48,"name":"Legacy M2","data":"-legacyM2 逐字节复现最老的基线","why":"","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t08-07",{"topic":"回放电机","topicSub":"用来检查有没有改坏的尺子","role":"pending","phase":"U","date":"10-30","sortDate":"2026-10-30","order":49,"name":"到此为止（今天）","data":"只当尺子，不再换斜坡、+30 推墙等剩下几项","why":"","sw":"","kind":"decision","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t09-01",{"topic":"钩爪","topicSub":"Pathfinder","role":"version","phase":"M","date":"10-21","sortDate":"2026-10-21","order":50,"name":"M4 / M4b","data":"不是钟摆，是沿绳加速 + 横向刹车","why":"","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t09-02",{"topic":"钩爪","topicSub":"Pathfinder","role":"version","phase":"M","date":"10-23","sortDate":"2026-10-23","order":51,"name":"M10-A 拟合","data":"72 次实测；射程 21 m ≈ 827 u","why":"","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t09-03",{"topic":"钩爪","topicSub":"Pathfinder","role":"version","phase":"N","date":"10-24","sortDate":"2026-10-24","order":52,"name":"N6 / N7","data":"转开视角就脱钩的规则、空中超时","why":"","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t09-04",{"topic":"钩爪","topicSub":"Pathfinder","role":"version","phase":"R","date":"10-27","sortDate":"2026-10-27","order":53,"name":"F6 A-1（D-34）","data":"真实眼高打出 + 原生横向刹车：最高点差 15–22 → <b>5–10 u</b>","why":"叠图发现 Unity 拉不高","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t09-05",{"topic":"钩爪","topicSub":"Pathfinder","role":"version","phase":"N","date":"10-28","sortDate":"2026-10-28","order":54,"name":"N13 研究","data":"早脱钩是本地 dedi 反复重挂的假象；剩下的是对照场景（岩石后倾 1.86°）","why":"F7 发现 Unity 早脱钩","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t09-06",{"topic":"钩爪","topicSub":"Pathfinder","role":"version","phase":"R","date":"10-28→29","sortDate":"2026-10-28","order":55,"name":"GN 脱钩全部原生（D-50）+ G6（D-52）","data":"最高点差 <b>0.4–1.0 u</b>；天花板拉到脱钩 1.20 → <b>1.50 s</b>（R5 1.51）；撞墙上抬默认关 = R5 实际","why":"你定\"全部按原生改，旧版归档\"","sw":"SetGnDetach(false)；菜单 hsd.gn.grapple","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t09-07",{"topic":"钩爪","topicSub":"Pathfinder","role":"parallel","phase":"R","date":"10-28","sortDate":"2026-10-28","order":56,"name":"pre-GN 旧规则","data":"菜单能切回","why":"","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t09-08",{"topic":"钩爪","topicSub":"Pathfinder","role":"parallel","phase":"R","date":"10-29","sortDate":"2026-10-29","order":57,"name":"撞墙上抬（可选开关）","data":"照客户端代码 vz → 300；R5 实际被丢掉（D-51 先关 → D-52 实测后定）","why":"","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t09-09",{"topic":"钩爪","topicSub":"Pathfinder","role":"parallel","phase":"T","date":"10-29","sortDate":"2026-10-29","order":58,"name":"TF2 钩爪对照","data":"拉动和脱钩同一套；不做 TF2 预设","why":"","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t10-01",{"topic":"镜头","topicSub":"","role":"version","phase":"M","date":"10-21","sortDate":"2026-10-21","order":59,"name":"M5.5 镜头（D-05）","data":"物理解耦的第一人称镜头；你：\"自然、流畅\"","why":"第一版动作很难感觉到","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t10-02",{"topic":"镜头","topicSub":"","role":"version","phase":"N","date":"10-24","sortDate":"2026-10-24","order":60,"name":"N8-CAM 原生镜头（D-18）","data":"默认换成原生镜头","why":"REA 读到原生镜头代码","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t10-03",{"topic":"镜头","topicSub":"","role":"version","phase":"N","date":"10-25","sortDate":"2026-10-25","order":61,"name":"N10（D-24）","data":"跑步晃动加偏航（步长 0.280 s）；滑索侧倾 A 分支","why":"","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t10-04",{"topic":"镜头","topicSub":"","role":"version","phase":"S","date":"10-26","sortDate":"2026-10-26","order":62,"name":"F4 叠图","data":"镜头 <b>107 / 149</b>（72 %）：K-1 900 u 落地 32° 对 34–43°；K-2 横滚偏小；K-3 不一致","why":"开始系统对照","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t10-05",{"topic":"镜头","topicSub":"","role":"version","phase":"R","date":"10-27","sortDate":"2026-10-27","order":63,"name":"F6（D-35、D-37、D-38）","data":"落地 kick 用 R5 随机数；晃动 0.335 → 0.25；眼高 64 → 70；镜头 <b>188 / 211</b>","why":"更多测试 + 新会话 F6_seed","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t10-06",{"topic":"镜头","topicSub":"","role":"version","phase":"R","date":"10-27","sortDate":"2026-10-27","order":64,"name":"F7（D-42、D-43）","data":"钩爪 / 滑索横滚改原生弹簧：rodeo rms 4.8 → 3.0°；跳板二段跳 1.2°","why":"N12 查出平滑模型写错","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t10-07",{"topic":"镜头","topicSub":"","role":"version","phase":"R","date":"10-29","sortDate":"2026-10-29","order":65,"name":"CAM2（D-53、D-54）","data":"起跳 punch 2.5–3.7°（R5 2.4–3.9）；翻越 4.6°（R5 4.5–5.3）；滑索 10 / 10；镜头 <b>332 / 361</b>","why":"F6 留下 K-5 / K-6 / K-7，你定\"加\"和\"复测\"","sw":"SetCam2(false)；-preCam2","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t10-08",{"topic":"镜头","topicSub":"","role":"parallel","phase":"M","date":"10-21","sortDate":"2026-10-21","order":66,"name":"M5.5 镜头","data":"菜单 Camera model 能切回","why":"","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t10-09",{"topic":"镜头","topicSub":"","role":"pending","phase":"U","date":"10-30","sortDate":"2026-10-30","order":67,"name":"K-8 下滑索 punch","data":"今天定：按 R5 加（12–14° 向下）","why":"","sw":"","kind":"decision","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t10-10",{"topic":"镜头","topicSub":"","role":"pending","phase":"U","date":"10-30","sortDate":"2026-10-30","order":68,"name":"二段跳 punch","data":"今天定：三种二段跳都用 R5 原版 3.9–6.2°，1.2° 留开关","why":"","sw":"","kind":"decision","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t10-11",{"topic":"镜头","topicSub":"","role":"pending","phase":"U","date":"10-30","sortDate":"2026-10-30","order":69,"name":"滑铲跳落地 kick","data":"Unity 1.7–2.3° 对 R5 1.1–1.7°：先查原因","why":"","sw":"","kind":"decision","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t10-12",{"topic":"镜头","topicSub":"","role":"pending","phase":"U","date":"10-30","sortDate":"2026-10-30","order":70,"name":"蹲着翻越镜头时刻","data":"Unity h120 0.29 s 对 R5 0.52–0.60 s；会影响 B1，要回归","why":"","sw":"","kind":"decision","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t11-01",{"topic":"跑墙 · 二段跳","topicSub":"Apex 没有原型","role":"version","phase":"M","date":"10-22","sortDate":"2026-10-22","order":71,"name":"M7-A HSD 设计（D-08）","data":"Reference 关、Fun 开；二段跳 vz ≥ <b>259.8</b>，方向往按键转一半","why":"R5 S21 没有","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t11-02",{"topic":"跑墙 · 二段跳","topicSub":"Apex 没有原型","role":"version","phase":"M","date":"10-22","sortDate":"2026-10-22","order":72,"name":"M8-C Octane 跳板二段跳","data":"R5 实测 123 次：vz +201.81 或设成 409.25；水平 ±240","why":"","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t11-03",{"topic":"跑墙 · 二段跳","topicSub":"Apex 没有原型","role":"version","phase":"T","date":"10-28→29","sortDate":"2026-10-28","order":73,"name":"TF2 T3 / T5 实测","data":"蹬墙上冲 vz + 250 封顶 250；TF2 二段跳 vz <b>300</b>，水平 −180 / +180","why":"Apex 没有原型，去 TF2 找","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t11-04",{"topic":"跑墙 · 二段跳","topicSub":"Apex 没有原型","role":"version","phase":"N","date":"10-29","sortDate":"2026-10-29","order":74,"name":"反过来读 R5：R-1 · D-1 / D-2","data":"R5 没有 wallrunFriction，线性减速 H 500 / V 300；上冲和重力斜坡共用一个系数 f","why":"B 方案要用 R5 残留数值","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t11-05",{"topic":"跑墙 · 二段跳","topicSub":"Apex 没有原型","role":"version","phase":"T","date":"10-29","sortDate":"2026-10-29","order":75,"name":"蹬墙跑 B + TF2 二段跳 + 侧倾（D-57、D-58）","data":"B = TF2 规则 + R5 残留数值；P-02 TF2 二段跳；P-05 侧倾；都默认关","why":"T6 提案你批准","sw":"hsd.tf2.wallrun / djump / tilt","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t11-06",{"topic":"跑墙 · 二段跳","topicSub":"Apex 没有原型","role":"parallel","phase":"T","date":"10-29","sortDate":"2026-10-29","order":76,"name":"A 预设","data":"TF2 原版规则和 MP 数值","why":"","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t11-07",{"topic":"跑墙 · 二段跳","topicSub":"Apex 没有原型","role":"parallel","phase":"M","date":"10-22","sortDate":"2026-10-22","order":77,"name":"M7 设计版","data":"保留","why":"","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t11-08",{"topic":"跑墙 · 二段跳","topicSub":"Apex 没有原型","role":"pending","phase":"U","date":"10-30","sortDate":"2026-10-30","order":78,"name":"TF2 二段跳做成道具包（今天）","data":"拿到道具才能用，跳得更高更灵活","why":"","sw":"","kind":"decision","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t11-09",{"topic":"跑墙 · 二段跳","topicSub":"Apex 没有原型","role":"parallel","phase":"T","date":"10-29","sortDate":"2026-10-29","order":79,"name":"挂墙 T-10","data":"留存，以后可能做成道具","why":"","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t12-01",{"topic":"战斗和扩展道具","topicSub":"TF2X","role":"version","phase":"T","date":"10-29","sortDate":"2026-10-29","order":80,"name":"W1–W3 TF2 实测","data":"靶子、技能和投掷物、增益和特殊武器","why":"","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t12-02",{"topic":"战斗和扩展道具","topicSub":"TF2X","role":"version","phase":"N","date":"10-29","sortDate":"2026-10-29","order":81,"name":"W4 反过来测 R5","data":"Apex 有原型的 8 项在本地 R5 测（来源 Apex、归属 TF2）","why":"","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t12-03",{"topic":"战斗和扩展道具","topicSub":"TF2X","role":"version","phase":"T","date":"10-29","sortDate":"2026-10-29","order":82,"name":"TF2X 可玩版（D-59–D-65）","data":"统一伤害体系；占位血量 铁驭 100 / 泰坦 2500；按 Apex 或 TF2 各取所长","why":"HSD 最终是 PvE","sw":"Runtime/Combat/","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t12-04",{"topic":"战斗和扩展道具","topicSub":"TF2X","role":"pending","phase":"U","date":"—","sortDate":"2026-10-30","order":83,"name":"泰坦清单","data":"抉择列还空着","why":"","sw":"","kind":"decision","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t12-05",{"topic":"战斗和扩展道具","topicSub":"TF2X","role":"parallel","phase":"T","date":"10-29","sortDate":"2026-10-29","order":84,"name":"不做的 12 项","data":"兴奋剂、相位移动、电烟雾等（D-65）","why":"","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t13-01",{"topic":"火箭跳","topicSub":"","role":"version","phase":"R","date":"10-27","sortDate":"2026-10-27","order":85,"name":"R5 EPG 模拟（#64）","data":"本地拿不到能开火的 EPG；jump_kit 65000 站着 270 u，跳 + 开火 486 u","why":"","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t13-02",{"topic":"火箭跳","topicSub":"","role":"version","phase":"T","date":"10-29","sortDate":"2026-10-29","order":86,"name":"TF2 T-1 真实开火","data":"原版推力 17500 不能火箭跳；jump_kit 和 R5 同一套；TF2 飞得高是重力和爆炸半径","why":"","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t13-03",{"topic":"火箭跳","topicSub":"","role":"none","phase":"U","date":"—","sortDate":"2026-10-30","order":87,"name":"还没进游戏","data":"D-56 等你定","why":"","sw":"","kind":"version","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t13-04",{"topic":"火箭跳","topicSub":"","role":"pending","phase":"U","date":"—","sortDate":"2026-10-30","order":88,"name":"A：EPG 式物理击退","data":"研究建议先做这个，上限 1000","why":"","sw":"","kind":"decision","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["t13-05",{"topic":"火箭跳","topicSub":"","role":"pending","phase":"U","date":"—","sortDate":"2026-10-30","order":89,"name":"B：Fuse 式跳跃加成","data":"在自己炸弹旁按跳给固定速度","why":"","sw":"","kind":"decision","session":"seed 10-30（从 DECISIONS / R5-DIFF-ARCHIVE 整理）","ts":"2026-10-30T07:00:00Z","resolved":false}],["2026-10-30-pr49-79-merged",{"phase":"T","kind":"milestone","session":"项目盘点 10-30（Leader）","ts":"2026-10-30T07:10:00Z","resolved":false,"data":"04:56 合并：蹬墙跑 TF2 规则、TF2 二段跳、侧倾、TF2X 战斗道具、D-57–D-65 进 Main；W5 面板（中英文菜单）一起进去","why":"","sw":"","topicSub":"","topic":"跑墙 · 二段跳","role":"note","date":"10-30","sortDate":"2026-10-30","order":1001,"name":"PR HSD-Unity#49 + research#79 合并","rec":"HSD-Unity#49，research#79"}],["2026-10-30-titan-t0",{"phase":"T","kind":"data","session":"项目盘点 10-30（Leader）","ts":"2026-10-30T07:10:00Z","resolved":false,"data":"会话 tf2-t0-titan 在跑，成果放 TF2-Research/expansion/titan/","why":"","sw":"","topicSub":"","topic":"战斗和扩展道具","role":"pending","date":"10-30","sortDate":"2026-10-30","order":1002,"name":"泰坦 T0：召唤驾驶 + 转向和底盘实测（进行中）"}]];
+const phName={M:"M",N:"N",S:"副",R:"R5",T:"TF2",U:"今天"};
+const escH=s=>String(s??"").replace(/&/g,"&amp;").replace(/</g,"&lt;");
+// seed text carries a little <b> markup from the snapshot; session rows are escaped
+const txt=(e,f)=>String(e.session||"").startsWith("seed")?String(e[f]??""):escH(e[f]);
+const tagOf={parallel:"平行保留",pending:"还要定"};
+function cell(e,cls){const p=phName[e.phase]?e.phase:"U";return `<div class="cell ${cls}">
+ <div class="h"><span class="ph ${p}">${phName[p]}</span><span class="d">${escH(e.date)}</span>${tagOf[e.role]&&!cls.startsWith("cur")?`<span class="tag">${tagOf[e.role]}</span>`:""}</div>
+ <div class="n">${txt(e,"name")}</div>${e.data?`<div class="x">${txt(e,"data")}</div>`:""}${e.why?`<div class="w">${txt(e,"why")}</div>`:""}${e.sw?`<div class="s">${escH(e.sw)}</div>`:""}${e.rec?`<div class="s">${escH(e.rec)}</div>`:""}</div>`;}
+const key=e=>(e.sortDate||"")+String(e.order??0).padStart(14,"0");
+let ROWS=SEED;
+function render(rows){
+ const by={};rows.forEach(([id,e])=>{if(e&&e.topic)(by[e.topic]=by[e.topic]||[]).push(e)});
+ const bands=Object.entries(by).map(([k,es])=>{
+  const vs=es.filter(e=>e.role=="version"||e.role=="none").sort((a,b)=>key(a)<key(b)?-1:1);
+  const cur=vs[vs.length-1], olds=vs.slice(0,-1);
+  const alts=es.filter(e=>(e.role=="parallel"||e.role=="pending")&&!e.resolved).sort((a,b)=>key(a)<key(b)?-1:1);
+  return {k,sub:(es.find(e=>e.topicSub)||{}).topicSub||"",cur,olds,alts};
+ }).filter(b=>b.cur).sort((a,b)=>key(a.cur)<key(b.cur)?-1:1);
+ const lad=document.getElementById("ladder");
+ lad.innerHTML=`<div class="rails" id="rails"><i></i><i></i></div><div class="cap">▲ LATEST · MAIN</div>`+
+  [...bands].reverse().map(t=>`<div class="band"><span class="topic">${escH(t.k)}${t.sub?`<small>${escH(t.sub)}</small>`:""}</span>
+   <div class="olds">${[...t.olds].reverse().map(c=>cell(c,"")).join("")}</div>
+   <div class="curcol">${cell(t.cur,"cur"+(t.cur.role=="none"?" none":""))}</div>
+   <div class="alts">${t.alts.map(c=>cell(c,c.role=="pending"?"pend":"alt")).join("")}</div></div>`).join("")+
+  `<div class="cap">▼ OLDEST · 10-20</div>`;
+ rails();
+ const sel=document.getElementById("f-topic"), keep=sel.value;
+ sel.innerHTML=`<option value="">全部功能</option>`+Object.keys(by).map(k=>`<option>${escH(k)}</option>`).join("");sel.value=keep;
+ feed(rows);
+}
+function feed(rows){
+ const t=document.getElementById("f-topic").value, onlyS=document.getElementById("f-sess").getAttribute("aria-pressed")=="true";
+ const list=rows.filter(([id,e])=>e&&(!t||e.topic==t)&&(!onlyS||!String(e.session||"").startsWith("seed")))
+  .sort((a,b)=>String(b[1].ts||"").localeCompare(String(a[1].ts||""))||(b[1].order??0)-(a[1].order??0));
+ const kindName={decision:"决定",data:"数据",version:"版本",milestone:"节点",issue:"问题",plan:"计划"};
+ document.getElementById("feed").innerHTML=list.length?list.map(([id,e])=>`<div class="ev"><div class="when"><span>${escH(e.date)}</span><span>${escH(id)}</span></div>
+  <div class="body"><div class="top"><span class="ph ${phName[e.phase]?e.phase:"U"}">${phName[e.phase]||"今天"}</span><span class="kind">${kindName[e.kind]||escH(e.kind)}</span><span>${escH(e.topic)}</span><span>· ${escH(e.session)}</span>${e.resolved?"<span class=kind>已定</span>":""}</div>
+  <div class="nm">${txt(e,"name")}</div>${e.data?`<div class="x">${txt(e,"data")}</div>`:""}${e.why?`<div class="x">为什么：${txt(e,"why")}</div>`:""}</div></div>`).join(""):`<div class="ev"><div></div><div class="x">还没有会话写入的条目。</div></div>`;
+}
+function rails(){const lad=document.getElementById("ladder");const c=lad.querySelector(".curcol");if(!c)return;const r=lad.getBoundingClientRect(),b=c.getBoundingClientRect();
+ const R=document.getElementById("rails");R.style.left=(b.left-r.left)+"px";R.style.width=b.width+"px";
+ const [a,z]=R.children;a.style.left="22%";z.style.right="22%";}
+render(ROWS);
+addEventListener("resize",rails);document.fonts&&document.fonts.ready.then(rails);
+document.getElementById("f-topic").addEventListener("change",()=>feed(ROWS));
+document.getElementById("f-sess").addEventListener("click",e=>{const b=e.currentTarget;b.setAttribute("aria-pressed",String(b.getAttribute("aria-pressed")!="true"));feed(ROWS);});
+(async()=>{try{const db=await window.claude?.use?.("db");if(!db)return;
+ db.collection("log").onSnapshot(snap=>{if(snap.empty)return;ROWS=snap.docs.map(d=>[d.id,d.data()]);render(ROWS);
+  const l=document.getElementById("live");l.textContent="实时 · "+snap.size+" 条";l.style.color="var(--cur)";},()=>{});
+}catch(e){}})();
+
+</script>

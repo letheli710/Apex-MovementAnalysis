@@ -1,0 +1,257 @@
+<title>HSD 项目全局地图</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;900&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a survey map — five lanes (workstreams) of status-coded nodes, then the convergence checklist in order. */
+:root{
+  --bg:#f3f4f1; --panel:#ffffff; --ink:#1d2421; --muted:#5d6862; --line:#d5dad5; --accent:#0f6b5c;
+  --done:#2f7d4f; --done-bg:#e3f1e8;
+  --wrap:#a5650a; --wrap-bg:#fbefd9;
+  --decide:#3a55b4; --decide-bg:#e4e9fa;
+  --gap:#b23a2e; --gap-bg:#f9e2df;
+  --far:#6f7772; --far-bg:#eceeec;
+  --run:#7a3fb0; --run-bg:#efe5f8;
+  --display:"Noto Serif SC","Songti SC",serif;
+  --body:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141917; --panel:#1c2320; --ink:#e4e9e5; --muted:#9aa59f; --line:#323c37; --accent:#4fc2a9;
+  --done:#6cc58f; --done-bg:#1f3428; --wrap:#e8a94a; --wrap-bg:#3a2c14; --decide:#8ea4f2; --decide-bg:#222b47;
+  --gap:#ef7d70; --gap-bg:#41201c; --far:#a2aaa5; --far-bg:#262d2a; --run:#c39af0; --run-bg:#2f2240; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141917; --panel:#1c2320; --ink:#e4e9e5; --muted:#9aa59f; --line:#323c37; --accent:#4fc2a9;
+  --done:#6cc58f; --done-bg:#1f3428; --wrap:#e8a94a; --wrap-bg:#3a2c14; --decide:#8ea4f2; --decide-bg:#222b47;
+  --gap:#ef7d70; --gap-bg:#41201c; --far:#a2aaa5; --far-bg:#262d2a; --run:#c39af0; --run-bg:#2f2240; color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.6}
+.wrap{max-width:1280px;margin:0 auto;padding-block:28px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:36px}
+h1,h2{font-family:var(--display);text-wrap:balance;margin:0}
+h1{font-size:clamp(28px,4vw,40px);font-weight:900;letter-spacing:.01em}
+h2{font-size:22px;font-weight:600;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+h2 small{font-family:var(--body);font-size:13px;color:var(--muted);font-weight:400}
+p{margin:0}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+header{display:grid;gap:10px}
+.lede{max-width:72ch;color:var(--muted)}
+.lede b{color:var(--ink)}
+code,.mono{font-family:var(--mono);font-size:.86em}
+/* status chips */
+.legend{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid transparent;border-radius:999px;padding:3px 11px;font-size:13px;cursor:pointer;background:var(--panel);color:var(--ink);border-color:var(--line);font-family:var(--body)}
+.chip:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.chip[aria-pressed="false"]{opacity:.45}
+.dot{width:9px;height:9px;border-radius:50%;flex:none}
+.s-done .dot,.dot.done{background:var(--done)} .s-wrap .dot,.dot.wrap{background:var(--wrap)} .s-decide .dot,.dot.decide{background:var(--decide)}
+.s-gap .dot,.dot.gap{background:var(--gap)} .s-far .dot,.dot.far{background:var(--far)} .s-run .dot,.dot.run{background:var(--run)}
+/* summary */
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;display:grid;gap:2px}
+.stat .n{font-family:var(--mono);font-size:26px;font-weight:600;font-variant-numeric:tabular-nums}
+.stat .l{font-size:13px;color:var(--muted)}
+.stat.done .n{color:var(--done)} .stat.wrap .n{color:var(--wrap)} .stat.decide .n{color:var(--decide)} .stat.gap .n{color:var(--gap)} .stat.run .n{color:var(--run)} .stat.far .n{color:var(--far)}
+/* goal bars */
+.goals{display:grid;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+.goal{display:grid;grid-template-columns:minmax(0,15em) minmax(0,1fr) 4.5em;gap:12px;align-items:center}
+.bar{height:10px;border-radius:5px;background:var(--far-bg);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent)}
+.goal .pct{font-family:var(--mono);font-size:13px;text-align:right;color:var(--muted)}
+.goal .t{font-size:14px}
+.goal .t span{display:block;font-size:12px;color:var(--muted)}
+@media (max-width:560px){.goal{grid-template-columns:1fr 3.5em}.goal .bar{grid-column:1/-1;grid-row:2}}
+/* lanes */
+.lanes{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,232px),1fr));gap:14px;align-items:start}
+.lane{display:grid;gap:8px;min-width:0}
+.lane-h{border-bottom:2px solid var(--ink);padding-bottom:6px;display:grid;gap:2px}
+.lane-h b{font-family:var(--display);font-size:17px}
+.lane-h span{font-size:12px;color:var(--muted)}
+.node{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--far);border-radius:6px;padding:8px 10px;display:grid;gap:3px;min-width:0}
+.node .nt{font-weight:500;font-size:14px;display:flex;gap:6px;align-items:baseline;justify-content:space-between}
+.node .nt em{font-style:normal;font-family:var(--mono);font-size:11px;padding:1px 6px;border-radius:4px;white-space:nowrap}
+.node .nd{font-size:12.5px;color:var(--muted);overflow-wrap:anywhere}
+.node.done{border-left-color:var(--done)} .node.done em{background:var(--done-bg);color:var(--done)}
+.node.wrap{border-left-color:var(--wrap)} .node.wrap em{background:var(--wrap-bg);color:var(--wrap)}
+.node.decide{border-left-color:var(--decide)} .node.decide em{background:var(--decide-bg);color:var(--decide)}
+.node.gap{border-left-color:var(--gap)} .node.gap em{background:var(--gap-bg);color:var(--gap)}
+.node.far{border-left-color:var(--far)} .node.far em{background:var(--far-bg);color:var(--far)}
+.node.run{border-left-color:var(--run)} .node.run em{background:var(--run-bg);color:var(--run)}
+.node.hide{display:none}
+/* convergence */
+.steps{display:grid;gap:10px;counter-reset:s;margin:0;padding:0;list-style:none}
+.steps li{counter-increment:s;display:grid;grid-template-columns:2.2em minmax(0,1fr);gap:12px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+.steps li::before{content:counter(s);font-family:var(--mono);font-weight:600;font-size:20px;color:var(--accent);line-height:1.2}
+.steps b{display:block}
+.steps .why{font-size:13px;color:var(--muted)}
+.steps .who{font-family:var(--mono);font-size:11.5px;color:var(--muted);margin-top:4px}
+/* decision table */
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--panel)}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:14px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;letter-spacing:.06em;color:var(--muted);font-weight:500;background:var(--bg)}
+tr:last-child td{border-bottom:0}
+td .mono{color:var(--muted)}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:18px}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;display:grid;gap:8px;min-width:0}
+.box ul{margin:0;padding-left:1.2em;display:grid;gap:4px;font-size:14px}
+.box h3{margin:0;font-size:16px;font-family:var(--display)}
+footer{font-size:12.5px;color:var(--muted)}
+section{display:grid;gap:14px}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">High Speed Doom · 2026-10-30 盘点</div>
+  <h1>HSD 项目全局地图</h1>
+  <p class="lede"><b>一句话：Apex 研究和复刻已经收尾，TF2 研究做完、停在两个 PR 上，离"能玩的练习游戏"还差动画、关卡和平衡。</b>
+  现在要做的是收敛：把没进 git 的东西放进去，把开着的 PR 合掉，把等你定的事一次定完，然后决定下一阶段做游戏本体。</p>
+</header>
+
+<section aria-label="总数">
+  <div class="summary" id="summary"></div>
+</section>
+
+<section>
+  <h2>离最初目标多远 <small>最初目标：让 Apex 玩家练移动手感的 Unity 游戏</small></h2>
+  <div class="goals">
+    <div class="goal"><div class="t">研究 Apex 移动<span>基础、高级技巧、9 个传奇；大部分有原生解释</span></div><div class="bar"><i style="width:95%"></i></div><div class="pct">≈ 95%</div></div>
+    <div class="goal"><div class="t">转化进 Unity（Reference）<span>平地 99.6%，攀爬 89%，技能 91%，镜头 89%</span></div><div class="bar"><i style="width:88%"></i></div><div class="pct">≈ 88%</div></div>
+    <div class="goal"><div class="t">TF2 扩展（蹬墙跑 / 二段跳 / 道具）<span>研究完，实现在 PR #49，未合并未试玩</span></div><div class="bar"><i style="width:70%"></i></div><div class="pct">≈ 70%</div></div>
+    <div class="goal"><div class="t">可玩的练习游戏<span>有练习图、训练场、技能槽；缺动画、正式关卡、平衡</span></div><div class="bar"><i style="width:30%"></i></div><div class="pct">≈ 30%</div></div>
+  </div>
+  <p class="lede" style="font-size:13px">百分比是按完成项粗估的，用来看相对位置，不是测出来的数字。镜头一致率按 DECISIONS 里 325 / 367 算。</p>
+</section>
+
+<section>
+  <h2>全局地图 <small>点上面的颜色可以只看某一类</small></h2>
+  <div class="legend" id="legend"></div>
+  <div class="lanes" id="lanes"></div>
+</section>
+
+<section>
+  <h2>收敛顺序 <small>建议按这个顺序做，前两步风险最大</small></h2>
+  <ol class="steps">
+    <li><div><b>把 TF2-Research 放进 git</b><div class="why">205 MB 的 TF2 报告、runner、W1–W4 成果都只在本机，丢了就没了。建议作为研究仓库里的 <code>tf2/</code> 子目录或单独仓库，原始数据按体积决定要不要进。</div><div class="who">Agent 做 · 你选放哪里</div></div></li>
+    <li><div><b>等 W5 面板会话做完，你试玩 TF2X，再合并 HSD-Unity#49 + research#79</b><div class="why">这是现在唯一开着的两个 PR。W5 正在 <code>HSD-Unity-TF2</code> 里做中英文菜单，改动还没提交，等它推上去再试玩。</div><div class="who">正在跑 · 然后你试玩 + 批准合并</div></div></li>
+    <li><div><b>一次"等你定"的集中决定</b><div class="why">火箭跳 A/B、泰坦清单抉择列、三个镜头小项、回放电机 N7 项。下面的表格一次列全，定完写进 DECISIONS。</div><div class="who">你定 · Agent 记录</div></div></li>
+    <li><div><b>一次日志 PR</b><div class="why">DECISIONS "现在的状态"停在 10-28，RESEARCH-OVERVIEW 停在 10-27；补 10-29 / 10-30 的进展和第 3 步的决定。TODO.md 和 OVERVIEW 现在不在任何仓库里，顺便收进去。</div><div class="who">Agent 做</div></div></li>
+    <li><div><b>工作区清理</b><div class="why">13 个已合并的工作树、主 checkout 落后 11 个提交、HSD-Unity 主 checkout 停在旧分支、22 个未跟踪数据文件夹、<code>origin/cloud/check-1</code>、GN 工作树里的零散改动、侧栏里的 btw 分叉会话。</div><div class="who">Agent 做 · 删分支和数据前问你</div></div></li>
+    <li><div><b>修 runner 锁的竞争 bug</b><div class="why">两个会话同时等锁可能同时拿到。只在下次并行实测前必须修，如果下一阶段不再并行跑 TF2/R5 可以挂着。</div><div class="who">Agent 做 · 可延后</div></div></li>
+    <li><div><b>定下一阶段：做游戏本体</b><div class="why">研究线可以宣告收尾。剩下离目标最远的是动画、正式关卡、技能配置和平衡、火箭跳、泰坦。这需要你给一个新的阶段计划。</div><div class="who">你定方向</div></div></li>
+  </ol>
+</section>
+
+<section>
+  <h2>等你定的事 <small>一次定完就能关掉一大片</small></h2>
+  <div class="tbl"><table>
+    <thead><tr><th>事项</th><th>选项 / 现状</th><th>研究建议</th><th>出处</th></tr></thead>
+    <tbody>
+      <tr><td><b>HSD 火箭跳</b>（D-56）</td><td>A：EPG 物理击退（推向身体中心、随距离衰减、上限 1000）；B：Fuse 式跳跃加成</td><td>先做 A，用 jump_kit 65000，护盾和地面门槛先不做</td><td class="mono">epg/EPG-ROCKET-JUMP.md §7<br>TF2 epg/T1-T7-REPORT.md</td></tr>
+      <tr><td><b>泰坦清单</b>（T-8）</td><td>3 种底盘 + 7 台泰坦，"抉择"列全空</td><td>选 3–4 台；先做第 0 节：召唤驾驶 + 转向实测</td><td class="mono">TF2-Research/expansion/TITAN-LIST.md</td></tr>
+      <tr><td><b>K-8 下滑索镜头 punch</b></td><td>原生向下 12–14°、横滚 ±1–5°，Unity 没有</td><td>按 D-36 原则应加</td><td class="mono">DECISIONS 还没结论 · CAM2</td></tr>
+      <tr><td><b>二段跳 punch</b></td><td>原生 3.9–6.2°；现在是 F7 设计的 1.2°</td><td>按 D-36 应换原生，旧版留开关</td><td class="mono">CAM2</td></tr>
+      <tr><td><b>滑铲跳落地 kick 偏大</b></td><td>Unity 约是 R5 的 1.5 倍，原因没查</td><td>先查原因再定</td><td class="mono">CAM2</td></tr>
+      <tr><td><b>回放电机的其余 N7 项</b></td><td>斜坡、地面摩擦、空中额外加速仍是旧规则</td><td>回放电机只用于对照，可以定"不换"直接关掉</td><td class="mono">DECISIONS 还没结论</td></tr>
+      <tr><td><b>E1 / E2 / E3</b></td><td>二段跳同时装备、Fun 斜坡 1.6 倍、跳跃输入缓冲</td><td>按 D-09 留到游戏接近完成时；不用现在定</td><td class="mono">DEFERRED-DESIGN-TODO.md</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="two">
+  <div class="box">
+    <h3>真正的缺口（还没开始）</h3>
+    <ul>
+      <li>动画：第一人称手臂 / 武器，没有动画手感对照永远靠镜头</li>
+      <li>正式关卡：只有练习图和组合训练场，没有关卡设计</li>
+      <li>技能配置和平衡：Reference / Fun 两套，没有游戏层的配置方案</li>
+      <li>火箭跳：研究完，Unity 没做</li>
+      <li>泰坦：只读了设置文件，召唤 / 驾驶都没跑通</li>
+      <li>蹲姿翻越的镜头时刻（B1 遗留）</li>
+    </ul>
+  </div>
+  <div class="box">
+    <h3>明确不做 / 远期（不算欠账）</h3>
+    <ul>
+      <li>T-3 TF2 钩爪预设、T-5 继承关系、T-6 其他战术技能、T-9 战役机制：不符合研究标准，已停</li>
+      <li>Loba、Alter、Ash 冲刺：搁置（D-07 / D-11，SHELVED-ABILITIES.md）</li>
+      <li>T-4 Gauntlet 训练场：远期</li>
+      <li>T-10 挂墙、T-11 窗户辅助、P-03 连跳开关：低优先，留存</li>
+      <li>LS / RAS、旧 Revenant-Wraith 配置：已结案（D-39 / D-40）</li>
+    </ul>
+  </div>
+</section>
+
+<footer>依据：两个仓库的 origin/main（research 到 #78，HSD-Unity 到 #48）、所有工作树的 git 状态、开着的 PR、TODO.md、DECISIONS.md、DEFERRED-DESIGN-TODO.md、TF2-Research 目录、正在运行的会话。2026-10-30 盘点。</footer>
+</div>
+
+<script>
+const S={done:"已完成",run:"进行中",wrap:"收尾没做",decide:"等你定",gap:"缺口",far:"远期 / 低优先"};
+const lanes=[
+ {t:"Apex 研究",s:"R5 实测 + 原生代码",n:[
+  ["done","M0–M3 自动跑测 + 基础移动","lurch、墙、翻越模型；120 fps 固定"],
+  ["done","M4–M10 传奇能力","9 个传奇 + Zipline Gun 实测"],
+  ["done","N0–N13 原生代码","Ghidra / Frida，对照表 87 项基本一致"],
+  ["done","B1 S27 翻越加速",""],
+  ["done","EPG 火箭跳模拟（#64）","本地拿不到能开火的 EPG"],
+  ["done","R6 斜坡滑铲实测（#67）",""],
+  ["done","G6 撞墙上抬实测（#78）","R5 实际丢掉上抬，默认关"],
+  ["done","F-2 原地跳高查根源（#76）","测试工具造成，不改"],
+  ["wrap","22 个实验数据文件夹没进仓库","10-23 到 10-27 的 B1 / N8 / N10 / F6 原始数据"]]},
+ {t:"Unity 复刻",s:"HSD-Unity · Reference / Fun",n:[
+  ["done","M5 / M5.5 第一版 + 镜头","D-05 你认可的镜头"],
+  ["done","N7 / N8 按原版改 Reference","12 项全部改原版，镜头默认原生"],
+  ["done","F1–F7 叠图手感对照","A-1、K-1–K-4、横滚平滑、FOV"],
+  ["done","R6U / RPS / RUD / GN / G6 / CAM2","斜坡、回放电机、钩爪脱钩、镜头叠加"],
+  ["done","基线","EditMode 2181，课程单圈 78.88 s，build G6"],
+  ["decide","K-8 下滑索 punch",""],
+  ["decide","二段跳 punch 换原生？",""],
+  ["decide","滑铲跳落地 kick 偏大",""],
+  ["decide","回放电机其余 N7 项",""],
+  ["gap","蹲姿翻越镜头时刻","B1 遗留"]]},
+ {t:"TF2 研究",s:"Northstar 本地私服",n:[
+  ["done","T0–T6 环境 + 实测 + 提案","P-01 / 02 / 05 已批准"],
+  ["done","T-1 / T-7 EPG 真实开火 + 投掷物",""],
+  ["done","D-1 / D-2 + 蹬墙跑 B 规格",""],
+  ["done","Overnight N1–N6","窗户辅助、钩爪对照、泰坦设置"],
+  ["done","W1–W4 扩展研究","靶子、技能投掷物、增益、Apex 原型 8 项"],
+  ["gap","TF2-Research 不在 git","205 MB 只在本机，风险最大"],
+  ["wrap","runner 锁竞争 bug","并行实测前要修"],
+  ["decide","泰坦清单抉择列","T-8 第 0 节没开始"],
+  ["far","T-10 挂墙 / T-11 窗户辅助",""],
+  ["far","T-4 Gauntlet",""]]},
+ {t:"TF2 进 Unity",s:"分支 tf2/wallrun-rules",n:[
+  ["done","蹬墙跑 TF2 规则 B / A","D-57"],
+  ["done","TF2 二段跳 + 侧倾","D-58"],
+  ["done","TF2X 战斗道具可玩版","W5，D-59..D-65，build TF2X"],
+  ["run","W5 面板优化（中英文菜单）","正在跑，改动未提交"],
+  ["wrap","HSD-Unity#49 未合并","等 W5 + 你试玩"],
+  ["wrap","research#79 未合并","D-57..D-65 只在这里"],
+  ["decide","你试玩 TF2X",""],
+  ["far","P-03 连跳开关","低优先"]]},
+ {t:"游戏本体",s:"离最初目标最远",n:[
+  ["done","练习图 + 组合训练场 + 技能槽","M5 / M6-C"],
+  ["decide","火箭跳 A / B（D-56）","研究完，等你选"],
+  ["gap","动画",""],
+  ["gap","正式关卡",""],
+  ["gap","技能配置和平衡",""],
+  ["gap","泰坦（3–4 台）","要先跑通召唤驾驶"],
+  ["far","E1–E3 设计暂缓项","接近完成时再定"]]},
+ {t:"工程卫生",s:"git / 日志 / 工作区",n:[
+  ["wrap","DECISIONS 状态停在 10-28",""],
+  ["wrap","RESEARCH-OVERVIEW 停在 10-27","还写着没有开着的 PR"],
+  ["wrap","TODO.md / OVERVIEW 不在仓库","工作区根目录不是 git"],
+  ["wrap","13 个已合并工作树没清理",""],
+  ["wrap","主 checkout 落后 / 停在旧分支","研究落后 11，Unity 在 rud 分支"],
+  ["wrap","origin/cloud/check-1 无主分支","10-21"],
+  ["wrap","GN 工作树零散改动","ProjectSettings"],
+  ["done","记忆里过期 PR 状态","10-30 已改"]]}
+];
+const on=new Set(Object.keys(S));
+const counts={};lanes.forEach(l=>l.n.forEach(n=>counts[n[0]]=(counts[n[0]]||0)+1));
+document.getElementById("summary").innerHTML=["done","run","wrap","decide","gap","far"].map(k=>`<div class="stat ${k}"><span class="n">${counts[k]||0}</span><span class="l">${S[k]}</span></div>`).join("");
+const lg=document.getElementById("legend");
+lg.innerHTML=Object.keys(S).map(k=>`<button class="chip s-${k}" id="chip-${k}" data-k="${k}" aria-pressed="true"><span class="dot"></span>${S[k]}</button>`).join("");
+document.getElementById("lanes").innerHTML=lanes.map(l=>`<div class="lane"><div class="lane-h"><b>${l.t}</b><span>${l.s}</span></div>${l.n.map(n=>`<div class="node ${n[0]}" data-k="${n[0]}"><div class="nt">${n[1]}<em>${S[n[0]]}</em></div>${n[2]?`<div class="nd">${n[2]}</div>`:""}</div>`).join("")}</div>`).join("");
+lg.addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;const k=b.dataset.k;
+ if(on.has(k)){on.delete(k)}else{on.add(k)}b.setAttribute("aria-pressed",on.has(k));
+ document.querySelectorAll(".node").forEach(n=>n.classList.toggle("hide",!on.has(n.dataset.k)));});
+</script>
