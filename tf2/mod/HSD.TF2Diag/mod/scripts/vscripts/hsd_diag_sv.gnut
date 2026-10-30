@@ -1,0 +1,343 @@
+// HSD.TF2Diag server side: logs the local player every server tick and
+// answers setup commands from the client-side experiment driver.
+// Log line (one per tick, parsed by runtime/runner.py):
+//   HSDDIAG T <time> <ox> <oy> <oz> <vx> <vy> <vz> <pitch> <yaw> <ground> <wallrun> <wallhang> <slide> <crouch> <sprint> <tag>
+global function HsdDiag_InitServer
+
+struct
+{
+	string tag = "-"
+} file
+
+void function HsdDiag_InitServer()
+{
+	AddCallback_OnPlayerRespawned( HsdDiag_OnRespawn )
+	AddClientCommandCallback( "hsd_setup", HsdDiag_CC_Setup )
+	AddClientCommandCallback( "hsd_tag", HsdDiag_CC_Tag )
+	AddClientCommandCallback( "hsd_query", HsdDiag_CC_Query )
+	AddClientCommandCallback( "hsd_kick", HsdDiag_CC_Kick )
+	AddClientCommandCallback( "hsd_stim", HsdDiag_CC_Stim )
+	AddClientCommandCallback( "hsd_info", HsdDiag_CC_Info )
+	AddClientCommandCallback( "hsd_weapon", HsdDiag_CC_Weapon )
+	AddClientCommandCallback( "hsd_probe", HsdDiag_CC_Probe )
+	AddClientCommandCallback( "hsd_trace", HsdDiag_CC_Trace )
+	AddClientCommandCallback( "hsd_class", HsdDiag_CC_Class )
+	AddClientCommandCallback( "hsd_offhand", HsdDiag_CC_Offhand )
+	AddClientCommandCallback( "hsd_gpower", HsdDiag_CC_GPower )
+	AddClientCommandCallback( "hsd_windows", HsdDiag_CC_Windows )
+	AddClientCommandCallback( "hsd_hp", HsdDiag_CC_Hp )
+	AddClientCommandCallback( "hsd_throw", HsdDiag_CC_Throw )
+	AddClientCommandCallback( "hsd_detonate", HsdDiag_CC_Detonate )
+	AddClientCommandCallback( "hsd_blast", HsdDiag_CC_Blast )
+	// T-1 / T-7: every hit on the local player (explosion self-damage, knockback)
+	AddDamageCallback( "player", HsdDiag_OnDamage )
+	// a run's local server is a test server: keep it off the Northstar server list.
+	// autoexec_ns_server.cfg sets this to 1 when the server starts, after the UI ran.
+	if ( GetConVarBool( "hsd_autorun" ) )
+		SetConVarBool( "ns_report_server_to_masterserver", false )
+	printt( "HSDDIAG INIT server insecure=" + GetConVarString( "ns_auth_allow_insecure" ) + " report=" + GetConVarString( "ns_report_server_to_masterserver" ) )
+}
+
+void function HsdDiag_OnRespawn( entity player )
+{
+	thread HsdDiag_LogLoop( player )
+}
+
+string function B( bool b )
+{
+	return b ? "1" : "0"
+}
+
+void function HsdDiag_LogLoop( entity player )
+{
+	player.EndSignal( "OnDestroy" )
+	player.EndSignal( "OnDeath" )
+	while ( true )
+	{
+		vector o = player.GetOrigin()
+		vector v = player.GetVelocity()
+		vector a = player.EyeAngles()
+		printt( format( "HSDDIAG T %.4f %.3f %.3f %.3f %.3f %.3f %.3f %.2f %.2f %s %s %s %s %s %s %s",
+			Time(), o.x, o.y, o.z, v.x, v.y, v.z, a.x, a.y,
+			B( player.IsOnGround() ), B( player.IsWallRunning() ), B( player.IsWallHanging() ),
+			B( player.IsSliding() ), B( player.IsCrouched() ), B( player.IsSprinting() ), file.tag ) )
+		WaitFrame()
+	}
+}
+
+// hsd_setup ox oy oz vx vy vz pitch yaw
+bool function HsdDiag_CC_Setup( entity player, array<string> args )
+{
+	if ( args.len() < 8 )
+		return true
+	player.SetOrigin( < float( args[0] ), float( args[1] ), float( args[2] ) > )
+	player.SetVelocity( < float( args[3] ), float( args[4] ), float( args[5] ) > )
+	player.SetAngles( < float( args[6] ), float( args[7] ), 0.0 > )
+	printt( "HSDDIAG SETUP " + args[0] + " " + args[1] + " " + args[2] + " " + args[3] + " " + args[4] + " " + args[5] + " " + args[6] + " " + args[7] )
+	return true
+}
+
+// hsd_kick vx vy vz: set the velocity where the player stands (no teleport)
+bool function HsdDiag_CC_Kick( entity player, array<string> args )
+{
+	if ( args.len() < 3 )
+		return true
+	player.SetVelocity( < float( args[0] ), float( args[1] ), float( args[2] ) > )
+	printt( "HSDDIAG KICK " + args[0] + " " + args[1] + " " + args[2] + " " + format( "%.4f", Time() ) )
+	return true
+}
+
+// hsd_tag <name>: label the following log lines (one experiment trial)
+bool function HsdDiag_CC_Tag( entity player, array<string> args )
+{
+	file.tag = args.len() > 0 ? args[0] : "-"
+	printt( "HSDDIAG TAG " + file.tag + " " + format( "%.4f", Time() ) )
+	return true
+}
+
+// hsd_query <setfile key> ...: print current player settings fields
+bool function HsdDiag_CC_Query( entity player, array<string> args )
+{
+	foreach ( string key in args )
+		printt( "HSDDIAG Q " + key + " " + string( player.GetPlayerSettingsField( key ) ) )
+	return true
+}
+
+// hsd_stim <duration>: the Stim ability's effect (sh_stim.gnut StimPlayer, severity 0.4)
+bool function HsdDiag_CC_Stim( entity player, array<string> args )
+{
+	float dur = args.len() > 0 ? float( args[0] ) : 5.0
+	StimPlayer( player, dur )
+	printt( "HSDDIAG STIM " + dur + " " + format( "%.4f", Time() ) )
+	return true
+}
+
+// hsd_info: settings set, weapons and offhands
+bool function HsdDiag_CC_Info( entity player, array<string> args )
+{
+	printt( "HSDDIAG INFO settings " + player.GetPlayerSettings() )
+	entity active = player.GetActiveWeapon()
+	printt( "HSDDIAG INFO active " + ( IsValid( active ) ? active.GetWeaponClassName() : "none" ) )
+	foreach ( entity w in player.GetMainWeapons() )
+		printt( "HSDDIAG INFO main " + w.GetWeaponClassName() )
+	foreach ( entity w in player.GetOffhandWeapons() )
+		printt( "HSDDIAG INFO offhand " + w.GetWeaponClassName() )
+	printt( "HSDDIAG INFO report " + GetConVarString( "ns_report_server_to_masterserver" ) )
+	printt( "HSDDIAG INFO phase " + ( player.IsPhaseShifted() ? "1" : "0" ) + format( " %.4f", Time() ) )
+	return true
+}
+
+// hsd_weapon <class> [mod ...]: make <class> (with the given mods) the active main weapon;
+// it is taken and given again so the mods always apply
+bool function HsdDiag_CC_Weapon( entity player, array<string> args )
+{
+	if ( args.len() < 1 )
+		return true
+	array<string> mods = []
+	for ( int i = 1; i < args.len(); i++ )
+		mods.append( args[i] )
+	foreach ( entity w in player.GetMainWeapons() )
+	{
+		if ( w.GetWeaponClassName() == args[0] )
+			player.TakeWeaponNow( args[0] )
+	}
+	array<entity> mains = player.GetMainWeapons()
+	if ( mains.len() >= 3 )
+		player.TakeWeaponNow( mains[0].GetWeaponClassName() )
+	player.GiveWeapon( args[0], mods )
+	player.SetActiveWeaponByName( args[0] )
+	string m = ""
+	foreach ( string x in mods )
+		m += " " + x
+	printt( "HSDDIAG WEAPON " + args[0] + m + " " + format( "%.4f", Time() ) )
+	return true
+}
+
+// hsd_probe [range]: horizontal traces around the player every 15 deg at four heights,
+// plus one down; prints hit point, normal and distance (to find a wall-run wall)
+bool function HsdDiag_CC_Probe( entity player, array<string> args )
+{
+	float range = args.len() > 0 ? float( args[0] ) : 2000.0
+	vector o = player.GetOrigin()
+	printt( format( "HSDDIAG PROBE origin %.1f %.1f %.1f", o.x, o.y, o.z ) )
+	foreach ( float dz in [ 20.0, 120.0, 240.0, 400.0 ] )
+	{
+		for ( int yaw = 0; yaw < 360; yaw += 15 )
+		{
+			vector dir = AnglesToForward( < 0.0, float( yaw ), 0.0 > )
+			vector start = o + < 0.0, 0.0, dz >
+			TraceResults tr = TraceLine( start, start + dir * range, player, TRACE_MASK_SOLID_BRUSHONLY, TRACE_COLLISION_GROUP_NONE )
+			if ( tr.fraction < 1.0 )
+				printt( format( "HSDDIAG PROBE %d %.0f %.1f %.1f %.1f %.3f %.3f %.3f %.1f", yaw, dz,
+					tr.endPos.x, tr.endPos.y, tr.endPos.z, tr.surfaceNormal.x, tr.surfaceNormal.y, tr.surfaceNormal.z, tr.fraction * range ) )
+		}
+	}
+	TraceResults down = TraceLine( o + < 0.0, 0.0, 10.0 >, o - < 0.0, 0.0, 2000.0 >, player, TRACE_MASK_SOLID_BRUSHONLY, TRACE_COLLISION_GROUP_NONE )
+	printt( format( "HSDDIAG PROBE down %.1f %.1f %.1f", down.endPos.x, down.endPos.y, down.endPos.z ) )
+	return true
+}
+
+// hsd_trace sx sy sz ex ey ez: one world trace; prints hit point, normal and fraction
+bool function HsdDiag_CC_Trace( entity player, array<string> args )
+{
+	if ( args.len() < 6 )
+		return true
+	vector a = < float( args[0] ), float( args[1] ), float( args[2] ) >
+	vector b = < float( args[3] ), float( args[4] ), float( args[5] ) >
+	TraceResults tr = TraceLine( a, b, player, TRACE_MASK_SOLID_BRUSHONLY, TRACE_COLLISION_GROUP_NONE )
+	printt( format( "HSDDIAG TR %.0f %.0f %.0f %.0f %.0f %.0f %.1f %.1f %.1f %.3f %.3f %.3f %.4f", a.x, a.y, a.z, b.x, b.y, b.z,
+		tr.endPos.x, tr.endPos.y, tr.endPos.z, tr.surfaceNormal.x, tr.surfaceNormal.y, tr.surfaceNormal.z, tr.fraction ) )
+	return true
+}
+
+// hsd_hp <n>: max health and health (explosion self-damage would kill a 100 hp pilot)
+bool function HsdDiag_CC_Hp( entity player, array<string> args )
+{
+	int hp = args.len() > 0 ? int( args[0] ) : 1000
+	player.SetMaxHealth( hp )
+	player.SetHealth( hp )
+	printt( "HSDDIAG HP " + hp + " " + format( "%.4f", Time() ) )
+	return true
+}
+
+// hsd_throw <offhand class> <fuse> [dx dy dz]: the ordnance slot gets <class>, and one of its
+// projectiles is fired at rest at the player's feet + (dx, dy, dz), with the weapon's own
+// damage and knockback (FireWeaponGrenade, as the throw scripts do; the R5 #64 frag control)
+bool function HsdDiag_CC_Throw( entity player, array<string> args )
+{
+	if ( args.len() < 2 )
+		return true
+	entity w = player.GetOffhandWeapon( OFFHAND_ORDNANCE )
+	if ( !IsValid( w ) || w.GetWeaponClassName() != args[0] )
+	{
+		if ( IsValid( w ) )
+			player.TakeOffhandWeapon( OFFHAND_ORDNANCE )
+		player.GiveOffhandWeapon( args[0], OFFHAND_ORDNANCE )
+		w = player.GetOffhandWeapon( OFFHAND_ORDNANCE )
+	}
+	vector off = args.len() >= 5 ? < float( args[2] ), float( args[3] ), float( args[4] ) > : < 0.0, 0.0, 2.0 >
+	vector pos = player.GetOrigin() + off
+	int dt = damageTypes.explosive
+	entity nade = w.FireWeaponGrenade( pos, < 0.0, 0.0, -1.0 >, < 0.0, 0.0, 0.0 >, float( args[1] ), dt, dt, false, true, true )
+	printt( format( "HSDDIAG THROW %s %.3f %.1f %.1f %.1f %s %.4f", args[0], float( args[1] ), pos.x, pos.y, pos.z, IsValid( nade ) ? "ok" : "none", Time() ) )
+	return true
+}
+
+// hsd_detonate: set off the player's satchels
+bool function HsdDiag_CC_Detonate( entity player, array<string> args )
+{
+	Player_DetonateSatchels( player )
+	printt( "HSDDIAG DETONATE " + format( "%.4f", Time() ) )
+	return true
+}
+
+void function HsdDiag_OnDamage( entity ent, var damageInfo )
+{
+	vector f = DamageInfo_GetDamageForce( damageInfo )
+	vector p = DamageInfo_GetDamagePosition( damageInfo )
+	vector o = ent.GetOrigin()
+	entity inf = DamageInfo_GetInflictor( damageInfo )
+	string infName = IsValid( inf ) ? inf.GetClassName() : "none"
+	printt( format( "HSDDIAG DMG %.4f %.2f %.1f %.1f %.1f %.1f %.1f %.1f %.1f %.1f %.1f %d %s", Time(), DamageInfo_GetDamage( damageInfo ),
+		f.x, f.y, f.z, p.x - o.x, p.y - o.y, p.z - o.z, o.x, o.y, o.z, ent.GetHealth(), infName ) )
+}
+
+// hsd_blast <force> [damage] [dx dy dz]: a scripted explosion at the feet + (dx, dy, dz) with the
+// given knockback force (EPG radii 52 / 180), as the R5 #64 force sweep did
+bool function HsdDiag_CC_Blast( entity player, array<string> args )
+{
+	if ( args.len() < 1 )
+		return true
+	float force = float( args[0] )
+	float dmg = args.len() > 1 ? float( args[1] ) : 10.0
+	vector off = args.len() >= 5 ? < float( args[2] ), float( args[3] ), float( args[4] ) > : < 0.0, 0.0, 2.0 >
+	vector pos = player.GetOrigin() + off
+	RadiusDamage( pos, player, player, dmg, dmg, 52, 180, 0, 0, force, damageTypes.explosive, eDamageSourceId.mp_weapon_frag_grenade )
+	printt( format( "HSDDIAG BLAST %.0f %.0f %.1f %.1f %.1f %.4f", force, dmg, pos.x, pos.y, pos.z, Time() ) )
+	return true
+}
+
+// hsd_class <setfile> [mods...]: switch the player settings (e.g. the cut pilot_boost_male)
+bool function HsdDiag_CC_Class( entity player, array<string> args )
+{
+	if ( args.len() < 1 )
+		return true
+	array<string> mods
+	for ( int i = 1; i < args.len(); i++ )
+		mods.append( args[i] )
+	player.SetPlayerSettingsWithMods( args[0], mods )
+	printt( "HSDDIAG CLASS " + player.GetPlayerSettings() + " " + format( "%.4f", Time() ) )
+	return true
+}
+
+// hsd_offhand <weapon> <slot>: replace the offhand in <slot> (1 = tactical) with a fresh copy (full charge)
+bool function HsdDiag_CC_Offhand( entity player, array<string> args )
+{
+	if ( args.len() < 2 )
+		return true
+	int slot = int( args[1] )
+	entity old = player.GetOffhandWeapon( slot )
+	if ( IsValid( old ) )
+		player.TakeOffhandWeapon( slot )
+	player.GiveOffhandWeapon( args[0], slot )
+	printt( "HSDDIAG OFFHAND " + args[0] + " " + slot + " " + format( "%.4f", Time() ) )
+	return true
+}
+
+// hsd_gpower <value>: set the grapple suit power (0..100; one pull costs grapple_power_required)
+bool function HsdDiag_CC_GPower( entity player, array<string> args )
+{
+	if ( args.len() > 0 )
+		player.SetSuitGrapplePower( float( args[0] ) )
+	printt( "HSDDIAG GPOWER " + player.GetSuitGrapplePower() + format( " %.4f", Time() ) )
+	return true
+}
+
+// hsd_windows x0 y0 x1 y1 step z: scan a grid with the engine's GetWindowHint (8 directions,
+// 1000 u ahead, gravity 600) and print every distinct hint found (origin, angles, class)
+bool function HsdDiag_CC_Windows( entity player, array<string> args )
+{
+	if ( args.len() < 6 )
+		return true
+	float vs = args.len() > 6 ? float( args[6] ) : 1.0
+	float dist = args.len() > 7 ? float( args[7] ) : 1000.0
+	float grav = args.len() > 8 ? float( args[8] ) : 600.0
+	float margin = args.len() > 9 ? float( args[9] ) : 0.0
+	thread HsdDiag_WindowScan( player, float( args[0] ), float( args[1] ), float( args[2] ), float( args[3] ), float( args[4] ), float( args[5] ), vs, dist, grav, margin )
+	return true
+}
+
+void function HsdDiag_WindowScan( entity player, float x0, float y0, float x1, float y1, float step, float z, float vs, float dist, float grav, float margin )
+{
+	table<string, bool> seen
+	int n = 0
+	for ( float x = x0; x <= x1; x += step )
+	{
+		for ( float y = y0; y <= y1; y += step )
+		{
+			for ( int yaw = 0; yaw < 360; yaw += 45 )
+			{
+				vector dir = AnglesToForward( < 0.0, float( yaw ), 0.0 > )
+				var hint = GetWindowHint( < x, y, z >, 16.0, 72.0, dir * vs, dist, grav, margin, player )
+				n++
+				if ( hint == null )
+					continue
+				if ( type( hint ) != "instance" )
+				{
+					printt( "HSDDIAG WINTYPE " + type( hint ) + " " + string( hint ) )
+					continue
+				}
+				entity h = expect entity( hint )
+				vector o = h.GetOrigin()
+				vector a = h.GetAngles()
+				string key = format( "%.0f %.0f %.0f", o.x, o.y, o.z )
+				if ( key in seen )
+					continue
+				seen[ key ] <- true
+				printt( format( "HSDDIAG WIN %.1f %.1f %.1f %.1f %.1f %.1f %s from %.0f %.0f %.0f yaw %d", o.x, o.y, o.z, a.x, a.y, a.z, h.GetClassName(), x, y, z, yaw ) )
+			}
+		}
+		WaitFrame()
+	}
+	printt( "HSDDIAG WINSCAN done vs=" + vs + " dist=" + dist + " grav=" + grav + " margin=" + margin + " queries=" + n + " found=" + seen.len() )
+}

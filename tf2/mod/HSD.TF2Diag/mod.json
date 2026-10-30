@@ -1,0 +1,90 @@
+{
+	"Name": "HSD.TF2Diag",
+	"Description": "HSD research: per-frame movement log and scripted experiments (local server only)",
+	"Version": "0.3.0",
+	"LoadPriority": 2,
+	"RequiredOnClient": false,
+	"ConVars": [
+		{
+			"Name": "hsd_autorun",
+			"DefaultValue": "0"
+		},
+		{
+			"Name": "hsd_map",
+			"DefaultValue": "mp_lf_stacks"
+		}
+	],
+	"Scripts": [
+		{
+			"Path": "hsd_diag_drv.gnut",
+			"RunOn": "CLIENT && MP"
+		},
+		{
+			"Path": "hsd_diag_plan.gnut",
+			"RunOn": "CLIENT && MP"
+		},
+		{
+			"Path": "hsd_diag_ui.gnut",
+			"RunOn": "UI",
+			"UICallback": {
+				"After": "HsdDiag_InitUI"
+			}
+		},
+		{
+			"Path": "hsd_diag_sv.gnut",
+			"RunOn": "SERVER && MP",
+			"ServerCallback": {
+				"After": "HsdDiag_InitServer"
+			}
+		},
+		{
+			"Path": "hsd_diag_npc.gnut",
+			"RunOn": "SERVER && MP",
+			"ServerCallback": {
+				"After": "HsdDiagNpc_Init"
+			}
+		},
+		{
+			"Path": "hsd_diag_w3.gnut",
+			"RunOn": "SERVER && MP",
+			"ServerCallback": {
+				"After": "HsdDiagW3_InitServer"
+			}
+		},
+		{
+			"Path": "hsd_diag_w2.gnut",
+			"RunOn": "SERVER && MP",
+			"ServerCallback": {
+				"After": "HsdDiagW2_InitServer"
+			}
+		},
+		{
+			"Path": "hsd_diag_w2_cl.gnut",
+			"RunOn": "CLIENT && MP",
+			"ClientCallback": {
+				"After": "HsdDiagW2_InitClient"
+			}
+		},
+		{
+			"Path": "hsd_diag_titan.gnut",
+			"RunOn": "SERVER && MP",
+			"ServerCallback": {
+				"After": "HsdDiagTitan_Init"
+			}
+		},
+		{
+			"Path": "hsd_diag_titan_cl.gnut",
+			"RunOn": "CLIENT && MP",
+			"ClientCallback": {
+				"After": "HsdDiagTitan_InitClient"
+			}
+		},
+		{
+			"Path": "hsd_diag_cl.gnut",
+			"RunOn": "CLIENT && MP",
+			"ClientCallback": {
+				"After": "HsdDiag_InitClient"
+			}
+		}
+	]
+}

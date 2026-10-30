@@ -1,0 +1,155 @@
+// HSD.TF2Diag W2 (expansion worker 2, 2026-10-29): cloak, A-Wall, gravity star, satchel,
+// grenade throws, ADS hover. Server-side commands only; the per-tick player log stays in
+// hsd_diag_sv.gnut.
+// Log lines:
+//   HSDDIAG W2 <time> <cloaked> <cloakedOrFlicker> <cloakEnd> <off0 class> <off0 clip> <off1 class> <off1 clip> <hp>
+//   HSDDIAG W2P <time> <ehandle> <weapon class> <x> <y> <z> <vx> <vy> <vz> <planted> <team>
+//   HSDDIAG W2W <time> <ehandle> <x> <y> <z> <yaw> <health> <minsx> <minsy> <minsz> <maxsx> <maxsy> <maxsz>
+global function HsdDiagW2_InitServer
+
+struct
+{
+	int watchId = 0
+} file
+
+void function HsdDiagW2_InitServer()
+{
+	AddClientCommandCallback( "w2_watch", HsdDiagW2_CC_Watch )
+	AddClientCommandCallback( "w2_refill", HsdDiagW2_CC_Refill )
+	AddClientCommandCallback( "w2_mods", HsdDiagW2_CC_Mods )
+	AddClientCommandCallback( "w2_shoot", HsdDiagW2_CC_Shoot )
+	AddClientCommandCallback( "w2_clear", HsdDiagW2_CC_Clear )
+	AddClientCommandCallback( "w2_cvars", HsdDiagW2_CC_Cvars )
+	printt( "HSDDIAG W2 INIT" )
+}
+
+string function W2B( bool b )
+{
+	return b ? "1" : "0"
+}
+
+int function W2EnemyTeam( entity player )
+{
+	return player.GetTeam() == TEAM_IMC ? TEAM_MILITIA : TEAM_IMC
+}
+
+// w2_watch <seconds>: log cloak state, offhand charge, the player's projectiles and amped
+// walls every server think (0.1 s) for <seconds>; a new w2_watch replaces the old one
+bool function HsdDiagW2_CC_Watch( entity player, array<string> args )
+{
+	float dur = args.len() > 0 ? float( args[0] ) : 5.0
+	file.watchId++
+	thread HsdDiagW2_WatchLoop( player, file.watchId, dur )
+	return true
+}
+
+string function W2Offhand( entity player, int slot )
+{
+	entity w = player.GetOffhandWeapon( slot )
+	if ( !IsValid( w ) )
+		return "none -1"
+	return w.GetWeaponClassName() + " " + w.GetWeaponPrimaryClipCount()
+}
+
+void function HsdDiagW2_WatchLoop( entity player, int id, float dur )
+{
+	player.EndSignal( "OnDestroy" )
+	float endTime = Time() + dur
+	while ( Time() < endTime && id == file.watchId )
+	{
+		float t = Time()
+		printt( format( "HSDDIAG W2 %.4f %s %s %.3f %s %s %d", t, W2B( player.IsCloaked( true ) ), W2B( player.IsCloaked( false ) ),
+			player.GetCloakEndTime(), W2Offhand( player, OFFHAND_ORDNANCE ), W2Offhand( player, 1 ), player.GetHealth() ) )
+		foreach ( entity p in GetProjectileArrayEx( "any", TEAM_ANY, TEAM_ANY, < 0.0, 0.0, 0.0 >, -1 ) )
+		{
+			vector o = p.GetOrigin()
+			vector v = p.GetVelocity()
+			printt( format( "HSDDIAG W2P %.4f %d %s %.2f %.2f %.2f %.2f %.2f %.2f %s %d", t, p.GetEncodedEHandle(), p.ProjectileGetWeaponClassName(),
+				o.x, o.y, o.z, v.x, v.y, v.z, W2B( p.proj.isPlanted ), p.GetTeam() ) )
+		}
+		foreach ( entity m in GetEntArrayByClass_Expensive( "prop_dynamic" ) )
+		{
+			if ( m.GetModelName() != $"models/fx/pilot_shield_wall_amped.mdl" )
+				continue
+			vector o = m.GetOrigin()
+			vector mn = m.GetBoundingMins()
+			vector mx = m.GetBoundingMaxs()
+			printt( format( "HSDDIAG W2W %.4f %d %.2f %.2f %.2f %.2f %d %.1f %.1f %.1f %.1f %.1f %.1f", t, m.GetEncodedEHandle(), o.x, o.y, o.z,
+				m.GetAngles().y, m.GetHealth(), mn.x, mn.y, mn.z, mx.x, mx.y, mx.z ) )
+		}
+		WaitFrame()
+	}
+}
+
+// w2_refill: fill every offhand clip (cooldowns)
+bool function HsdDiagW2_CC_Refill( entity player, array<string> args )
+{
+	foreach ( entity w in player.GetOffhandWeapons() )
+	{
+		int mx = w.GetWeaponPrimaryClipCountMax()
+		if ( mx > 0 )
+			w.SetWeaponPrimaryClipCountAbsolute( mx )
+	}
+	printt( "HSDDIAG W2 REFILL " + format( "%.4f", Time() ) )
+	return true
+}
+
+// w2_mods [class mods ...]: keep the current settings set, apply these class mods (pas_ads_hover)
+bool function HsdDiagW2_CC_Mods( entity player, array<string> args )
+{
+	string settings = player.GetPlayerSettings()
+	player.SetPlayerSettingsWithMods( settings, args )
+	string m = ""
+	foreach ( string x in args )
+		m += " " + x
+	printt( "HSDDIAG W2 MODS " + settings + m + " hoverEnabled=" + string( player.GetPlayerSettingsField( "hoverEnabled" ) ) + format( " %.4f", Time() ) )
+	return true
+}
+
+// w2_shoot <weapon class> <enemy 0/1> <fuse> <x> <y> <z> <vx> <vy> <vz>: fire one projectile of
+// <class> (taken into the ordnance slot) from (x y z) with FireWeaponGrenade's velocity argument
+// (vx vy vz). enemy 1 puts it on the other team, so a gravity star pulls the local player.
+bool function HsdDiagW2_CC_Shoot( entity player, array<string> args )
+{
+	if ( args.len() < 9 )
+		return true
+	entity w = player.GetOffhandWeapon( OFFHAND_ORDNANCE )
+	if ( !IsValid( w ) || w.GetWeaponClassName() != args[0] )
+	{
+		if ( IsValid( w ) )
+			player.TakeOffhandWeapon( OFFHAND_ORDNANCE )
+		player.GiveOffhandWeapon( args[0], OFFHAND_ORDNANCE )
+		w = player.GetOffhandWeapon( OFFHAND_ORDNANCE )
+	}
+	vector pos = < float( args[3] ), float( args[4] ), float( args[5] ) >
+	vector vel = < float( args[6] ), float( args[7] ), float( args[8] ) >
+	int dt = damageTypes.explosive
+	entity nade = w.FireWeaponGrenade( pos, vel, < 0.0, 0.0, 0.0 >, float( args[2] ), dt, dt, false, true, true )
+	if ( IsValid( nade ) && args[1] == "1" )
+		SetTeam( nade, W2EnemyTeam( player ) )
+	vector v = IsValid( nade ) ? nade.GetVelocity() : < 0.0, 0.0, 0.0 >
+	printt( format( "HSDDIAG W2 SHOOT %s %s %.1f %.1f %.1f in %.1f %.1f %.1f out %.2f %.2f %.2f %d %.4f", args[0], args[1], pos.x, pos.y, pos.z,
+		vel.x, vel.y, vel.z, v.x, v.y, v.z, IsValid( nade ) ? nade.GetEncodedEHandle() : -1, Time() ) )
+	return true
+}
+
+// w2_clear: remove every projectile (planted satchels, stars) so trials do not mix
+bool function HsdDiagW2_CC_Clear( entity player, array<string> args )
+{
+	int n = 0
+	foreach ( entity p in GetProjectileArrayEx( "any", TEAM_ANY, TEAM_ANY, < 0.0, 0.0, 0.0 >, -1 ) )
+	{
+		p.Destroy()
+		n++
+	}
+	printt( "HSDDIAG W2 CLEAR " + n + format( " %.4f", Time() ) )
+	return true
+}
+
+// w2_cvars <name> ...: print ConVar values (native defaults hidden behind data pointers)
+bool function HsdDiagW2_CC_Cvars( entity player, array<string> args )
+{
+	foreach ( string c in args )
+		printt( "HSDDIAG W2 CVAR " + c + " " + GetConVarString( c ) )
+	return true
+}

@@ -1,0 +1,370 @@
+convar	default	dll	function	register_call	flags	help	object
+automantle_backoff_anim_maxfrac	0.7	server.dll	1808369f0	FUN_1807240e0	0x2000	Fraction of mantle after which pulling back simply aborts the mantle	180c05ed0
+automantle_cooldown	.25	server.dll	180836a30	FUN_1807240e0	0x2000	Minimum time between mantles	180c08e40
+automantle_dangle_required_space	60	server.dll	180836a70	FUN_1807240e0	0x2000	Required space under the ledge to dangle	180c07130
+automantle_debug	0	server.dll	180836ab0	FUN_1807240e0	0x2000	Debugs player auto-mantle behavior	180c023d0
+automantle_duration_above	0.5	server.dll	180836af0	FUN_1807240e0	0x2000	"Duration of \""above\"" mantle animation"	180c08780
+automantle_duration_below	1.11	server.dll	180836b30	FUN_1807240e0	0x2000	"Duration of \""below\"" mantle animation"	180c015c0
+automantle_duration_high	0.35	server.dll	180836b70	FUN_1807240e0	0x2000	"Duration of \""high\"" mantle animation"	180c030e0
+automantle_duration_level	1.0	server.dll	180836bb0	FUN_1807240e0	0x2000	"Duration of \""level\"" mantle animation"	180c059c0
+automantle_enable	1	server.dll	180836bf0	FUN_1807240e0	0x2000	Enables player auto-mantle behavior	180c04da0
+automantle_forwarddist	30.f	server.dll	180836c30	FUN_1807240e0	0x2000	Distance forward to do the ground check from when auto-mantling	180c03320
+automantle_gun_enable_height	33	server.dll	180836c70	FUN_1807240e0	0x2000	Eye height above ledge at which gun is reenabled	180c06830
+automantle_height	80.f	server.dll	180836cb0	FUN_1807240e0	0x2000	Maximum step height to auto-mantle player	180c03050
+automantle_height_above	30	server.dll	180836cf0	FUN_1807240e0	0x2000	"Mantle height above ledge below which the \""above\"" animation is used and above which the \""high\"" animation is used"	180c052b0
+automantle_height_below	-10	server.dll	180836d30	FUN_1807240e0	0x2000	"Mantle height above ledge below which the \""below\"" animation is used"	180c02b40
+automantle_height_level	10	server.dll	180836d70	FUN_1807240e0	0x2000	"Mantle height above ledge below which the \""level\"" animation is used"	180c04920
+automantle_jumpoff_anim_maxfrac	0.5	server.dll	180836db0	FUN_1807240e0	0x2000	Maximum fraction of mantle at which jump off animation is played	180c03710
+automantle_jumpoff_duration	0.1	server.dll	180836df0	FUN_1807240e0	0x2000	Duration of jump off animation when jumping off	180c01da0
+automantle_max_frac	0.5	server.dll	180836e30	FUN_1807240e0	0x2000	Fractional amount (0-1) player can move forward without hitting jump.	180c06560
+automantle_maxangle_push	50	server.dll	180836e70	FUN_1807240e0	0x2000	Max angle the player can be pushing from the wall normal to auto-mantle	180c027c0
+automantle_maxangle_view	50	server.dll	180836eb0	FUN_1807240e0	0x2000	Max angle the player can be facing from the wall to auto-mantle	180c078e0
+automantle_min_frac	0.1	server.dll	180836ef0	FUN_1807240e0	0x2000	Fractional amount (0-1) player can move backward without hitting jump.	180c08db0
+automantle_mindist	18.f	server.dll	180836f30	FUN_1807240e0	0x2000	Minimum forward distance when auto-mantling	180c045c0
+automantle_rest_frac	0.4	server.dll	180836f70	FUN_1807240e0	0x2000	Fractional amount (0-1) player will tend toward when no input is given.	180c077c0
+automantle_rest_frac_below	0.3	server.dll	180836fb0	FUN_1807240e0	0x2000	"Replaces rest_frac when using the \""below\"" animation"	180c06710
+automantle_searchdist	5.f	server.dll	180836ff0	FUN_1807240e0	0x2000	Forward distance within which to look for a ledge to auto-mantle	180c06680
+automantle_wallrun_maxangle_view	45	server.dll	180837030	FUN_1807240e0	0x2000	Max angle the player can be facing from the wall to auto-mantle while wall running	180c07580
+dodge_cockpitHack	0	server.dll	1808370b0	FUN_1807240e0	0x2000	Hack to avoid eye moving too far back in cockpit	180c04140
+dodge_cockpitOffsetMax	3	server.dll	1808370f0	FUN_1807240e0	0x2000	Cockpit translation while dodging	180c02fc0
+dodge_cockpitTiltMax	4	server.dll	180837130	FUN_1807240e0	0x2000	Additional view tilt applied to the cockpit while dodging	180c01a40
+dodge_no_movement_forward_enable	1	server.dll	180837170	FUN_1807240e0	0x2000	Defaults dodge to go forward if there is no movement	180c069e0
+dodge_vertical_enable	0	server.dll	1808371b0	FUN_1807240e0	0x2000	Enables vertical dodge	180c07850
+dodge_vertical_horzspeedscale	0.5	server.dll	1808371f0	FUN_1807240e0	0x2000	Horizontal speed retained when dodging vertically	180c08c90
+dodge_vertical_in_air	1	server.dll	180837230	FUN_1807240e0	0x2000	Allow dodge to still apply vertical acceleration when player is in the air	180c056a0
+dodge_vertical_threshold	0.1	server.dll	180837270	FUN_1807240e0	0x2000	Stick deflection before dodge becomes vertical	180c05c90
+dodge_viewTiltDecreaseSpeed	2.5	server.dll	1808372b0	FUN_1807240e0	0x2000	Speed at which view tilt decreases while dodging (degrees/sec)	180c08150
+dodge_viewTiltFalloffTime	.7	server.dll	1808372f0	FUN_1807240e0	0x2000	Time during which view tilt decays to zero while dodging	180c037a0
+dodge_viewTiltIncreaseSpeed	5	server.dll	180837330	FUN_1807240e0	0x2000	Speed at which view tilt increases while dodging (degrees/sec)	180c03560
+dodge_viewTiltMax	10	server.dll	180837370	FUN_1807240e0	0x2000	Amount of view tilt while dodging in degrees	180c06290
+grapple_accel_human	1000	server.dll	1808374a0	FUN_1807240e0	0x2000	Speed added per second from grapple, up to the grapple_speedRamp* speed	180c01ad0
+grapple_accel_titan	1800	server.dll	1808374e0	FUN_1807240e0	0x2000	Speed added per second from grapple, up to the grapple_speedRamp* speed	180c02340
+grapple_around_obstacle_accel	1000	server.dll	180837520	FUN_1807240e0	0x2000	Acceleration around obstacles while grappling	180c08a50
+grapple_autoMeleeConvergeTime	1.0	server.dll	180837560	FUN_1807240e0	0x2000	Simplify relative velocities when the enemy is this many seconds away from hitting us (increases chances of a hit)	180c02cf0
+grapple_autoMeleeOnDetach	1	server.dll	1808375a0	FUN_1807240e0	0x2000	Starts a melee sequence when the grapple detaches.	180c02bd0
+grapple_autoMeleePredict	0	server.dll	1808375e0	FUN_1807240e0	0x2000	Whether to run grapple melee logic on the client (tends to mispredict anyway)	180c039f0
+grapple_autoMeleePredictTime	0.13	server.dll	180837620	FUN_1807240e0	0x2000	Melee begins when the enemy is this many seconds away from hitting us	180c01770
+grapple_autoMeleeViewRotateSpeedFar	1	server.dll	180837660	FUN_1807240e0	0x2000	Speed at which view rotates toward grapple melee target	180c08030
+grapple_autoMeleeViewRotateSpeedNear	3	server.dll	1808376a0	FUN_1807240e0	0x2000	Speed at which view rotates toward grapple melee target	180c07a90
+grapple_debug	0	server.dll	1808376e0	FUN_1807240e0	0x2000	Show grapple debug info	180c06320
+grapple_decelMeleeStrength	1	server.dll	180837720	FUN_1807240e0	0x2000	Strength of extra deceleration that forces melee targets to come to you	180c01890
+grapple_decel_human	425	server.dll	180837760	FUN_1807240e0	0x2000	Deceleration of player\'s speed that doesn\'t go toward the grapple point	180c07c40
+grapple_decel_titan	200	server.dll	1808377a0	FUN_1807240e0	0x2000	Deceleration of player\'s speed that doesn\'t go toward the grapple point	180c016e0
+grapple_disableMeleeWhenActive	0	server.dll	1808377e0	FUN_1807240e0	0x2000	Disallows melee when the grapple is out.	180c03a80
+grapple_dontFightGravity	1	server.dll	180837820	FUN_1807240e0	0x2000	Ignores downward speed when applying deceleration, so that gravity continues to pull you down	180c06200
+grapple_fallSpeed	300	server.dll	180837860	FUN_1807240e0	0x2000	Fall speed of the grapple hook while it\'s returning	180c024f0
+grapple_forcedRetractVel	3000	server.dll	1808378a0	FUN_1807240e0	0x2000	Return speed of grapple hook when grapple is finished or cancelled	180c05190
+grapple_gracePeriod	0.25	server.dll	1808378e0	FUN_1807240e0	0x2000	Length of time player can grapple without using a charge, in case they mess up	180c07d60
+grapple_gravityPushUnderContribution	2	server.dll	180837920	FUN_1807240e0	0x2000	"Pushing forward while looking \""under\"" the grapple point increases gravity this much"	180c07730
+grapple_initialImpulseOffGround_human	50	server.dll	180837960	FUN_1807240e0	0x2000	Initial launch speed off the ground when grapple connects	180c067a0
+grapple_initialImpulseOffGround_human_npc	150	server.dll	1808379a0	FUN_1807240e0	0x2000	Initial launch speed off the ground when grapple connects	180c03de0
+grapple_initialImpulseOffGround_titan	0	server.dll	1808379e0	FUN_1807240e0	0x2000	Initial launch speed off the ground when grapple connects	180c02850
+grapple_initialImpulse_human	350	server.dll	180837a20	FUN_1807240e0	0x2000	Initial launch speed when grapple connects	180c06d40
+grapple_initialImpulse_titan	350	server.dll	180837a60	FUN_1807240e0	0x2000	Initial launch speed when grapple connects	180c088a0
+grapple_initialSlowFracVert_human	0.4	server.dll	180837aa0	FUN_1807240e0	0x2000	Fraction of vertical speed that is retained when grapple connects	180c04fe0
+grapple_initialSlowFracVert_titan	0.1	server.dll	180837ae0	FUN_1807240e0	0x2000	Fraction of vertical speed that is retained when grapple connects	180c04e30
+grapple_initialSlowFrac_human	1	server.dll	180837b20	FUN_1807240e0	0x2000	Fraction of XY speed that is retained when grapple connects	180c04a40
+grapple_initialSlowFrac_titan	0.5	server.dll	180837b60	FUN_1807240e0	0x2000	Fraction of XY speed that is retained when grapple connects	180c03290
+grapple_initialSpeedMin_human	0	server.dll	180837ba0	FUN_1807240e0	0x2000	When grapple connects, player speed is immediately set to at least this value (negative = away, positive = towards)	180c022b0
+grapple_initialSpeedMin_titan	0	server.dll	180837be0	FUN_1807240e0	0x2000	When grapple connects, player speed is immediately set to at least this value (negative = away, positive = towards)	180c08420
+grapple_jumpFrac	1.0	server.dll	180837c20	FUN_1807240e0	0x2000	Jump velocity multiplier when grappled	180c07370
+grapple_letGravityHelpCosAngle	0.8	server.dll	180837c60	FUN_1807240e0	0x2000	Don\'t ignore gravity when grappling downward this much (0 is horizontal, 1 is straight down)	180c085d0
+grapple_pullDelay_human	0.2	server.dll	180837ce0	FUN_1807240e0	0x2000	Grapple delay between attachment and acceleration	180c07df0
+grapple_pullDelay_titan	0.2	server.dll	180837d20	FUN_1807240e0	0x2000	Grapple delay between attachment and acceleration	180c01920
+grapple_retractVel	6000	server.dll	180837d60	FUN_1807240e0	0x2000	Return speed of grapple hook when it hasn\'t hit anything yet	180c086f0
+grapple_rodeoVerticalImpulse	750	server.dll	180837da0	FUN_1807240e0	0x2000	Vertical impulse applied to the player when grappling off of a rodeo.	180c05db0
+grapple_shootVel	3000	server.dll	180837de0	FUN_1807240e0	0x2000	Outward speed of grapple hook	180c06b90
+grapple_speedRampMax_human	800	server.dll	180837e20	FUN_1807240e0	0x2000	Player will accelerate to this speed after grapple_speedRampTime has passed	180c068c0
+grapple_speedRampMax_titan	750	server.dll	180837e60	FUN_1807240e0	0x2000	Player will accelerate to this speed after grapple_speedRampTime has passed	180c01800
+grapple_speedRampMin_human	50	server.dll	180837ea0	FUN_1807240e0	0x2000	Player will accelerate to this speed while grappling; lerps to grapple_speedRampMax over grapple_speedRampTime	180c04770
+grapple_speedRampMin_titan	400	server.dll	180837ee0	FUN_1807240e0	0x2000	Player will accelerate to this speed while grappling; lerps to grapple_speedRampMax over grapple_speedRampTime	180c08300
+grapple_speedRampTime_human	1.5	server.dll	180837f20	FUN_1807240e0	0x2000	Time from grapple_speedRampMin to grapple_speedRampMax	180c04f50
+grapple_speedRampTime_titan	1.0	server.dll	180837f60	FUN_1807240e0	0x2000	Time from grapple_speedRampMin to grapple_speedRampMax	180c01650
+grapple_titanEmbarkDist	250	server.dll	180837fa0	FUN_1807240e0	0x2000	Distance at which to begin embark when grappling to your own titan.	180c07b20
+grapple_windowCheckDist	150	server.dll	180837fe0	FUN_1807240e0	0x2000	Check for window hints at this distance from grapple point	180c070a0
+jump_graceperiod	0.2	server.dll	180838060	FUN_1807240e0	0x2000	Extra time during which a player can jump after falling off a ledge	180c06c20
+jump_keyboardgrace_max	0.7	server.dll	1808380a0	FUN_1807240e0	0x2000	Amount of velocity change allowed during jump_keyboardgraceperiod, as a fraction of sprinting speed	180c03960
+jump_keyboardgrace_strength	0.7	server.dll	1808380e0	FUN_1807240e0	0x2000	Fraction of change toward the new direction when pressing a direction during jump_keyboardgraceperiod	180c03e70
+jump_keyboardgraceperiodmax	0.5	server.dll	180838120	FUN_1807240e0	0x2000	Extra time during which a player can change their direction with keyboard input after jumping (fades to 0 strength at this time)	180c02190
+jump_keyboardgraceperiodmin	0.2	server.dll	180838160	FUN_1807240e0	0x2000	Extra time during which a player can change their direction with keyboard input after jumping (at full strength)	180c026a0
+movement_anim_playback_maxrate	10	server.dll	180851cb0	FUN_180724420	0x2000		1814ec480
+movement_anim_playback_minrate	0.25	server.dll	180851cf0	FUN_180724420	0x2000		1814ec1b0
+movement_anim_sprint_playback_maxrate	1.25	server.dll	180851d30	FUN_180724420	0x2000		1814ec240
+player_debug_print_damage	0	server.dll	180850040	FUN_1807240e0	0x4000	When true, print amount and type of all damage received by player to console.	1814d9b50
+player_dispatch_anim_events_per_frame	0	server.dll	180850080	FUN_1807240e0	0	When enabled, animation events for players are handled every frame rather than only when there are move commands to process.	1814d94f0
+player_extraairaccelleration	2.0	server.dll	180838370	FUN_1807240e0	0x2000	Extra air acceleration given to players, even if they\'re already at max speed. Helps to start wall running	180c02c60
+player_find_rodeo_target_per_cmd	1	server.dll	180850f60	FUN_1807240e0	0x2002	Run FindRodeoTarget callback	1814e8320
+player_max_command_contexts	1000	server.dll	1808500f0	FUN_180724420	0		1814da870
+player_melee_cone_from_user_command_only	0	server.dll	1808546f0	FUN_180724420	0		181503410
+player_movementBounds_predictionShare	1	server.dll	1808383b0	FUN_180724420	0x2002		180c03f90
+player_movement_debug	0	server.dll	180850910	FUN_1807240e0	0	Draws player origin changes from player movement code	1814e66e0
+player_restore_use_SetLocalAngles	0	server.dll	180850130	FUN_180724420	0		1814d9370
+player_restore_use_UpdateCurrentPlayerClass	0	server.dll	180850170	FUN_180724420	0		1814dad30
+player_share_squad_info	1	server.dll	1808501b0	FUN_1807240e0	0x4000	Player shares enemy information with AI squad	1814daca0
+player_showpredictedposition	0	server.dll	180850fa0	FUN_180724420	0		1814e81a0
+player_showpredictedposition_timestep	1.0	server.dll	180850fe0	FUN_180724420	0		1814e7cc0
+player_useMovementBounds	1	server.dll	1808383f0	FUN_180724420	0x2002		180c04800
+skip_jump_height_fraction	0.75	server.dll	180838480	FUN_1807240e0	0x2000	Jump height fraction when skipping	180c02970
+skip_replenish_double_jump	1	server.dll	1808384c0	FUN_1807240e0	0x2000	Whether the player can double jump after skipping	180c074f0
+skip_sounds	0	server.dll	180838500	FUN_1807240e0	0x2000	Enables skip-specific sounds	180c014a0
+skip_speed_reduce	12	server.dll	180838540	FUN_1807240e0	0x2000	Speed lost when skipping	180c01fe0
+skip_speed_retain	450	server.dll	180838580	FUN_1807240e0	0x2000	Speed loss doesn\'t go below this	180c05580
+skip_time	0.1	server.dll	1808385c0	FUN_1807240e0	0x2000	"Time after landing that is considered \""skipping\"" if the player jumps again"	180c06950
+slide_auto_stand	0	server.dll	180838600	FUN_1807240e0	0x2000	Automatically stand when slide ends	180c072e0
+slide_boost_cooldown	2	server.dll	180838640	FUN_1807240e0	0x2000	Min time between slides before getting another boost	180c07250
+slide_max_angle_dot	0.6	server.dll	180838680	FUN_1807240e0	0x2000	Cosine of max angle from forward that you can slide when sprinting	180c05e40
+slide_step_velocity_reduction	10	server.dll	1808386c0	FUN_1807240e0	0x2000	Velocity reduction when going up a step (is multiplied by step height)	180c04410
+slide_whileInAir	0	server.dll	180838700	FUN_1807240e0	0x2000	Allows beginning a slide (including the boost) while still in the air	180c07cd0
+sprint_powerdrain	0	server.dll	180851130	FUN_180724420	0x2000		1814e8020
+sprinttilt_accel	35	server.dll	180838740	FUN_1807240e0	0x2000	Acceleration of sprint view tilt fraction	180c04d10
+sprinttilt_maxvel	2	server.dll	180838780	FUN_1807240e0	0x2000	Maximum speed of sprint view tilt	180c042f0
+sprinttilt_turnrange	120	server.dll	1808387c0	FUN_1807240e0	0x2000	Max turn rate that creates view tilt when sprinting	180c03830
+superjump_disabled_from_water	0	server.dll	1808388c0	FUN_180724420	0x2000		180c05220
+superjump_drain_power_onfail	0	server.dll	180838900	FUN_180724420	0x2000		180c07f10
+superjump_fail_sound_when_jump_limit	1	server.dll	180838940	FUN_180724420	0x2000		180c06e60
+superjump_limit	0	server.dll	180838980	FUN_180724420	0x2000		180c04bf0
+superjump_limitreset_onwallrun	1	server.dll	1808389c0	FUN_180724420	0x2000		180c04530
+superjump_max_power_use	100	server.dll	180838a00	FUN_180724420	0x2000		180c01c80
+superjump_min_height_fraction	0.25	server.dll	180838a40	FUN_1807240e0	0x2000	Minimum fraction of desired superjump height that is acheived, even if already moving quickly upwards	180c08930
+superjump_min_power_use	0	server.dll	180838a80	FUN_180724420	0x2000		180c06f80
+superjump_powerreset_onground	1	server.dll	180838ac0	FUN_180724420	0x2000		180c080c0
+sv_airaccelerate	10	server.dll	18083c930	FUN_180724420	0x2102		180c39320
+sv_backspeed	0.6	server.dll	18083c970	FUN_1807240e0	0x2002	How much to slow down backwards motion	180c39290
+sv_bounce	0	server.dll	18083c9b0	FUN_1807240e0	0x2102	Bounce multiplier for when physically simulated objects collide with other objects.	180c38c50
+sv_footsteps	1	server.dll	18083c9f0	FUN_1807240e0	0x2102	Play footstep sound for players	180c38fc0
+sv_friction	4	server.dll	18083ca30	FUN_1807240e0	0x2102	World friction. (Equivalent player setting is in player settings files)	180c38bc0
+sv_gravity	750	server.dll	18083ca70	FUN_1807240e0	0x2100	World gravity.	180c38f30
+sv_maxspeed	320	server.dll	18083cab0	FUN_180724420	0x2102		180c38b30
+sv_maxvelocity	12100	server.dll	18083caf0	FUN_1807240e0	0x2002	Maximum speed any ballistically moving object is allowed to attain per axis.	180c39050
+sv_stopspeed	100	server.dll	18083cd30	FUN_1807240e0	0x2102	Minimum stopping speed when on ground. (Equivalent player setting is in player settings files)	180c395f0
+sv_wateraccelerate	10	server.dll	18083cd70	FUN_180724420	0x2102		180c38a10
+view_offset_entity_enable	1	server.dll	1808518c0	FUN_1807240e0	0x6000	Whether to apply camera animations from the view offset entity	1814e7610
+wallrun_allowed_wall_dist	13	server.dll	180839200	FUN_1807240e0	0x2000	Distance to the side that feet may be from the wall	180c02100
+wallrun_allowed_wall_dist_wallhang	18	server.dll	180839240	FUN_1807240e0	0x2000	Distance to the side that hand may be from the wall for wallhang	180c02f30
+wallrun_angleChangeMinCos	0.8	server.dll	180839280	FUN_1807240e0	0x2000	Cosine of maximum angle the wall can change away from you without falling off	180c07970
+wallrun_avoid_wall_top_decel	3000	server.dll	1808392c0	FUN_1807240e0	0x2000	Deceleration applied to prevent the player from wall running too close to the top of a wall and falling off	180c064d0
+wallrun_curveDebug	0	server.dll	180852e50	FUN_1807240e0	0x2000	Draws debugging information for wallrun curves	1814fe610
+wallrun_curveEnable	1	server.dll	180852e90	FUN_1807240e0	0x2000	Enables usage of wallrun curve hints	1814fe6a0
+wallrun_debug	0	server.dll	180839300	FUN_1807240e0	0x2000	Shows wall run debug info	180c03c30
+wallrun_enable	1	server.dll	180839340	FUN_1807240e0	0x2000	Enables wall running	180c076a0
+wallrun_fallAwaySpeed	70.0	server.dll	180839380	FUN_1807240e0	0x2000	Velocity away from the wall when falling off	180c04ec0
+wallrun_gravityRampUpTime	1.0	server.dll	1808393c0	FUN_1807240e0	0x2000	While wall running, gravity starts at 0 and ramps up to full over this many seconds	180c035f0
+wallrun_hangStopTime	0.5	server.dll	180839400	FUN_1807240e0	0x2000	Length of time to come to a stop when zooming	180c05d20
+wallrun_hangslipduration	1.0	server.dll	180839440	FUN_1807240e0	0x2000	Time it takes for slipping to become completely gravity based	180c06b00
+wallrun_hangslipstarttime	3.0	server.dll	180839480	FUN_1807240e0	0x2000	Time wall hanging before you start to slip down	180c07460
+wallrun_hangslipvel	70	server.dll	1808394c0	FUN_1807240e0	0x2000	Impulse downward when slipping starts while wall hanging	180c044a0
+wallrun_maxViewTilt	15.0	server.dll	180839500	FUN_1807240e0	0x2000	Amount of roll applied to the view in degrees while wall running	180c040b0
+wallrun_minAngle_air	180.0	server.dll	180839540	FUN_1807240e0	0x2000	Angle at which you can start wall running when hitting a wall from a jump (0 to 180)	180c02a90
+wallrun_noInputSlipFrac	0.7	server.dll	180839580	FUN_1807240e0	0x2000	Min fraction of slip behavior when not pushing in any direction (applies more gravity)	180c08c00
+wallrun_pushAwayFallOffTime	0.05	server.dll	1808395c0	FUN_1807240e0	0x2000	Pushing away from the wall for this many seconds causes you to fall off	180c081e0
+wallrun_repelEnable	1	server.dll	180839600	FUN_1807240e0	0x2000	Enables repelling players from walls they have jumped off of	180c05ff0
+wallrun_repelSoftness	5.0	server.dll	180839640	FUN_1807240e0	0x2000	Softness of wall jump repel: higher values make it easier for players to reduce their speed away from the wall	180c06ef0
+wallrun_repelTimeMax	0.4	server.dll	180839680	FUN_1807240e0	0x2000	Time after jumping off the wall that player is no longer repelled from the wall	180c02d80
+wallrun_repelTimeMin	0.2	server.dll	1808396c0	FUN_1807240e0	0x2000	Time after jumping off the wall that player is repelled from the wall	180c05100
+wallrun_retry_interval	0.07	server.dll	180839700	FUN_1807240e0	0x2000	Length of time between checking for the ability to wallrun after hitting a wall in air movement	180c08390
+wallrun_rotateMaxRate	3	server.dll	180839740	FUN_1807240e0	0x2000	Maximum rotation speed around a wall in radians per second; avoids sticking to walls that do tight curves	180c06dd0
+wallrun_sameWallDist	100	server.dll	180839780	FUN_1807240e0	0x2000	Within this distance of the previous wall run, wall run is prevented at a higher point on the same wall	180c08660
+wallrun_sameWallDot	0.9	server.dll	1808397c0	FUN_1807240e0	0x2000	Dot product threshold for preventing wall running on the same wall twice	180c05460
+wallrun_sameWallHeight	0	server.dll	180839800	FUN_1807240e0	0x2000	Height, relative to where the player last touched the wall, above which he cannot reattach	180c02e10
+wallrun_sameWallSlope	0	server.dll	180839840	FUN_1807240e0	0x2000	Beyond wallrun_samewalldist, wall running is permitted at higher points with this slope	180c019b0
+wallrun_slipduration	1.0	server.dll	180839880	FUN_1807240e0	0x2000	Time it takes for slipping to become completely gravity based	180c08d20
+wallrun_slipslowdown	0.5	server.dll	1808398c0	FUN_1807240e0	0x2000	Fraction of velocity lost when slipping starts	180c02460
+wallrun_slipstarttime	1.5	server.dll	180839900	FUN_1807240e0	0x2000	Time wall running before you start to slip down	180c01e30
+wallrun_slipvel	70	server.dll	180839940	FUN_1807240e0	0x2000	Impulse downward when slipping starts	180c04ad0
+wallrun_strengthLossEnd	1000	server.dll	180839980	FUN_1807240e0	0x2000	Number of wall runs at which point upward strength is fully lost (scales upWallBoost, jumpUpSpeed, and gravityRampUpTime to zero)	180c05f60
+wallrun_strengthLossStart	1000	server.dll	1808399c0	FUN_1807240e0	0x2000	Number of wall runs allowed before starting to lose upward strength (scales upWallBoost, jumpUpSpeed, and gravityRampUpTime)	180c08270
+wallrun_upWallBoost	250.0	server.dll	180839a00	FUN_1807240e0	0x2000	Initial vertical velocity boost when wall running begins	180c03170
+wallrun_upwardAutoPush	0.65	server.dll	180839a40	FUN_1807240e0	0x2000	The amount of automatic up-the-wall input applied when the player pushes forward along the wall. Helps to fight gravity when pushing forward.	180c01b60
+wallrun_viewTiltPredictTime	0.25	server.dll	180839a80	FUN_1807240e0	0x2000	Time before you start wall running where your view starts tilting. Predicts upcoming wall running	180c065f0
+wallrun_viewTiltSpeed	6.0	server.dll	180839ac0	FUN_1807240e0	0x2000	Speed at which the view tilts while wall running	180c02730
+zipline_debug	0	server.dll	180856c00	FUN_180724420	0x6000		181605820
+zipline_use_range	120.0	server.dll	180856c40	FUN_180724420	0x6000		181605790
+automantle_backoff_anim_maxfrac	0.7	client.dll	1808636b0	FUN_1807374a0	0x2000	Fraction of mantle after which pulling back simply aborts the mantle	1811b2700
+automantle_cooldown	.25	client.dll	1808636f0	FUN_1807374a0	0x2000	Minimum time between mantles	1811b5610
+automantle_dangle_required_space	60	client.dll	180863730	FUN_1807374a0	0x2000	Required space under the ledge to dangle	1811b3960
+automantle_debug	0	client.dll	180863770	FUN_1807374a0	0x2000	Debugs player auto-mantle behavior	1811aed40
+automantle_duration_above	0.5	client.dll	1808637b0	FUN_1807374a0	0x2000	"Duration of \""above\"" mantle animation"	1811b4f50
+automantle_duration_below	1.11	client.dll	1808637f0	FUN_1807374a0	0x2000	"Duration of \""below\"" mantle animation"	1811adf30
+automantle_duration_high	0.35	client.dll	180863830	FUN_1807374a0	0x2000	"Duration of \""high\"" mantle animation"	1811afa30
+automantle_duration_level	1.0	client.dll	180863870	FUN_1807374a0	0x2000	"Duration of \""level\"" mantle animation"	1811b21f0
+automantle_enable	1	client.dll	1808638b0	FUN_1807374a0	0x2000	Enables player auto-mantle behavior	1811b1660
+automantle_forwarddist	30.f	client.dll	1808638f0	FUN_1807374a0	0x2000	Distance forward to do the ground check from when auto-mantling	1811afc70
+automantle_gun_enable_height	33	client.dll	180863930	FUN_1807374a0	0x2000	Eye height above ledge at which gun is reenabled	1811b3060
+automantle_height	80.f	client.dll	180863970	FUN_1807374a0	0x2000	Maximum step height to auto-mantle player	1811af9a0
+automantle_height_above	30	client.dll	1808639b0	FUN_1807374a0	0x2000	"Mantle height above ledge below which the \""above\"" animation is used and above which the \""high\"" animation is used"	1811b1b70
+automantle_height_below	-10	client.dll	1808639f0	FUN_1807374a0	0x2000	"Mantle height above ledge below which the \""below\"" animation is used"	1811af490
+automantle_height_level	10	client.dll	180863a30	FUN_1807374a0	0x2000	"Mantle height above ledge below which the \""level\"" animation is used"	1811b11e0
+automantle_jumpoff_anim_maxfrac	0.5	client.dll	180863a70	FUN_1807374a0	0x2000	Maximum fraction of mantle at which jump off animation is played	1811b0060
+automantle_jumpoff_duration	0.1	client.dll	180863ab0	FUN_1807374a0	0x2000	Duration of jump off animation when jumping off	1811ae710
+automantle_max_frac	0.5	client.dll	180863af0	FUN_1807374a0	0x2000	Fractional amount (0-1) player can move forward without hitting jump.	1811b2d90
+automantle_maxangle_push	50	client.dll	180863b30	FUN_1807374a0	0x2000	Max angle the player can be pushing from the wall normal to auto-mantle	1811af130
+automantle_maxangle_view	50	client.dll	180863b70	FUN_1807374a0	0x2000	Max angle the player can be facing from the wall to auto-mantle	1811b40b0
+automantle_min_frac	0.1	client.dll	180863bb0	FUN_1807374a0	0x2000	Fractional amount (0-1) player can move backward without hitting jump.	1811b5580
+automantle_mindist	18.f	client.dll	180863bf0	FUN_1807374a0	0x2000	Minimum forward distance when auto-mantling	1811b0e80
+automantle_rest_frac	0.4	client.dll	180863c30	FUN_1807374a0	0x2000	Fractional amount (0-1) player will tend toward when no input is given.	1811b3f90
+automantle_rest_frac_below	0.3	client.dll	180863c70	FUN_1807374a0	0x2000	"Replaces rest_frac when using the \""below\"" animation"	1811b2f40
+automantle_searchdist	5.f	client.dll	180863cb0	FUN_1807374a0	0x2000	Forward distance within which to look for a ledge to auto-mantle	1811b2eb0
+automantle_view_correction_speed	180	client.dll	18085e1b0	FUN_1807374a0	0x4000	Speed at which view direction is clamped when mantling	180c1f560
+automantle_view_high_yaw_max	90	client.dll	18085e1f0	FUN_1807374a0	0x4000	"Max view yaw when mantling with the \""high\"" mantle animation"	180c20d90
+automantle_view_pitch_max	35	client.dll	18085e230	FUN_1807374a0	0x4000	Max view pitch when mantling	180c1f4d0
+automantle_view_pitch_min	-80	client.dll	18085e270	FUN_1807374a0	0x4000	Min view pitch when mantling	180c215c0
+automantle_view_yaw_max	60	client.dll	18085e2b0	FUN_1807374a0	0x4000	Max view yaw when mantling	180c20930
+automantle_wallrun_maxangle_view	45	client.dll	180863cf0	FUN_1807374a0	0x2000	Max angle the player can be facing from the wall to auto-mantle while wall running	1811b3d50
+cl_viewmodel_pre_animate	1	client.dll	18085a8f0	FUN_1807377e0	0		180bf4600
+dodge_cockpitHack	0	client.dll	180863d30	FUN_1807374a0	0x2000	Hack to avoid eye moving too far back in cockpit	1811b0a00
+dodge_cockpitOffsetMax	3	client.dll	180863d70	FUN_1807374a0	0x2000	Cockpit translation while dodging	1811af910
+dodge_cockpitTiltMax	4	client.dll	180863db0	FUN_1807374a0	0x2000	Additional view tilt applied to the cockpit while dodging	1811ae3b0
+dodge_no_movement_forward_enable	1	client.dll	180863df0	FUN_1807374a0	0x2000	Defaults dodge to go forward if there is no movement	1811b3210
+dodge_vertical_enable	0	client.dll	180863e30	FUN_1807374a0	0x2000	Enables vertical dodge	1811b4020
+dodge_vertical_horzspeedscale	0.5	client.dll	180863e70	FUN_1807374a0	0x2000	Horizontal speed retained when dodging vertically	1811b5460
+dodge_vertical_in_air	1	client.dll	180863eb0	FUN_1807374a0	0x2000	Allow dodge to still apply vertical acceleration when player is in the air	1811b1ed0
+dodge_vertical_threshold	0.1	client.dll	180863ef0	FUN_1807374a0	0x2000	Stick deflection before dodge becomes vertical	1811b24c0
+dodge_viewTiltDecreaseSpeed	2.5	client.dll	180863f30	FUN_1807374a0	0x2000	Speed at which view tilt decreases while dodging (degrees/sec)	1811b4920
+dodge_viewTiltFalloffTime	.7	client.dll	180863f70	FUN_1807374a0	0x2000	Time during which view tilt decays to zero while dodging	1811b00f0
+dodge_viewTiltIncreaseSpeed	5	client.dll	180863fb0	FUN_1807374a0	0x2000	Speed at which view tilt increases while dodging (degrees/sec)	1811afeb0
+dodge_viewTiltMax	10	client.dll	180863ff0	FUN_1807374a0	0x2000	Amount of view tilt while dodging in degrees	1811b2ac0
+grapple_accel_human	1000	client.dll	180864120	FUN_1807374a0	0x2000	Speed added per second from grapple, up to the grapple_speedRamp* speed	1811ae440
+grapple_accel_titan	1800	client.dll	180864160	FUN_1807374a0	0x2000	Speed added per second from grapple, up to the grapple_speedRamp* speed	1811aecb0
+grapple_around_obstacle_accel	1000	client.dll	1808641a0	FUN_1807374a0	0x2000	Acceleration around obstacles while grappling	1811b5220
+grapple_autoMeleeConvergeTime	1.0	client.dll	1808641e0	FUN_1807374a0	0x2000	Simplify relative velocities when the enemy is this many seconds away from hitting us (increases chances of a hit)	1811af640
+grapple_autoMeleeOnDetach	1	client.dll	180864220	FUN_1807374a0	0x2000	Starts a melee sequence when the grapple detaches.	1811af520
+grapple_autoMeleePredict	0	client.dll	180864260	FUN_1807374a0	0x2000	Whether to run grapple melee logic on the client (tends to mispredict anyway)	1811b0340
+grapple_autoMeleePredictTime	0.13	client.dll	1808642a0	FUN_1807374a0	0x2000	Melee begins when the enemy is this many seconds away from hitting us	1811ae0e0
+grapple_autoMeleeViewRotateSpeedFar	1	client.dll	1808642e0	FUN_1807374a0	0x2000	Speed at which view rotates toward grapple melee target	1811b4800
+grapple_autoMeleeViewRotateSpeedNear	3	client.dll	180864320	FUN_1807374a0	0x2000	Speed at which view rotates toward grapple melee target	1811b4260
+grapple_debug	0	client.dll	180864360	FUN_1807374a0	0x2000	Show grapple debug info	1811b2b50
+grapple_decelMeleeStrength	1	client.dll	1808643a0	FUN_1807374a0	0x2000	Strength of extra deceleration that forces melee targets to come to you	1811ae200
+grapple_decel_human	425	client.dll	1808643e0	FUN_1807374a0	0x2000	Deceleration of player\'s speed that doesn\'t go toward the grapple point	1811b4410
+grapple_decel_titan	200	client.dll	180864420	FUN_1807374a0	0x2000	Deceleration of player\'s speed that doesn\'t go toward the grapple point	1811ae050
+grapple_disableMeleeWhenActive	0	client.dll	180864460	FUN_1807374a0	0x2000	Disallows melee when the grapple is out.	1811b03d0
+grapple_dontFightGravity	1	client.dll	1808644a0	FUN_1807374a0	0x2000	Ignores downward speed when applying deceleration, so that gravity continues to pull you down	1811b2a30
+grapple_fallSpeed	300	client.dll	1808644e0	FUN_1807374a0	0x2000	Fall speed of the grapple hook while it\'s returning	1811aee60
+grapple_forcedRetractVel	3000	client.dll	180864520	FUN_1807374a0	0x2000	Return speed of grapple hook when grapple is finished or cancelled	1811b1a50
+grapple_gracePeriod	0.25	client.dll	180864560	FUN_1807374a0	0x2000	Length of time player can grapple without using a charge, in case they mess up	1811b4530
+grapple_gravityPushUnderContribution	2	client.dll	1808645a0	FUN_1807374a0	0x2000	"Pushing forward while looking \""under\"" the grapple point increases gravity this much"	1811b3f00
+grapple_initialImpulseOffGround_human	50	client.dll	1808645e0	FUN_1807374a0	0x2000	Initial launch speed off the ground when grapple connects	1811b2fd0
+grapple_initialImpulseOffGround_human_npc	150	client.dll	180864620	FUN_1807374a0	0x2000	Initial launch speed off the ground when grapple connects	1811b06a0
+grapple_initialImpulseOffGround_titan	0	client.dll	180864660	FUN_1807374a0	0x2000	Initial launch speed off the ground when grapple connects	1811af1c0
+grapple_initialImpulse_human	350	client.dll	1808646a0	FUN_1807374a0	0x2000	Initial launch speed when grapple connects	1811b3570
+grapple_initialImpulse_titan	350	client.dll	1808646e0	FUN_1807374a0	0x2000	Initial launch speed when grapple connects	1811b5070
+grapple_initialSlowFracVert_human	0.4	client.dll	180864720	FUN_1807374a0	0x2000	Fraction of vertical speed that is retained when grapple connects	1811b18a0
+grapple_initialSlowFracVert_titan	0.1	client.dll	180864760	FUN_1807374a0	0x2000	Fraction of vertical speed that is retained when grapple connects	1811b16f0
+grapple_initialSlowFrac_human	1	client.dll	1808647a0	FUN_1807374a0	0x2000	Fraction of XY speed that is retained when grapple connects	1811b1300
+grapple_initialSlowFrac_titan	0.5	client.dll	1808647e0	FUN_1807374a0	0x2000	Fraction of XY speed that is retained when grapple connects	1811afbe0
+grapple_initialSpeedMin_human	0	client.dll	180864820	FUN_1807374a0	0x2000	When grapple connects, player speed is immediately set to at least this value (negative = away, positive = towards)	1811aec20
+grapple_initialSpeedMin_titan	0	client.dll	180864860	FUN_1807374a0	0x2000	When grapple connects, player speed is immediately set to at least this value (negative = away, positive = towards)	1811b4bf0
+grapple_jumpFrac	1.0	client.dll	1808648a0	FUN_1807374a0	0x2000	Jump velocity multiplier when grappled	1811b3ba0
+grapple_letGravityHelpCosAngle	0.8	client.dll	1808648e0	FUN_1807374a0	0x2000	Don\'t ignore gravity when grappling downward this much (0 is horizontal, 1 is straight down)	1811b4da0
+grapple_pullDelay_human	0.2	client.dll	180864960	FUN_1807374a0	0x2000	Grapple delay between attachment and acceleration	1811b45c0
+grapple_pullDelay_titan	0.2	client.dll	1808649a0	FUN_1807374a0	0x2000	Grapple delay between attachment and acceleration	1811ae290
+grapple_retractVel	6000	client.dll	1808649e0	FUN_1807374a0	0x2000	Return speed of grapple hook when it hasn\'t hit anything yet	1811b4ec0
+grapple_rodeoVerticalImpulse	750	client.dll	180864a20	FUN_1807374a0	0x2000	Vertical impulse applied to the player when grappling off of a rodeo.	1811b25e0
+grapple_shootVel	3000	client.dll	180864a60	FUN_1807374a0	0x2000	Outward speed of grapple hook	1811b33c0
+grapple_speedRampMax_human	800	client.dll	180864aa0	FUN_1807374a0	0x2000	Player will accelerate to this speed after grapple_speedRampTime has passed	1811b30f0
+grapple_speedRampMax_titan	750	client.dll	180864ae0	FUN_1807374a0	0x2000	Player will accelerate to this speed after grapple_speedRampTime has passed	1811ae170
+grapple_speedRampMin_human	50	client.dll	180864b20	FUN_1807374a0	0x2000	Player will accelerate to this speed while grappling; lerps to grapple_speedRampMax over grapple_speedRampTime	1811b1030
+grapple_speedRampMin_titan	400	client.dll	180864b60	FUN_1807374a0	0x2000	Player will accelerate to this speed while grappling; lerps to grapple_speedRampMax over grapple_speedRampTime	1811b4ad0
+grapple_speedRampTime_human	1.5	client.dll	180864ba0	FUN_1807374a0	0x2000	Time from grapple_speedRampMin to grapple_speedRampMax	1811b1810
+grapple_speedRampTime_titan	1.0	client.dll	180864be0	FUN_1807374a0	0x2000	Time from grapple_speedRampMin to grapple_speedRampMax	1811adfc0
+grapple_titanEmbarkDist	250	client.dll	180864c20	FUN_1807374a0	0x2000	Distance at which to begin embark when grappling to your own titan.	1811b42f0
+grapple_windowCheckDist	150	client.dll	180864c60	FUN_1807374a0	0x2000	Check for window hints at this distance from grapple point	1811b38d0
+jump_graceperiod	0.2	client.dll	180864ce0	FUN_1807374a0	0x2000	Extra time during which a player can jump after falling off a ledge	1811b3450
+jump_keyboardgrace_max	0.7	client.dll	180864d20	FUN_1807374a0	0x2000	Amount of velocity change allowed during jump_keyboardgraceperiod, as a fraction of sprinting speed	1811b02b0
+jump_keyboardgrace_strength	0.7	client.dll	180864d60	FUN_1807374a0	0x2000	Fraction of change toward the new direction when pressing a direction during jump_keyboardgraceperiod	1811b0730
+jump_keyboardgraceperiodmax	0.5	client.dll	180864da0	FUN_1807374a0	0x2000	Extra time during which a player can change their direction with keyboard input after jumping (fades to 0 strength at this time)	1811aeb00
+jump_keyboardgraceperiodmin	0.2	client.dll	180864de0	FUN_1807374a0	0x2000	Extra time during which a player can change their direction with keyboard input after jumping (at full strength)	1811af010
+movement_anim_playback_maxrate	10	client.dll	180879180	FUN_1807377e0	0x2000		1828f47d0
+movement_anim_playback_minrate	0.25	client.dll	1808791c0	FUN_1807377e0	0x2000		1828f4500
+movement_anim_sprint_playback_maxrate	1.25	client.dll	180879200	FUN_1807377e0	0x2000		1828f4590
+player_debugPredictedPosition	0	client.dll	18085eb30	FUN_1807377e0	0		180c1f3b0
+player_deltaAnimsMakeMeUnpredicted	0	client.dll	18085eb70	FUN_1807377e0	2		180c20b20
+player_extraairaccelleration	2.0	client.dll	180864fa0	FUN_1807374a0	0x2000	Extra air acceleration given to players, even if they\'re already at max speed. Helps to start wall running	1811af5b0
+player_find_rodeo_target_per_cmd	1	client.dll	18086e130	FUN_1807374a0	0x2002	Run FindRodeoTarget callback	1811f1890
+player_movementBounds_predictionShare	1	client.dll	180864fe0	FUN_1807377e0	0x2002		1811b0850
+player_movingDeathThreshold	50	client.dll	180879340	FUN_1807377e0	0x6000		1828f4aa0
+player_respawnInputDebounceDuration	0.5	client.dll	18085ebb0	FUN_1807374a0	0	How long after respawning will certain player inputs be debounced for	180c21410
+player_showEyePosition	0	client.dll	18085ebf0	FUN_1807377e0	2		180c20550
+player_useMovementBounds	1	client.dll	180865020	FUN_1807377e0	0x2002		1811b10c0
+player_viewchange_debug_pitch	20	client.dll	18085ec30	FUN_1807377e0	2		180c20e20
+player_viewchange_debug_roll	9	client.dll	18085ec70	FUN_1807377e0	2		180c20d00
+player_viewchange_debug_yaw	160	client.dll	18085ecb0	FUN_1807377e0	2		180c21d40
+skip_jump_height_fraction	0.75	client.dll	1808650b0	FUN_1807374a0	0x2000	Jump height fraction when skipping	1811af2e0
+skip_replenish_double_jump	1	client.dll	1808650f0	FUN_1807374a0	0x2000	Whether the player can double jump after skipping	1811b3cc0
+skip_sounds	0	client.dll	180865130	FUN_1807374a0	0x2000	Enables skip-specific sounds	1811ade10
+skip_speed_reduce	12	client.dll	180865170	FUN_1807374a0	0x2000	Speed lost when skipping	1811ae950
+skip_speed_retain	450	client.dll	1808651b0	FUN_1807374a0	0x2000	Speed loss doesn\'t go below this	1811b1db0
+skip_time	0.1	client.dll	1808651f0	FUN_1807374a0	0x2000	"Time after landing that is considered \""skipping\"" if the player jumps again"	1811b3180
+slide_auto_stand	0	client.dll	180865230	FUN_1807374a0	0x2000	Automatically stand when slide ends	1811b3b10
+slide_boost_cooldown	2	client.dll	180865270	FUN_1807374a0	0x2000	Min time between slides before getting another boost	1811b3a80
+slide_max_angle_dot	0.6	client.dll	1808652b0	FUN_1807374a0	0x2000	Cosine of max angle from forward that you can slide when sprinting	1811b2670
+slide_step_velocity_reduction	10	client.dll	1808652f0	FUN_1807374a0	0x2000	Velocity reduction when going up a step (is multiplied by step height)	1811b0cd0
+slide_viewTiltDecreaseSpeed	2.5	client.dll	18086e240	FUN_1807374a0	0	Speed at which view tilt decreases while sliding in degrees per second	1811f0860
+slide_viewTiltIncreaseSpeed	5	client.dll	18086e280	FUN_1807374a0	0	Speed at which view tilt increases while sliding in degrees per second	1811f1ad0
+slide_viewTiltPlayerSpeed	400	client.dll	18086e2c0	FUN_1807374a0	0	Speed at which view tilt is full while sliding	1811f22b0
+slide_viewTiltSide	15	client.dll	18086e300	FUN_1807374a0	0	View tilt when looking to the side while sliding in degrees	1811f0bc0
+slide_whileInAir	0	client.dll	180865330	FUN_1807374a0	0x2000	Allows beginning a slide (including the boost) while still in the air	1811b44a0
+sprint_camera_smoothing_enabled	1	client.dll	18085aad0	FUN_1807377e0	0x1000000		180bf43a0
+sprint_powerdrain	0	client.dll	18086e380	FUN_1807377e0	0x2000		1811f15c0
+sprinttilt_accel	35	client.dll	180865370	FUN_1807374a0	0x2000	Acceleration of sprint view tilt fraction	1811b15d0
+sprinttilt_maxvel	2	client.dll	1808653b0	FUN_1807374a0	0x2000	Maximum speed of sprint view tilt	1811b0bb0
+sprinttilt_turnrange	120	client.dll	1808653f0	FUN_1807374a0	0x2000	Max turn rate that creates view tilt when sprinting	1811b0180
+superjump_disabled_from_water	0	client.dll	1808654f0	FUN_1807377e0	0x2000		1811b1ae0
+superjump_drain_power_onfail	0	client.dll	180865530	FUN_1807377e0	0x2000		1811b46e0
+superjump_fail_sound_when_jump_limit	1	client.dll	180865570	FUN_1807377e0	0x2000		1811b3690
+superjump_limit	0	client.dll	1808655b0	FUN_1807377e0	0x2000		1811b14b0
+superjump_limitreset_onwallrun	1	client.dll	1808655f0	FUN_1807377e0	0x2000		1811b0df0
+superjump_max_power_use	100	client.dll	180865630	FUN_1807377e0	0x2000		1811ae5f0
+superjump_min_height_fraction	0.25	client.dll	180865670	FUN_1807374a0	0x2000	Minimum fraction of desired superjump height that is acheived, even if already moving quickly upwards	1811b5100
+superjump_min_power_use	0	client.dll	1808656b0	FUN_1807377e0	0x2000		1811b37b0
+superjump_powerreset_onground	1	client.dll	1808656f0	FUN_1807377e0	0x2000		1811b4890
+sv_airaccelerate	10	client.dll	18086bee0	FUN_1807377e0	0x2102		1811c3b20
+sv_backspeed	0.6	client.dll	18086bf20	FUN_1807374a0	0x2002	How much to slow down backwards motion	1811c3a90
+sv_bounce	0	client.dll	18086bf60	FUN_1807374a0	0x2102	Bounce multiplier for when physically simulated objects collide with other objects.	1811c3450
+sv_footsteps	1	client.dll	18086bfa0	FUN_1807374a0	0x2102	Play footstep sound for players	1811c37c0
+sv_friction	4	client.dll	18086bfe0	FUN_1807374a0	0x2102	World friction. (Equivalent player setting is in player settings files)	1811c33c0
+sv_gravity	750	client.dll	18086c020	FUN_1807374a0	0x2100	World gravity.	1811c3730
+sv_maxspeed	320	client.dll	18086c060	FUN_1807377e0	0x2102		1811c3330
+sv_maxvelocity	12100	client.dll	18086c0a0	FUN_1807374a0	0x2002	Maximum speed any ballistically moving object is allowed to attain per axis.	1811c3850
+sv_stopspeed	100	client.dll	18086c2e0	FUN_1807374a0	0x2102	Minimum stopping speed when on ground. (Equivalent player setting is in player settings files)	1811c3df0
+sv_wateraccelerate	10	client.dll	18086c320	FUN_1807377e0	0x2102		1811c3210
+view_offset_entity_enable	1	client.dll	18086ea80	FUN_1807374a0	0x6000	Whether to apply camera animations from the view offset entity	1811f0a10
+wallrun_allowed_wall_dist	13	client.dll	180865df0	FUN_1807374a0	0x2000	Distance to the side that feet may be from the wall	1811aea70
+wallrun_allowed_wall_dist_wallhang	18	client.dll	180865e30	FUN_1807374a0	0x2000	Distance to the side that hand may be from the wall for wallhang	1811af880
+wallrun_angleChangeMinCos	0.8	client.dll	180865e70	FUN_1807374a0	0x2000	Cosine of maximum angle the wall can change away from you without falling off	1811b4140
+wallrun_avoid_wall_top_decel	3000	client.dll	180865eb0	FUN_1807374a0	0x2000	Deceleration applied to prevent the player from wall running too close to the top of a wall and falling off	1811b2d00
+wallrun_curveDebug	0	client.dll	18087b410	FUN_1807374a0	0x2000	Draws debugging information for wallrun curves	182904080
+wallrun_curveEnable	1	client.dll	18087b450	FUN_1807374a0	0x2000	Enables usage of wallrun curve hints	182904110
+wallrun_debug	0	client.dll	180865ef0	FUN_1807374a0	0x2000	Shows wall run debug info	1811b0580
+wallrun_enable	1	client.dll	180865f30	FUN_1807374a0	0x2000	Enables wall running	1811b3e70
+wallrun_fallAwaySpeed	70.0	client.dll	180865f70	FUN_1807374a0	0x2000	Velocity away from the wall when falling off	1811b1780
+wallrun_gravityRampUpTime	1.0	client.dll	180865fb0	FUN_1807374a0	0x2000	While wall running, gravity starts at 0 and ramps up to full over this many seconds	1811aff40
+wallrun_hangStopTime	0.5	client.dll	180865ff0	FUN_1807374a0	0x2000	Length of time to come to a stop when zooming	1811b2550
+wallrun_hangslipduration	1.0	client.dll	180866030	FUN_1807374a0	0x2000	Time it takes for slipping to become completely gravity based	1811b3330
+wallrun_hangslipstarttime	3.0	client.dll	180866070	FUN_1807374a0	0x2000	Time wall hanging before you start to slip down	1811b3c30
+wallrun_hangslipvel	70	client.dll	1808660b0	FUN_1807374a0	0x2000	Impulse downward when slipping starts while wall hanging	1811b0d60
+wallrun_maxViewTilt	15.0	client.dll	1808660f0	FUN_1807374a0	0x2000	Amount of roll applied to the view in degrees while wall running	1811b0970
+wallrun_minAngle_air	180.0	client.dll	180866130	FUN_1807374a0	0x2000	Angle at which you can start wall running when hitting a wall from a jump (0 to 180)	1811af400
+wallrun_noInputSlipFrac	0.7	client.dll	180866170	FUN_1807374a0	0x2000	Min fraction of slip behavior when not pushing in any direction (applies more gravity)	1811b53d0
+wallrun_pushAwayFallOffTime	0.05	client.dll	1808661b0	FUN_1807374a0	0x2000	Pushing away from the wall for this many seconds causes you to fall off	1811b49b0
+wallrun_repelEnable	1	client.dll	1808661f0	FUN_1807374a0	0x2000	Enables repelling players from walls they have jumped off of	1811b2820
+wallrun_repelSoftness	5.0	client.dll	180866230	FUN_1807374a0	0x2000	Softness of wall jump repel: higher values make it easier for players to reduce their speed away from the wall	1811b3720
+wallrun_repelTimeMax	0.4	client.dll	180866270	FUN_1807374a0	0x2000	Time after jumping off the wall that player is no longer repelled from the wall	1811af6d0
+wallrun_repelTimeMin	0.2	client.dll	1808662b0	FUN_1807374a0	0x2000	Time after jumping off the wall that player is repelled from the wall	1811b19c0
+wallrun_retry_interval	0.07	client.dll	1808662f0	FUN_1807374a0	0x2000	Length of time between checking for the ability to wallrun after hitting a wall in air movement	1811b4b60
+wallrun_rotateMaxRate	3	client.dll	180866330	FUN_1807374a0	0x2000	Maximum rotation speed around a wall in radians per second; avoids sticking to walls that do tight curves	1811b3600
+wallrun_sameWallDist	100	client.dll	180866370	FUN_1807374a0	0x2000	Within this distance of the previous wall run, wall run is prevented at a higher point on the same wall	1811b4e30
+wallrun_sameWallDot	0.9	client.dll	1808663b0	FUN_1807374a0	0x2000	Dot product threshold for preventing wall running on the same wall twice	1811b1d20
+wallrun_sameWallHeight	0	client.dll	1808663f0	FUN_1807374a0	0x2000	Height, relative to where the player last touched the wall, above which he cannot reattach	1811af760
+wallrun_sameWallSlope	0	client.dll	180866430	FUN_1807374a0	0x2000	Beyond wallrun_samewalldist, wall running is permitted at higher points with this slope	1811ae320
+wallrun_slipduration	1.0	client.dll	180866470	FUN_1807374a0	0x2000	Time it takes for slipping to become completely gravity based	1811b54f0
+wallrun_slipslowdown	0.5	client.dll	1808664b0	FUN_1807374a0	0x2000	Fraction of velocity lost when slipping starts	1811aedd0
+wallrun_slipstarttime	1.5	client.dll	1808664f0	FUN_1807374a0	0x2000	Time wall running before you start to slip down	1811ae7a0
+wallrun_slipvel	70	client.dll	180866530	FUN_1807374a0	0x2000	Impulse downward when slipping starts	1811b1390
+wallrun_strengthLossEnd	1000	client.dll	180866570	FUN_1807374a0	0x2000	Number of wall runs at which point upward strength is fully lost (scales upWallBoost, jumpUpSpeed, and gravityRampUpTime to zero)	1811b2790
+wallrun_strengthLossStart	1000	client.dll	1808665b0	FUN_1807374a0	0x2000	Number of wall runs allowed before starting to lose upward strength (scales upWallBoost, jumpUpSpeed, and gravityRampUpTime)	1811b4a40
+wallrun_upWallBoost	250.0	client.dll	1808665f0	FUN_1807374a0	0x2000	Initial vertical velocity boost when wall running begins	1811afac0
+wallrun_upwardAutoPush	0.65	client.dll	180866630	FUN_1807374a0	0x2000	The amount of automatic up-the-wall input applied when the player pushes forward along the wall. Helps to fight gravity when pushing forward.	1811ae4d0
+wallrun_viewTiltPredictTime	0.25	client.dll	180866670	FUN_1807374a0	0x2000	Time before you start wall running where your view starts tilting. Predicts upcoming wall running	1811b2e20
+wallrun_viewTiltSpeed	6.0	client.dll	1808666b0	FUN_1807374a0	0x2000	Speed at which the view tilts while wall running	1811af0a0
+zipline_debug	0	client.dll	18087ea80	FUN_1807377e0	0x6000		182e3b000
+zipline_use_range	120.0	client.dll	18087eac0	FUN_1807377e0	0x6000		182e3af70

@@ -1,0 +1,29 @@
+// HSD.TF2Diag W2 client side: the local player's cloak as the client sees it (fade factor
+// drives the cloak material), 20 times a second, only while cloaked or fading.
+// Log line: HSDDIAG W2C <time> <cloaked> <cloakedOrFlicker> <fade>
+global function HsdDiagW2_InitClient
+
+void function HsdDiagW2_InitClient()
+{
+	if ( GetConVarBool( "hsd_autorun" ) )
+		thread HsdDiagW2_CloakLog()
+}
+
+void function HsdDiagW2_CloakLog()
+{
+	float last = -1.0
+	while ( true )
+	{
+		entity p = GetLocalClientPlayer()
+		if ( IsValid( p ) )
+		{
+			float fade = p.GetCloakFadeFactor()
+			bool c = p.IsCloaked( true )
+			bool cf = p.IsCloaked( false )
+			if ( c || cf || fade != last )
+				printt( format( "HSDDIAG W2C %.4f %s %s %.3f", Time(), c ? "1" : "0", cf ? "1" : "0", fade ) )
+			last = fade
+		}
+		wait 0.05
+	}
+}
