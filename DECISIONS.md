@@ -19,11 +19,32 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 - **回放电机**：用来逐命令复现 R5 录像的电机，和基线保持逐字节相同，一般不改。下面的改动除非特别说明，都只改游戏身体。
 - **[meas] / [native] / [design]**：数值来自实测 / 原生代码 / 我们自己的设计。
 
+### 留档规则（你 2026-10-30 定的，D-73）
+
+- 留档指的是**决定和数据**，不是文件。每个决定都写**选中的和没选中的**，各自的数据和理由。
+- 每份数据都标明属于哪个版本：**R5 / Unity 改前 / Unity 改后**。
+- 旧版本不删：代码里留开关，和 R5 的差别写进 [R5-DIFF-ARCHIVE.md](R5-DIFF-ARCHIVE.md)。
+- 结束的话题标"到此为止 + 日期 + 原因"，不删除。
+- 拟合原则（D-70）：尽量贴合 R5 原生；差零点几个百分比可以不追，但要写出差在哪里、差多少。
+- 实时过程记在共享日志（"HSD 版本溯源"页面的数据库，https://claude.ai/artifact/NCjBNDQZPUYoTwdfHdcNEa ，写法在工作区根目录 `CLAUDE.md`），所有会话随时写；这份文件仍是进 git 的正式档案，PR 里有决定时照旧在同一个 PR 里加时间线和 D-xx 行。
+- 早先缺档的地方，查到的旧值写在最后的"补档（10-30）"。
+
 更早、更细的技术过程（英文，2026-10-20 到 10-23）在 [EXECUTION-LOG.md](EXECUTION-LOG.md)；各阶段一览在 [research/phase2-local/STATUS.md](research/phase2-local/STATUS.md)。这两份从 2026-10-26 起不再更新，新的内容都记在这里。暂缓的设计问题：[DEFERRED-DESIGN-TODO.md](DEFERRED-DESIGN-TODO.md)；搁置的能力：[SHELVED-ABILITIES.md](SHELVED-ABILITIES.md)。
 
 ---
 
-## 现在的状态（2026-10-28）
+## 现在的状态（2026-10-30）
+
+〔10-30 更新。下面"10-28 的状态"那几条原样保留，10-29 / 10-30 的变化写在这里。〕
+
+- **两个仓库没有开着的 PR**：10-30 04:56 HSD-Unity#49 + research #79 合并，TF2 部分（蹬墙跑 TF2 规则 B / A、TF2 二段跳、TF2 侧倾、TF2X 战斗道具、D-57 – D-65）进了 Main。合并前你试玩了 TF2X。
+- **基线**（TF2X 合并后）：EditMode 2236 / 2236，PlayMode 1 / 1；回放电机（M2/M1 222、M3 90、M4 114）和游戏身体（FeelBatch M1–M3 201、M4 114）共 741 个文件和改前逐字节相同；smoke 演示 238 / 238；课程单圈 78.88 s；镜头对照主指标 332 / 361（CAM2）。
+- **10-30 你定的**（D-66 – D-73，详见时间线）：回放电机到此为止（只当尺子）；K-8 下滑索 punch 按 R5；三种二段跳的镜头都用 R5 原生二段跳 punch；TF2 二段跳整理成可复用的包（不绑成道具）；拟合原则；滑铲跳落地 kick 先查原因再按 R5；蹲着翻越的镜头曲线按实际蹲姿时长选；留档规则 + 共享实时日志。
+- **正在做**（10-30 夜里，补坑计划 `PLAN-FOUNDATION.md`，只开 PR 不合并）：存档进 git（TF2-Research → 研究仓库 `tf2/`，会话 fnd-archive）；记录补齐（本 PR，会话 fnd-records）；Apex 遗留修改 K-8 / 二段跳 punch / TF2 二段跳包 / 滑铲跳落地 kick / 蹲姿翻越镜头（HSD-Unity，会话 fnd-unity）；工作树清理（fnd-cleanup）。
+- **泰坦**：T0 做完（`TF2-Research/expansion/titan/T0-REPORT.md`）：7 台都能召唤驾驶；鼠标 / 键盘转向和铁驭完全一样，手柄转速 × 0.75；底盘走速 270 / 250 / 210。用户之后从 7 台里选 3 台（`TITAN-LIST.md` 的抉择列）。
+- **等你定的**：D-56 火箭跳（A EPG 式击退 / B Fuse 式跳跃加成）；泰坦清单；E1–E3（留到游戏接近完成）。
+
+10-28 的状态（原文）：
 
 - **R5 实测和 Unity 复刻**：M0–M10 全部完成并合并。基础移动、lurch / tap strafe、攀爬 / 翻越 / superglide、滑索、各传奇能力（Pathfinder、Octane、Horizon、Valkyrie、Ash、Revenant、Vantage、Wraith、Zipline Gun）都在 Unity 里。
 - **原生代码研究（N 系列）**：N0–N11 完成。用 Ghidra / Frida 读 r5apex 的原生移动代码，和实测逐项对照（对照表 [research/rea-native/CROSSCHECK-LEDGER.md](research/rea-native/CROSSCHECK-LEDGER.md)）。认可的差别都改进了 Reference。
@@ -185,13 +206,13 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
   - 练习地图上 U-3（R5 档）会触发的只有平台和坡道相接的 4 处：J 发射坡顶的平台两头、L 滑索场的上坡道接平台、终点平台接 X 连招坡、ZG2 平台接坡道。贴地滑过去才算，而且只有滑铲已经超过 2 s 才会再加速；91 个 Reference 演示和课程单圈里一次都没有触发（"每个方块"档也没有）。
   - Unity：EditMode 2149 / 2149，PlayMode 1 / 1；M2/M1、M3、M4 回放和基线逐字节相同；真实按键演示 238 / 238，91 个 Reference 演示的轨迹和改前完全一样；课程单圈 79.12 → 78.88 s，来自 U-1（L 滑索场的上坡道走得快了；单关 U-1 回到 79.14）；build `HSD-Build\R6U`。
 
-### 2026-10-28：回放电机的滑铲规则换成原生（RPS）
+### 2026-10-28：回放电机的滑铲规则换成原生（RPS）〔到此为止 10-30，见 D-66〕
 - 你："你建议（主要的贴合原生的）老的归档"，确认"对，合并后派"。
   - **[D-47]** 回放电机（R5 录像逐命令复现用的那套）的 7 个滑铲开关改成原生，和 Reference 一致：松开下蹲、2 s 加速冷却（从上次开始算）、早跳退还要下蹲过渡没完、过渡从下一条命令算、350 下限只抬 297.5–350、滑铲转向 50。斜坡（R6U）和非滑铲的 N7 项没动。旧规则存成 **Legacy M2**（`R5MotorV2Params.LegacyM2()`、`BatchReplay -legacyM2`），能逐字节复现改前全部回放输出。
   - 105 个 R5 录像重跑：103 个逐命令轨迹不变，M3 两个 `e8_slide_chain` 更接近 R5（水平速度误差 rms 7.48 → 0.15 u/s，事件时刻误差 12 → 0 条命令；原因是录像最后的松开下蹲），没有变差的。新基线和对照：[research/phase2-local/rps/README.md](research/phase2-local/rps/README.md)；存档：[R5-DIFF-ARCHIVE.md](R5-DIFF-ARCHIVE.md)（RPS 一节）。
   - 游戏身体不变：105 个录像喂给 Reference / Fun 身体，轨迹和改前逐字节相同；真实按键演示 238 / 238，smoke 输出和 R6U 逐行相同，课程单圈 78.88 s 不变。Unity：EditMode 2149 / 2149，PlayMode 1 / 1；build `HSD-Build\RPS`；HSD-Unity [#44](https://github.com/letheli710/HSD-Unity/pull/44)。
 
-### 2026-10-28：回放电机的下蹲碰撞体和地面移动换成 Reference（RUD）
+### 2026-10-28：回放电机的下蹲碰撞体和地面移动换成 Reference（RUD）〔到此为止 10-30，见 D-66〕
 - 你：先同意把 RPS 留下的边界项 `airUnduckDrop`（空中松开下蹲时原点下降 16.5 u）也换到回放电机（"第一个，我完全同意，就像你说的"）。
   - 只换这一项时，105 个录像里 7 个变好、3 个按判据变差，所以停下来查原因：
     - M3 e3 滑铲跳 r650 / r651：着地时刻对了，但水平位置误差 rms 4.0 → 8.4 / 3.7 → 9.1。原因是这时露出了回放电机的另一条旧规则：着地那一条命令速度方向就直接转到按键方向（R5 用约 30 条命令慢慢转过去）。改前着地晚 10 条命令，正好把这个差别盖住了。
@@ -300,7 +321,77 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 - 你把 TF2 的铁驭技能、投掷物、Boost（以后还有 3–4 个泰坦）列进 HSD 以后要做的范围，定了总方向 [D-59]–[D-64]：HSD 最终是 PvE；先研究机制存档，数值等战斗框架建好再调；伤害不分泰坦和士兵；Apex 有原型的用 Apex；只借规则和数值；抛物线显示做成开关、默认开。清单和去向在 `TF2-Research/expansion/`（PILOT-LIST §0、DESIGN-LIST）。
 - 研究分给 W1–W4（TF2 测试目标、W2 技能和投掷物、W3 增益和特殊武器、W4 Apex 对照），报告在 `TF2-Research/expansion/w2`、`w3`、`apex`。
 - 同一天按你的要求做了可玩版（W5，HSD-Unity 分支 `tf2/wallrun-rules`，PR [#49](https://github.com/letheli710/HSD-Unity/pull/49)）：占位战斗框架（统一血量 / 伤害、假人、测试步枪、伤害数字、战斗场 K 键）+ 研究里的全部道具（公共投掷公式和抛物线、悬停、相位回溯、重力星；破片、电弧星、铝热剂、炸药包；隐身、A 型墙 + Rampart 选项、扫描、分身三种、地图透视；智能手枪、蜘蛛雷、两种哨戒炮、增幅武器、能量电池、快速回血、地狱塔光束、投掷物发射器）。全部默认不装，装备在 Esc → "Combat items (TF2X)"（PlayerPrefs `hsd.tf2.x.*`）。试玩说明 HSD-Unity `TF2X-PLAYTEST.md`，build `HSD-Build\TF2X`。
-- 不装道具时移动不变：回放电机（M2/M1 222、M3 90、M4 114）和游戏身体（FeelBatch M1–M3 201、M4 114）共 741 个文件和改前逐字节相同；挂上空战斗层后所有移动演示逐帧相同（测试）；EditMode 2236 / 2236，PlayMode 1 / 1，smoke 演示 238 / 238，课程单圈 78.88 s。还没有人试玩。
+- 不装道具时移动不变：回放电机（M2/M1 222、M3 90、M4 114）和游戏身体（FeelBatch M1–M3 201、M4 114）共 741 个文件和改前逐字节相同；挂上空战斗层后所有移动演示逐帧相同（测试）；EditMode 2236 / 2236，PlayMode 1 / 1，smoke 演示 238 / 238，课程单圈 78.88 s。还没有人试玩。〔10-30：你试玩通过，合并，见下一节〕
+
+### 2026-10-30：TF2 进 Main、泰坦 T0、全面盘点后的决定（D-66 – D-73）
+
+**节点**
+- 04:56 合并 HSD-Unity [#49](https://github.com/letheli710/HSD-Unity/pull/49) + research [#79](https://github.com/letheli710/Apex-MovementAnalysis/pull/79)（你试玩 TF2X 后）：蹬墙跑 TF2 规则、TF2 二段跳、TF2 侧倾、TF2X 战斗道具、D-57 – D-65 进 Main。合并后两个仓库没有开着的 PR。
+- **泰坦 T0**（会话 tf2-t0-titan，工作区 `TF2-Research/expansion/titan/T0-REPORT.md`（fnd-archive 把 TF2-Research 放进本仓库 `tf2/` 后在 `tf2/expansion/titan/`），Northstar 本地私服 `mp_lf_stacks`，144 fps）。只研究，Unity 没改：
+  - 7 台（Ronin、Northstar、Ion、Tone、Monarch、Scorch、Legion）都能召唤、上机（动画上机 3.45 s，或瞬间上机）、下机（1.03–1.42 s，铁驭落在泰坦上方 120–170 u）。
+  - **转向**：鼠标和键盘和铁驭完全一样（键盘 210.1–210.3 / 1499.3–1500.7 °/s，真实鼠标 2000 计数都是 144.78°，没有上限、平滑、加速曲线）。**手柄**：泰坦单独一张视角表，最大转速 × 0.75，加速时间 0.33 → 0.8 s。"机械感"来自手柄表、技能的临时 `turn_slow`（鼠标输入约 × (1 − 2 × 强度)：0.25 → 鼠标转速 × 0.506）和镜头弹簧（铁驭 65 / 9，Stryder 35 / 9，Atlas 65 / 15，Ogre 95 / 30）。
+  - **底盘移动**（实测和设置文件一致）：走 270 / 250 / 210，冲刺跑 400 / 380 / 310，dash 800 / 700 / 600（保持约 0.2 s），多人里 dash 次数 2 / 1 / 1（TITAN-LIST 原来按底盘写的 4 / 3 / 2 不对）。眼高 185（铁驭 60）。
+  - 同日你改了范围：7 台全部实测，每台的武器、技能、核心都要详细数据（`titans/`），之后你从中选 3 台。
+- 全面盘点（全局地图、会话推进树、版本溯源页）后建了补坑计划（工作区 `PLAN-FOUNDATION.md`）和共享实时日志；当晚 4 个会话执行（只开 PR，不合并）。
+
+**[D-66] 回放电机到此为止**〔到此为止 10-30：回放电机只当尺子〕
+- 你定：回放电机保持"回归用的尺子"，不再往里换东西。还剩下只在 Reference 里、回放电机没有的项，**都不换**：
+  - 斜坡 U-1 – U-5 / `slopeMovement`（R6U，D-45 / D-46）；
+  - 起跳朝墙推 `jumpSurfacePush` 30（D-23；回放电机 0）；
+  - 空中额外加速 `extraAirAccel` 2.0（N7）；
+  - 超速起跳减速 `groundJumpSkipReduce` 100（N7）；
+  - 冲刺加速边界 `sprintAccelFixedEdge`（N7）；
+  - lurch 上限系数 0.7（N7 的原生来源）。
+- 选中：A. 到此为止。理由：回放电机的用处是让每次改动都能逐字节对比；RPS（D-47）和 RUD（D-49）已经把影响最大的滑铲、下蹲碰撞体、地面 WalkMove 换过来了（e8 滑铲连招速度误差 rms 7.48 → 0.15，e3 侧向起跳位置误差 24.2 → 2.4 u），剩下几项在现有 105 个录像里影响小，每换一项就要重定一次基线。
+- 没选：B. 继续换剩下的项。数据：没有跑过（这几项在回放电机里的影响没量过）；代价是每项一次基线重定和例外核查（RUD 一次就有 35 个录像变化、3 个例外）。
+- D-47 / D-49 原文不动，后面加了〔到此为止 10-30，见 D-66〕。"还没结论的事"里那条"斜坡和非滑铲的 N7 项"也标了：那条写在 D-49 之前，其中的地面摩擦（WalkMove）D-49 已经换了。
+
+**[D-67] K-8 下滑索 punch：按 R5 加**
+- R5：原生 `0x140a35ac0`，下绳时往 punch 弹簧加冲量：俯仰 (10 + 3·r₁)·20、偏航 / 横滚 10·r·20；CAM2 实测第一组峰值向下 12–14°、横滚 ±1–5°。Unity 改前：没有。
+- 选中：按 R5 加（旧版 = 没有，留开关）。理由：拟合原则（D-70）、D-36。你试玩时看会不会太晃。
+- 没选：保持没有。理由：12–14° 比较大，可能晃；但这是 R5 的实际表现，不按 R5 要单独理由，没有。
+- 实现：fnd-unity（补坑计划 3.1），还没做。
+
+**[D-68] 二段跳的镜头：三种二段跳都用 R5 原生二段跳 punch**
+- R5：原生 `0x140a34c00`：俯仰 (4.5 + r₁)·20（约 3.9–6.2°）、横滚 2·r₃·20，弹簧形状（和落地 kick 同两组弹簧）。Unity 改前：跳板二段跳是 F7 设计的向下 1.2° 小凸起（D-43，0.10 s 到最低、不回弹）；M7 和 TF2 二段跳没有镜头。
+- 三种二段跳（数值不变，只换镜头）：
+
+| 二段跳 | 来源 | 竖直 | 水平 | 时机 |
+|---|---|---|---|---|
+| Octane 跳板二段跳 | R5 实测（M8-C，123 次） | vz +201.81；起跳时 vz 低于 358.7 时直接设成 409.25 | ±240（按键方向） | 跳板起飞后 0.108 s 才能按 |
+| HSD M7 二段跳 | HSD 设计（D-08） | vz ≥ 259.8（高 45 u） | 方向往按键转一半（redirect 0.5） | 起跳 0.1 s 后 |
+| TF2 二段跳（P-02） | TF2 实测（T3 / T5，D-58） | vz = 300（高 60 u） | 先扣 180 再按键加 180 | 起跳后马上 |
+
+- 选中：三种都用 R5 原生 punch（3.9–6.2°）；F7 的 1.2° 留成开关。理由：R5 里二段跳（Octane）就是这个 punch，拟合原则；M7 / TF2 两种 R5 没有原型，用同一个 punch 让三种手感一致。D-43 的镜头部分被取代，HUD 提示和声音不变。
+- 没选：A. 跳板保留 1.2°（设计值，比 R5 小 3–5 倍）；B. 只给跳板换 R5、M7 / TF2 不加镜头。理由：都不是 R5 的表现。
+- 实现：fnd-unity（3.2），还没做。
+
+**[D-69] TF2 二段跳整理成可复用的包**
+- 选中：把 TF2 二段跳的代码实现、研究数据（T3 / T5）、规则说明（README）放进一个文件夹（暂定 `Abilities/DoubleJumpTf2/`），**不绑成道具**，现在先不用，留好以后开发时直接拉过去用；行为不变、逐字节回归。
+- 没选：做成道具 / 拾取物（拿到才能用）。你 10-30 先这么说过，后来改了："不绑定成道具"。共享日志的种子条目 `t11-08` 原来写的是"道具包"，已经改正。
+- 实现：fnd-unity（3.3），还没做。
+
+**[D-70] 拟合原则**
+- 选中：尽量贴合 R5 原生；差零点几个百分比可以不追，但要写出差在哪里、差多少（写进 R5-DIFF-ARCHIVE 二节）。例如滑铲下沉到最低 Unity 约 0.19 s、R5 约 0.167 s（补坑计划 3.6，只记录）。
+- 没选：A. 每个差别都追到 0（成本高，部分差别来自对照场景和混合版本，追不到）；B. 只追大差别、小的不记（违反留档规则）。
+- 这是 D-36 的补充：D-36 定"原则上改成 R5"，D-70 定"多小可以不追、不追也要写"。
+
+**[D-71] 滑铲跳落地 kick：先查原因，再按 R5**
+- 数据：R5 1.1–1.7°；Unity 改前（CAM2 之前）1.5–2.1°，CAM2 后 1.7–2.3°（起跳 punch 的尾巴让基准再低 0.2°）。Unity 大约是 R5 的 1.5 倍，原因没查。
+- 选中：先研究原因（落地速度、kick 输入、基准），再按 R5 改。
+- 没选：A. 直接按比例缩小（不知道原因，可能盖掉别的差别）；B. 不改（差 50 %，超过 D-70 的"零点几个百分比"）。
+- 实现：fnd-unity（3.4），先研究，还没做。
+
+**[D-72] 蹲着翻越的镜头时刻：按实际蹲姿翻越时长选曲线**
+- 数据：R5 h120 蹲 0.52–0.60 s 到峰、h160 蹲 0.99 s 到峰；Unity（CAM2 后）h120 蹲 0.29 s 到峰、h160 蹲没有驼峰。原因：翻越镜头读的是 B1 按站姿分类的曲线，没有按 D-22 的蹲姿时长（0.517 / 0.625 / 0.813 s）去选。
+- 选中：镜头曲线按实际蹲姿翻越时长（D-22）选。**注意**：S27 翻越加速（B1）读的是同一套曲线，改完要跑 B1 / B1-H 回归。
+- 没选：A. 不改（CAM2 记为已知差别）；B. 只改镜头、B1 判定用单独一套（两套曲线会分叉，以后难维护）。
+- 实现：fnd-unity（3.5），还没做。
+
+**[D-73] 留档规则 + 共享实时日志**
+- 选中：规则见文件开头"留档规则"一节。实时日志 = "HSD 版本溯源"页面的数据库（https://claude.ai/artifact/NCjBNDQZPUYoTwdfHdcNEa ，collection `log`），所有会话做了决定、拿到数据、出了新版本、合并 PR、发现问题时当场写；写法在工作区根目录 `CLAUDE.md`。这份 DECISIONS 仍是进 git 的正式档案。
+- 没选：只在 DECISIONS 里记（会话结束才写，中间过程会丢，几个会话同时改一个文件会冲突）。
+- 补档：盘点时找到的 6 处缺档（D-11、D-13、D-19、D-22、D-24、D-28）和早期 M 版本的数字，查到的写在最后"补档（10-30）"。
 
 ---
 
@@ -350,13 +441,13 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 | D-40 | 10-27 | LS / RAS | 没有具体要复现的视频；Reference 保持原生 lurch 模型（对照 L-11 一致，M9 反向 lurch 在 3° 以内）（你："没有具体要实现的…尽可能符合这个原生的版本…之前这个已经做完了"） | 不改代码 | — |
 | D-41 | 10-27 | "N10 剩下的镜头项目"这条待定 | 早已完成（CAM-18 / 19 在 N10 查清），划掉；rodeo 钩爪侧倾那条还开着 | — | research #56 |
 | D-42 | 10-27 | 钩爪 / 滑索横滚平滑（N12 C-12，你批准） | 改成原生：两者共用一个临界阻尼弹簧（ω 6.667），钩头飞行中也算目标；旧版（各自一阶 6.667 / 3.0）存档 | `NativeCameraParams.nativeRollSmooth`（默认 true；false = 旧版） | HSD-Unity#42，research #68 |
-| D-43 | 10-27 | 跳板二段跳反馈 | 只动表现层：准星下方的可用 / 倒计时 / 按太早 / 触发提示，触发音，原生镜头向下沉 1.2°（[design]，等试玩） | `HsdHud.PadCentre`、`PadJumpCue`、`NativeCameraParams.padJumpKickPitch` | HSD-Unity#42，research #68 |
+| D-43 | 10-27 | 跳板二段跳反馈〔10-30：镜头那部分被 D-68 取代，1.2° 留成开关；HUD 和声音不变〕 | 只动表现层：准星下方的可用 / 倒计时 / 按太早 / 触发提示，触发音，原生镜头向下沉 1.2°（[design]，等试玩） | `HsdHud.PadCentre`、`PadJumpCue`、`NativeCameraParams.padJumpKickPitch` | HSD-Unity#42，research #68 |
 | D-44 | 10-27 | FOV 设置 | 菜单按 Apex 的 FOV 数值（4:3 水平，70–110）显示和输入；默认不变（竖直 70° = Apex 86） | `CameraFeedbackSettings.VerticalFromApex` / `ApexFov`，PlayerPrefs 键不变 | HSD-Unity#42，research #68 |
 | D-45 | 10-28 | 斜坡 U-1 / U-2 / U-4 / U-5（R6 实测） | Reference 按 R5：上坡步长保持长度、坡上圆底半径 16（接触和法线按原点）、滑铲坡面项没有门槛、`slideSlopeNeedsDuck` = false；Fun、回放电机不变；旧版存档 | `R5MotorV2Params.slopeUphillKeepStep` / `hullBottomRadius` / `slideSlopeAnyGrade` / `slideSlopeNeedsDuck` | HSD-Unity#43，research #69 |
 | D-46 | 10-28 | 斜坡 U-3：换地面实体时重新开始滑铲 | 按 R5（≥ 2 s 再加速一次，不降速），可选三档：R5（默认，关卡几何一个实体、平台是道具）/ 关（旧版）/ 每个方块 | `R5MotorV2Params.slideRebeginOnGroundChange`（`SlideRebegin`）、`ConvexSolid.prop`；菜单 PlayerPrefs `hsd.r6u.sliderebegin` | HSD-Unity#43，research #69 |
-| D-47 | 10-28 | 回放电机要不要换成 M10 / N7 的滑铲规则（"还没结论的事"里的一条） | 换成原生（和 Reference 一致），只换 7 个滑铲开关；旧规则存成 Legacy M2，可逐字节复现旧回放基线；回放基线重定（只有 2 个 M3 滑铲连招变了，更接近 R5） | `R5MotorV2Params` 滑铲开关默认值、`LegacyM2()` / `WithLegacyM2Slide()`、`BatchReplay -legacyM2` | HSD-Unity#44，research #70 |
+| D-47 | 10-28 | 回放电机要不要换成 M10 / N7 的滑铲规则（"还没结论的事"里的一条）〔到此为止 10-30，见 D-66〕 | 换成原生（和 Reference 一致），只换 7 个滑铲开关；旧规则存成 Legacy M2，可逐字节复现旧回放基线；回放基线重定（只有 2 个 M3 滑铲连招变了，更接近 R5） | `R5MotorV2Params` 滑铲开关默认值、`LegacyM2()` / `WithLegacyM2Slide()`、`BatchReplay -legacyM2` | HSD-Unity#44，research #70 |
 | D-48 | 10-27 | EPG 真实开火的火箭跳 | 本地 R5 加载不了能开火的 EPG，只做了服务端模拟 + 真手雷对照；真实开火留到之后的《泰坦陨落2》研究（Northstar 本地私服）里做，和模拟结果对照 | — | research #64；工作区 `TODO.md` 的 TF2 研究 T-1 |
-| D-49 | 10-28 | 回放电机的下蹲碰撞体和地面转向（RPS 留下的边界项） | 换成 Reference：`airUnduckDrop` 16.5 + 原生 WalkMove（`groundNativeFriction`）；先做的 M5 `groundVectorRedirect` 版（第一版）没采用；旧电机仍是 Legacy M2；回放基线重定（35 个变，3 个例外：e1_turn ×2 平台噪声、r1237 着地探测边界） | `R5MotorV2Params.R5Reference()`、`WithLegacyM2Rud()`、`BatchReplay -legacyM2` | HSD-Unity `rud/replay-unduck-native`（#45） |
+| D-49 | 10-28 | 回放电机的下蹲碰撞体和地面转向（RPS 留下的边界项）〔到此为止 10-30，见 D-66〕 | 换成 Reference：`airUnduckDrop` 16.5 + 原生 WalkMove（`groundNativeFriction`）；先做的 M5 `groundVectorRedirect` 版（第一版）没采用；旧电机仍是 Legacy M2；回放基线重定（35 个变，3 个例外：e1_turn ×2 平台噪声、r1237 着地探测边界） | `R5MotorV2Params.R5Reference()`、`WithLegacyM2Rud()`、`BatchReplay -legacyM2` | HSD-Unity `rud/replay-unduck-native`（#45） |
 | D-50 | 10-28 | 钩爪脱钩规则（N13 的 G-1…G-6） | 全部按原生：接近距离取原点 / 眼睛较近者、斜坡 400、视线和速度按绳子方向量、低速按径向速度、拉动中低速时限一律 1.5 s、远离 > 500 只在世界钩点；撞上上抬（G-6）没加、待定；旧版存档可切回 | `GrappleS21Params.SetGnDetach(false)`（或单个开关 `nativeProxDistance` / `detachRampMax` / `nativeRopeDir` / `nativeLowSpeed` / `nativeLowSpeedTimer` / `awayOnlyWorldHooks`）；Esc 菜单 "Grapple detach rules (GN)"（PlayerPrefs `hsd.gn.grapple`）；`FeelBatch` / `CameraFeelBatch -preGn` | HSD-Unity `gn/grapple-native` （[#46](https://github.com/letheli710/HSD-Unity/pull/46)）；research [#74](https://github.com/letheli710/Apex-MovementAnalysis/pull/74) |
 | D-51 | 10-28 | 钩爪撞上时上抬（G-6，GN 留下的）〔10-29：见 D-52（实测 R5 丢掉上抬，默认仍关，加可选开关）〕 | 先关着、留作待定：原生客户端在世界钩点会抬到 300，但本地录像是混合版本看不到，世界上的墙也没测过，没法对照；等有只有客户端的实测或《泰坦陨落2》的对照再定 | 不改（`GrappleS21Params.impactBoost` 保持关） | 本表；R5-DIFF-ARCHIVE 二节 G-6 行 |
 | D-52 | 10-29 | 钩爪撞上时上抬（G-6）：实测后定 | 默认关（= R5：客户端 pull step 算出 vz 300，但同一条命令的移动把它丢掉，世界墙和地面钩都不跳）；做成可选开关，打开 = 照客户端代码 vz = min(vz + 300, 300)（世界钩点、接近脱钩、每次拉一次），不是 R5 的实际移动 | `GrappleS21Params.impactBoost`（默认 false，不在 `SetGnDetach` 里）；Esc 菜单 "Grapple impact boost (G-6)"（PlayerPrefs `hsd.g6.impact`）；`FeelBatch -impactBoost` | HSD-Unity [#48](https://github.com/letheli710/HSD-Unity/pull/48)；research [#78](https://github.com/letheli710/Apex-MovementAnalysis/pull/78)；[research/rea-native/g6/G6-IMPACT-BOOST.md](research/rea-native/g6/G6-IMPACT-BOOST.md) |
@@ -372,6 +463,14 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 | D-63 | 10-29 | 素材 | 只借规则和数值，不用 TF2 / Apex 的模型、贴图、声音、动画 | 占位几何体和 IMGUI | DESIGN-LIST §1 |
 | D-64 | 10-29 | 开关的默认值 | 抛物线显示做成开关，**默认开**（和 Apex 一致，关掉的写法参考 `sp_disable_arc_indicator`）；窗户辅助默认关（TODO T-11，不在这次范围） | PlayerPrefs `hsd.tf2.x.arc`（默认 1） | DESIGN-LIST §4 |
 | D-65 | 10-29 | 扩展道具的去向和不做的项 | 按 PILOT-LIST §0：Apex 研究 / 设计清单（能量电池、快速回血、增幅武器、地狱塔式武器、分身分支 B）/ TF2 W1–W3；不做：钩爪（已按 Apex 做）、兴奋剂、相位移动（已有虚空）、脉冲刀的刀、电烟雾、挂墙（留存）、击杀回报、低调、雷达干扰、备用电池、掷骰子、加倍经验。可玩版按这个范围全部做了，数值多为占位 | HSD-Unity `Assets/HSD/Game/Runtime/Combat/`（PR #49） | `TF2-Research/expansion/PILOT-LIST.md`；HSD-Unity `TF2X-PLAYTEST.md` |
+| D-66 | 10-30 | 回放电机到此为止〔到此为止 10-30〕 | 回放电机只当回归用的尺子，Reference 独有的剩下几项都不换：斜坡 U-1 – U-5 / `slopeMovement`、`jumpSurfacePush` 30、`extraAirAccel` 2.0、`groundJumpSkipReduce` 100、`sprintAccelFixedEdge`、lurch 上限 0.7。没选：继续换（每项一次基线重定，影响没量过） | 不改代码；`R5MotorV2Params.R5Reference()` 保持 RUD 版 | 本表；R5-DIFF-ARCHIVE 二节 |
+| D-67 | 10-30 | K-8 下滑索 punch | 按 R5 加：原生 `0x140a35ac0`，俯仰 (10 + 3·r₁)·20，实测向下 12–14°、横滚 ±1–5°；旧版（没有）留开关。没选：保持没有 | fnd-unity 实现（补坑计划 3.1），开关名以 PR 为准 | 待 fnd-unity PR |
+| D-68 | 10-30 | 二段跳的镜头 | 三种二段跳（Octane 跳板、M7、TF2 P-02）都用 R5 原生二段跳 punch `0x140a34c00`（俯仰 (4.5 + r₁)·20 ≈ 3.9–6.2°）；F7 的 1.2°（D-43）留开关。没选：跳板留 1.2° / 只换跳板 | fnd-unity 实现（3.2） | 待 fnd-unity PR |
+| D-69 | 10-30 | TF2 二段跳复用包 | 代码 + 研究数据 + README 放一个文件夹（暂定 `Abilities/DoubleJumpTf2/`），行为不变、逐字节回归；**不绑成道具**。没选：做成拿到才能用的道具 | fnd-unity 实现（3.3） | 待 fnd-unity PR |
+| D-70 | 10-30 | 拟合原则 | 尽量贴合 R5 原生；差零点几个百分比可以不追，但要写出差在哪、差多少（R5-DIFF-ARCHIVE 二节）。没选：全追到 0 / 小的不记 | — | 文件开头"留档规则" |
+| D-71 | 10-30 | 滑铲跳落地 kick | Unity 1.7–2.3°（CAM2 前 1.5–2.1°）对 R5 1.1–1.7°：先查原因，再按 R5 改。没选：按比例缩 / 不改 | fnd-unity 先研究（3.4） | 待 fnd-unity PR |
+| D-72 | 10-30 | 蹲着翻越的镜头时刻 | 镜头曲线按实际蹲姿翻越时长（D-22）选：Unity h120 蹲 0.29 s 到峰对 R5 0.52–0.60 s，h160 蹲没有驼峰对 R5 0.99 s；B1 也读这套曲线，要跑 B1 / B1-H 回归。没选：不改 / 镜头和 B1 分两套 | fnd-unity 实现（3.5） | 待 fnd-unity PR |
+| D-73 | 10-30 | 留档规则 + 共享实时日志 | 记决定和数据（选中 + 没选中 + 各自数据），数据标版本，旧版不删，结束标"到此为止"；实时过程写共享日志 https://claude.ai/artifact/NCjBNDQZPUYoTwdfHdcNEa ，DECISIONS 仍是 git 档案。没选：只记 DECISIONS | 工作区根目录 `CLAUDE.md` | 本文件开头 |
 
 **D-29 → D-31（C-2 为什么推翻）**：第一次决定时以为 Unity 的 102.5 ms 窗口已经盖住了 R5 的减量段，所以"简化 = 不改代码"。后来按 Unity 自己的翻越时钟重排（Unity 的翻越比 R5 长约 25 ms），发现减量段其实在窗口外面，原来的 Reference 在这段是"切到台面"，并不是"给完整 460"。你随后要求继续做 C-2 并合并。细节见 `research/feel/FEEL.md` §6.4 和 `Climb/README.md`。
 
@@ -385,7 +484,7 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 
 记录里写着"等你决定"、后来没看到明确结论的。要么还没定，要么定了没记下来，回顾时请确认：
 
-- ~~回放电机要不要换成 M10 的新滑铲规则~~：10-28 换了，见 D-47。回放电机里斜坡和非滑铲的 N7 项（地面摩擦、空中额外加速等）仍是旧规则，要不要也换没定。
+- ~~回放电机要不要换成 M10 的新滑铲规则~~：10-28 换了，见 D-47。回放电机里斜坡和非滑铲的 N7 项（地面摩擦、空中额外加速等）仍是旧规则，要不要也换没定。〔到此为止 10-30，见 D-66：这句写在 D-49 之前，其中的地面摩擦（有输入时的原生 WalkMove `groundNativeFriction`）10-28 已由 D-49 换进回放电机；剩下的斜坡、`jumpSurfacePush`、`extraAirAccel`、`groundJumpSkipReduce`、`sprintAccelFixedEdge`、lurch 上限 0.7 都不换，回放电机只当尺子〕
 - **F-2**：一次原地跳 Unity 比 R5 高 1.8 u（两套电机都是）。（F1）〔10-28 查了：不是移动代码。测试工具的重置在 dedi 上算成落地，0.72 s 后起跳触发原生 antiMultiJump 降高，客户端被 dedi 纠正；Unity 不改，见 D-55〕
 - ~~LS / RAS~~：10-27 定了，见 D-40。
 - ~~旧的 "Revenant-Wraith" 配置~~：10-27 定了，当历史保留，见 D-39。
@@ -396,12 +495,46 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 - ~~K-5 起跳时的镜头动作~~：10-29 按原生做了，见 D-53（"再向上 1.7°"是指标基准的问题）。
 - ~~K-6 翻越时的镜头动作~~：10-29 按原生做了，见 D-53。蹲着翻越的镜头时刻还对不上（B1 的蹲姿翻越时间问题）。
 - ~~K-7 滑索横滚~~：10-29 复测并按原生做了，见 D-54（N6 的片段没上绳）。
-- **K-8 下滑索 punch**：原生下绳时镜头向下 12–14°、横滚 ±1–5°（`0x140a35ac0`），Unity 没有。加不加？（CAM2）
-- **二段跳 punch**：原生二段跳 punch 3.9–6.2°（`0x140a34c00`）；HSD 跳板二段跳现在是 F7 设计的 1.2° 小凸起。换不换成原生？（CAM2）
-- **滑铲跳落地 kick**：Unity 比 R5 大约 1.5 倍（1.7–2.3° 对 1.1–1.7°，CAM2 之前就大），原因没查。（CAM2）
+- **K-8 下滑索 punch**：原生下绳时镜头向下 12–14°、横滚 ±1–5°（`0x140a35ac0`），Unity 没有。加不加？（CAM2）〔10-30 定了：按 R5 加，见 D-67；fnd-unity 实现中〕
+- **二段跳 punch**：原生二段跳 punch 3.9–6.2°（`0x140a34c00`）；HSD 跳板二段跳现在是 F7 设计的 1.2° 小凸起。换不换成原生？（CAM2）〔10-30 定了：三种二段跳都用原生 punch，1.2° 留开关，见 D-68；fnd-unity 实现中〕
+- **滑铲跳落地 kick**：Unity 比 R5 大约 1.5 倍（1.7–2.3° 对 1.1–1.7°，CAM2 之前就大），原因没查。（CAM2）〔10-30 定了：先查原因再按 R5 改，见 D-71；fnd-unity 研究中〕
 - ~~钩爪比 R5 早脱钩~~：10-28 查清（N13：R5 的"挂到 1.5 s"是本地 dedi 重挂，只有客户端时 Unity 一致）并把脱钩规则全部按原生改了，见 D-50。
 - ~~**G-6 钩爪撞上时上抬**~~：原生客户端在世界钩点（不是道具）接近脱钩时把竖直速度抬到 300，本地轨迹看不到，世界上的墙没测过。要不要加（开关 `impactBoost`，现在都关）等你定。（GN）〔10-28 你定了：先关着，留作待定；等有能对照的实测（只有客户端的录像、或《泰坦陨落2》）再说。见 D-51〕〔10-29 实测后定了：R5 实际不跳，默认关，留可选开关，见 D-52〕
 - **HSD 要不要做火箭跳**：A. EPG 式物理击退（爆点推向身体中心，随距离衰减，和现有速度相加，上限 1000），或 B. Fuse Knuckle Jumper 式跳跃加成（在自己炸弹旁边按跳给固定的起跳速度）。研究建议先做 A，用 jump_kit 数值，护盾规则和地面门槛先不做。见 [research/epg/EPG-ROCKET-JUMP.md](research/epg/EPG-ROCKET-JUMP.md) §7。（EPG）
 - **回放电机的 `airUnduckDrop`**（空中松开下蹲时原点下降 16.5 u，下蹲碰撞体规则）：Reference 开着、回放电机关着。RPS 只换了滑铲开关，这一项算不算滑铲由你定，回放电机要不要也开？（RPS）〔10-28 已做完：回放电机开了，地面移动也一起换成原生 WalkMove，见 D-49〕
-- **《泰坦陨落2》研究**：第一步装 Northstar 并验证能自动跑测，第一个实验是 EPG 真实开火（D-48）。什么时候开始等你定。
+- **《泰坦陨落2》研究**：第一步装 Northstar 并验证能自动跑测，第一个实验是 EPG 真实开火（D-48）。什么时候开始等你定。〔10-28 开始，10-29 T0–T6 / T-1 / T-7 做完，10-30 TF2 部分合并进 Main（#49 / #79，D-57 – D-65）；泰坦 T0 10-30 做完〕
+- **K-6 蹲姿：蹲着翻越的镜头时刻**（CAM2 后剩下的）：Unity h120 蹲 0.29 s 到峰对 R5 0.52–0.60 s。〔10-30 定了：按实际蹲姿时长选曲线，要跑 B1 回归，见 D-72；fnd-unity 实现中〕
+- **TF2 二段跳的去向**：〔10-30 定了：整理成可复用的包，不绑成道具，见 D-69〕
+- **泰坦清单**：`TF2-Research/expansion/TITAN-LIST.md` 的抉择列；T0 做完，7 台的详细数据在 `titan/titans/`，你从中选 3 台。
 - 暂缓清单里的 E1–E3 见 [DEFERRED-DESIGN-TODO.md](DEFERRED-DESIGN-TODO.md)。
+
+---
+
+## 补档（10-30）
+
+10-30 盘点时发现有几个决定只写了结论，没写旧值或没选方案的数据。这里按留档规则补上：每条写"版本 = 数值"和出处；真的找不到的写"原始数据没留下"和已知的部分。出处路径相对本仓库，除非写明是 HSD-Unity。
+
+### 6 处缺档
+
+| 决定 | 缺什么 | 补到的 | 出处 |
+|---|---|---|---|
+| D-11 Ash 冲刺不做 | 为什么不做；有没有数据 | **理由**（你 10-22 原话）："这和我们未来会做的重复了，这个也很常见了"。另一个理由：Ash 冲刺（Predator's Pursuit）是 **S24（2025）** 才加的，S21 的 Ash 没有，不能进 Reference，最多以 [post-S21] 标签放进 Fun。**数据**：本地从没测过（M4 §3.5：setfile mod 不明、计划里 Ash 只列了传送）；本地脚本 `mp_ability_ash_dash.nut`、`ash_dash` mod、冲刺条都在，M4 估计可以触发；数值在 setfile 里没读。网上资料（只有搜索摘要，没核补丁说明）：冷却 2025-02 翻倍、S25 8 s、S26.1 12 s 并削弱方向、S29 10 s，速度 425 → 450。**R5 实测数据：原始数据没留下（没测过）** | `research/phase2-local/m10/M10-PLAN.md`（用户决定第 2 条）；`m9/D2-CANDIDATES.md` C7、§3；`m4/M4-REPORT.md` §3.5 |
+| D-13 客户端 / 本地服务端不一致时跟客户端 | 具体哪里不一致、差多少 | 本地是混合版本（S21 客户端 + S3 dedi，dedi 说了算）。M10 找到两处：**① 天花板滑行**（M10 r_octane，68 次）：S21 客户端贴着天花板时 z 不动、vz 按 600 u/s²（g × 跳板慢放 0.8）衰减、水平速度保持；S3 dedi 把 vz 削到约 0，6–16 条命令后把客户端拉回。跳板 150 / 250 / 400 u 下客户端撞顶 vz 966.1 / 885.9 / 750.9（HSD 971.1 / 891.1 / 751.1）；冲刺跳撞 100 u 天花板客户端 vz 180.1（HSD 199）。社区教程 2021-01 就有。**② 钩爪视线离开脱钩**：客户端在钩点偏离视线约 100°（实测 101–103°）时脱钩，dedi 又继续拉 0.6–1.2 s。另外一个小的：钩上时的弹跳 200（客户端 200、dedi setfile 0，轨迹两边都是 vz 193.7）。〔后来：N13 / GN（D-50）查清 ② 里 dedi 的"继续拉"是本地 dedi 每 0.1 s 重挂钩子造成的；脱钩规则按原生改了〕 | `research/phase2-local/m10/M10-REPORT.md`"混合版本分裂"；`m10/unity/M10C-UNITY.md` §5；`m10/r_grapple/GRAPPLE-M10.md`；`m10/unity/M10A-UNITY.md` |
+| D-19 传送重新进入间隔 | 旧值 | **Unity 改前**：Wraith 大招 `RiftParams.reuseDebounce` **0.5 s**（离开出口 0.5 s 后可以再进）；Ash 大招**没有防抖**（站进去马上再走）。**R5**（脚本 `PhaseTunnel_PhaseEntity`，[src]）：进入 0.5 s 防抖，离开后 1.0 s 内不能再进。**Unity 改后**：两个都是 1.0 s。同一批没选 / 保留的：E-4 门触发范围 Unity 半径 32、高 72（设计值，保留）对 R5 半径 16、高 32；E-5 终点被挡不建模；E-6 旧 `portal` 原语出口速度 300 + 锁 0.3 s（R5 Wraith 门出口 0），只标成设计值。PORTAL-R2 只测到"出来 0.5 s 再走回去能进"，1.0 s 没实测 | `research/rea-native/n8/N8-E-UNITY.md` §2、§4；HSD-Unity#27 |
+| D-22 蹲着翻越的时长 | 改前 Unity 的时长 | **Unity 改前**：翻越时长不分站蹲，蹲着开始也用站姿时长（R5 站姿三类 0.313 / 0.467 / 0.571 s，Unity 用同一个公式）；蹲姿 h80 的 S27 窗口约 0.05 s（R5 约 0.09 s，按时间进度算）。**R5**：蹲姿 h80 0.517 s、h100 0.625 s、h120+ 0.813 s（8 次里 6 次；短的 0.650 s 只在蹲下动作没做完时出现）。**Unity 改后**：按 R5 三点线性插值；另外曲线改按动画进度查后，蹲姿 h80 窗口 0.09 → 约 0.21 s（R5 0.21 s），各类窗口都在 R5 ± 0.02 s 内。〔CAM2 后翻越镜头时刻在蹲姿下还对不上，见 D-72〕 | `research/b1/B1-MANTLE-BOOST.md` §9–§10；HSD-Unity `ac5af2a` |
+| D-24 N10 镜头 | 改前 Unity 的值 | **Unity 改前**：跑步晃动只有俯仰（幅度 0.335，按 N6 的 R5 实测冲刺俯仰 −0.49 … +0.18° 做的，一步 0.27 s；幅度后来 D-37 改成 0.25），**没有偏航**；滑索上**没有横滚**。**R5**（N10 实测）：偏航左右交替，两步一个周期（约 0.55 s），约 ±0.4°（实测 −0.085 … +0.806°）；滑索横滚分支 A（朝最近的绳上点，强度 0.7、视角 30–50°、封顶 25°）。**Unity 改后**：偏航中心 +0.36°、幅度 ±0.445°，一步 0.280 s（9 步 2.518 s）；滑索横滚跟随速度 3.0 /s（1579 帧拟合，残差 0.42 °/s；后来 D-42 改成原生弹簧）。偏航和俯仰的相位是推断的 | `research/rea-native/n10/N10-CAMERA.md` §1、§5、改动一节 |
+| D-28 走路翻越的出口速度 | 改前 Unity 的值 | **Unity 改前**：不管走路还是冲刺，翻越自然结束出口都是 **299**（冲刺姿态速度）。**R5**：走路接近 199.5，按住冲刺 299。**Unity 改后**：没按冲刺 173.5 × 1.15 = 199.525，按住冲刺 299 | `research/feel/FEEL.md` C-5 行和"C-5 已修" |
+
+### 早期 M 版本的数字（共享日志里只有一句话的）
+
+| 功能 | 版本 | 数字（版本 = R5 实测 / Unity 设计） | 出处 |
+|---|---|---|---|
+| 地面移动 | M2（R5 实测，Unity `R5MotorV2` 照做） | 走 199.525、冲刺 299、蹲 92（都是 × 1.15）；138 u/s 以下加速 2875、以上 517.5；冲刺加速 100·1.15；松手减速 1250 u/s²（不乘 1.15，Source 摩擦被否：每条命令误差 3.1 对 0.005 u/s）；重力 750，跳高 56（起跳 V 289.823），空中加速 500、空中目标速度 69 | `research/phase2-local/m2/PARAMETER-TABLE.md` |
+| 滑铲 | M2 / M3（R5 实测） | 按蹲加 150·1.15，上限 460；减速 100 u/s² × 0.7^dt；低于 125 结束（从 460 滑 1.693 s）；滑铲后蹲着超速减速 1500 到 92；退还窗 0.2–0.6 s（实测退还 −160.99）；窗外滑铲跳水平至少 350；滑铲跳高 50 | 同上 Slide 一节 |
+| lurch | M2 / M3（R5 实测） | M2 第一次看到：空中第一次侧按，速度 × 0.8477、方向 −44.2°（5 / 5 一样）；M3 模型：系数 0.7、0.2 s 全强度、0.5 s 消失、Δv 大小上限 209.3 u/s；Unity 对照 ≤ 0.04°、≤ 0.011 u/s | `m2/PARAMETER-TABLE.md`；`m3/` lurch 模型 |
+| 镜头 | M5.5（Unity 设计，D-05） | 落地下沉 −4 u·k、俯仰 +0.8°·k（k 按落地速度 150 → 772 u/s）；硬落地 −8 u、+2.0°；起跳 +1 u、−0.4°；滑铲横滚 3°；跑墙横滚 ±10°；侧移横滚 1.5°·min(1, v/300)；FOV 竖直 70，速度加 0–8°（200 → 700 u/s）、滑铲加 0–3°，总加量上限 22°；没有跑步晃动 | `research/phase2-local/m55/CAMERA-FEEDBACK.md` |
+| 斜坡 | M6-A4（Unity 设计，R5 没测） | 能站的坡 n_z ≥ 0.7（约 45.6°，[src] `slope_launch_math.h`）；`slideSlopeGravityScale` 1 [design]；`slopeMovement` 默认关（回放电机不变） | `research/phase2-local/m6/unity/A4-WORLD.md` |
+
+### 种子日志的改正
+
+- `t11-08`（TF2 二段跳做成道具包）：原来写"拿到道具才能用"，你 10-30 改成"不绑定成道具"，已在共享日志 `update` 改正并注明（D-69）。
