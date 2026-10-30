@@ -1,0 +1,1334 @@
+{
+ "names": [
+  "sv_gravity",
+  "sv_friction",
+  "sv_stopspeed",
+  "sv_maxspeed",
+  "sv_backspeed",
+  "sv_airaccelerate",
+  "sv_maxvelocity",
+  "skip_time",
+  "skip_speed_reduce",
+  "skip_speed_retain",
+  "skip_jump_height_fraction",
+  "skip_jump_height_speed",
+  "skip_replenish_double_jump",
+  "jump_grace_jump",
+  "jump_grace_strength",
+  "jump_grace_max",
+  "jump_grace_cutoff_speed",
+  "jump_grace_require_tap",
+  "jump_grace_limit_to_90",
+  "jump_grace_min_tap_period",
+  "jump_grace_max_tap_count",
+  "jump_grace_decay_start_tap_count",
+  "jump_grace_multi_tap_decay",
+  "jump_grace_multi_tap_decay_velocity_based_max_speed",
+  "jump_grace_multi_tap_decay_velocity_based_easing_type",
+  "jump_grace_controller_disable_duration",
+  "jump_graceperiod",
+  "jump_graceperiodmin",
+  "jump_graceperiodmax",
+  "player_slideBoostEnabled",
+  "player_slideBoostCooldown",
+  "player_slideSuperJumpEnabled",
+  "slide_super_jump_enabled",
+  "slide_auto_stand",
+  "slide_max_angle_dot",
+  "slide_max_duck_frac_to_start",
+  "slide_step_velocity_reduction",
+  "slide_whileInAir",
+  "player_movementBounds_predictionShare"
+ ],
+ "client": {
+  "sv_gravity": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "client",
+     "text": "[MOVE-TRACE] cmd=1551 ent=1 ms=199.525 spr=0 duck=0 slide=0 ge=1 fwd=0.000 sd=0.000 b=00000000 msc=1.1500 o=-11699.000 512.000 1577.046 v=0.000 0.000 0.000 po=-11699.000 512.000 1577.046 pv=0.000 0.000 0.000"
+    },
+    {
+     "level": "info",
+     "source": "script_client",
+     "text": "[HSD-MD] ver=2 side=cl kind=frame run=0 seq=1512 t=42.62926 ft=0.00695 o=-11699.000,512.000,1577.046 vel=0.000,0.000,0.000 spd2d=0.000 vz=0.000 ground=1 slide=0 sprint=0 crouch=0 ang=-0.022,0.083 in_jump=0 in_duck=0 in_fwd=0 ax_fwd=0.000 ax_right=0.000"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "sv_friction": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "client",
+     "text": "[MOVE-TRACE] cmd=1552 ent=1 ms=199.525 spr=0 duck=0 slide=0 ge=1 fwd=0.000 sd=0.000 b=00000000 msc=1.1500 o=-11699.000 512.000 1577.046 v=0.000 0.000 0.000 po=-11699.000 512.000 1577.046 pv=0.000 0.000 0.000"
+    },
+    {
+     "level": "info",
+     "source": "script_client",
+     "text": "[HSD-MD] ver=2 side=cl kind=frame run=0 seq=1513 t=42.63621 ft=0.00695 o=-11699.000,512.000,1577.046 vel=0.000,0.000,0.000 spd2d=0.000 vz=0.000 ground=1 slide=0 sprint=0 crouch=0 ang=-0.022,0.083 in_jump=0 in_duck=0 in_fwd=0 ax_fwd=0.000 ax_right=0.000"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "sv_stopspeed": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "client",
+     "text": "[MOVE-TRACE] cmd=1553 ent=1 ms=199.525 spr=0 duck=0 slide=0 ge=1 fwd=0.000 sd=0.000 b=00000000 msc=1.1500 o=-11699.000 512.000 1577.046 v=0.000 0.000 0.000 po=-11699.000 512.000 1577.046 pv=0.000 0.000 0.000"
+    },
+    {
+     "level": "info",
+     "source": "script_client",
+     "text": "[HSD-MD] ver=2 side=cl kind=frame run=0 seq=1514 t=42.64315 ft=0.00694 o=-11699.000,512.000,1577.046 vel=0.000,0.000,0.000 spd2d=0.000 vz=0.000 ground=1 slide=0 sprint=0 crouch=0 ang=-0.022,0.083 in_jump=0 in_duck=0 in_fwd=0 ax_fwd=0.000 ax_right=0.000"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "sv_maxspeed": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "client",
+     "text": "[MOVE-TRACE] cmd=1554 ent=1 ms=199.525 spr=0 duck=0 slide=0 ge=1 fwd=0.000 sd=0.000 b=00000000 msc=1.1500 o=-11699.000 512.000 1577.046 v=0.000 0.000 0.000 po=-11699.000 512.000 1577.046 pv=0.000 0.000 0.000"
+    },
+    {
+     "level": "info",
+     "source": "script_client",
+     "text": "[HSD-MD] ver=2 side=cl kind=frame run=0 seq=1515 t=42.65010 ft=0.00695 o=-11699.000,512.000,1577.046 vel=0.000,0.000,0.000 spd2d=0.000 vz=0.000 ground=1 slide=0 sprint=0 crouch=0 ang=-0.022,0.083 in_jump=0 in_duck=0 in_fwd=0 ax_fwd=0.000 ax_right=0.000"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "sv_backspeed": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "client",
+     "text": "[MOVE-TRACE] cmd=1555 ent=1 ms=199.525 spr=0 duck=0 slide=0 ge=1 fwd=0.000 sd=0.000 b=00000000 msc=1.1500 o=-11699.000 512.000 1577.046 v=0.000 0.000 0.000 po=-11699.000 512.000 1577.046 pv=0.000 0.000 0.000"
+    },
+    {
+     "level": "info",
+     "source": "script_client",
+     "text": "[HSD-MD] ver=2 side=cl kind=frame run=0 seq=1516 t=42.65705 ft=0.00695 o=-11699.000,512.000,1577.046 vel=0.000,0.000,0.000 spd2d=0.000 vz=0.000 ground=1 slide=0 sprint=0 crouch=0 ang=-0.022,0.083 in_jump=0 in_duck=0 in_fwd=0 ax_fwd=0.000 ax_right=0.000"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "sv_airaccelerate": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "client",
+     "text": "[MOVE-TRACE] cmd=1556 ent=1 ms=199.525 spr=0 duck=0 slide=0 ge=1 fwd=0.000 sd=0.000 b=00000000 msc=1.1500 o=-11699.000 512.000 1577.046 v=0.000 0.000 0.000 po=-11699.000 512.000 1577.046 pv=0.000 0.000 0.000"
+    },
+    {
+     "level": "info",
+     "source": "script_client",
+     "text": "[HSD-MD] ver=2 side=cl kind=frame run=0 seq=1517 t=42.66399 ft=0.00695 o=-11699.000,512.000,1577.046 vel=0.000,0.000,0.000 spd2d=0.000 vz=0.000 ground=1 slide=0 sprint=0 crouch=0 ang=-0.022,0.083 in_jump=0 in_duck=0 in_fwd=0 ax_fwd=0.000 ax_right=0.000"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "sv_maxvelocity": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "client",
+     "text": "[MOVE-TRACE] cmd=1557 ent=1 ms=199.525 spr=0 duck=0 slide=0 ge=1 fwd=0.000 sd=0.000 b=00000000 msc=1.1500 o=-11699.000 512.000 1577.046 v=0.000 0.000 0.000 po=-11699.000 512.000 1577.046 pv=0.000 0.000 0.000"
+    },
+    {
+     "level": "info",
+     "source": "script_client",
+     "text": "[HSD-MD] ver=2 side=cl kind=frame run=0 seq=1518 t=42.67094 ft=0.00695 o=-11699.000,512.000,1577.046 vel=0.000,0.000,0.000 spd2d=0.000 vz=0.000 ground=1 slide=0 sprint=0 crouch=0 ang=-0.022,0.083 in_jump=0 in_duck=0 in_fwd=0 ax_fwd=0.000 ax_right=0.000"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "skip_time": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "client",
+     "text": "[MOVE-TRACE] cmd=1558 ent=1 ms=199.525 spr=0 duck=0 slide=0 ge=1 fwd=0.000 sd=0.000 b=00000000 msc=1.1500 o=-11699.000 512.000 1577.046 v=0.000 0.000 0.000 po=-11699.000 512.000 1577.046 pv=0.000 0.000 0.000"
+    },
+    {
+     "level": "info",
+     "source": "script_client",
+     "text": "[HSD-MD] ver=2 side=cl kind=frame run=0 seq=1519 t=42.67789 ft=0.00695 o=-11699.000,512.000,1577.046 vel=0.000,0.000,0.000 spd2d=0.000 vz=0.000 ground=1 slide=0 sprint=0 crouch=0 ang=-0.022,0.083 in_jump=0 in_duck=0 in_fwd=0 ax_fwd=0.000 ax_right=0.000"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "skip_speed_reduce": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "client",
+     "text": "[MOVE-TRACE] cmd=1559 ent=1 ms=199.525 spr=0 duck=0 slide=0 ge=1 fwd=0.000 sd=0.000 b=00000000 msc=1.1500 o=-11699.000 512.000 1577.046 v=0.000 0.000 0.000 po=-11699.000 512.000 1577.046 pv=0.000 0.000 0.000"
+    },
+    {
+     "level": "info",
+     "source": "script_client",
+     "text": "[HSD-MD] ver=2 side=cl kind=frame run=0 seq=1520 t=42.68489 ft=0.00700 o=-11699.000,512.000,1577.046 vel=0.000,0.000,0.000 spd2d=0.000 vz=0.000 ground=1 slide=0 sprint=0 crouch=0 ang=-0.022,0.083 in_jump=0 in_duck=0 in_fwd=0 ax_fwd=0.000 ax_right=0.000"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "skip_speed_retain": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "client",
+     "text": "[MOVE-TRACE] cmd=1560 ent=1 ms=199.525 spr=0 duck=0 slide=0 ge=1 fwd=0.000 sd=0.000 b=00000000 msc=1.1500 o=-11699.000 512.000 1577.046 v=0.000 0.000 0.000 po=-11699.000 512.000 1577.046 pv=0.000 0.000 0.000"
+    },
+    {
+     "level": "info",
+     "source": "script_client",
+     "text": "[HSD-MD] ver=2 side=cl kind=frame run=0 seq=1521 t=42.69183 ft=0.00695 o=-11699.000,512.000,1577.046 vel=0.000,0.000,0.000 spd2d=0.000 vz=0.000 ground=1 slide=0 sprint=0 crouch=0 ang=-0.022,0.083 in_jump=0 in_duck=0 in_fwd=0 ax_fwd=0.000 ax_right=0.000"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "skip_jump_height_fraction": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "client",
+     "text": "[MOVE-TRACE] cmd=1561 ent=1 ms=199.525 spr=0 duck=0 slide=0 ge=1 fwd=0.000 sd=0.000 b=00000000 msc=1.1500 o=-11699.000 512.000 1577.046 v=0.000 0.000 0.000 po=-11699.000 512.000 1577.046 pv=0.000 0.000 0.000"
+    },
+    {
+     "level": "info",
+     "source": "script_client",
+     "text": "[HSD-MD] ver=2 side=cl kind=frame run=0 seq=1522 t=42.69878 ft=0.00695 o=-11699.000,512.000,1577.046 vel=0.000,0.000,0.000 spd2d=0.000 vz=0.000 ground=1 slide=0 sprint=0 crouch=0 ang=-0.022,0.083 in_jump=0 in_duck=0 in_fwd=0 ax_fwd=0.000 ax_right=0.000"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "skip_jump_height_speed": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "client",
+     "text": "[MOVE-TRACE] cmd=1562 ent=1 ms=199.525 spr=0 duck=0 slide=0 ge=1 fwd=0.000 sd=0.000 b=00000000 msc=1.1500 o=-11699.000 512.000 1577.046 v=0.000 0.000 0.000 po=-11699.000 512.000 1577.046 pv=0.000 0.000 0.000"
+    },
+    {
+     "level": "info",
+     "source": "script_client",
+     "text": "[HSD-MD] ver=2 side=cl kind=frame run=0 seq=1523 t=42.70573 ft=0.00695 o=-11699.000,512.000,1577.046 vel=0.000,0.000,0.000 spd2d=0.000 vz=0.000 ground=1 slide=0 sprint=0 crouch=0 ang=-0.022,0.083 in_jump=0 in_duck=0 in_fwd=0 ax_fwd=0.000 ax_right=0.000"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "skip_replenish_double_jump": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "client",
+     "text": "[MOVE-TRACE] cmd=1563 ent=1 ms=199.525 spr=0 duck=0 slide=0 ge=1 fwd=0.000 sd=0.000 b=00000000 msc=1.1500 o=-11699.000 512.000 1577.046 v=0.000 0.000 0.000 po=-11699.000 512.000 1577.046 pv=0.000 0.000 0.000"
+    },
+    {
+     "level": "info",
+     "source": "script_client",
+     "text": "[HSD-MD] ver=2 side=cl kind=frame run=0 seq=1524 t=42.71267 ft=0.00694 o=-11699.000,512.000,1577.046 vel=0.000,0.000,0.000 spd2d=0.000 vz=0.000 ground=1 slide=0 sprint=0 crouch=0 ang=-0.022,0.083 in_jump=0 in_duck=0 in_fwd=0 ax_fwd=0.000 ax_right=0.000"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "jump_grace_jump": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "client",
+     "text": "[MOVE-TRACE] cmd=1564 ent=1 ms=199.525 spr=0 duck=0 slide=0 ge=1 fwd=0.000 sd=0.000 b=00000000 msc=1.1500 o=-11699.000 512.000 1577.046 v=0.000 0.000 0.000 po=-11699.000 512.000 1577.046 pv=0.000 0.000 0.000"
+    },
+    {
+     "level": "info",
+     "source": "script_client",
+     "text": "[HSD-MD] ver=2 side=cl kind=frame run=0 seq=1525 t=42.71962 ft=0.00695 o=-11699.000,512.000,1577.046 vel=0.000,0.000,0.000 spd2d=0.000 vz=0.000 ground=1 slide=0 sprint=0 crouch=0 ang=-0.022,0.083 in_jump=0 in_duck=0 in_fwd=0 ax_fwd=0.000 ax_right=0.000"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "jump_grace_strength": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "client",
+     "text": "[MOVE-TRACE] cmd=1565 ent=1 ms=199.525 spr=0 duck=0 slide=0 ge=1 fwd=0.000 sd=0.000 b=00000000 msc=1.1500 o=-11699.000 512.000 1577.046 v=0.000 0.000 0.000 po=-11699.000 512.000 1577.046 pv=0.000 0.000 0.000"
+    },
+    {
+     "level": "info",
+     "source": "script_client",
+     "text": "[HSD-MD] ver=2 side=cl kind=frame run=0 seq=1526 t=42.72656 ft=0.00695 o=-11699.000,512.000,1577.046 vel=0.000,0.000,0.000 spd2d=0.000 vz=0.000 ground=1 slide=0 sprint=0 crouch=0 ang=-0.022,0.083 in_jump=0 in_duck=0 in_fwd=0 ax_fwd=0.000 ax_right=0.000"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "jump_grace_max": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "client",
+     "text": "[MOVE-TRACE] cmd=1566 ent=1 ms=199.525 spr=0 duck=0 slide=0 ge=1 fwd=0.000 sd=0.000 b=00000000 msc=1.1500 o=-11699.000 512.000 1577.046 v=0.000 0.000 0.000 po=-11699.000 512.000 1577.046 pv=0.000 0.000 0.000"
+    },
+    {
+     "level": "info",
+     "source": "script_client",
+     "text": "[HSD-MD] ver=2 side=cl kind=frame run=0 seq=1527 t=42.73355 ft=0.00699 o=-11699.000,512.000,1577.046 vel=0.000,0.000,0.000 spd2d=0.000 vz=0.000 ground=1 slide=0 sprint=0 crouch=0 ang=-0.022,0.083 in_jump=0 in_duck=0 in_fwd=0 ax_fwd=0.000 ax_right=0.000"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "jump_grace_cutoff_speed": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "client",
+     "text": "[MOVE-TRACE] cmd=1567 ent=1 ms=199.525 spr=0 duck=0 slide=0 ge=1 fwd=0.000 sd=0.000 b=00000000 msc=1.1500 o=-11699.000 512.000 1577.046 v=0.000 0.000 0.000 po=-11699.000 512.000 1577.046 pv=0.000 0.000 0.000"
+    },
+    {
+     "level": "info",
+     "source": "script_client",
+     "text": "[HSD-MD] ver=2 side=cl kind=frame run=0 seq=1528 t=42.74055 ft=0.00699 o=-11699.000,512.000,1577.046 vel=0.000,0.000,0.000 spd2d=0.000 vz=0.000 ground=1 slide=0 sprint=0 crouch=0 ang=-0.022,0.083 in_jump=0 in_duck=0 in_fwd=0 ax_fwd=0.000 ax_right=0.000"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "jump_grace_require_tap": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "client",
+     "text": "[MOVE-TRACE] cmd=1568 ent=1 ms=199.525 spr=0 duck=0 slide=0 ge=1 fwd=0.000 sd=0.000 b=00000000 msc=1.1500 o=-11699.000 512.000 1577.046 v=0.000 0.000 0.000 po=-11699.000 512.000 1577.046 pv=0.000 0.000 0.000"
+    },
+    {
+     "level": "info",
+     "source": "script_client",
+     "text": "[HSD-MD] ver=2 side=cl kind=frame run=0 seq=1529 t=42.74754 ft=0.00699 o=-11699.000,512.000,1577.046 vel=0.000,0.000,0.000 spd2d=0.000 vz=0.000 ground=1 slide=0 sprint=0 crouch=0 ang=-0.022,0.083 in_jump=0 in_duck=0 in_fwd=0 ax_fwd=0.000 ax_right=0.000"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "jump_grace_limit_to_90": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "client",
+     "text": "[MOVE-TRACE] cmd=1569 ent=1 ms=199.525 spr=0 duck=0 slide=0 ge=1 fwd=0.000 sd=0.000 b=00000000 msc=1.1500 o=-11699.000 512.000 1577.046 v=0.000 0.000 0.000 po=-11699.000 512.000 1577.046 pv=0.000 0.000 0.000"
+    },
+    {
+     "level": "info",
+     "source": "script_client",
+     "text": "[HSD-MD] ver=2 side=cl kind=frame run=0 seq=1530 t=42.75453 ft=0.00699 o=-11699.000,512.000,1577.046 vel=0.000,0.000,0.000 spd2d=0.000 vz=0.000 ground=1 slide=0 sprint=0 crouch=0 ang=-0.022,0.083 in_jump=0 in_duck=0 in_fwd=0 ax_fwd=0.000 ax_right=0.000"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "jump_grace_min_tap_period": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "client",
+     "text": "[MOVE-TRACE] cmd=1570 ent=1 ms=199.525 spr=0 duck=0 slide=0 ge=1 fwd=0.000 sd=0.000 b=00000000 msc=1.1500 o=-11699.000 512.000 1577.046 v=0.000 0.000 0.000 po=-11699.000 512.000 1577.046 pv=0.000 0.000 0.000"
+    },
+    {
+     "level": "info",
+     "source": "script_client",
+     "text": "[HSD-MD] ver=2 side=cl kind=frame run=0 seq=1531 t=42.76152 ft=0.00699 o=-11699.000,512.000,1577.046 vel=0.000,0.000,0.000 spd2d=0.000 vz=0.000 ground=1 slide=0 sprint=0 crouch=0 ang=-0.022,0.083 in_jump=0 in_duck=0 in_fwd=0 ax_fwd=0.000 ax_right=0.000"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "jump_grace_max_tap_count": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "client",
+     "text": "[MOVE-TRACE] cmd=1572 ent=1 ms=199.525 spr=0 duck=0 slide=0 ge=1 fwd=0.000 sd=0.000 b=00000000 msc=1.1500 o=-11699.000 512.000 1577.046 v=0.000 0.000 0.000 po=-11699.000 512.000 1577.046 pv=0.000 0.000 0.000"
+    },
+    {
+     "level": "info",
+     "source": "script_client",
+     "text": "[HSD-MD] ver=2 side=cl kind=frame run=0 seq=1533 t=42.78691 ft=0.01232 o=-11699.000,512.000,1577.046 vel=0.000,0.000,0.000 spd2d=0.000 vz=0.000 ground=1 slide=0 sprint=0 crouch=0 ang=-0.022,0.083 in_jump=0 in_duck=0 in_fwd=0 ax_fwd=0.000 ax_right=0.000"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "jump_grace_decay_start_tap_count": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "client",
+     "text": "[MOVE-TRACE] cmd=1574 ent=1 ms=199.525 spr=0 duck=0 slide=0 ge=1 fwd=0.000 sd=0.000 b=00000000 msc=1.1500 o=-11699.000 512.000 1577.046 v=0.000 0.000 0.000 po=-11699.000 512.000 1577.046 pv=0.000 0.000 0.000"
+    },
+    {
+     "level": "info",
+     "source": "script_client",
+     "text": "[HSD-MD] ver=2 side=cl kind=frame run=0 seq=1535 t=42.79980 ft=0.00628 o=-11699.000,512.000,1577.046 vel=0.000,0.000,0.000 spd2d=0.000 vz=0.000 ground=1 slide=0 sprint=0 crouch=0 ang=-0.022,0.083 in_jump=0 in_duck=0 in_fwd=0 ax_fwd=0.000 ax_right=0.000"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "jump_grace_multi_tap_decay": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "client",
+     "text": "[MOVE-TRACE] cmd=1575 ent=1 ms=199.525 spr=0 duck=0 slide=0 ge=1 fwd=0.000 sd=0.000 b=00000000 msc=1.1500 o=-11699.000 512.000 1577.046 v=0.000 0.000 0.000 po=-11699.000 512.000 1577.046 pv=0.000 0.000 0.000"
+    },
+    {
+     "level": "info",
+     "source": "script_client",
+     "text": "[HSD-MD] ver=2 side=cl kind=frame run=0 seq=1536 t=42.80608 ft=0.00629 o=-11699.000,512.000,1577.046 vel=0.000,0.000,0.000 spd2d=0.000 vz=0.000 ground=1 slide=0 sprint=0 crouch=0 ang=-0.022,0.083 in_jump=0 in_duck=0 in_fwd=0 ax_fwd=0.000 ax_right=0.000"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "jump_grace_multi_tap_decay_velocity_based_max_speed": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "client",
+     "text": "[MOVE-TRACE] cmd=1576 ent=1 ms=199.525 spr=0 duck=0 slide=0 ge=1 fwd=0.000 sd=0.000 b=00000000 msc=1.1500 o=-11699.000 512.000 1577.046 v=0.000 0.000 0.000 po=-11699.000 512.000 1577.046 pv=0.000 0.000 0.000"
+    },
+    {
+     "level": "info",
+     "source": "script_client",
+     "text": "[HSD-MD] ver=2 side=cl kind=frame run=0 seq=1537 t=42.81239 ft=0.00630 o=-11699.000,512.000,1577.046 vel=0.000,0.000,0.000 spd2d=0.000 vz=0.000 ground=1 slide=0 sprint=0 crouch=0 ang=-0.022,0.083 in_jump=0 in_duck=0 in_fwd=0 ax_fwd=0.000 ax_right=0.000"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "jump_grace_multi_tap_decay_velocity_based_easing_type": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "client",
+     "text": "[MOVE-TRACE] cmd=1578 ent=1 ms=199.525 spr=0 duck=0 slide=0 ge=1 fwd=0.000 sd=0.000 b=00000000 msc=1.1500 o=-11699.000 512.000 1577.046 v=0.000 0.000 0.000 po=-11699.000 512.000 1577.046 pv=0.000 0.000 0.000"
+    },
+    {
+     "level": "info",
+     "source": "script_client",
+     "text": "[HSD-MD] ver=2 side=cl kind=frame run=0 seq=1539 t=42.82795 ft=0.00929 o=-11699.000,512.000,1577.046 vel=0.000,0.000,0.000 spd2d=0.000 vz=0.000 ground=1 slide=0 sprint=0 crouch=0 ang=-0.022,0.083 in_jump=0 in_duck=0 in_fwd=0 ax_fwd=0.000 ax_right=0.000"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "jump_grace_controller_disable_duration": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "client",
+     "text": "[MOVE-TRACE] cmd=1579 ent=1 ms=199.525 spr=0 duck=0 slide=0 ge=1 fwd=0.000 sd=0.000 b=00000000 msc=1.1500 o=-11699.000 512.000 1577.046 v=0.000 0.000 0.000 po=-11699.000 512.000 1577.046 pv=0.000 0.000 0.000"
+    },
+    {
+     "level": "info",
+     "source": "script_client",
+     "text": "[HSD-MD] ver=2 side=cl kind=frame run=0 seq=1540 t=42.83489 ft=0.00694 o=-11699.000,512.000,1577.046 vel=0.000,0.000,0.000 spd2d=0.000 vz=0.000 ground=1 slide=0 sprint=0 crouch=0 ang=-0.022,0.083 in_jump=0 in_duck=0 in_fwd=0 ax_fwd=0.000 ax_right=0.000"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "jump_graceperiod": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "client",
+     "text": "[MOVE-TRACE] cmd=1580 ent=1 ms=199.525 spr=0 duck=0 slide=0 ge=1 fwd=0.000 sd=0.000 b=00000000 msc=1.1500 o=-11699.000 512.000 1577.046 v=0.000 0.000 0.000 po=-11699.000 512.000 1577.046 pv=0.000 0.000 0.000"
+    },
+    {
+     "level": "info",
+     "source": "script_client",
+     "text": "[HSD-MD] ver=2 side=cl kind=frame run=0 seq=1541 t=42.84184 ft=0.00695 o=-11699.000,512.000,1577.046 vel=0.000,0.000,0.000 spd2d=0.000 vz=0.000 ground=1 slide=0 sprint=0 crouch=0 ang=-0.022,0.083 in_jump=0 in_duck=0 in_fwd=0 ax_fwd=0.000 ax_right=0.000"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "jump_graceperiodmin": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "client",
+     "text": "[MOVE-TRACE] cmd=1581 ent=1 ms=199.525 spr=0 duck=0 slide=0 ge=1 fwd=0.000 sd=0.000 b=00000000 msc=1.1500 o=-11699.000 512.000 1577.046 v=0.000 0.000 0.000 po=-11699.000 512.000 1577.046 pv=0.000 0.000 0.000"
+    },
+    {
+     "level": "info",
+     "source": "script_client",
+     "text": "[HSD-MD] ver=2 side=cl kind=frame run=0 seq=1542 t=42.84879 ft=0.00695 o=-11699.000,512.000,1577.046 vel=0.000,0.000,0.000 spd2d=0.000 vz=0.000 ground=1 slide=0 sprint=0 crouch=0 ang=-0.022,0.083 in_jump=0 in_duck=0 in_fwd=0 ax_fwd=0.000 ax_right=0.000"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "jump_graceperiodmax": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "client",
+     "text": "[MOVE-TRACE] cmd=1582 ent=1 ms=199.525 spr=0 duck=0 slide=0 ge=1 fwd=0.000 sd=0.000 b=00000000 msc=1.1500 o=-11699.000 512.000 1577.046 v=0.000 0.000 0.000 po=-11699.000 512.000 1577.046 pv=0.000 0.000 0.000"
+    },
+    {
+     "level": "info",
+     "source": "script_client",
+     "text": "[HSD-MD] ver=2 side=cl kind=frame run=0 seq=1543 t=42.85574 ft=0.00695 o=-11699.000,512.000,1577.046 vel=0.000,0.000,0.000 spd2d=0.000 vz=0.000 ground=1 slide=0 sprint=0 crouch=0 ang=-0.022,0.083 in_jump=0 in_duck=0 in_fwd=0 ax_fwd=0.000 ax_right=0.000"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "player_slideBoostEnabled": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "client",
+     "text": "[MOVE-TRACE] cmd=1583 ent=1 ms=199.525 spr=0 duck=0 slide=0 ge=1 fwd=0.000 sd=0.000 b=00000000 msc=1.1500 o=-11699.000 512.000 1577.046 v=0.000 0.000 0.000 po=-11699.000 512.000 1577.046 pv=0.000 0.000 0.000"
+    },
+    {
+     "level": "info",
+     "source": "script_client",
+     "text": "[HSD-MD] ver=2 side=cl kind=frame run=0 seq=1544 t=42.86268 ft=0.00695 o=-11699.000,512.000,1577.046 vel=0.000,0.000,0.000 spd2d=0.000 vz=0.000 ground=1 slide=0 sprint=0 crouch=0 ang=-0.022,0.083 in_jump=0 in_duck=0 in_fwd=0 ax_fwd=0.000 ax_right=0.000"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "player_slideBoostCooldown": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "client",
+     "text": "[MOVE-TRACE] cmd=1584 ent=1 ms=199.525 spr=0 duck=0 slide=0 ge=1 fwd=0.000 sd=0.000 b=00000000 msc=1.1500 o=-11699.000 512.000 1577.046 v=0.000 0.000 0.000 po=-11699.000 512.000 1577.046 pv=0.000 0.000 0.000"
+    },
+    {
+     "level": "info",
+     "source": "script_client",
+     "text": "[HSD-MD] ver=2 side=cl kind=frame run=0 seq=1545 t=42.86963 ft=0.00695 o=-11699.000,512.000,1577.046 vel=0.000,0.000,0.000 spd2d=0.000 vz=0.000 ground=1 slide=0 sprint=0 crouch=0 ang=-0.022,0.083 in_jump=0 in_duck=0 in_fwd=0 ax_fwd=0.000 ax_right=0.000"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "player_slideSuperJumpEnabled": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "client",
+     "text": "[MOVE-TRACE] cmd=1585 ent=1 ms=199.525 spr=0 duck=0 slide=0 ge=1 fwd=0.000 sd=0.000 b=00000000 msc=1.1500 o=-11699.000 512.000 1577.046 v=0.000 0.000 0.000 po=-11699.000 512.000 1577.046 pv=0.000 0.000 0.000"
+    },
+    {
+     "level": "info",
+     "source": "script_client",
+     "text": "[HSD-MD] ver=2 side=cl kind=frame run=0 seq=1546 t=42.87658 ft=0.00695 o=-11699.000,512.000,1577.046 vel=0.000,0.000,0.000 spd2d=0.000 vz=0.000 ground=1 slide=0 sprint=0 crouch=0 ang=-0.022,0.083 in_jump=0 in_duck=0 in_fwd=0 ax_fwd=0.000 ax_right=0.000"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "slide_super_jump_enabled": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "client",
+     "text": "[MOVE-TRACE] cmd=1586 ent=1 ms=199.525 spr=0 duck=0 slide=0 ge=1 fwd=0.000 sd=0.000 b=00000000 msc=1.1500 o=-11699.000 512.000 1577.046 v=0.000 0.000 0.000 po=-11699.000 512.000 1577.046 pv=0.000 0.000 0.000"
+    },
+    {
+     "level": "info",
+     "source": "script_client",
+     "text": "[HSD-MD] ver=2 side=cl kind=frame run=0 seq=1547 t=42.88352 ft=0.00695 o=-11699.000,512.000,1577.046 vel=0.000,0.000,0.000 spd2d=0.000 vz=0.000 ground=1 slide=0 sprint=0 crouch=0 ang=-0.022,0.083 in_jump=0 in_duck=0 in_fwd=0 ax_fwd=0.000 ax_right=0.000"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "slide_auto_stand": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "client",
+     "text": "[MOVE-TRACE] cmd=1587 ent=1 ms=199.525 spr=0 duck=0 slide=0 ge=1 fwd=0.000 sd=0.000 b=00000000 msc=1.1500 o=-11699.000 512.000 1577.046 v=0.000 0.000 0.000 po=-11699.000 512.000 1577.046 pv=0.000 0.000 0.000"
+    },
+    {
+     "level": "info",
+     "source": "script_client",
+     "text": "[HSD-MD] ver=2 side=cl kind=frame run=0 seq=1548 t=42.89137 ft=0.00785 o=-11699.000,512.000,1577.046 vel=0.000,0.000,0.000 spd2d=0.000 vz=0.000 ground=1 slide=0 sprint=0 crouch=0 ang=-0.022,0.083 in_jump=0 in_duck=0 in_fwd=0 ax_fwd=0.000 ax_right=0.000"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "slide_max_angle_dot": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "client",
+     "text": "[MOVE-TRACE] cmd=1588 ent=1 ms=199.525 spr=0 duck=0 slide=0 ge=1 fwd=0.000 sd=0.000 b=00000000 msc=1.1500 o=-11699.000 512.000 1577.046 v=0.000 0.000 0.000 po=-11699.000 512.000 1577.046 pv=0.000 0.000 0.000"
+    },
+    {
+     "level": "info",
+     "source": "script_client",
+     "text": "[HSD-MD] ver=2 side=cl kind=frame run=0 seq=1549 t=42.89832 ft=0.00695 o=-11699.000,512.000,1577.046 vel=0.000,0.000,0.000 spd2d=0.000 vz=0.000 ground=1 slide=0 sprint=0 crouch=0 ang=-0.022,0.083 in_jump=0 in_duck=0 in_fwd=0 ax_fwd=0.000 ax_right=0.000"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "slide_max_duck_frac_to_start": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "client",
+     "text": "[MOVE-TRACE] cmd=1589 ent=1 ms=199.525 spr=0 duck=0 slide=0 ge=1 fwd=0.000 sd=0.000 b=00000000 msc=1.1500 o=-11699.000 512.000 1577.046 v=0.000 0.000 0.000 po=-11699.000 512.000 1577.046 pv=0.000 0.000 0.000"
+    },
+    {
+     "level": "info",
+     "source": "script_client",
+     "text": "[HSD-MD] ver=2 side=cl kind=frame run=0 seq=1550 t=42.90527 ft=0.00695 o=-11699.000,512.000,1577.046 vel=0.000,0.000,0.000 spd2d=0.000 vz=0.000 ground=1 slide=0 sprint=0 crouch=0 ang=-0.022,0.083 in_jump=0 in_duck=0 in_fwd=0 ax_fwd=0.000 ax_right=0.000"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "slide_step_velocity_reduction": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "client",
+     "text": "[MOVE-TRACE] cmd=1590 ent=1 ms=199.525 spr=0 duck=0 slide=0 ge=1 fwd=0.000 sd=0.000 b=00000000 msc=1.1500 o=-11699.000 512.000 1577.046 v=0.000 0.000 0.000 po=-11699.000 512.000 1577.046 pv=0.000 0.000 0.000"
+    },
+    {
+     "level": "info",
+     "source": "script_client",
+     "text": "[HSD-MD] ver=2 side=cl kind=frame run=0 seq=1551 t=42.91221 ft=0.00694 o=-11699.000,512.000,1577.046 vel=0.000,0.000,0.000 spd2d=0.000 vz=0.000 ground=1 slide=0 sprint=0 crouch=0 ang=-0.022,0.083 in_jump=0 in_duck=0 in_fwd=0 ax_fwd=0.000 ax_right=0.000"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "slide_whileInAir": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "client",
+     "text": "[MOVE-TRACE] cmd=1591 ent=1 ms=199.525 spr=0 duck=0 slide=0 ge=1 fwd=0.000 sd=0.000 b=00000000 msc=1.1500 o=-11699.000 512.000 1577.046 v=0.000 0.000 0.000 po=-11699.000 512.000 1577.046 pv=0.000 0.000 0.000"
+    },
+    {
+     "level": "info",
+     "source": "script_client",
+     "text": "[HSD-MD] ver=2 side=cl kind=frame run=0 seq=1552 t=42.91916 ft=0.00695 o=-11699.000,512.000,1577.046 vel=0.000,0.000,0.000 spd2d=0.000 vz=0.000 ground=1 slide=0 sprint=0 crouch=0 ang=-0.022,0.083 in_jump=0 in_duck=0 in_fwd=0 ax_fwd=0.000 ax_right=0.000"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "player_movementBounds_predictionShare": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "client",
+     "text": "[MOVE-TRACE] cmd=1592 ent=1 ms=199.525 spr=0 duck=0 slide=0 ge=1 fwd=0.000 sd=0.000 b=00000000 msc=1.1500 o=-11699.000 512.000 1577.046 v=0.000 0.000 0.000 po=-11699.000 512.000 1577.046 pv=0.000 0.000 0.000"
+    },
+    {
+     "level": "info",
+     "source": "script_client",
+     "text": "[HSD-MD] ver=2 side=cl kind=frame run=0 seq=1553 t=42.92610 ft=0.00695 o=-11699.000,512.000,1577.046 vel=0.000,0.000,0.000 spd2d=0.000 vz=0.000 ground=1 slide=0 sprint=0 crouch=0 ang=-0.022,0.083 in_jump=0 in_duck=0 in_fwd=0 ax_fwd=0.000 ax_right=0.000"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  }
+ },
+ "server": {
+  "sv_gravity": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "engine",
+     "text": "\"sv_gravity\" = \"750\" notify replicated                                           - World gravity."
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "sv_friction": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "engine",
+     "text": "\"sv_friction\" = \"4\" notify replicated                                            - World friction. (Equivalent player setting is in player settings files)"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "sv_stopspeed": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "engine",
+     "text": "\"sv_stopspeed\" = \"100\" notify replicated                                         - Minimum stopping speed when on ground. (Equivalent player setting is in player settings files)"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "sv_maxspeed": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "engine",
+     "text": "\"sv_maxspeed\" = \"320\" notify replicated                                         "
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "sv_backspeed": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "engine",
+     "text": "\"sv_backspeed\" = \"0.6\" replicated                                                - How much to slow down backwards motion"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "sv_airaccelerate": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "engine",
+     "text": "\"sv_airaccelerate\" = \"10\" notify replicated                                     "
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "sv_maxvelocity": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "engine",
+     "text": "\"sv_maxvelocity\" = \"34000\" replicated                                            - Maximum speed any ballistically moving object is allowed to attain per axis."
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "skip_time": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "engine",
+     "text": "\"skip_time\" = \"1.0\" replicated                                                   - Time after landing that is considered \"skipping\" if the player jumps again"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "skip_speed_reduce": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "engine",
+     "text": "\"skip_speed_reduce\" = \"100\" replicated                                           - Speed lost when skipping"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "skip_speed_retain": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "engine",
+     "text": "\"skip_speed_retain\" = \"-1\" replicated                                            - Speed loss doesn't go below this"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "skip_jump_height_fraction": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "engine",
+     "text": "\"skip_jump_height_fraction\" = \"1.0\" replicated                                   - Jump height fraction when skipping"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "skip_jump_height_speed": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "engine",
+     "text": "\"skip_jump_height_speed\" = \"450\" replicated                                      - Jump height loss only applies above this speed"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "skip_replenish_double_jump": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "engine",
+     "text": "\"skip_replenish_double_jump\" = \"1\" replicated                                    - Whether the player can double jump after skipping"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "jump_grace_jump": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "engine",
+     "text": "help:  no cvar or command named jump_grace_jump"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "jump_grace_strength": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "engine",
+     "text": "help:  no cvar or command named jump_grace_strength"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "jump_grace_max": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "engine",
+     "text": "help:  no cvar or command named jump_grace_max"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "jump_grace_cutoff_speed": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "engine",
+     "text": "help:  no cvar or command named jump_grace_cutoff_speed"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "jump_grace_require_tap": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "engine",
+     "text": "help:  no cvar or command named jump_grace_require_tap"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "jump_grace_limit_to_90": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "engine",
+     "text": "help:  no cvar or command named jump_grace_limit_to_90"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "jump_grace_min_tap_period": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "engine",
+     "text": "help:  no cvar or command named jump_grace_min_tap_period"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "jump_grace_max_tap_count": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "engine",
+     "text": "help:  no cvar or command named jump_grace_max_tap_count"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "jump_grace_decay_start_tap_count": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "engine",
+     "text": "help:  no cvar or command named jump_grace_decay_start_tap_count"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "jump_grace_multi_tap_decay": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "engine",
+     "text": "help:  no cvar or command named jump_grace_multi_tap_decay"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "jump_grace_multi_tap_decay_velocity_based_max_speed": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "engine",
+     "text": "help:  no cvar or command named jump_grace_multi_tap_decay_velocity_based_max_speed"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "jump_grace_multi_tap_decay_velocity_based_easing_type": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "engine",
+     "text": "help:  no cvar or command named jump_grace_multi_tap_decay_velocity_based_easing_type"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "jump_grace_controller_disable_duration": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "engine",
+     "text": "help:  no cvar or command named jump_grace_controller_disable_duration"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "jump_graceperiod": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "engine",
+     "text": "\"jump_graceperiod\" = \"0.2\" replicated                                            - Extra time during which a player can jump after falling off a ledge"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "jump_graceperiodmin": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "engine",
+     "text": "help:  no cvar or command named jump_graceperiodmin"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "jump_graceperiodmax": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "engine",
+     "text": "help:  no cvar or command named jump_graceperiodmax"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "player_slideBoostEnabled": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "engine",
+     "text": "help:  no cvar or command named player_slideBoostEnabled"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "player_slideBoostCooldown": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "engine",
+     "text": "help:  no cvar or command named player_slideBoostCooldown"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "player_slideSuperJumpEnabled": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "engine",
+     "text": "help:  no cvar or command named player_slideSuperJumpEnabled"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "slide_super_jump_enabled": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "engine",
+     "text": "help:  no cvar or command named slide_super_jump_enabled"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "slide_auto_stand": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "engine",
+     "text": "\"slide_auto_stand\" = \"0\" replicated                                              - Automatically stand when slide ends"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "slide_max_angle_dot": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "engine",
+     "text": "\"slide_max_angle_dot\" = \"0.6\" replicated                                         - Cosine of max angle from forward that you can slide when sprinting"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "slide_max_duck_frac_to_start": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "engine",
+     "text": "help:  no cvar or command named slide_max_duck_frac_to_start"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "slide_step_velocity_reduction": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "engine",
+     "text": "\"slide_step_velocity_reduction\" = \"10\" replicated                                - Velocity reduction when going up a step (is multiplied by step height)"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "slide_whileInAir": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "engine",
+     "text": "\"slide_whileInAir\" = \"0\" replicated                                              - Allows beginning a slide (including the boost) while still in the air"
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  },
+  "player_movementBounds_predictionShare": {
+   "ran": true,
+   "error": false,
+   "reply": null,
+   "log": [
+    {
+     "level": "info",
+     "source": "engine",
+     "text": "\"player_movementBounds_predictionShare\" = \"1\" replicated                        "
+    }
+   ],
+   "logDropped": 0,
+   "ok": true
+  }
+ }
+}
