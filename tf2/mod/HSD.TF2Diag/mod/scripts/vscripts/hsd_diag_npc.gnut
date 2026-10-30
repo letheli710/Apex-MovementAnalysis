@@ -1,0 +1,508 @@
+// HSD.TF2Diag test targets (W1): spawn AI targets for target-dependent items
+// (smart pistol lock-on, ticks, turrets), move them, read their health.
+// Commands (client console -> server):
+//   hsd_npc <kind> <behave> x y z yaw [hp] [team]
+//     kind:   soldier | spectre | stalker | reaper | npc_<class>
+//     behave: static (frozen, never shoots) | idle (stands, never shoots) | hostile (normal AI, shoots back)
+//     hp:     max health (0 = class default); team: enemy (default) | friendly | <number>
+//   hsd_npc_walk <id> x y z [run]     AI walks back and forth between its spawn and (x y z); needs a navmesh
+//   hsd_npc_chase <id> [run] [radius] AI keeps moving to the player; needs a navmesh
+//   hsd_npc_slide <id> x y z speed    scripted constant-speed back and forth (frozen, no navmesh needed)
+//   hsd_npc_stop <id|all>             stop walk / chase / slide and freeze in place
+//   hsd_npc_passive <id|all> <0|1>    1: never shoots (NPC_IGNORE_ALL); 0: normal AI
+//   hsd_npc_hp <id|all> [set]         print (or set) health
+//   hsd_npc_track <id|all> <0|1>      position log every server think (0.1 s)
+//   hsd_npc_list, hsd_npc_kill <id|all>, hsd_npc_nav
+// Log lines:
+//   HSDDIAG NPC <event> <id> ...      spawn / walk / chase / slide / stop / passive / kill / list / err
+//   HSDDIAG NHP <id> <hp> <maxhp> <time>
+//   HSDDIAG NDMG <time> <id> <damage> <hp before> <attacker class> <damage source id> <dmg x y z>
+//   HSDDIAG NPOS <time> <id> <x> <y> <z> <hp>
+//   HSDDIAG NDEAD <id> <time>
+//   HSDDIAG PDMG <time> <damage> <player hp before> <attacker class> <attacker target id, -1 = not a target>
+global function HsdDiagNpc_Init
+
+struct HsdTarget
+{
+	int id
+	entity npc
+	string kind
+	string behave
+	bool frozen = false
+	bool track = false
+	bool dead = false
+	entity mover
+	array<string> weapons // taken while passive
+}
+
+struct
+{
+	int nextId = 1
+	table<int, HsdTarget> targets
+} file
+
+void function HsdDiagNpc_Init()
+{
+	RegisterSignal( "HsdNpcStop" )
+	AddClientCommandCallback( "hsd_npc", HsdNpc_CC_Spawn )
+	AddClientCommandCallback( "hsd_npc_walk", HsdNpc_CC_Walk )
+	AddClientCommandCallback( "hsd_npc_chase", HsdNpc_CC_Chase )
+	AddClientCommandCallback( "hsd_npc_slide", HsdNpc_CC_Slide )
+	AddClientCommandCallback( "hsd_npc_stop", HsdNpc_CC_Stop )
+	AddClientCommandCallback( "hsd_npc_passive", HsdNpc_CC_Passive )
+	AddClientCommandCallback( "hsd_npc_hp", HsdNpc_CC_Hp )
+	AddClientCommandCallback( "hsd_npc_track", HsdNpc_CC_Track )
+	AddClientCommandCallback( "hsd_npc_list", HsdNpc_CC_List )
+	AddClientCommandCallback( "hsd_npc_kill", HsdNpc_CC_Kill )
+	AddClientCommandCallback( "hsd_npc_nav", HsdNpc_CC_Nav )
+	AddDamageCallback( "player", HsdNpc_OnPlayerDamaged )
+	thread HsdNpc_WatchLoop()
+}
+
+string function HsdNpc_Class( string kind )
+{
+	switch ( kind )
+	{
+		case "soldier":
+		case "grunt":
+			return "npc_soldier"
+		case "spectre":
+			return "npc_spectre"
+		case "stalker":
+			return "npc_stalker"
+		case "reaper":
+			return "npc_super_spectre"
+	}
+	return kind.find( "npc_" ) == 0 ? kind : ""
+}
+
+vector function HsdNpc_Vec( array<string> args, int i )
+{
+	return < float( args[i] ), float( args[i + 1] ), float( args[i + 2] ) >
+}
+
+// targets named by "<id>" or "all"
+array<HsdTarget> function HsdNpc_Pick( string which )
+{
+	array<HsdTarget> out
+	foreach ( int id, HsdTarget t in file.targets )
+	{
+		if ( t.dead || !IsValid( t.npc ) )
+			continue
+		if ( which == "all" || int( which ) == id )
+			out.append( t )
+	}
+	if ( out.len() == 0 )
+		printt( "HSDDIAG NPC err no_target " + which )
+	return out
+}
+
+// passive: ignores everyone, drops its enemy and its guns are taken (a spectre kept shooting
+// with NPC_IGNORE_ALL alone, run 20261029_113018_w1_hostile); active: guns back, senses again
+// and is given the player as its enemy (otherwise it takes seconds to notice)
+void function HsdNpc_SetPassive( HsdTarget t, bool passive, entity player = null )
+{
+	if ( passive )
+	{
+		t.npc.EnableNPCFlag( NPC_IGNORE_ALL | NPC_DISABLE_SENSING )
+		t.npc.ClearEnemy()
+		foreach ( entity w in t.npc.GetMainWeapons() )
+		{
+			string cls = w.GetWeaponClassName()
+			if ( !t.weapons.contains( cls ) )
+				t.weapons.append( cls )
+			t.npc.TakeWeapon( cls )
+		}
+	}
+	else
+	{
+		foreach ( string cls in t.weapons )
+			t.npc.GiveWeapon( cls )
+		if ( t.weapons.len() > 0 )
+			t.npc.SetActiveWeaponByName( t.weapons[0] )
+		t.weapons.clear()
+		t.npc.DisableNPCFlag( NPC_IGNORE_ALL | NPC_DISABLE_SENSING )
+		if ( IsAlive( player ) )
+			t.npc.SetEnemy( player )
+	}
+}
+
+int function HsdNpc_IdOf( entity ent )
+{
+	foreach ( int id, HsdTarget t in file.targets )
+	{
+		if ( t.npc == ent )
+			return id
+	}
+	return -1
+}
+
+// every hit on the player, with the target id of the attacker (-1: not a target)
+void function HsdNpc_OnPlayerDamaged( entity player, var damageInfo )
+{
+	entity att = DamageInfo_GetAttacker( damageInfo )
+	printt( format( "HSDDIAG PDMG %.4f %.2f %d %s %d", Time(), DamageInfo_GetDamage( damageInfo ), player.GetHealth(),
+		IsValid( att ) ? att.GetClassName() : "none", HsdNpc_IdOf( att ) ) )
+}
+
+void function HsdNpc_Freeze( HsdTarget t )
+{
+	if ( !t.frozen && IsAlive( t.npc ) )
+	{
+		t.npc.Freeze()
+		t.frozen = true
+	}
+}
+
+void function HsdNpc_Unfreeze( HsdTarget t )
+{
+	if ( t.frozen && IsValid( t.npc ) )
+	{
+		t.npc.Unfreeze()
+		t.frozen = false
+	}
+}
+
+// ends walk / chase / slide threads and drops the slide mover
+void function HsdNpc_EndMotion( HsdTarget t )
+{
+	t.npc.Signal( "HsdNpcStop" )
+	if ( IsValid( t.mover ) )
+	{
+		t.npc.ClearParent()
+		t.mover.Destroy()
+	}
+	t.mover = null
+}
+
+void function HsdNpc_SetRun( entity npc, bool run )
+{
+	if ( run )
+	{
+		npc.DisableNPCMoveFlag( NPCMF_WALK_ALWAYS | NPCMF_WALK_NONCOMBAT )
+		npc.EnableNPCMoveFlag( NPCMF_PREFER_SPRINT )
+	}
+	else
+	{
+		npc.DisableNPCMoveFlag( NPCMF_PREFER_SPRINT )
+		npc.EnableNPCMoveFlag( NPCMF_WALK_ALWAYS )
+	}
+}
+
+// hsd_npc <kind> <behave> x y z yaw [hp] [team]
+bool function HsdNpc_CC_Spawn( entity player, array<string> args )
+{
+	if ( args.len() < 6 )
+	{
+		printt( "HSDDIAG NPC err usage hsd_npc <kind> <static|idle|hostile> x y z yaw [hp] [team]" )
+		return true
+	}
+	string cls = HsdNpc_Class( args[0] )
+	string behave = args[1]
+	if ( cls == "" || ( behave != "static" && behave != "idle" && behave != "hostile" ) )
+	{
+		printt( "HSDDIAG NPC err bad_args " + args[0] + " " + behave )
+		return true
+	}
+	vector origin = HsdNpc_Vec( args, 2 )
+	float yaw = float( args[5] )
+	int hp = args.len() > 6 ? int( args[6] ) : 0
+	int team = GetOtherTeam( player.GetTeam() )
+	if ( args.len() > 7 )
+	{
+		if ( args[7] == "friendly" )
+			team = player.GetTeam()
+		else if ( args[7] != "enemy" )
+			team = int( args[7] )
+	}
+
+	entity npc = CreateNPC( cls, team, origin, < 0.0, yaw, 0.0 > )
+	DispatchSpawn( npc )
+	if ( !IsValid( npc ) )
+	{
+		printt( "HSDDIAG NPC err spawn_failed " + cls )
+		return true
+	}
+	if ( hp > 0 )
+	{
+		npc.SetMaxHealth( hp )
+		npc.SetHealth( hp )
+	}
+
+	HsdTarget t
+	t.id = file.nextId++
+	t.npc = npc
+	t.kind = cls
+	t.behave = behave
+	file.targets[ t.id ] <- t
+	npc.SetTitle( "HSD " + t.id )
+	HsdNpc_SetPassive( t, behave != "hostile", player )
+	AddEntityCallback_OnDamaged( npc, HsdNpc_OnDamaged )
+	if ( behave == "static" )
+		thread HsdNpc_FreezeLater( t )
+
+	vector o = npc.GetOrigin()
+	// a passive NPC's gun is held in t.weapons
+	string weapon = IsValid( npc.GetActiveWeapon() ) ? npc.GetActiveWeapon().GetWeaponClassName() : ( t.weapons.len() > 0 ? t.weapons[0] + "(held)" : "none" )
+	printt( format( "HSDDIAG NPC spawn %d %s %s team=%d %.1f %.1f %.1f yaw=%.1f hp=%d/%d weapon=%s %.4f", t.id, cls, behave, team,
+		o.x, o.y, o.z, yaw, npc.GetHealth(), npc.GetMaxHealth(), weapon, Time() ) )
+	return true
+}
+
+// freeze once the spawn animation settled (the Gauntlet targets wait 0.5-1 s too)
+void function HsdNpc_FreezeLater( HsdTarget t )
+{
+	t.npc.EndSignal( "OnDeath" )
+	t.npc.EndSignal( "OnDestroy" )
+	t.npc.EndSignal( "HsdNpcStop" )
+	wait 0.6
+	HsdNpc_Freeze( t )
+}
+
+void function HsdNpc_OnDamaged( entity npc, var damageInfo )
+{
+	int id = -1
+	foreach ( int k, HsdTarget t in file.targets )
+	{
+		if ( t.npc == npc )
+		{
+			id = k
+			// a frozen NPC must be unfrozen to die (Gauntlet_NPC_Damaged)
+			if ( t.frozen && npc.GetHealth() - DamageInfo_GetDamage( damageInfo ) <= 0 )
+				HsdNpc_Unfreeze( t )
+		}
+	}
+	entity att = DamageInfo_GetAttacker( damageInfo )
+	vector p = DamageInfo_GetDamagePosition( damageInfo )
+	printt( format( "HSDDIAG NDMG %.4f %d %.2f %d %s %d %.1f %.1f %.1f", Time(), id, DamageInfo_GetDamage( damageInfo ), npc.GetHealth(),
+		IsValid( att ) ? att.GetClassName() : "none", DamageInfo_GetDamageSourceIdentifier( damageInfo ), p.x, p.y, p.z ) )
+}
+
+// hsd_npc_walk <id> x y z [run]
+bool function HsdNpc_CC_Walk( entity player, array<string> args )
+{
+	if ( args.len() < 4 )
+		return true
+	vector b = HsdNpc_Vec( args, 1 )
+	bool run = args.len() > 4 && args[4] == "1"
+	foreach ( HsdTarget t in HsdNpc_Pick( args[0] ) )
+	{
+		HsdNpc_EndMotion( t )
+		HsdNpc_Unfreeze( t )
+		HsdNpc_SetRun( t.npc, run )
+		t.track = true
+		thread HsdNpc_WalkThread( t, t.npc.GetOrigin(), b )
+		printt( format( "HSDDIAG NPC walk %d %.1f %.1f %.1f run=%d %.4f", t.id, b.x, b.y, b.z, run ? 1 : 0, Time() ) )
+	}
+	return true
+}
+
+void function HsdNpc_WalkThread( HsdTarget t, vector a, vector b )
+{
+	entity npc = t.npc
+	npc.EndSignal( "OnDeath" )
+	npc.EndSignal( "OnDestroy" )
+	npc.EndSignal( "HsdNpcStop" )
+	npc.AssaultSetGoalRadius( 64 )
+	vector goal = b
+	while ( true )
+	{
+		npc.AssaultPoint( goal )
+		float start = Time()
+		while ( Distance2D( npc.GetOrigin(), goal ) > 96.0 && Time() - start < 12.0 )
+			wait 0.1
+		printt( format( "HSDDIAG NPC leg %d %.1f %.1f %.1f dist=%.1f %.4f", t.id, goal.x, goal.y, goal.z, Distance2D( npc.GetOrigin(), goal ), Time() ) )
+		goal = goal == b ? a : b
+	}
+}
+
+// hsd_npc_chase <id> [run] [radius]
+bool function HsdNpc_CC_Chase( entity player, array<string> args )
+{
+	if ( args.len() < 1 )
+		return true
+	bool run = args.len() > 1 && args[1] == "1"
+	float radius = args.len() > 2 ? float( args[2] ) : 150.0
+	foreach ( HsdTarget t in HsdNpc_Pick( args[0] ) )
+	{
+		HsdNpc_EndMotion( t )
+		HsdNpc_Unfreeze( t )
+		HsdNpc_SetRun( t.npc, run )
+		t.track = true
+		thread HsdNpc_ChaseThread( t, player, radius )
+		printt( format( "HSDDIAG NPC chase %d run=%d radius=%.0f %.4f", t.id, run ? 1 : 0, radius, Time() ) )
+	}
+	return true
+}
+
+void function HsdNpc_ChaseThread( HsdTarget t, entity player, float radius )
+{
+	entity npc = t.npc
+	npc.EndSignal( "OnDeath" )
+	npc.EndSignal( "OnDestroy" )
+	npc.EndSignal( "HsdNpcStop" )
+	npc.AssaultSetGoalRadius( radius )
+	while ( IsValid( player ) )
+	{
+		// a goal off the navmesh is ignored (the NPC keeps its old goal): clamp it first
+		vector goal = player.GetOrigin()
+		vector ornull clamped = NavMesh_ClampPointForAI( goal, npc )
+		if ( clamped != null )
+			goal = expect vector( clamped )
+		npc.AssaultPoint( goal )
+		printt( format( "HSDDIAG NPC chasing %d goal %.1f %.1f %.1f clamped=%d dist=%.1f %.4f", t.id, goal.x, goal.y, goal.z, clamped != null ? 1 : 0,
+			Distance2D( npc.GetOrigin(), player.GetOrigin() ), Time() ) )
+		wait 0.5
+	}
+}
+
+// hsd_npc_slide <id> x y z speed: the NPC, frozen, rides a script mover between its
+// position and (x y z) at a constant speed (u/s); no navmesh needed
+bool function HsdNpc_CC_Slide( entity player, array<string> args )
+{
+	if ( args.len() < 5 )
+		return true
+	vector b = HsdNpc_Vec( args, 1 )
+	float speed = max( 1.0, float( args[4] ) )
+	foreach ( HsdTarget t in HsdNpc_Pick( args[0] ) )
+	{
+		HsdNpc_EndMotion( t )
+		HsdNpc_Freeze( t )
+		t.track = true
+		t.mover = CreateScriptMover( t.npc.GetOrigin(), t.npc.GetAngles() )
+		t.npc.SetParent( t.mover, "", true )
+		thread HsdNpc_SlideThread( t, t.npc.GetOrigin(), b, speed )
+		printt( format( "HSDDIAG NPC slide %d %.1f %.1f %.1f speed=%.1f %.4f", t.id, b.x, b.y, b.z, speed, Time() ) )
+	}
+	return true
+}
+
+void function HsdNpc_SlideThread( HsdTarget t, vector a, vector b, float speed )
+{
+	entity npc = t.npc
+	entity mover = t.mover
+	npc.EndSignal( "OnDeath" )
+	npc.EndSignal( "OnDestroy" )
+	npc.EndSignal( "HsdNpcStop" )
+	mover.EndSignal( "OnDestroy" )
+	float dur = max( 0.1, Distance( a, b ) / speed )
+	vector goal = b
+	while ( true )
+	{
+		mover.NonPhysicsMoveTo( goal, dur, 0.0, 0.0 )
+		wait dur
+		goal = goal == b ? a : b
+	}
+}
+
+// hsd_npc_stop <id|all>
+bool function HsdNpc_CC_Stop( entity player, array<string> args )
+{
+	foreach ( HsdTarget t in HsdNpc_Pick( args.len() > 0 ? args[0] : "all" ) )
+	{
+		HsdNpc_EndMotion( t )
+		HsdNpc_Freeze( t )
+		printt( format( "HSDDIAG NPC stop %d %.4f", t.id, Time() ) )
+	}
+	return true
+}
+
+// hsd_npc_passive <id|all> <0|1>
+bool function HsdNpc_CC_Passive( entity player, array<string> args )
+{
+	if ( args.len() < 2 )
+		return true
+	bool passive = args[1] == "1"
+	foreach ( HsdTarget t in HsdNpc_Pick( args[0] ) )
+	{
+		HsdNpc_SetPassive( t, passive, player )
+		printt( format( "HSDDIAG NPC passive %d %d %.4f", t.id, passive ? 1 : 0, Time() ) )
+	}
+	return true
+}
+
+// hsd_npc_hp <id|all> [set]
+bool function HsdNpc_CC_Hp( entity player, array<string> args )
+{
+	foreach ( HsdTarget t in HsdNpc_Pick( args.len() > 0 ? args[0] : "all" ) )
+	{
+		if ( args.len() > 1 )
+		{
+			int hp = int( args[1] )
+			if ( hp > t.npc.GetMaxHealth() )
+				t.npc.SetMaxHealth( hp )
+			t.npc.SetHealth( hp )
+		}
+		printt( format( "HSDDIAG NHP %d %d %d %.4f", t.id, t.npc.GetHealth(), t.npc.GetMaxHealth(), Time() ) )
+	}
+	return true
+}
+
+// hsd_npc_track <id|all> <0|1>
+bool function HsdNpc_CC_Track( entity player, array<string> args )
+{
+	if ( args.len() < 2 )
+		return true
+	foreach ( HsdTarget t in HsdNpc_Pick( args[0] ) )
+		t.track = args[1] == "1"
+	return true
+}
+
+bool function HsdNpc_CC_List( entity player, array<string> args )
+{
+	foreach ( int id, HsdTarget t in file.targets )
+	{
+		if ( t.dead || !IsValid( t.npc ) )
+			continue
+		vector o = t.npc.GetOrigin()
+		printt( format( "HSDDIAG NPC list %d %s %s team=%d %.1f %.1f %.1f hp=%d/%d frozen=%d %.4f", id, t.kind, t.behave, t.npc.GetTeam(),
+			o.x, o.y, o.z, t.npc.GetHealth(), t.npc.GetMaxHealth(), t.frozen ? 1 : 0, Time() ) )
+	}
+	printt( format( "HSDDIAG NPC list end player_team=%d %.4f", player.GetTeam(), Time() ) )
+	return true
+}
+
+// hsd_npc_kill <id|all>: remove (no death animation)
+bool function HsdNpc_CC_Kill( entity player, array<string> args )
+{
+	foreach ( HsdTarget t in HsdNpc_Pick( args.len() > 0 ? args[0] : "all" ) )
+	{
+		HsdNpc_EndMotion( t )
+		t.dead = true
+		t.npc.Destroy()
+		printt( format( "HSDDIAG NPC kill %d %.4f", t.id, Time() ) )
+	}
+	return true
+}
+
+// hsd_npc_nav: AI node graph size (0 = no ground nodes; walk / chase then cannot path)
+bool function HsdNpc_CC_Nav( entity player, array<string> args )
+{
+	printt( format( "HSDDIAG NPC nav map=%s nodes=%d %.4f", GetMapName(), GetNodeCount(), Time() ) )
+	return true
+}
+
+// position log for tracked targets and one NDEAD line per death, every server think (0.1 s)
+void function HsdNpc_WatchLoop()
+{
+	while ( true )
+	{
+		foreach ( int id, HsdTarget t in file.targets )
+		{
+			if ( t.dead )
+				continue
+			if ( !IsValid( t.npc ) || !IsAlive( t.npc ) )
+			{
+				t.dead = true
+				printt( format( "HSDDIAG NDEAD %d %.4f", id, Time() ) )
+				continue
+			}
+			if ( t.track )
+			{
+				vector o = t.npc.GetOrigin()
+				printt( format( "HSDDIAG NPOS %.4f %d %.1f %.1f %.1f %d", Time(), id, o.x, o.y, o.z, t.npc.GetHealth() ) )
+			}
+		}
+		WaitFrame()
+	}
+}

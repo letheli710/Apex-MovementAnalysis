@@ -1,0 +1,124 @@
+// HSD.TF2Diag UI side: only when installed by runtime/runner.py with hsd_autorun 1
+// (the runner writes the ConVar defaults into mod.json for one run; a Steam launch
+// does not pass long argument lists or read ns_startup_args.txt).
+// Does what the main menu's "Launch Northstar" button does (Northstar.Client
+// ui/panel_mainmenu.nut: OnPlayNSButton_Activate / TryAuthWithLocalServer): the host
+// authenticates with its own local server, then loads hsd_map instead of mp_lobby.
+// It never gives the Atlas consent: without ns_has_agreed_to_send_token it quits.
+// Every step prints "HSDDIAG UI ..." and every wait has a timeout.
+global function HsdDiag_InitUI
+global function HsdDiag_Exec
+global function HsdDiag_PlanDone
+
+const float CONSENT_TIMEOUT = 60.0
+const float UNLOCK_DELAY = 10.0 // the button unlocks after this long (TryUnlockNorthstarButton)
+const float AUTH_TIMEOUT = 60.0
+const int HOST_PORT = 37115 // R5's hsd_launch.ps1 needs 37015 free
+const float MAP_TIMEOUT = 120.0
+const float PLAN_TIMEOUT = 900.0
+
+struct
+{
+	bool planDone = false
+	string focusSleep = ""
+} file
+
+void function HsdDiag_InitUI()
+{
+	printt( "HSDDIAG UI init autorun=" + GetConVarString( "hsd_autorun" ) + " map=" + GetConVarString( "hsd_map" ) )
+	if ( !GetConVarBool( "hsd_autorun" ) )
+		return
+	// not_focus_sleep (engine, default 50 ms) throttles an unfocused window to ~20 fps, and
+	// the client simulates one usercmd per frame, so a background run would move with
+	// 50 ms steps (2026-10-29 probe runs). Off for the run, restored before quitting.
+	file.focusSleep = GetConVarString( "not_focus_sleep" )
+	ClientCommand( "not_focus_sleep 0" )
+	printt( "HSDDIAG UI not_focus_sleep was " + file.focusSleep )
+	thread HsdDiag_AuthThenMap()
+}
+
+// called by the client plan (hsd_diag_drv.gnut) through RunUIScript
+void function HsdDiag_Exec( string cmd )
+{
+	ClientCommand( cmd )
+}
+
+void function HsdDiag_PlanDone()
+{
+	file.planDone = true
+}
+
+void function HsdDiag_RestoreAndQuit()
+{
+	if ( file.focusSleep != "" )
+		ClientCommand( "not_focus_sleep " + file.focusSleep )
+	ClientCommand( "quit" )
+}
+
+void function HsdDiag_Quit( string why )
+{
+	printt( "HSDDIAG AUTH " + why )
+	HsdDiag_RestoreAndQuit()
+}
+
+void function HsdDiag_AuthThenMap()
+{
+	float start = Time()
+	while ( GetConVarInt( "ns_has_agreed_to_send_token" ) != NS_AGREED_TO_SEND_TOKEN )
+	{
+		if ( Time() - start > CONSENT_TIMEOUT )
+			return HsdDiag_Quit( "no_consent (the user must agree in the menu)" )
+		WaitFrame()
+	}
+	printt( "HSDDIAG UI consent ok" )
+	// the button also accepts IsStryderAuthenticated(), which is not visible to mod scripts
+	while ( Time() - start < UNLOCK_DELAY && !NSIsMasterServerAuthenticated() )
+		WaitFrame()
+	printt( "HSDDIAG UI masterserver=" + NSIsMasterServerAuthenticated() + " t=" + ( Time() - start ) )
+
+	SetConVarString( "communities_hostname", "" ) // as the button does
+	NSTryAuthWithLocalServer()
+	float authStart = Time()
+	while ( NSIsAuthenticatingWithServer() )
+	{
+		if ( Time() - authStart > AUTH_TIMEOUT )
+			return HsdDiag_Quit( "timeout while authenticating with the local server" )
+		WaitFrame()
+	}
+	if ( !NSWasAuthSuccessful() )
+		return HsdDiag_Quit( "failed reason=" + NSGetAuthFailReason() )
+	NSCompleteAuthWithLocalServer()
+	printt( "HSDDIAG AUTH success" )
+
+	ClientCommand( "hostport " + HOST_PORT )
+	// ns_report_server_to_masterserver: autoexec_ns_server.cfg sets it back to 1 when the
+	// server starts, so the server script (hsd_diag_sv.gnut) switches it off instead
+	ClientCommand( "mp_enablematchending 0" )
+	ClientCommand( "mp_enabletimelimit 0" )
+	ClientCommand( "setplaylist tdm" )
+	ClientCommand( "map " + GetConVarString( "hsd_map" ) )
+
+	// wait for the map; the plan itself runs in the client VM (hsd_diag_cl.gnut) on game
+	// time and reports back through HsdDiag_PlanDone
+	float mapStart = Time()
+	while ( !( IsFullyConnected() && !IsLobby() && GetActiveLevel() == GetConVarString( "hsd_map" ) ) )
+	{
+		if ( Time() - mapStart > MAP_TIMEOUT )
+			return HsdDiag_Quit( "map did not load" )
+		WaitFrame()
+	}
+	printt( "HSDDIAG UI in map t=" + ( Time() - mapStart ) )
+	float planStart = Time()
+	while ( !file.planDone )
+	{
+		if ( Time() - planStart > PLAN_TIMEOUT )
+			return HsdDiag_Quit( "plan timeout" )
+		// e.g. kicked by sv_quota_stringcmdspersecond (2026-10-29 t1_sky run): quit, don't wait out the timeout
+		if ( !IsConnected() )
+			return HsdDiag_Quit( "disconnected during the plan" )
+		WaitFrame()
+	}
+	printt( "HSDDIAG DONE" )
+	wait 1.0
+	HsdDiag_RestoreAndQuit()
+}

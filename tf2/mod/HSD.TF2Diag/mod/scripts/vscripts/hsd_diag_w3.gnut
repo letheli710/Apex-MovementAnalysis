@@ -1,0 +1,223 @@
+untyped
+// HSD.TF2Diag worker W3 (boosts research, 2026-10-29): Phase Rewind, Smart Pistol, Ticks, sentry turrets.
+// Server-only commands; the per-frame client log (hsd_diag_cl.gnut) gives the player's path.
+//   hsd_w3_rwbuf                 print the Phase Rewind position buffer (Northstar _burnmeter.gnut)
+//   hsd_w3_rewind                print the buffer, then run the burnmeter_phase_rewind use function
+//   hsd_w3_smart <sec>           log the active weapon's smart-ammo targets (ent, fraction) every frame
+//   hsd_w3_tick <dx> <dy> [team] spawn an armed Tick (npc_frag_drone_throwable) at feet + (dx, dy);
+//                                team "enemy" (default) chases the player, "own" is owned by the player
+//   hsd_w3_turret <ap|at> <dx> <dy> <yaw> [team]  spawn a burn-card sentry turret (AI settings as the boost)
+//   hsd_w3_npclog <class> <sec>  log every <class> NPC: origin, velocity, yaw, health, enemy, phase
+//   hsd_w3_kill <class>          kill every <class> NPC
+// Every hit on an NPC prints HSDDIAG W3DMG (time, victim, attacker, inflictor, damage, source id, distance).
+global function HsdDiagW3_InitServer
+
+void function HsdDiagW3_InitServer()
+{
+	AddClientCommandCallback( "hsd_w3_rwbuf", HsdW3_CC_RwBuf )
+	AddClientCommandCallback( "hsd_w3_rewind", HsdW3_CC_Rewind )
+	AddClientCommandCallback( "hsd_w3_smart", HsdW3_CC_Smart )
+	AddClientCommandCallback( "hsd_w3_tick", HsdW3_CC_Tick )
+	AddClientCommandCallback( "hsd_w3_turret", HsdW3_CC_Turret )
+	AddClientCommandCallback( "hsd_w3_npclog", HsdW3_CC_NpcLog )
+	AddClientCommandCallback( "hsd_w3_kill", HsdW3_CC_Kill )
+	foreach ( string c in [ "npc_soldier", "npc_spectre", "npc_stalker", "npc_super_spectre", "npc_titan", "npc_prowler",
+		"npc_frag_drone", "npc_turret_sentry", "npc_drone", "npc_marvin" ] )
+		AddDamageCallback( c, HsdW3_OnNpcDamage )
+	printt( "HSDDIAG W3 init" )
+}
+
+string function HsdW3_V( vector v )
+{
+	return format( "%.1f %.1f %.1f", v.x, v.y, v.z )
+}
+
+void function HsdW3_PrintBuf( entity player, string label )
+{
+	array<PhaseRewindData> buf = player.p.burnCardPhaseRewindStruct.phaseRetreatSavedPositions
+	vector o = player.GetOrigin()
+	printt( format( "HSDDIAG W3RW %s %.4f n=%d now %s", label, Time(), buf.len(), HsdW3_V( o ) ) )
+	for ( int i = 0; i < buf.len(); i++ )
+	{
+		PhaseRewindData d = buf[i]
+		printt( format( "HSDDIAG W3RWB %d %s yaw %.1f vel %s crouch %d ctx %d", i, HsdW3_V( d.origin ), d.angles.y,
+			HsdW3_V( d.velocity ), d.wasCrouched ? 1 : 0, d.wasInContextAction ? 1 : 0 ) )
+	}
+}
+
+bool function HsdW3_CC_RwBuf( entity player, array<string> args )
+{
+	HsdW3_PrintBuf( player, "buf" )
+	return true
+}
+
+bool function HsdW3_CC_Rewind( entity player, array<string> args )
+{
+	HsdW3_PrintBuf( player, "use" )
+	RunBurnCardUseFunc( player, "burnmeter_phase_rewind" )
+	thread HsdW3_RewindWatch( player )
+	return true
+}
+
+// server-side view of the rewind: phase state, parent, origin, eye angles, velocity, every server frame for 4 s
+void function HsdW3_RewindWatch( entity player )
+{
+	player.EndSignal( "OnDestroy" )
+	float end = Time() + 4.0
+	while ( Time() < end )
+	{
+		vector a = player.EyeAngles()
+		printt( format( "HSDDIAG W3RWT %.4f %s ang %.1f %.1f vel %s phase %d parent %d", Time(), HsdW3_V( player.GetOrigin() ),
+			a.x, a.y, HsdW3_V( player.GetVelocity() ), player.IsPhaseShifted() ? 1 : 0, IsValid( player.GetParent() ) ? 1 : 0 ) )
+		WaitFrame()
+	}
+}
+
+bool function HsdW3_CC_Smart( entity player, array<string> args )
+{
+	float sec = args.len() > 0 ? float( args[0] ) : 3.0
+	thread HsdW3_SmartLog( player, sec )
+	return true
+}
+
+void function HsdW3_SmartLog( entity player, float sec )
+{
+	player.EndSignal( "OnDestroy" )
+	float end = Time() + sec
+	while ( Time() < end )
+	{
+		entity w = player.GetActiveWeapon()
+		if ( IsValid( w ) && w.SmartAmmo_IsEnabled() )
+		{
+			string s = ""
+			var targets = w.SmartAmmo_GetTargets()
+			foreach ( t in targets )
+			{
+				entity e = expect entity( t.ent )
+				string name = IsValid( e ) ? e.GetClassName() + "#" + e.GetEntIndex() : "invalid"
+				float dist = IsValid( e ) ? Distance( e.GetOrigin(), player.EyePosition() ) : -1.0
+				s += format( " %s:%.3f:%.0f", name, expect float( t.fraction ), dist )
+			}
+			printt( format( "HSDDIAG W3SM %.4f n=%d%s", Time(), targets.len(), s ) )
+		}
+		WaitFrame()
+	}
+}
+
+int function HsdW3_Team( entity player, array<string> args, int idx )
+{
+	if ( args.len() > idx && args[idx] == "own" )
+		return player.GetTeam()
+	return GetOtherTeam( player.GetTeam() )
+}
+
+bool function HsdW3_CC_Tick( entity player, array<string> args )
+{
+	if ( args.len() < 2 )
+		return true
+	int team = HsdW3_Team( player, args, 2 )
+	vector pos = player.GetOrigin() + < float( args[0] ), float( args[1] ), 0.0 >
+	// as OnProjectileExplode_weapon_frag_drone (mp_weapon_frag_drone.nut 61-103), without the projectile
+	entity drone = CreateFragDroneCan( team, pos, < 0, player.EyeAngles().y + 180.0, 0 > )
+	SetSpawnOption_AISettings( drone, "npc_frag_drone_throwable" )
+	DispatchSpawn( drone )
+	vector ornull clamped = NavMesh_ClampPointForAIWithExtents( pos, drone, < 20, 20, 36 > )
+	printt( format( "HSDDIAG W3TICK spawn %.4f team %d %s nav %s", Time(), team, HsdW3_V( pos ), clamped == null ? "none" : "ok" ) )
+	if ( clamped != null )
+		drone.SetOrigin( expect vector( clamped ) )
+	if ( team == player.GetTeam() )
+	{
+		drone.SetBossPlayer( player )
+		UpdateEnemyMemoryWithinRadius( drone, 1000 )
+	}
+	else
+	{
+		drone.SetEnemy( player )
+	}
+	drone.EnableNPCFlag( NPC_ALLOW_PATROL | NPC_ALLOW_INVESTIGATE | NPC_NEW_ENEMY_FROM_SOUND )
+	thread FragDroneDeplyAnimation( drone, 0.0, 0.1 )
+	return true
+}
+
+bool function HsdW3_CC_Turret( entity player, array<string> args )
+{
+	if ( args.len() < 4 )
+		return true
+	string ai = args[0] == "at" ? "npc_turret_sentry_burn_card_at" : "npc_turret_sentry_burn_card_ap"
+	int team = HsdW3_Team( player, args, 4 )
+	vector pos = player.GetOrigin() + < float( args[1] ), float( args[2] ), 1.0 >
+	// as DeployTurret (mp_ability_turretweapon.nut), minus the placement checks and the boost bookkeeping
+	entity turret = CreateEntity( "npc_turret_sentry" )
+	turret.SetOrigin( pos )
+	turret.SetAngles( < 0, float( args[3] ), 0 > )
+	if ( team == player.GetTeam() )
+	{
+		turret.SetBossPlayer( player )
+		turret.ai.preventOwnerDamage = true
+	}
+	turret.StartDeployed()
+	SetTeam( turret, team )
+	SetSpawnOption_AISettings( turret, ai )
+	turret.kv.AccuracyMultiplier = DEPLOYABLE_TURRET_ACCURACY_MULTIPLIER
+	DispatchSpawn( turret )
+	turret.Anim_Play( "deploy" )
+	entity w = turret.GetActiveWeapon()
+	printt( format( "HSDDIAG W3TUR spawn %.4f %s team %d %s yaw %s hp %d weapon %s maxdist %.0f heavy %.0f maxyaw %.0f", Time(), ai, team,
+		HsdW3_V( pos ), args[3], turret.GetHealth(), IsValid( w ) ? w.GetWeaponClassName() : "none",
+		turret.GetMaxEnemyDist(), turret.GetMaxEnemyDistHeavyArmor(), turret.GetMaxTurretYaw() ) )
+	return true
+}
+
+bool function HsdW3_CC_NpcLog( entity player, array<string> args )
+{
+	if ( args.len() < 2 )
+		return true
+	thread HsdW3_NpcLog( args[0], float( args[1] ) )
+	return true
+}
+
+void function HsdW3_NpcLog( string cls, float sec )
+{
+	float end = Time() + sec
+	while ( Time() < end )
+	{
+		foreach ( entity npc in GetNPCArrayByClass( cls ) )
+		{
+			if ( !IsValid( npc ) )
+				continue
+			entity e = npc.GetEnemy()
+			vector a = npc.GetAngles()
+			string extra = ""
+			if ( npc.IsNPC() && cls == "npc_turret_sentry" )
+			{
+				vector aim = npc.EyeAngles()
+				extra = format( " aim %.1f %.1f", aim.x, aim.y )
+			}
+			printt( format( "HSDDIAG W3NPC %.4f %s#%d %s vel %s yaw %.1f hp %d alive %d enemy %s%s", Time(), cls, npc.GetEntIndex(),
+				HsdW3_V( npc.GetOrigin() ), HsdW3_V( npc.GetVelocity() ), a.y, npc.GetHealth(), IsAlive( npc ) ? 1 : 0,
+				IsValid( e ) ? e.GetClassName() + "#" + e.GetEntIndex() : "none", extra ) )
+		}
+		WaitFrame()
+	}
+}
+
+bool function HsdW3_CC_Kill( entity player, array<string> args )
+{
+	if ( args.len() < 1 )
+		return true
+	foreach ( entity npc in GetNPCArrayByClass( args[0] ) )
+		if ( IsAlive( npc ) )
+			npc.Die()
+	printt( "HSDDIAG W3KILL " + args[0] + format( " %.4f", Time() ) )
+	return true
+}
+
+void function HsdW3_OnNpcDamage( entity ent, var damageInfo )
+{
+	entity att = DamageInfo_GetAttacker( damageInfo )
+	entity inf = DamageInfo_GetInflictor( damageInfo )
+	float dist = IsValid( att ) ? Distance( att.GetOrigin(), ent.GetOrigin() ) : -1.0
+	printt( format( "HSDDIAG W3DMG %.4f %s#%d hp %d att %s inf %s dmg %.2f src %d dist %.0f", Time(), ent.GetClassName(), ent.GetEntIndex(),
+		ent.GetHealth(), IsValid( att ) ? att.GetClassName() : "none", IsValid( inf ) ? inf.GetClassName() : "none",
+		DamageInfo_GetDamage( damageInfo ), DamageInfo_GetDamageSourceIdentifier( damageInfo ), dist ) )
+}

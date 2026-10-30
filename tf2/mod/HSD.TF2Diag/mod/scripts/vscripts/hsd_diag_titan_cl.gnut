@@ -1,0 +1,35 @@
+// HSD.TF2Diag titans (T0), client side: look settings once, then the camera every client frame
+// (only with hsd_autorun 1). The camera is what the screen shows, so it includes view effects
+// (dash roll, step jolt, bob) that EyeAngles / origin in the HSDDIAG C line do not.
+// Log lines:
+//   HSDDIAG LOOKCFG <convar> <value>
+//   HSDDIAG CAM <time> <titan> <cam pitch> <cam yaw> <cam roll> <cam - origin x y z>
+global function HsdDiagTitan_InitClient
+
+void function HsdDiagTitan_InitClient()
+{
+	if ( !GetConVarBool( "hsd_autorun" ) )
+		return
+	thread HsdDiagTitan_CamLog()
+	// only ConVars seen valid in a run: an invalid one is a script error in the client init,
+	// which drops the client into a reconnect loop (run 20261030_012337_t0_smoke)
+	foreach ( string cv in [ "mouse_sensitivity", "mouse_sensitivity_zoomed" ] )
+		printt( "HSDDIAG LOOKCFG " + cv + " " + GetConVarString( cv ) )
+}
+
+void function HsdDiagTitan_CamLog()
+{
+	entity player = GetLocalClientPlayer()
+	while ( player == null || !IsAlive( player ) )
+	{
+		WaitFrame()
+		player = GetLocalClientPlayer()
+	}
+	while ( IsValid( player ) )
+	{
+		vector a = player.CameraAngles()
+		vector d = player.CameraPosition() - player.GetOrigin()
+		printt( format( "HSDDIAG CAM %.5f %s %.3f %.3f %.3f %.2f %.2f %.2f", Time(), player.IsTitan() ? "1" : "0", a.x, a.y, a.z, d.x, d.y, d.z ) )
+		WaitFrame()
+	}
+}

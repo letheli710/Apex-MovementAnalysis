@@ -1,0 +1,75 @@
+// HSD.TF2Diag client side: logs the local (predicted) player every client frame and runs
+// the generated experiment plan (hsd_diag_plan.gnut) as a client thread, so plan waits
+// use the same clock as the log. The server script only runs at the script think rate
+// (0.1 s), so this is the per-frame record.
+// Log line: HSDDIAG C <time> <ox> <oy> <oz> <vx> <vy> <vz> <pitch> <yaw> <ground> <wallrun> <wallhang> <crouch> <fwd> <side> <buttons>
+//   fwd / side: input axes (-1..1); buttons: 1 jump, 2 duck, 4 sprint, 8 zoom, 16 attack (held)
+global function HsdDiag_InitClient
+
+const float SPAWN_WAIT = 1.0 // after the intro, before the plan starts
+
+void function HsdDiag_InitClient()
+{
+	printt( "HSDDIAG INIT client autorun=" + GetConVarString( "hsd_autorun" ) )
+	// manual play: log nothing
+	if ( GetConVarBool( "hsd_autorun" ) )
+		thread HsdDiag_FrameLog()
+}
+
+string function B( bool b )
+{
+	return b ? "1" : "0"
+}
+
+int function HsdDiag_Buttons( entity p )
+{
+	int b = 0
+	if ( p.IsInputCommandHeld( IN_JUMP ) )
+		b = b | 1
+	if ( p.IsInputCommandHeld( IN_DUCK ) )
+		b = b | 2
+	if ( p.IsInputCommandHeld( IN_SPEED ) )
+		b = b | 4
+	if ( p.IsInputCommandHeld( IN_ZOOM ) )
+		b = b | 8
+	if ( p.IsInputCommandHeld( IN_ATTACK ) )
+		b = b | 16
+	return b
+}
+
+void function HsdDiag_FrameLog()
+{
+	entity player = GetLocalClientPlayer()
+	while ( player == null || !IsAlive( player ) )
+	{
+		WaitFrame()
+		player = GetLocalClientPlayer()
+	}
+	printt( "HSDDIAG CLIENT alive" )
+	thread HsdDiag_PlanThread()
+	while ( IsValid( player ) )
+	{
+		vector o = player.GetOrigin()
+		vector v = player.GetVelocity()
+		vector a = player.EyeAngles()
+		printt( format( "HSDDIAG C %.5f %.3f %.3f %.3f %.3f %.3f %.3f %.2f %.2f %s %s %s %s %.2f %.2f %d",
+			Time(), o.x, o.y, o.z, v.x, v.y, v.z, a.x, a.y,
+			B( player.IsOnGround() ), B( player.IsWallRunning() ), B( player.IsWallHanging() ), B( player.IsCrouched() ),
+			player.GetInputAxisForward(), player.GetInputAxisRight(), HsdDiag_Buttons( player ) ) )
+		WaitFrame()
+	}
+}
+
+void function HsdDiag_PlanThread()
+{
+	// the match intro (~10 s, "started intro!" .. "intro finished!" in the server log)
+	// freezes the player; the 2026-10-29 smoke run's "1.5 s input lag" was this freeze
+	while ( GetGameState() < eGameState.Playing )
+		WaitFrame()
+	printt( format( "HSDDIAG PLAN playing %.5f", Time() ) )
+	wait SPAWN_WAIT
+	printt( format( "HSDDIAG PLAN start %.5f", Time() ) )
+	HsdDiag_RunPlan()
+	printt( format( "HSDDIAG PLAN end %.5f", Time() ) )
+	RunUIScript( "HsdDiag_PlanDone" )
+}

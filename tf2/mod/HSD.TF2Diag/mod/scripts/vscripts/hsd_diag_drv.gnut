@@ -1,0 +1,58 @@
+// HSD.TF2Diag experiment driver helpers (CLIENT). The generated plan (hsd_diag_plan.gnut)
+// runs as a client thread, so its waits are in client game time (the same clock as the
+// per-frame HSDDIAG C lines). Commands go to the UI VM (RunUIScript), whose ClientCommand
+// runs on the local console: +forward etc. act locally, hsd_* are forwarded to the server.
+// Every command prints "HSDDIAG CMD <client time> <command>" so analysis can line it up.
+global function HsdDiag_C
+global function HsdDiag_U
+
+void function HsdDiag_C( string cmd )
+{
+	printt( format( "HSDDIAG CMD %.5f %s", Time(), cmd ) )
+	RunUIScript( "HsdDiag_Exec", cmd )
+}
+
+bool function HsdDiag_Cond( entity p, string cond, float arg )
+{
+	vector v = p.GetVelocity()
+	float h = sqrt( v.x * v.x + v.y * v.y )
+	switch ( cond )
+	{
+		case "ground":
+			return p.IsOnGround()
+		case "air":
+			return !p.IsOnGround()
+		case "wallrun":
+			return p.IsWallRunning()
+		case "nowallrun":
+			return !p.IsWallRunning()
+		case "fall":
+			return v.z < 0.0
+		case "hmin":
+			return h >= arg
+		case "hmax":
+			return h <= arg
+		case "zmin":
+			return p.GetOrigin().z >= arg
+	}
+	return true
+}
+
+// wait until cond holds (checked every client frame), at most timeout seconds
+bool function HsdDiag_U( string cond, float arg, float timeout )
+{
+	float start = Time()
+	entity p = GetLocalClientPlayer()
+	bool ok = false
+	while ( Time() - start < timeout )
+	{
+		if ( IsValid( p ) && HsdDiag_Cond( p, cond, arg ) )
+		{
+			ok = true
+			break
+		}
+		WaitFrame()
+	}
+	printt( format( "HSDDIAG UNTIL %.5f %s %.1f %s", Time(), cond, arg, ok ? "ok" : "timeout" ) )
+	return ok
+}

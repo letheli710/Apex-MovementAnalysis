@@ -1,0 +1,53 @@
+{
+  "files": [
+    "C:\\Workspace\\Playground\\ReApex-DataAnalysis\\Apex-MovementAnalysis\\research\\phase2-local\\data\\20261024_161004_B1_pilot_game\\platform\\logs\\client\\0668e3e1-8fe5-416d-94bf-b72b2d4eb46b\\bridge_trace.log",
+    "C:\\Workspace\\Playground\\ReApex-DataAnalysis\\Apex-MovementAnalysis\\research\\phase2-local\\data\\20261024_161004_B1_pilot_game\\platform\\logs\\client\\0668e3e1-8fe5-416d-94bf-b72b2d4eb46b\\error.log",
+    "C:\\Workspace\\Playground\\ReApex-DataAnalysis\\Apex-MovementAnalysis\\research\\phase2-local\\data\\20261024_161004_B1_pilot_game\\platform\\logs\\client\\0668e3e1-8fe5-416d-94bf-b72b2d4eb46b\\filesystem.log",
+    "C:\\Workspace\\Playground\\ReApex-DataAnalysis\\Apex-MovementAnalysis\\research\\phase2-local\\data\\20261024_161004_B1_pilot_game\\platform\\logs\\client\\0668e3e1-8fe5-416d-94bf-b72b2d4eb46b\\message.log",
+    "C:\\Workspace\\Playground\\ReApex-DataAnalysis\\Apex-MovementAnalysis\\research\\phase2-local\\data\\20261024_161004_B1_pilot_game\\platform\\logs\\client\\0668e3e1-8fe5-416d-94bf-b72b2d4eb46b\\net_trace.log",
+    "C:\\Workspace\\Playground\\ReApex-DataAnalysis\\Apex-MovementAnalysis\\research\\phase2-local\\data\\20261024_161004_B1_pilot_game\\platform\\logs\\client\\0668e3e1-8fe5-416d-94bf-b72b2d4eb46b\\netconsole.log",
+    "C:\\Workspace\\Playground\\ReApex-DataAnalysis\\Apex-MovementAnalysis\\research\\phase2-local\\data\\20261024_161004_B1_pilot_game\\platform\\logs\\client\\0668e3e1-8fe5-416d-94bf-b72b2d4eb46b\\script.log",
+    "C:\\Workspace\\Playground\\ReApex-DataAnalysis\\Apex-MovementAnalysis\\research\\phase2-local\\data\\20261024_161004_B1_pilot_game\\platform\\logs\\client\\0668e3e1-8fe5-416d-94bf-b72b2d4eb46b\\script_warning.log",
+    "C:\\Workspace\\Playground\\ReApex-DataAnalysis\\Apex-MovementAnalysis\\research\\phase2-local\\data\\20261024_161004_B1_pilot_game\\platform\\logs\\client\\0668e3e1-8fe5-416d-94bf-b72b2d4eb46b\\warning.log",
+    "C:\\Workspace\\Playground\\ReApex-DataAnalysis\\Apex-MovementAnalysis\\research\\phase2-local\\data\\20261024_161004_B1_pilot_game\\platform\\logs\\server\\8e9b9317-9e26-40ae-bdc5-2225085f110e\\error.log",
+    "C:\\Workspace\\Playground\\ReApex-DataAnalysis\\Apex-MovementAnalysis\\research\\phase2-local\\data\\20261024_161004_B1_pilot_game\\platform\\logs\\server\\8e9b9317-9e26-40ae-bdc5-2225085f110e\\filesystem.log",
+    "C:\\Workspace\\Playground\\ReApex-DataAnalysis\\Apex-MovementAnalysis\\research\\phase2-local\\data\\20261024_161004_B1_pilot_game\\platform\\logs\\server\\8e9b9317-9e26-40ae-bdc5-2225085f110e\\message.log",
+    "C:\\Workspace\\Playground\\ReApex-DataAnalysis\\Apex-MovementAnalysis\\research\\phase2-local\\data\\20261024_161004_B1_pilot_game\\platform\\logs\\server\\8e9b9317-9e26-40ae-bdc5-2225085f110e\\net_trace.log",
+    "C:\\Workspace\\Playground\\ReApex-DataAnalysis\\Apex-MovementAnalysis\\research\\phase2-local\\data\\20261024_161004_B1_pilot_game\\platform\\logs\\server\\8e9b9317-9e26-40ae-bdc5-2225085f110e\\script.log",
+    "C:\\Workspace\\Playground\\ReApex-DataAnalysis\\Apex-MovementAnalysis\\research\\phase2-local\\data\\20261024_161004_B1_pilot_game\\platform\\logs\\server\\8e9b9317-9e26-40ae-bdc5-2225085f110e\\script_warning.log",
+    "C:\\Workspace\\Playground\\ReApex-DataAnalysis\\Apex-MovementAnalysis\\research\\phase2-local\\data\\20261024_161004_B1_pilot_game\\platform\\logs\\server\\8e9b9317-9e26-40ae-bdc5-2225085f110e\\warning.log"
+  ],
+  "summary": {
+    "errors": 0,
+    "warnings": 1,
+    "infos": 2,
+    "codes": {
+      "I_REPLAYS": 1,
+      "W_TIME_BACKWARDS": 1,
+      "I_JOIN": 1
+    }
+  },
+  "issues": [
+    {
+      "severity": "info",
+      "code": "I_REPLAYS",
+      "file": "message.log",
+      "line_no": 0,
+      "message": "10 re-predicted (rp=1) rows in ('MT', 'cl', 'cmd', 1, '0668e3e1-8fe5-416d-94bf-b72b2d4eb46b')"
+    },
+    {
+      "severity": "warning",
+      "code": "W_TIME_BACKWARDS",
+      "file": "script.log",
+      "line_no": 715,
+      "message": "t 26.05 -> 25.78392 in ('HSD', 'sv', 'evt', 1.0, '8e9b9317-9e26-40ae-bdc5-2225085f110e')"
+    },
+    {
+      "severity": "info",
+      "code": "I_JOIN",
+      "file": "",
+      "line_no": 0,
+      "message": "99.8% of client commands have a dedi line for the same usercmd (session, ent, reset batch, cmd) (2750/2756; ambiguous 0)"
+    }
+  ]
+}

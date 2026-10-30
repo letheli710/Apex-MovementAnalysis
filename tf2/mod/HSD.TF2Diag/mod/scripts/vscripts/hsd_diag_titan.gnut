@@ -1,0 +1,343 @@
+// HSD.TF2Diag titans (T0): spawn a titan, embark the player, disembark, log titan state.
+// See ../../../../../expansion/titan/T0-REPORT.md.
+// Commands (client console -> server):
+//   hsd_titan <class> x y z yaw [mods...]
+//     class: ion | scorch | northstar | ronin | tone | legion | monarch (= vanguard), from the
+//            default titan loadouts (sh_loadouts.nut GetDefaultTitanLoadouts), or a set file name
+//            (titan_stryder_leadwall ...) used with the player's own loadout's weapons
+//     mods:  set-file mods (pas_mobility_dash_capacity, turbo_titan ...)
+//     Spawns one auto-titan owned by the player (the previous one is destroyed).
+//   hsd_embark [anim]   anim 0 (default): instant (ForceScriptedEmbark, as RespawnAsTitan does)
+//                       anim 1: the real embark animation (FindBestEmbark + PlayerEmbarksTitan)
+//   hsd_disembark       the real disembark (as the TitanDisembark client command, without its checks)
+//   hsd_titan_info      class, set file, mods, dodge power, health, shield
+//   hsd_dodgepower <v>  set the dash power (0..100)
+//   hsd_lanes x0 y0 x1 y1 step [len] [minfree]   titan-hull (120 x 235) traces from a floor grid in 16
+//                       directions; prints every start / yaw with at least minfree units clear
+//   hsd_core            core meter full (SoulTitanCore_SetNextAvailableTime( soul, 1.0 ), as sh_titancore_utility does)
+//   hsd_status <effect> <severity> <duration> [fade]   StatusEffect_AddTimed on the titan soul (or the pilot),
+//                       effect = eStatusEffect name (turn_slow, move_slow, dodge_speed_slow ...)
+// Log lines:
+//   HSDDIAG TITAN <event> ...          spawn / embark / embarked / disembark / disembarked / info / err
+//   HSDDIAG TT <time> <titan> <dodgePower> <sprint> <hp> <shield>   every server frame while autorun
+global function HsdDiagTitan_Init
+
+struct
+{
+	entity titan
+	string setFile = ""
+} file
+
+void function HsdDiagTitan_Init()
+{
+	AddClientCommandCallback( "hsd_titan", HsdTitan_CC_Spawn )
+	AddClientCommandCallback( "hsd_embark", HsdTitan_CC_Embark )
+	AddClientCommandCallback( "hsd_disembark", HsdTitan_CC_Disembark )
+	AddClientCommandCallback( "hsd_titan_info", HsdTitan_CC_Info )
+	AddClientCommandCallback( "hsd_dodgepower", HsdTitan_CC_DodgePower )
+	AddClientCommandCallback( "hsd_mouse", HsdTitan_CC_Mouse )
+	AddClientCommandCallback( "hsd_core", HsdTitan_CC_Core )
+	AddClientCommandCallback( "hsd_lanes", HsdTitan_CC_Lanes )
+	AddClientCommandCallback( "hsd_status", HsdTitan_CC_Status )
+	if ( GetConVarBool( "hsd_autorun" ) )
+		AddCallback_OnPlayerRespawned( HsdTitan_OnRespawn )
+}
+
+void function HsdTitan_OnRespawn( entity player )
+{
+	thread HsdTitan_StateLog( player )
+}
+
+void function HsdTitan_StateLog( entity player )
+{
+	player.EndSignal( "OnDestroy" )
+	player.EndSignal( "OnDeath" )
+	while ( true )
+	{
+		entity soul = player.GetTitanSoul()
+		int shield = IsValid( soul ) ? soul.GetShieldHealth() : 0
+		printt( format( "HSDDIAG TT %.4f %s %.2f %s %d %d", Time(), player.IsTitan() ? "1" : "0", player.GetDodgePower(),
+			player.IsSprinting() ? "1" : "0", player.GetHealth(), shield ) )
+		WaitFrame()
+	}
+}
+
+string function HsdTitan_ClassName( string cls )
+{
+	return cls == "monarch" ? "vanguard" : cls
+}
+
+// hsd_titan <class|setfile> x y z yaw [mods...]
+bool function HsdTitan_CC_Spawn( entity player, array<string> args )
+{
+	if ( args.len() < 5 )
+	{
+		printt( "HSDDIAG TITAN err usage" )
+		return true
+	}
+	string cls = HsdTitan_ClassName( args[0] )
+	// the loadout structs are shared (default table / the player's cached loadout): the set file
+	// and mods are changed for this spawn only and put back right after
+	TitanLoadoutDef loadout = GetTitanLoadoutForPlayer( player )
+	bool found = false
+	foreach ( TitanLoadoutDef l in GetDefaultTitanLoadouts() )
+	{
+		if ( l.titanClass == cls || l.setFile == cls )
+		{
+			loadout = l
+			found = true
+			break
+		}
+	}
+	if ( !found && cls.find( "titan_" ) != 0 )
+	{
+		printt( "HSDDIAG TITAN err unknown_class " + cls )
+		return true
+	}
+	string oldSetFile = loadout.setFile
+	array<string> oldMods = loadout.setFileMods
+	if ( !found )
+		loadout.setFile = cls
+	array<string> mods = clone oldMods
+	for ( int i = 5; i < args.len(); i++ )
+		mods.append( args[i] )
+	loadout.setFileMods = mods
+
+	if ( IsValid( file.titan ) && !file.titan.IsPlayer() )
+		file.titan.Destroy()
+	vector origin = < float( args[1] ), float( args[2] ), float( args[3] ) >
+	vector angles = < 0.0, float( args[4] ), 0.0 >
+	entity titan = CreateAutoTitanForPlayer_FromTitanLoadout( player, loadout, origin, angles )
+	DispatchSpawn( titan )
+	player.SetPetTitan( titan )
+	file.titan = titan
+	file.setFile = loadout.setFile
+	string cname = loadout.titanClass
+	string primary = loadout.primary
+	loadout.setFile = oldSetFile
+	loadout.setFileMods = oldMods
+	string m = ""
+	foreach ( string x in mods )
+		m += x + ","
+	printt( format( "HSDDIAG TITAN spawn %s %s mods=%s primary=%s %.1f %.1f %.1f yaw=%.1f hp=%d %.4f", cname, file.setFile,
+		m == "" ? "-" : m, primary, origin.x, origin.y, origin.z, angles.y, titan.GetHealth(), Time() ) )
+	return true
+}
+
+bool function HsdTitan_CC_Embark( entity player, array<string> args )
+{
+	bool anim = args.len() > 0 && args[0] == "1"
+	entity titan = file.titan
+	if ( !IsValid( titan ) || !IsAlive( titan ) || titan.IsPlayer() )
+	{
+		printt( "HSDDIAG TITAN err no_titan" )
+		return true
+	}
+	if ( player.IsTitan() )
+	{
+		printt( "HSDDIAG TITAN err already_titan" )
+		return true
+	}
+	if ( anim )
+	{
+		var embark = FindBestEmbark( player, titan, false )
+		if ( embark == null )
+		{
+			printt( "HSDDIAG TITAN err no_embark_action" )
+			return true
+		}
+		printt( format( "HSDDIAG TITAN embark anim %.1f %.4f", Distance( player.GetOrigin(), titan.GetOrigin() ), Time() ) )
+		thread PlayerEmbarksTitan( player, titan, expect table( embark ) )
+	}
+	else
+	{
+		printt( format( "HSDDIAG TITAN embark instant %.4f", Time() ) )
+		ForceScriptedEmbark( player, titan )
+		// PilotBecomesTitan leaves an npc titan behind (RespawnAsTitan destroys it too)
+		if ( IsValid( titan ) )
+			titan.Destroy()
+	}
+	thread HsdTitan_WaitEmbarked( player )
+	return true
+}
+
+void function HsdTitan_WaitEmbarked( entity player )
+{
+	player.EndSignal( "OnDestroy" )
+	float start = Time()
+	while ( !player.IsTitan() || player.p.isEmbarking )
+	{
+		if ( Time() - start > 15.0 )
+		{
+			printt( "HSDDIAG TITAN err embark_timeout" )
+			return
+		}
+		WaitFrame()
+	}
+	file.titan = player
+	printt( format( "HSDDIAG TITAN embarked %s %s dt=%.3f %.4f", player.GetPlayerSettings(), HsdTitan_Mods( player ), Time() - start, Time() ) )
+}
+
+string function HsdTitan_Mods( entity player )
+{
+	string m = ""
+	foreach ( string x in player.GetPlayerSettingsMods() )
+		m += x + ","
+	return m == "" ? "-" : m
+}
+
+bool function HsdTitan_CC_Disembark( entity player, array<string> args )
+{
+	if ( !player.IsTitan() )
+	{
+		printt( "HSDDIAG TITAN err not_titan" )
+		return true
+	}
+	printt( format( "HSDDIAG TITAN disembark %.4f", Time() ) )
+	player.CockpitStartDisembark()
+	Remote_CallFunction_Replay( player, "ServerCallback_TitanDisembark" )
+	thread HsdTitan_Disembark( player )
+	return true
+}
+
+void function HsdTitan_Disembark( entity player )
+{
+	player.EndSignal( "OnDestroy" )
+	float start = Time()
+	waitthread PlayerDisembarksTitan( player )
+	while ( player.IsTitan() || IsPlayerDisembarking( player ) )
+	{
+		if ( Time() - start > 15.0 )
+		{
+			printt( "HSDDIAG TITAN err disembark_timeout" )
+			return
+		}
+		WaitFrame()
+	}
+	entity titan = player.GetPetTitan()
+	file.titan = titan
+	vector o = player.GetOrigin()
+	printt( format( "HSDDIAG TITAN disembarked dt=%.3f pilot %.1f %.1f %.1f titan=%s %.4f", Time() - start, o.x, o.y, o.z,
+		IsValid( titan ) ? "1" : "0", Time() ) )
+}
+
+bool function HsdTitan_CC_Info( entity player, array<string> args )
+{
+	entity soul = player.GetTitanSoul()
+	printt( format( "HSDDIAG TITAN info %s %s titan=%s dodge=%.2f hp=%d/%d shield=%d %.4f", player.GetPlayerSettings(), HsdTitan_Mods( player ),
+		player.IsTitan() ? "1" : "0", player.GetDodgePower(), player.GetHealth(), player.GetMaxHealth(),
+		IsValid( soul ) ? soul.GetShieldHealth() : 0, Time() ) )
+	foreach ( entity w in player.GetMainWeapons() )
+		printt( "HSDDIAG TITAN info main " + w.GetWeaponClassName() )
+	foreach ( entity w in player.GetOffhandWeapons() )
+		printt( format( "HSDDIAG TITAN info offhand %s clip=%d charge=%.3f %.4f", w.GetWeaponClassName(), w.GetWeaponPrimaryClipCount(),
+			w.GetWeaponChargeFraction(), Time() ) )
+	return true
+}
+
+bool function HsdTitan_CC_DodgePower( entity player, array<string> args )
+{
+	if ( args.len() > 0 )
+		player.Server_SetDodgePower( float( args[0] ) )
+	printt( format( "HSDDIAG TITAN dodgepower %.2f %.4f", player.GetDodgePower(), Time() ) )
+	return true
+}
+
+// hsd_mouse ...: the runner (titan_mouse.py) sends the mouse input; the server only marks the time
+bool function HsdTitan_CC_Mouse( entity player, array<string> args )
+{
+	string a = ""
+	foreach ( string x in args )
+		a += " " + x
+	printt( format( "HSDDIAG MOUSE%s %.4f", a, Time() ) )
+	return true
+}
+
+bool function HsdTitan_CC_Core( entity player, array<string> args )
+{
+	entity soul = player.GetTitanSoul()
+	if ( !IsValid( soul ) )
+	{
+		printt( "HSDDIAG TITAN err no_soul" )
+		return true
+	}
+	SoulTitanCore_SetNextAvailableTime( soul, 1.0 )
+	printt( format( "HSDDIAG TITAN core ready %.4f", Time() ) )
+	return true
+}
+
+bool function HsdTitan_CC_Status( entity player, array<string> args )
+{
+	if ( args.len() < 3 )
+		return true
+	int effect = -1
+	switch ( args[0] )
+	{
+		case "turn_slow":
+			effect = eStatusEffect.turn_slow
+			break
+		case "move_slow":
+			effect = eStatusEffect.move_slow
+			break
+		case "dodge_speed_slow":
+			effect = eStatusEffect.dodge_speed_slow
+			break
+		case "speed_boost":
+			effect = eStatusEffect.speed_boost
+			break
+	}
+	if ( effect < 0 )
+	{
+		printt( "HSDDIAG TITAN err unknown_status " + args[0] )
+		return true
+	}
+	entity soul = player.GetTitanSoul()
+	entity target = IsValid( soul ) ? soul : player
+	float fade = args.len() > 3 ? float( args[3] ) : 0.0
+	StatusEffect_AddTimed( target, effect, float( args[1] ), float( args[2] ), fade )
+	printt( format( "HSDDIAG TITAN status %s %.3f %.2f %.2f %s %.4f", args[0], float( args[1] ), float( args[2] ), fade, IsValid( soul ) ? "soul" : "player", Time() ) )
+	return true
+}
+
+bool function HsdTitan_CC_Lanes( entity player, array<string> args )
+{
+	if ( args.len() < 5 )
+		return true
+	float len = args.len() > 5 ? float( args[5] ) : 1500.0
+	float minFree = args.len() > 6 ? float( args[6] ) : 700.0
+	thread HsdTitan_Lanes( player, float( args[0] ), float( args[1] ), float( args[2] ), float( args[3] ), float( args[4] ), len, minFree )
+	return true
+}
+
+void function HsdTitan_Lanes( entity player, float x0, float y0, float x1, float y1, float step, float len, float minFree )
+{
+	vector mins = < -60.0, -60.0, 0.0 >
+	vector maxs = < 60.0, 60.0, 235.0 >
+	int found = 0
+	for ( float x = x0; x <= x1; x += step )
+	{
+		for ( float y = y0; y <= y1; y += step )
+		{
+			TraceResults down = TraceLine( < x, y, 600.0 >, < x, y, -600.0 >, player, TRACE_MASK_PLAYERSOLID, TRACE_COLLISION_GROUP_NONE )
+			if ( down.fraction >= 1.0 )
+				continue
+			vector start = down.endPos + < 0.0, 0.0, 6.0 >
+			TraceResults here = TraceHull( start, start, mins, maxs, player, TRACE_MASK_PLAYERSOLID, TRACE_COLLISION_GROUP_NONE )
+			if ( here.startSolid )
+				continue
+			for ( int yaw = 0; yaw < 360; yaw += 22 )
+			{
+				vector dir = AnglesToForward( < 0.0, float( yaw ), 0.0 > )
+				TraceResults tr = TraceHull( start, start + dir * len, mins, maxs, player, TRACE_MASK_PLAYERSOLID, TRACE_COLLISION_GROUP_NONE )
+				float free = tr.fraction * len
+				if ( free >= minFree )
+				{
+					printt( format( "HSDDIAG LANE %.0f %.0f %.1f yaw=%d free=%.0f", start.x, start.y, start.z, yaw, free ) )
+					found++
+				}
+			}
+		}
+		WaitFrame()
+	}
+	printt( "HSDDIAG LANE done found=" + found )
+}
