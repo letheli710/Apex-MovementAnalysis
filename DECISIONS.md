@@ -477,7 +477,7 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 - 原因：本仓库是公开的；R5 原始日志有本机路径和启动命令行，TF2 `raw.log` 有启动命令行、本机路径和玩家账号名，TF2 `local/` 是游戏解包文件和反编译代码；`rows.csv` 是体积（可由 `hsd_tel.py report` 重建）。
 - 核对：从 GitHub 重新检出，逐个文件对 `_archive` 算 sha256，不一致 0、缺失 0。`_archive` 原样保留（`premerge-untracked-1030/` 和 git 里重复，没放）。逐文件清单在私有仓库 `MANIFEST.tsv`。
 - 没选：放进本仓库（会泄露本机信息、游戏文件）；只留在本机 `_archive`（没有远端备份）。
-- 没放进去的：主 checkout `research/phase2-local/data/` 下 10-20 到 10-24 的 158 次实测（M0–M10、N 系列）的 `platform/` + `rows.csv`，2934 个文件约 8.43 GB，一直只在本机原处、没进过 `_archive`。等你定要不要也放进私有仓库。
+- 早期实测：主 checkout `research/phase2-local/data/` 下 10-20 到 10-24 的 158 次实测（M0–M10、N4 / N6 / N8、C3）的 `platform/` + `rows.csv`，2934 个文件 8.43 GB，一直只在本机原处、没进过 `_archive`。〔10-30 你定了：也存进私有仓库，但要标明。已放在单独的 `apex-early/` 下，清单 `MANIFEST-EARLY.tsv`，README 3.7 逐次列出阶段、用到它的报告、文件数、大小；7 次在公开仓库文档里找不到（M1_loop_s2–s6、M3_gfx_check、M4_pilot_octane），标"出处待查"。两个超过 GitHub 100 MB 的 `rows.csv` 以 `.gz` 存（不用 LFS）。全部压缩后约 1 GiB，没拆第二个仓库。从 GitHub 重新检出逐个对主 checkout 原文件核对：2934 / 2934 一致，不一致 0、缺失 0。主 checkout 原文件没动。〕
 
 ---
 
