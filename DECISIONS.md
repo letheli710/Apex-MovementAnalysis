@@ -287,6 +287,21 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
   - 回归：EditMode 2157 / 2157（新增 `G6ImpactBoostIsOptInAndOnlyOnWorldHooks`），PlayMode 1 / 1；回放电机和 RUD 基线逐字节相同（`rud_check.py`：222 / 90 / 114）；`FeelBatch` 105 个录像的游戏身体（reference / fun 210 个文件）默认和 `-preGn` 都和 GN 版逐字节相同；`-impactBoost` 也全部相同（这 105 个里只有 M4 的 4 个钩爪片段，钩的是道具岩石，不上抬；打开后的效果由单元测试检查：墙钩跳到 300 再减重力，道具钩不变）；真实按键演示 238 / 238、课程单圈 78.88 s，smoke 输出和 GN build 逐行相同；build `HSD-Build\G6`（只多了菜单按钮）。
   - 文档：[research/rea-native/g6/G6-IMPACT-BOOST.md](research/rea-native/g6/G6-IMPACT-BOOST.md)；存档 [R5-DIFF-ARCHIVE.md](R5-DIFF-ARCHIVE.md)（G6 一节，二节 G-6 行）；开关说明 HSD-Unity `Abilities/Grapple/README.md`；HSD-Unity [#48](https://github.com/letheli710/HSD-Unity/pull/48)，research [#78](https://github.com/letheli710/Apex-MovementAnalysis/pull/78)。
 
+### 2026-10-29：《泰坦陨落2》研究：蹬墙跑和二段跳的原版规则（TF2）
+
+- TF2 研究计划 T0–T6 完成（研究文件夹 `TF2-Research/`，不在本仓库）：TF2 和 Apex 的移动代码几乎同源，差别主要是数值、Apex 收紧的连跳、关掉的蹬墙跑和二段跳。TF2 本地私服逐帧实测（T5）把大部分静态结论核对了一遍。
+- 蹬墙跑：你 10-28 定了以"TF2 规则 + R5 残留数值"（B）为基准、TF2 原版（A）做预设 [D-57]。R5 里 Apex 新增的蹬墙键和提速系数、参考高度都读清了（R5 静态），写成规格 `TF2-Research/wallrun/WALLRUN-B-SPEC.md`。
+- 10-29 你按建议批准了 P-01（蹬墙跑 TF2 规则模式）、P-02（TF2 二段跳）、P-05（TF2 侧倾）；P-03（TF2 连跳）低优先；P-04（兴奋剂）、P-06（挂墙，留存）暂不做 [D-58]。
+- Unity：分支 `tf2/wallrun-rules`（0bfbb0e），三个都是可选开关，默认关；Reference、Fun、回放不变（FeelBatch M1 / M2 / M3 + M4 和 origin/main 逐字节相同）。EditMode 2181 / 2181（新加 13 个 TF2 测试），PlayMode 1 / 1。
+- 同一天还做了 T-1 / T-7（EPG 真实开火的火箭跳、投掷物击退，只研究）：击退规则和 R5 #64 的模拟同一套，`jump_kit` 推力相同；TF2 飞得更高是重力和爆炸半径造成的。HSD 火箭跳（D-56）怎么做仍等你定。
+
+### 2026-10-29：扩展范围（技能、投掷物、增益）和战斗道具可玩版（TF2X）
+
+- 你把 TF2 的铁驭技能、投掷物、Boost（以后还有 3–4 个泰坦）列进 HSD 以后要做的范围，定了总方向 [D-59]–[D-64]：HSD 最终是 PvE；先研究机制存档，数值等战斗框架建好再调；伤害不分泰坦和士兵；Apex 有原型的用 Apex；只借规则和数值；抛物线显示做成开关、默认开。清单和去向在 `TF2-Research/expansion/`（PILOT-LIST §0、DESIGN-LIST）。
+- 研究分给 W1–W4（TF2 测试目标、W2 技能和投掷物、W3 增益和特殊武器、W4 Apex 对照），报告在 `TF2-Research/expansion/w2`、`w3`、`apex`。
+- 同一天按你的要求做了可玩版（W5，HSD-Unity 分支 `tf2/wallrun-rules`，PR [#49](https://github.com/letheli710/HSD-Unity/pull/49)）：占位战斗框架（统一血量 / 伤害、假人、测试步枪、伤害数字、战斗场 K 键）+ 研究里的全部道具（公共投掷公式和抛物线、悬停、相位回溯、重力星；破片、电弧星、铝热剂、炸药包；隐身、A 型墙 + Rampart 选项、扫描、分身三种、地图透视；智能手枪、蜘蛛雷、两种哨戒炮、增幅武器、能量电池、快速回血、地狱塔光束、投掷物发射器）。全部默认不装，装备在 Esc → "Combat items (TF2X)"（PlayerPrefs `hsd.tf2.x.*`）。试玩说明 HSD-Unity `TF2X-PLAYTEST.md`，build `HSD-Build\TF2X`。
+- 不装道具时移动不变：回放电机（M2/M1 222、M3 90、M4 114）和游戏身体（FeelBatch M1–M3 201、M4 114）共 741 个文件和改前逐字节相同；挂上空战斗层后所有移动演示逐帧相同（测试）；EditMode 2236 / 2236，PlayMode 1 / 1，smoke 演示 238 / 238，课程单圈 78.88 s。还没有人试玩。
+
 ---
 
 ## 决定总表
@@ -348,6 +363,15 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 | D-53 | 10-29 | K-5 起跳镜头、K-6 翻越镜头、多个镜头动作的叠加 | 按原生加：起跳往 punch 弹簧加冲量（`0x140a349c0`）；每次翻越都加翻越动画镜头（B1 曲线）；横滚相加后折回 ±180°、不封顶（原来夹 ±40°）；其余本来就是相加 | `NativeCameraParams.jumpPunch` / `traversalCamera` / `rollWrap`，`SetCam2(false)` 全部切回；`CameraFeelBatch -preCam2` | HSD-Unity `cam2/camera-combo`（[#47](https://github.com/letheli710/HSD-Unity/pull/47)）；research [#77](https://github.com/letheli710/Apex-MovementAnalysis/pull/77) |
 | D-54 | 10-29 | K-7 滑索横滚和眼高（复测） | N6 片段没上绳，N10 对；按原生加滑索视角偏移（Perlin 噪声 + ω 4 弹簧，眼睛下沉 5–9 u）和水平投影的绳上点 | `NativeCameraParams.zipViewOffset` / `zipRopeHorizontal`，`SetCam2(false)` | 同上 |
 | D-55 | 10-28 | F-2 原地跳 Unity 比 R5 高 1.8 u | 不是移动代码，不改：测试工具的重置在 dedi 上算成落地，0.72 s 后起跳触发原生 antiMultiJump 降高（282.0 → 277.3 u/s），客户端被纠正；真实玩的时候没有这种重置 | 不改（Unity 两套电机都按"片段开头的重置不算落地"） | [research/feel/F2-STANDING-JUMP.md](research/feel/F2-STANDING-JUMP.md)；本表 |
+| D-57 | 10-28 | 蹬墙跑以哪个版本为准（TF2 研究 T3） | B = TF2 规则 + R5 残留数值为基准；A = TF2 原版规则和 MP 数值做成可开关的预设；M7 设计版保留 | `WallRunParams.rules`（`M7Design` / `Tf2`）+ `Tf2WallRunParams.B()` / `A()` | `TF2-Research/wallrun/T3-REPORT.md` §5；本表 D-58 |
+| D-58 | 10-29 | TF2 研究的 Unity 提案（T6） | 按建议批准：P-01 蹬墙跑 TF2 规则模式（B / A）、P-02 TF2 二段跳（vz 300、扣 180 加 180）、P-05 TF2 侧倾（B 10°、A 15°），都默认关；P-03 TF2 连跳低优先、还没做；P-04 兴奋剂 ×1.8 和 P-06 挂墙暂不做（挂墙留存，以后可能做成道具或被动） | Esc 菜单 "Wall-run rules (P-01)"（`hsd.tf2.wallrun` 0 M7 / 1 B / 2 A）、"TF2 wall-run view tilt (P-05)"（`hsd.tf2.tilt`）、"Double jump rule (P-02)"（`hsd.tf2.djump`）；`DoubleJumpParams.rule` / `Tf2()` | HSD-Unity 分支 `tf2/wallrun-rules`；`TF2-Research/TF2-REPORT.md` §5、§7 |
+| D-59 | 10-29 | HSD 的方向（扩展范围） | HSD 最终是 PvE 游戏。技能和道具先把机制研究清楚、存档备用；数值等战斗框架建好后再调，那时再深入研究 | — | `TF2-Research/expansion/DESIGN-LIST.md` §1 |
+| D-60 | 10-29 | 泰坦 | 先研究泰坦的机动和核心等功能，数值以后调（原话："调整铁驭和士兵的伤害以及专属武器这类东西，是比较好处理的"） | — | `TF2-Research/expansion/TITAN-LIST.md`；DESIGN-LIST §1 |
+| D-61 | 10-29 | 伤害体系 | 伤害不分泰坦和士兵：统一的血量 / 伤害体系，不同单位只有数值不同。占位血量（Leader 定，随时改）：铁驭 100、AI 士兵 100、泰坦 2500（铁驭 25 倍，TF2 是 75–125 倍，统一伤害下压低）、炮塔 300 | `HSD.Game.Combat.PlaceholderHp`、`Health` | DESIGN-LIST §2；HSD-Unity `Runtime/Combat/README.md` |
+| D-62 | 10-29 | 参照哪个游戏 | Apex 有原型的用 Apex 做参考（好做）；TF2 明显更好做时也可以用 TF2 | 破片、电弧星、铝热剂、扫描、分身、地图透视、Fuse、Rampart 按 Apex；隐身、A 型墙、重力星、炸药包、悬停、相位回溯、智能手枪、蜘蛛雷、哨戒炮按 TF2 | `TF2-Research/expansion/APEX-HANDOFF.md`；PILOT-LIST §0 |
+| D-63 | 10-29 | 素材 | 只借规则和数值，不用 TF2 / Apex 的模型、贴图、声音、动画 | 占位几何体和 IMGUI | DESIGN-LIST §1 |
+| D-64 | 10-29 | 开关的默认值 | 抛物线显示做成开关，**默认开**（和 Apex 一致，关掉的写法参考 `sp_disable_arc_indicator`）；窗户辅助默认关（TODO T-11，不在这次范围） | PlayerPrefs `hsd.tf2.x.arc`（默认 1） | DESIGN-LIST §4 |
+| D-65 | 10-29 | 扩展道具的去向和不做的项 | 按 PILOT-LIST §0：Apex 研究 / 设计清单（能量电池、快速回血、增幅武器、地狱塔式武器、分身分支 B）/ TF2 W1–W3；不做：钩爪（已按 Apex 做）、兴奋剂、相位移动（已有虚空）、脉冲刀的刀、电烟雾、挂墙（留存）、击杀回报、低调、雷达干扰、备用电池、掷骰子、加倍经验。可玩版按这个范围全部做了，数值多为占位 | HSD-Unity `Assets/HSD/Game/Runtime/Combat/`（PR #49） | `TF2-Research/expansion/PILOT-LIST.md`；HSD-Unity `TF2X-PLAYTEST.md` |
 
 **D-29 → D-31（C-2 为什么推翻）**：第一次决定时以为 Unity 的 102.5 ms 窗口已经盖住了 R5 的减量段，所以"简化 = 不改代码"。后来按 Unity 自己的翻越时钟重排（Unity 的翻越比 R5 长约 25 ms），发现减量段其实在窗口外面，原来的 Reference 在这段是"切到台面"，并不是"给完整 460"。你随后要求继续做 C-2 并合并。细节见 `research/feel/FEEL.md` §6.4 和 `Climb/README.md`。
 
