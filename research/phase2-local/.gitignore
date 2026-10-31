@@ -1,6 +1,8 @@
 # Raw game logs stay on the local machine: they carry local paths and the
 # command line, and they can be regenerated only by rerunning the game.
 # The repository keeps the derived, path-free report/ outputs instead.
+# Archived copies (with sha256 manifest) live in the private repo letheli710/HSD-RawData (D-76):
+# apex/ for the runs copied via _archive, apex-early/ for the 10-20..10-24 runs (MANIFEST-EARLY.tsv).
 data/**/platform/
 data/**/scriptdump_*
 # Unified per-row table (several MB per session); rebuilt from the raw logs by hsd_tel.py report.

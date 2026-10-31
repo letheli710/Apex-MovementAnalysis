@@ -119,6 +119,10 @@
 
 366 个文件，96.11 MB。复制时逐个比对了 sha256。
 
+## 私有仓库（2026-10-30，D-76）
+
+这里列出的不进 git 的文件，已经全部存进私有仓库 [`letheli710/HSD-RawData`](https://github.com/letheli710/HSD-RawData)（按本仓库的同一路径放：`tf2/local/`、`tf2/runtime/data/<run>/raw.log`；去用户名前的 6 个原文在 `tf2/redacted-originals/`），附逐文件 sha256 清单 `MANIFEST.tsv`；从 GitHub 重新检出逐个核对过，不一致 0、缺失 0。要用的话从那里复制回本仓库的对应路径即可，`.gitignore` 仍然排除它们。工作区 `_archive` 保留不删。
+
 ## 怎么改主意
 
 这些文件不进 git 是沿用原来的规则：仓库是**公开的**，原始日志带本机路径、命令行和玩家账号名，`local/` 里是解包的游戏文件和反编译原文。如果要放进 git（或改放私有仓库），从存档目录按同样的路径复制回来、删掉对应的 `.gitignore` 行再提交即可，sha256 可以用上面的清单核对。

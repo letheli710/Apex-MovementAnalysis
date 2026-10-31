@@ -28,6 +28,7 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 - 拟合原则（D-70）：尽量贴合 R5 原生；差零点几个百分比可以不追，但要写出差在哪里、差多少。
 - 实时过程记在共享日志（"HSD 版本溯源"页面的数据库，https://claude.ai/artifact/NCjBNDQZPUYoTwdfHdcNEa ，写法在工作区根目录 `CLAUDE.md`），所有会话随时写；这份文件仍是进 git 的正式档案，PR 里有决定时照旧在同一个 PR 里加时间线和 D-xx 行。
 - 早先缺档的地方，查到的旧值写在最后的"补档（10-30）"。
+- 含本机路径 / 启动命令 / 账号名的原始数据和游戏解包文件（R5 `platform/`、TF2 `raw.log`、TF2 `local/`）进私有仓库 [`letheli710/HSD-RawData`](https://github.com/letheli710/HSD-RawData)（D-76），不进本仓库；本仓库只放派生结果和指向它的说明。
 
 更早、更细的技术过程（英文，2026-10-20 到 10-23）在 [EXECUTION-LOG.md](EXECUTION-LOG.md)；各阶段一览在 [research/phase2-local/STATUS.md](research/phase2-local/STATUS.md)。这两份从 2026-10-26 起不再更新，新的内容都记在这里。暂缓的设计问题：[DEFERRED-DESIGN-TODO.md](DEFERRED-DESIGN-TODO.md)；搁置的能力：[SHELVED-ABILITIES.md](SHELVED-ABILITIES.md)。
 
@@ -470,6 +471,14 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 - **复现不了、按拟合原则记下**（R5-DIFF-ARCHIVE "D-75"）：Unity 的翻越从离墙面 16 u（离 P 20.4 u）开始，按原生规则总是状态 4，所以 R5 h120 蹲着约 1 / 4 的短的（状态 3，0.656 s）Unity 是 0.849 s；空中已蹲到底的 h120（A 类 4 次，0.55 s）Unity 0.77 s；h120 M 类的 S27 窗口 R5 0.28 s、Unity 约 0.45 s（R5 的 δ 曲线跟着 4 → 8 换动画，Unity 还是一条曲线）；h120 L 0.019 → 0.027 s（旧的 0.813 本来就是按这一类定的）。
 - 回归：EditMode 2260 / 2260；rud_check 426 / 426 逐字节；FeelBatch 315 / 315 和 main 相同（这批片段里没有蹲姿翻越）；B1 / B1-H 的 S27 测试全过；圈速 78.883 s 不变；构建 `HSD-Build\D72`。详见报告 §9.4。
 
+### 2026-10-30：不能公开的原始数据进私有仓库（RAW，D-76）
+
+- 会话 raw-private-repo。建了私有仓库 [`letheli710/HSD-RawData`](https://github.com/letheli710/HSD-RawData)，把工作区 `_archive` 里不能公开的原始数据存进去：7217 个文件，1.24 GiB。R5 `platform/` 563 个（619.9 MiB，34 次实测）、R5 `rows.csv` 34 个（418.8 MiB）、TF2 `raw.log` 76 个（153.4 MiB）、TF2 `local/` 6527 个（75.8 MiB）、去用户名前的原文 6 个、Unity 工作树遗留 5 个、清单原件 6 个。
+- 原因：本仓库是公开的；R5 原始日志有本机路径和启动命令行，TF2 `raw.log` 有启动命令行、本机路径和玩家账号名，TF2 `local/` 是游戏解包文件和反编译代码；`rows.csv` 是体积（可由 `hsd_tel.py report` 重建）。
+- 核对：从 GitHub 重新检出，逐个文件对 `_archive` 算 sha256，不一致 0、缺失 0。`_archive` 原样保留（`premerge-untracked-1030/` 和 git 里重复，没放）。逐文件清单在私有仓库 `MANIFEST.tsv`。
+- 没选：放进本仓库（会泄露本机信息、游戏文件）；只留在本机 `_archive`（没有远端备份）。
+- 早期实测：主 checkout `research/phase2-local/data/` 下 10-20 到 10-24 的 158 次实测（M0–M10、N4 / N6 / N8、C3）的 `platform/` + `rows.csv`，2934 个文件 8.43 GB，一直只在本机原处、没进过 `_archive`。〔10-30 你定了：也存进私有仓库，但要标明。已放在单独的 `apex-early/` 下，清单 `MANIFEST-EARLY.tsv`，README 3.7 逐次列出阶段、用到它的报告、文件数、大小；7 次在公开仓库文档里找不到（M1_loop_s2–s6、M3_gfx_check、M4_pilot_octane），标"出处待查"。两个超过 GitHub 100 MB 的 `rows.csv` 以 `.gz` 存（不用 LFS）。全部压缩后约 1 GiB，没拆第二个仓库。从 GitHub 重新检出逐个对主 checkout 原文件核对：2934 / 2934 一致，不一致 0、缺失 0。主 checkout 原文件没动。〕
+
 ---
 
 ## 决定总表
@@ -550,6 +559,7 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 | D-73 | 10-30 | 留档规则 + 共享实时日志 | 记决定和数据（选中 + 没选中 + 各自数据），数据标版本，旧版不删，结束标"到此为止"；实时过程写共享日志 https://claude.ai/artifact/NCjBNDQZPUYoTwdfHdcNEa ，DECISIONS 仍是 git 档案。没选：只记 DECISIONS | 工作区根目录 `CLAUDE.md` | 本文件开头 |
 | D-74 | 10-30 | 蹲着翻越（R5 样本测试后） | 〔10-30 定了：B + E + F，见 D-75〕**等你定**。R5 610 次：蹲姿时长不是两种，是随按蹲时刻变的（h120 四种、长短在同一条命令上混着）；蹲着不能爬墙（116 / 116）；翻越开始俯仰从 0 淡入。选项 A 按 FND-3 分两种 / B 按原生每帧切换 / C 按实测分段近似 / D 不改；另 E 蹲着不能爬墙、F 俯仰淡入可单独定 | Unity 没改 | `research/phase2-local/D72-REPORT.md` |
 | D-75 | 10-30 | 蹲着翻越 / 蹲着爬墙 / 翻越开始俯仰（D-74 的决定） | B 时长按原生翻越状态（Frida：基础状态开始时选一次、蹲到底 +4、速率按基础状态和眼睛高度；177 / 195 段差 ≤ 1 帧）；E 按着蹲取消爬墙；F 翻越俯仰 0.15 s 淡入。没选：A 两种 / C 分段近似 / D 不改。蹲姿时长平均差 0.061 → 0.043 s；h160 / h200 蹲着 0 / 116 上去（= R5）；第一帧俯仰 ≈ 0（= R5）。h120 短的那种（状态 3）Unity 复现不了 | `ClimbParams.nativeTraversalStates` / `crouchEndsClimb`、`NativeCameraParams.traversalLerpIn`；切回 `-preD72`（单项 `-preD72B` / `E` / `F`） | `research/phase2-local/D72-REPORT.md` §8–§9；HSD-Unity #51（`d72/crouch-mantle`） |
+| D-76 | 10-30 | 不能公开的原始数据放哪 | 进私有仓库 letheli710/HSD-RawData（R5 `platform/` / `rows.csv`、TF2 `raw.log` / `local/`、去用户名前的原文），按公开仓库路径放，附 sha256 清单；`_archive` 保留。没选：进公开仓库（本机路径、启动命令、账号名、游戏文件）/ 只留本机 | — | 私有仓库 README、`MANIFEST.tsv`；工作区 `CLAUDE.md` 留档规则 |
 
 **D-29 → D-31（C-2 为什么推翻）**：第一次决定时以为 Unity 的 102.5 ms 窗口已经盖住了 R5 的减量段，所以"简化 = 不改代码"。后来按 Unity 自己的翻越时钟重排（Unity 的翻越比 R5 长约 25 ms），发现减量段其实在窗口外面，原来的 Reference 在这段是"切到台面"，并不是"给完整 460"。你随后要求继续做 C-2 并合并。细节见 `research/feel/FEEL.md` §6.4 和 `Climb/README.md`。
 
