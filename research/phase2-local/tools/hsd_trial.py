@@ -553,6 +553,19 @@ def _b1(name):
     return _B1_APP[m.group(1)] + ("waitf %d; " % k if k else "") + _M8SG_VAR[m.group(2)] + tail
 
 
+# D-72 crouched mantle sweep (geometry h<H>, --both-cvar mantle_boost_enabled=1 --mb-log): the B1 sprint jump, jumped E
+# frames earlier than b1_spr (a longer airtime for long crouch leads); cr = duck pressed D frames after the jump press and
+# held, st = no duck (standing control). Fixed waits, no waittrav: a crouched jump into a high face may never mantle.
+def _d72(name):
+    m = re.fullmatch(r"d72_(cr|st)_d(\d+)_e(\d+)", name)
+    if not m:
+        return None
+    d, e = int(m.group(2)), int(m.group(3))
+    duck = "waitf %d; down duck; " % d if m.group(1) == "cr" else ""
+    return ("wait 72; down speed; down forward; waitf %d; tap jump; %swait 2.5s; up forward; up speed; up duck; wait 1.0s"
+            % (144 - e, duck))
+
+
 def b1_view(name, yaw, pitch):
     """(yaw, pitch) for a b1_* schedule; other names pass through."""
     m = _b1_parse(name)
@@ -769,7 +782,7 @@ LANE_B = (-14200.0, 5900.0, 294.92)
 # Lane C: y 6800 is flat from x -14825 to -12475 (m3/map/field_fine.json) and 81 u clear of the wall's bounds.
 LANE_C = (-14800.0, 6800.0, 294.92)
 SPAWN_PAD = (-11699.0, 512.0, 1577.046)  # visible firing-range floor (M0/M1)
-SCHEDULE_ORIGIN_PREFIX = {"m8r2_climb": LANE_A, "m8r2_spw": LANE_A, "m8r2_jumpin": (-13878.0, 6500.0, 294.92), "m8r2_jd_": LANE_C, "m8r2_echo": LANE_C, "m8_slope": (-10900.0, 550.0, 1580.03), "m8_lurch_ledge": (-13640.0, 6500.0, 532.80), "cam2_ledge": (-13640.0, 6500.0, 532.80), "m8_lurch_sj": LANE_C, "m8_lurch": LANE_B, "b1_ang": (-14100.0, 6272.0, 294.92), "b1_": LANE_A, "m8_sg_ang": (-14100.0, 6272.0, 294.92), "m8_sg_slide": (-14200.0, 6500.0, 294.92), "m8_sg_": LANE_A, "m8_pad": LANE_C, "m8_djctrl": LANE_C, "m8_lift": LANE_C, "b_alter_stand": (-13856.0, 6500.0, 294.92), "bp_alter": (-13856.0, 6500.0, 294.92), "bp_ash": (-14900.0, 6650.0, 294.92), "b_alter_": (-14306.0, 6500.0, 294.92),
+SCHEDULE_ORIGIN_PREFIX = {"m8r2_climb": LANE_A, "m8r2_spw": LANE_A, "m8r2_jumpin": (-13878.0, 6500.0, 294.92), "m8r2_jd_": LANE_C, "m8r2_echo": LANE_C, "m8_slope": (-10900.0, 550.0, 1580.03), "m8_lurch_ledge": (-13640.0, 6500.0, 532.80), "cam2_ledge": (-13640.0, 6500.0, 532.80), "m8_lurch_sj": LANE_C, "m8_lurch": LANE_B, "b1_ang": (-14100.0, 6272.0, 294.92), "b1_": LANE_A, "d72_": LANE_A, "m8_sg_ang": (-14100.0, 6272.0, 294.92), "m8_sg_slide": (-14200.0, 6500.0, 294.92), "m8_sg_": LANE_A, "m8_pad": LANE_C, "m8_djctrl": LANE_C, "m8_lift": LANE_C, "b_alter_stand": (-13856.0, 6500.0, 294.92), "bp_alter": (-13856.0, 6500.0, 294.92), "bp_ash": (-14900.0, 6650.0, 294.92), "b_alter_": (-14306.0, 6500.0, 294.92),
                           "b_loba_": (-14900.0, 6650.0, 294.92), "b_ash_": (-14900.0, 6650.0, 294.92), "b_valk_": LANE_C, "a2r_": LANE_A, "g1_": LANE_A, "a2_": LANE_A, "z": (-14550.0, 6800.0, 294.92), "a1_wb": LANE_A, "a1_": LANE_B, "m4b_view": LANE_C, "m4b_pad": LANE_C, "m4_valk": LANE_C, "m4_pounce": LANE_C, "m4_stim": LANE_C, "m4_ctrl": LANE_C, "m4_pad": LANE_C, "m4_lift": LANE_C,
                           "m4_grapple": LANE_A, "x_pad_": SPAWN_PAD, "e8_hop350": LANE_C, "e3_": LANE_B, "e8_fast": LANE_C, "e8_slide": LANE_C, "e6_": LANE_A, "e7_": LANE_A,
                           "e8_drop": LANE_A}
@@ -2591,6 +2604,8 @@ def get_schedule(name):
         return _m8_sg(name)
     if name.startswith("b1_"):
         return _b1(name)
+    if name.startswith("d72_"):
+        return _d72(name)
     m = re.fullmatch(r"e3_right_k(\d+)", name)
     if m:
         k = int(m.group(1))
@@ -2783,6 +2798,7 @@ def main(argv):
                     help="M10: client console 'exec <cfg>' after the legend / kit (e.g. user/hsd_m10_classvars)")
     ap.add_argument("--m10-log", action="store_true", help="M10: client [M10-GRC] logger thread per trial")
     ap.add_argument("--mb-log", action="store_true", help="B1: client [B1-MB] mantle boost logger thread per trial")
+    ap.add_argument("--interleave", action="store_true", help="run the schedules round-robin instead of one block each")
     ap.add_argument("--m6-census", action="store_true",
                     help="also exec user/hsd_m6_classvars (client) and the M6 cvar finds on both consoles")
     ap.add_argument("--kit", action="store_true",
@@ -2951,10 +2967,13 @@ def main(argv):
             time.sleep(2.0)
         plan = [(names[0], 90 + w, 900 + w, True) for w in range(a.warmup)]
         k = 0
-        for n in names:
-            for _ in range(counts[n]):
-                plan.append((n, a.run_base + k, a.batch_base + k, False))
-                k += 1
+        if a.interleave:  # D-72: round-robin over the schedules so session drift does not line up with one schedule
+            order = [n for r in range(max(counts.values())) for n in names if r < counts[n]]
+        else:
+            order = [n for n in names for _ in range(counts[n])]
+        for n in order:
+            plan.append((n, a.run_base + k, a.batch_base + k, False))
+            k += 1
         for name, run, batch, warm in plan:
             trial = batch
             steps = scheds[name]
