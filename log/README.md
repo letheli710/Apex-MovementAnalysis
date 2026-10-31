@@ -7,5 +7,6 @@
 | 文件 | 导出时间 | 条目数 |
 |---|---|---:|
 | [log-export-2026-10-30.json](log-export-2026-10-30.json) | 2026-10-30 03:10（FND-1） | 129 |
+| [log-export-2026-10-31.json](log-export-2026-10-31.json) | 2026-10-31（记录对齐 10-31） | 183 |
 
 格式：一个 JSON 数组，按文档 id（`_id`，即日志里的 `日期-会话短名-主题` 或早期的 `t01-01` 这类编号）排序；其余字段和数据库里一样（`topic`、`role`、`kind`、`phase`、`date`、`sortDate`、`order`、`name`、`data`、`why`、`sw`、`rec`、`session`、`ts`、`resolved`）。导出方法：`ArtifactData` 的 `list`（`limit` 1000，一页取完），每条存成文件后合并。

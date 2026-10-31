@@ -34,9 +34,28 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 
 ---
 
-## 现在的状态（2026-10-30）
+## 现在的状态（2026-10-31）
 
-〔10-30 更新。下面"10-28 的状态"那几条原样保留，10-29 / 10-30 的变化写在这里。〕
+〔10-31 更新。下面"10-30 的状态"和"10-28 的状态"原样保留。〕
+
+- **补坑计划（FND）全部合并**：research #80（记录补齐，D-66 – D-73 + 补档）、#81（存档进 git：`tf2/`、实验数据、`workspace/`、`log/` 快照、runner 锁修复）、#82（蹲着翻越 D-72 / D-74 / D-75）、#83（私有原始数据仓库 D-76）；HSD-Unity #50（K-8、二段跳 punch、TF2 二段跳包，D-67 – D-71）、#51（D-75）。#80 / #81 / #50 10-30 合并，#82 / #83 / #51 10-31 合并。工作区清理见工作区根目录 `CLEANUP-RECORD.md`（远端分支你定了不删、旧会话暂时不归档）。计划本身见 [workspace/PLAN-FOUNDATION.md](workspace/PLAN-FOUNDATION.md)。
+- **两个仓库都没有开着的 PR**（10-31，本记录对齐 PR 除外）。
+- **D-75 已实现**：蹲着翻越按原生翻越状态（B）、按着蹲取消爬墙（E）、翻越开始俯仰淡入（F）；旧版 `MovementConfig.SetD75(false)` + `traversalLerpIn = 0` 一键切回。build `HSD-Build\D72`。
+- **D-76 私有仓库已建**：[`letheli710/HSD-RawData`](https://github.com/letheli710/HSD-RawData)，7217 个文件（1.24 GiB）；10-20 – 10-24 的 158 个早期 R5 run 在它的 `apex-early/`。
+- **基线**（D-75 合并后）：EditMode 2260 / 2260，PlayMode 1 / 1；回放基线 `rud_check` 426 / 426 逐字节；FeelBatch 运动输出 315 / 315；真实按键演示 238 / 238；课程单圈 78.883 s；镜头对照原有 361 项指标不变（K-8 下绳指标 17 / 20）。
+- **还没结论的事**（保留，见最后一节）：
+  - D-56 火箭跳：A EPG 式物理击退 / B Fuse 式跳跃加成。
+  - 泰坦 7 选 3：[tf2/expansion/TITAN-LIST.md](tf2/expansion/TITAN-LIST.md) 的抉择列（T0 7 台的数据在 `tf2/expansion/titan/titans/`）。
+  - E1 – E3：留到游戏接近完成（[DEFERRED-DESIGN-TODO.md](DEFERRED-DESIGN-TODO.md)）。
+- **低优先级**：T-11 窗户辅助（只做成开关，排在 Apex 的工作之后，先补 TF2 实测）；T-10 挂墙（留存）；T-4 Gauntlet 训练场（远期）。
+- **正线下一步**：泰坦 → 火箭跳（D-56）→ 游戏本体（动画、关卡、平衡）。
+- **小尾巴（只记录，不追）**：
+  - 7 个早期 run（M1_loop_s2 – s6、M3_gfx_check、M4_pilot_octane）在公开仓库文档里找不到用处，私有仓库里标"出处待查"。
+  - h120 蹲着翻越：R5 约 1 / 4 是短的（状态 3，0.656 s），Unity 的翻越起点总落在状态 4（0.849 s）。长短取决于起点离台面点是否跨过 20 u，R5 的起点差不到 1 u、来自帧时间抖动，R5 自己也控制不了，所以 Unity 不追（S 类平均差 0.193 s）；见 [R5-DIFF-ARCHIVE.md](R5-DIFF-ARCHIVE.md) "D-75"。
+
+10-30 的状态（原文）：
+
+〔10-30 更新。下面"10-28 的状态"那几条原样保留，10-29 / 10-30 的变化写在这里。〕〔10-31：下面"正在做"的补坑计划已全部合并，"等你定的"里蹲着翻越已由 D-75 做完，见上〕
 
 - **两个仓库没有开着的 PR**：10-30 04:56 HSD-Unity#49 + research #79 合并，TF2 部分（蹬墙跑 TF2 规则 B / A、TF2 二段跳、TF2 侧倾、TF2X 战斗道具、D-57 – D-65）进了 Main。合并前你试玩了 TF2X。
 - **基线**（TF2X 合并后）：EditMode 2236 / 2236，PlayMode 1 / 1；回放电机（M2/M1 222、M3 90、M4 114）和游戏身体（FeelBatch M1–M3 201、M4 114）共 741 个文件和改前逐字节相同；smoke 演示 238 / 238；课程单圈 78.88 s；镜头对照主指标 332 / 361（CAM2）。
@@ -602,7 +621,7 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
   - 〔10-30 R5 样本测试做完（610 次），结论不一样：长短不按蹲的时长分，蹲着不爬墙是"按着蹲取消爬墙"，台阶站姿也有。选项换成 D-74 的 A–F，见下一条〕
 - **D-74 蹲着翻越（样本测试后）**：A FND-3 的两种 / B 原生每帧切换（先补 Frida）/ C 按实测分段近似 / D 不改；另 E 蹲着不能爬墙、F 翻越开始俯仰淡入可以单独定。〔10-30 定了：B + E + F，做完，见 D-75〕详见 D-74 和 `research/phase2-local/D72-REPORT.md`。
 - **TF2 二段跳的去向**：〔10-30 定了：整理成可复用的包，不绑成道具，见 D-69〕
-- **泰坦清单**：`TF2-Research/expansion/TITAN-LIST.md` 的抉择列；T0 做完，7 台的详细数据在 `titan/titans/`，你从中选 3 台。
+- **泰坦清单**：`TF2-Research/expansion/TITAN-LIST.md` 的抉择列；T0 做完，7 台的详细数据在 `titan/titans/`，你从中选 3 台。〔10-31：还没定。TF2-Research 已进本仓库，文件现在在 `tf2/expansion/TITAN-LIST.md`〕
 - 暂缓清单里的 E1–E3 见 [DEFERRED-DESIGN-TODO.md](DEFERRED-DESIGN-TODO.md)。
 
 ---
