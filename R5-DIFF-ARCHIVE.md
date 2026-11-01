@@ -273,7 +273,7 @@ Default is S21. `sdkLocalNumbers` switches the first three rows to local R5.
 | Nemesis fully heated gap | 0.18 s | 0.19 s |
 | Rampage, Sentinel energize | fields: 3.7 s feed, −0.74 s a shot (Rampage), 88 damage (Sentinel) | could not be triggered |
 
-**Nemesis turbo is the one exception.** The default follows local R5 (turbo doesn't change heat), and the S21 field 0.125 is behind `nemesisTurboS21Heat`. D-85 alone would pick S21, but the task explicitly said turbo doesn't change it, so the user needs to settle this.
+**Nemesis 涡轮热量（用户 11-01 定）：** 默认 S21 的 0.125；本地 R5 是涡轮不改变，开关 `nemesisTurboS21Heat`。#60 改默认值时同步。
 
 **R5 / Unity before / Unity after**
 
