@@ -11,7 +11,9 @@ try {
 	if ( "{{mods}}" != "none" ) foreach ( m in split( "{{mods}}", "," ) ) mods.append( m )
 	entity w = p.GiveWeapon( "{{weap}}", WEAPON_INVENTORY_SLOT_PRIMARY_0, mods )
 	p.SetActiveWeaponByName( eActiveInventorySlot.mainHand, "{{weap}}" )
-	w.SetWeaponPrimaryClipCount( w.GetWeaponPrimaryClipCountMax() )
+	bool hasClip = true
+	try { w.SetWeaponPrimaryClipCount( w.GetWeaponPrimaryClipCountMax() ) } catch ( ec ) { hasClip = false; out += " noclip" }
+	try { w.SetWeaponPrimaryAmmoCount( AMMOSOURCE_STOCKPILE, {{stock}} ) } catch ( es ) { out += " stockerr" }
 	out += "w=" + w.GetWeaponClassName() + " clip=" + w.GetWeaponPrimaryClipCount() + " mods="
 	foreach ( mn in w.GetMods() ) out += mn + ","
 	out += " grav=" + w.GetWeaponSettingFloat( eWeaponVar.projectile_gravity_scale ) + " v=" + w.GetWeaponSettingFloat( eWeaponVar.projectile_launch_speed )
@@ -37,10 +39,11 @@ try {
 			printt( format( "[RT] dmg t=%.3f amt=%.2f hg=%d src=%d dist=%.1f type=%d pos=%.1f,%.1f,%.1f", Time(), DamageInfo_GetDamage( di ), DamageInfo_GetHitGroup( di ), DamageInfo_GetDamageSourceIdentifier( di ), DamageInfo_GetDistFromAttackOrigin( di ), DamageInfo_GetCustomDamageType( di ), dp.x, dp.y, dp.z ) )
 		} )
 	}
-	void functionref() lf = void function() : ( p, w, n, npos ) {
+	void functionref() lf = void function() : ( p, w, n, npos, hasClip ) {
 		try {
 			float t0 = Time()
 			int c0 = -1
+			int s0 = -1
 			string st0 = ""
 			table<int, bool> seen = {}
 			while ( Time() - t0 < {{secs}} ) {
@@ -53,6 +56,7 @@ try {
 					}
 				}
 				if ( !IsValid( w ) ) break
+				if ( !hasClip ) { WaitFrame(); continue }
 				int c = w.GetWeaponPrimaryClipCount()
 				if ( c != c0 ) {
 					entity a = p.GetActiveWeapon( eActiveInventorySlot.mainHand )
@@ -61,6 +65,8 @@ try {
 					printt( format( "[RT] clip t=%.3f c=%d ammo=%d reload=%d adsf=%.2f active=%s ea=%.3f,%.3f eo=%.1f,%.1f,%.1f spread=%.3f heat=%.3f charge=%.3f", t, c, w.GetWeaponPrimaryAmmoCount( AMMOSOURCE_STOCKPILE ), w.IsReloading() ? 1 : 0, p.GetZoomFrac(), IsValid( a ) ? a.GetWeaponClassName() : "-", ea.x, ea.y, eo.x, eo.y, eo.z, w.GetAttackSpreadAngle(), {{heat}}, w.GetWeaponChargeFraction() ) )
 					c0 = c
 				}
+				int st = w.GetWeaponPrimaryAmmoCount( AMMOSOURCE_STOCKPILE )
+				if ( st != s0 ) { printt( format( "[RT] stock t=%.3f s=%d reload=%d", t, st, w.IsReloading() ? 1 : 0 ) ); s0 = st }
 				if ( {{track}} == 1 ) {
 					foreach ( e in GetProjectileArrayEx( "any", TEAM_ANY, TEAM_ANY, p.GetOrigin(), 80000 ) ) {
 						int id = e.GetEncodedEHandle()

@@ -3,7 +3,7 @@
 
   python -I run.py <tag> <snippet.nut> <secs> "<schedule>" k=v ...
 {{k}} in the snippet is replaced by v, so Squirrel format() strings need no escaping.
-schedule: ';'-separated  wait <s> | down <key> | up <key> | tap <key> | hold <key> <s> | cl <client squirrel> | cc <console cmd>
+schedule: ';'-separated  wait <s> | down <key> | up <key> | tap <key> | hold <key> <s> | cl <client squirrel> | cc <client console cmd> | sc <server console cmd>
 """
 import os
 import sys
@@ -50,8 +50,13 @@ def main():
                 key(c, "+", k); pl.sleep(float(d)); key(c, "-", k)
             elif op == "cl":
                 out.append("client: " + str(c.eval(arg.replace(' | ', '; '), check=False)))
+            elif op == "clog":
+                # high-rate client logger (snippets/clog.txt) for arg seconds
+                c.eval(open(os.path.join(HERE, "snippets", "clog.txt"), encoding="utf-8").read().replace("SECS", arg), check=False)
             elif op == "cc":
                 c.cmd(arg)
+            elif op == "sc":
+                s.cmd(arg)
             out.append(f"# sched {time.time() - t0:.2f} {step}")
         pl.sleep(max(0.0, secs + 0.5 - (time.time() - t0)))
     out += ["## server"] + pl.lines["s"] + ["## client"] + pl.lines["c"]
