@@ -240,6 +240,61 @@ U-3 里没测到、按保守写的：落地不算换实体（落地的滑铲规�
 | #57 | Newcastle 城墙 | 约 3 s 铺开，挡身体 | 一次铺完，不挡身体 | 无开关 |
 | #57 | `move_slow` 对空中和滑铲 | 未实测（只测了地面） | 跟随移动倍率，滑铲起步和空中加速也变小 | `motorHooks` 总开关 |
 
+### 道具和武器：和 R5 的差别（HSD-Unity #59 / #60，D-85、D-86；都没合并）
+
+从两个 PR 正文抄来，**R5 指本地混合构建**。
+
+#### #59 道具
+
+**R5 / Unity before / Unity after**
+
+| Item | R5 | Before | After |
+|---|---|---|---|
+| Burn per stack | 25 | 24 | 25 |
+| First burn tick | on entry | 0.43 s later | on entry |
+| Fire out, after ignition | about 8 s | up to 8.5 s | 8 s |
+| Full fire total | 275 | about 288 (calculated) | 275 |
+| Thermite bounce | 0.6 / 0.4 / 0.2 (record) | 0.5 / 0.3 / 0.3 | 0.6 / 0.4 / 0.2 |
+| Fire wall climb | about 126 u (record, inferred) | 46 u | 126 u |
+| Arc Star stuck hit | +10 | 0 | +10 |
+| Arc Star NPC slow | ×0.5, full about 1.7 s + fade about 1 s at 60 u | by distance, no fade | full 1.5 s + fade 1 s, any distance |
+| Arc Star on player | move 0.498, turn 0.698 | turn only | move 0.5, turn 0.7 |
+
+#### #60 武器
+
+**For `R5-DIFF-ARCHIVE.md`: S21 versus local R5 (D-85)**
+
+Default is S21. `sdkLocalNumbers` switches the first three rows to local R5.
+
+| Weapon | S21 (default) | Local R5 |
+|---|---|---|
+| 30-30 charged, body | 60.2 | 43 (head 57) |
+| L-STAR overheat lock | 3.69 s | about 3.25 s |
+| Nemesis fully heated gap | 0.18 s | 0.19 s |
+| Rampage, Sentinel energize | fields: 3.7 s feed, −0.74 s a shot (Rampage), 88 damage (Sentinel) | could not be triggered |
+
+**Nemesis turbo is the one exception.** The default follows local R5 (turbo doesn't change heat), and the S21 field 0.125 is behind `nemesisTurboS21Heat`. D-85 alone would pick S21, but the task explicitly said turbo doesn't change it, so the user needs to settle this.
+
+**R5 / Unity before / Unity after**
+
+| Thing | R5 | Before | After | Switch |
+|---|---|---|---|---|
+| Vantage shot | round; about 1.7 s period | hitscan; 1.2 s | round; 1.7 s | `skillWeaponsBeforeWP3` |
+| Vantage head on a dummy | not measured on this gun (0.8 helmet rule seen on others) | ×1.5, helmet ignored | 50 + 0.8 × 25 = 70 | same |
+| Sheila | fires a round; firing closes the local client, so unmeasured | hitscan, no recoil, helmet ignored | field round, table recoil, helmet applied | same |
+| Sheila turret spread recovery | field 3 | 12 | 3 | none (now the turret's field) |
+
+**Small gaps left as they are**
+
+- Mastiff ADS: formula 1.50°, R5 1.45°.
+- Bocek full draw: 26891 u/s by the SDK's curve, field 27000.
+- Damage keeps fractions and R5 shows whole numbers: R-301 head 18.6 vs 19, 30-30 local head 56.8 vs 57.
+- Devotion top rate: 15 / s by field, R5 about 15.4 / s.
+- Vantage: fields alone give 1.53 s, R5 about 1.7 s, so `rechamber_time` is overridden.
+- R-301 ADS spread uses the measured 0.35°, while the field says 0 and R5 reads 0 while firing ADS. The report doesn't explain this, so it may be the wrong number.
+- R5's shotgun group sat about 11 u low at 300 u, also unexplained and not modelled.
+- Sheila's measured clip of 150 is the turret's field; the hand gun keeps 173.
+
 ## 二、还和 R5 不一样、没有改的
 
 | 编号 | 内容 | 旧版 = 现在 | R5 | 状态 |
