@@ -167,6 +167,11 @@ AddEntityUpdatedTether(锚点, maxHealth=1000, drainPerSec=200, drainDelay=1.0, 
 4. **NPC 的拴住**：脚本对 NPC 也走 `CreateTether_Thread`，但 `ai_basenpc.h:512` 有 `m_tethered` 字段，推断 NPC 有另一套原生拴住。PvE 关心这条。
 5. 反弹 5 次的字段和"碰到就落地"矛盾，测一下扔向墙是否落在墙上。
 
+**R5 实测（2026-11-01，combat-w2-rt，详见 [W2-RUNTIME.md](../W2-RUNTIME.md)）**
+1. ✅ **本地拴住完全无效**：dummie 被打中（−10 血、move_slow 0.5 约 1.6 s + 0.9 s 淡出），然后追玩家走到离锚点 **552 u**（半径 210 的 2.6 倍），没有拉回、没有链子伤害。锚点 `prop_physics` 留在命中点约 6.7–7.2 s。
+2. 原版拉回数学：本地拿不到，仍要 REA 反编译 S21 客户端（`tether_maxvel`）或录像。
+3–5 没测（3：本地只有一次 10 伤害，没有每帧伤害）。
+
 ## 6. HSD 实现
 
 **未实现。**

@@ -174,6 +174,8 @@ Caustic 有 `PAS_GAS_GEAR` 且 playlist `caustic_teammate_protection`（默认 f
 | GAS_CLOUD_RADIUS_MULTIPLIER_UPGRADE | 1.2 | × | `gas:53` | 未用 | |
 | damagedef_grenade_gas / gas_exposure | 1 dmg，r400 | — | `damage/damagedefs.txt:332-357` | 只给 sourceId 用 | |
 
+实测（R5，2026-11-01，NPC）：每跳 5 + floor(t / 2)，无上限，离开不重置；NPC 不减速。见 W2-RUNTIME §3。
+
 ## 5. 未解决和要实测的
 
 1. **NPC 在毒气里：减速有没有、伤害倍率会不会离开后还在涨**（最重要，PvE 的敌人全是 NPC）。测法：火力训练场刷一个 `npc_dummie`（它在出生回调列表里，`gas:108`），扔大招毒气，用 runner 每 0.1 s 记录 dummy 血量、速度；让 dummy 走出 10 s 后再走进，看第一跳伤害是 5 还是更高。
@@ -181,6 +183,12 @@ Caustic 有 `PAS_GAS_GEAR` 且 playlist `caustic_teammate_protection`（默认 f
 3. 墙后裁剪：一半云穿进墙时，墙另一侧是否吃伤害（伤害球不裁剪，只靠 BRUSHONLY LOS）。
 4. `onlyDamageEntitiesOncePerTick` 是否真把 24 个球去重：站在云心（会被多个球覆盖）看单跳伤害是否 5（不是 5 × 球数）。
 5. 移动减速 0.25 的实际速度倍率：同 `A-shellshock.md` 第 5 节。
+
+**R5 实测（2026-11-01，combat-w2-rt，详见 [W2-RUNTIME.md](../W2-RUNTIME.md)）**
+1. ✅ **NPC 不减速**（move_slow 全程 0）；✅ **离开再进来接着涨**：dummie 在云里 25 s 后移出 10 s，回来第一跳 23（= 5 + floor(37 / 2)），`gasEnterTime` 一直不重置。
+2. ✅ **没有上限**：每 1 s 一跳 5, 5, 6, 6, …, 25 s 时 17，49 s 时 29。和"上限 10"不符。只测了 NPC；玩家这边本地测不了（只有一个玩家，自己的云不打自己）。
+3、4 没测。5 见 `A-shellshock.md`（0.25 = ×0.75）。
+注意：`CreateGasCloudMediumAtOrigin` 结束时 `Destroy()` 它的 source；云主必须是玩家（`SetBossPlayer`）。
 
 ## 6. HSD 实现
 

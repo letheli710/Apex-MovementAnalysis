@@ -156,6 +156,10 @@ loop 每帧:
 3. 升级三把半径从 440 改成 330 的含义：查本地化 `localization/` 里 `upgrade_catalyst_tac_trigger_range` 的描述。
 4. `.txt` 的 `explosion_damage 20` 是否被引擎用到（脚本里 Explosion 传 0）。测法：直接扔到敌人脚下看落地瞬间是否掉 20。
 
+**R5 实测（2026-11-01，combat-w2-rt，详见 [W2-RUNTIME.md](../W2-RUNTIME.md)）**
+1. ✅ NPC 0.8 = **"减 80%"**（速度 ×0.2）：[R5] 直接给 prowler / dummie 加 move_slow 0.8，追人速度 347 → 69 / 191 → 30。没在真尖刺上测（规则同一引擎，见 `_shared/B-move-slow.md`）。另：玩家 0.5 会关掉冲刺，冲刺玩家实际 299 → 100。
+2–4 没测。
+
 ## 6. HSD 实现
 
 **未实现。**

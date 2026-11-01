@@ -105,6 +105,10 @@ NonPhysicsRotateTo( <pitch, yaw, roll>, dt )
 - 本地版本的实际轨迹是否符合公式：见 lifeline-heal-drone 5.2 第一条（AgentLink 记位置）。
 - S21 正版跟随点的位置（右后？头顶？）：只能对照正版录像。
 
+**R5 实测（2026-11-01，combat-w2-rt，详见 [W2-RUNTIME.md](../W2-RUNTIME.md)）**
+- ✅ 本地轨迹符合公式（数字见 lifeline-heal-drone 5.2 末尾、W2-RUNTIME §5）。
+- 正版对照仍缺。
+
 ## 6. HSD 实现
 
 未实现。建议：纯 C# `FollowMotion` 类，`Step( in FollowTarget t, double dt ) → (pos, vel, pitch, yaw, roll, teleported)`，所有第 4 节参数放进 `FollowMotionSettings`，EditMode 测试验证"匀速目标稳态落后 = 公式值"。HSD 的世界查询用 `IMovementWorld`（`Blocked` / 射线）代替 hull 和视线。

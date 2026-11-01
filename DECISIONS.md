@@ -488,6 +488,18 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 - 第一波 5 个会话并行做静态记录：41 份技能 + 22 份公共部件 + 5 页汇总（`research/combat/`）。第二波先做 Unity 公共框架和 R5 实测，再按批实现 [D-80]。
 - 主要发现：R5 很多控制效果只对玩家（PvE 要重定义）；D.O.C.、Ash 拴住、黑洞拉力、破坏球的服务端是 SDK 重写；Seer Exhibit 脚本是 `mp_ability_echo_locator`。
 
+### 2026-11-01：攻击研究第二波 R5 实测（W2-RUNTIME，第 0–6 项）
+
+只拿数据，没有新决定。汇总 `research/combat/W2-RUNTIME.md`，原始记录在 HSD-RawData `apex/research/combat/w2-runtime/runs/`（D-76）。结果已回填到对应 SYSTEM.md 第 5 节。
+
+- 本地能刷 `npc_dummie` / `npc_prowler`，会追人，但**不开火、不近战**；spectre 一刷 dedi 就卡死。凡是要 NPC 开火的项（定住时能否开枪、AI 打不打分身）本地测不了。
+- `move_slow`：速度 ×(1 − s)，玩家和 NPC 相同（NPC 0.8 = ×0.2）；s ≥ ~0.06 玩家不能冲刺；多个取最大。
+- 黑洞拉玩家 ≈ 公式（敌人 390 向心，脚本 400；逃跑限速比公式高 4–6 u/s）；**NPC 本地不被定身**。
+- 毒气对 NPC：不减速，每 1 s 伤害 5 + floor(t / 2)，无上限，离开不重置。
+- S3 dedi 有暗影状态（`EnterShadowForm` 可用，Forged Shadows 能放）；**Death Totem 武器本地没加载**。
+- D.O.C. 轨迹 = 公式（站立偏移 0 差，走 / 冲刺稳态落后 19.9 / ~36 u）。
+- Ash 拴住本地完全无效（dummie 走到离锚点 552 u）。
+
 ## 决定总表
 
 | # | 日期 | 主题 | 决定 | 怎么改 | 记录 |
