@@ -232,6 +232,10 @@ playlist `revenant_totem_has_distance_limit`（默认 false，`.nut:968`）打�
 4. **召回同一帧发生了什么顺序**：影子 0.1 s 后才飞，玩家是不是立刻到位。测法：录 10 Hz 位置（w4_probe 方式）。
 5. **暗影期间移动 / 其他变化**（原生 `EnterShadowForm` 里）：脚本看不到。
 
+**R5 实测（2026-11-01，combat-w2-rt，详见 [W2-RUNTIME.md](../W2-RUNTIME.md)）**
+1. ✅ **S3 dedi 有暗影状态**：`EnterShadowForm()` 可用，`IsShadowForm` false → true，`LeaveShadowForm()` 后 false。❌ 但 **Death Totem 武器本地没加载**：`GiveOffhandWeapon( "mp_ability_revenant_death_totem" )` 报 "Can't find weapon … may need to be precached"。所以放图腾 → 使用 → 致死召回整套本地测不了；按脚本做。
+2–5 因此都没测。
+
 ## 6. HSD 实现
 
 **未实现。** 最接近的是 `HSD-Unity/Assets/HSD/Game/Runtime/Combat/MovementItems.cs:55-160` `PhaseRewind`（相位回溯：按时间记录、倒回 2 s、1.8 s 放完、结束速度 0、蹲姿抬 20 u、找空位）。两者对比：

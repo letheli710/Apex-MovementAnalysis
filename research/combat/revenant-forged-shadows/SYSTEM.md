@@ -269,6 +269,12 @@ enableTacReset(=0，默认关)：战术充满
 7. **`EnterShadowFormFortified` 原生做了什么**（比如移动速度、受击动画）：脚本看不到。测法：开大招前后读移速、跳高；或 REA 看原生函数。**另外 S3 dedi 可能根本没有暗影状态**：SDK 在 `vscripts/mp/_staging_area.gnut:1843` 写了 `// S3: shadow form not available`。如果 `EnterShadowFormFortified` 在 S3 引擎不存在，`ShadowForm_Start` 会在 `.nut:517` 报错中断。测法：AgentLink 服务端开这个大招，看日志有没有脚本错误、状态效果是否加上（详见 `revenant-death-totem/SYSTEM.md` 第 5 节第 1 项）。
 8. 生效时机：`toss_time 2.2` 内动画事件的确切时间。测法：记按键时刻和状态效果出现时刻。
 
+**R5 实测（2026-11-01，combat-w2-rt，详见 [W2-RUNTIME.md](../W2-RUNTIME.md)）**
+7. ✅ 本地能用：真大招（按住 `offhand4` 0.8 s 松开）~1.5 s 后生效，生成 `forged_shadows_shield` 壳 75 / 75（parent 在玩家身上），`shadow_form` 状态 1。`EnterShadowFormFortified()` 存在、不报错，但 `IsShadowForm()` 仍 false（只有普通 `EnterShadowForm` 会让它变 true）。
+1. 回复速度**没测到**：脚本 `TakeDamage` 打壳 50 后 9 s 不回——回复走 `SHADOW_FORM_HEALTH_NETVAR`，由壳的受伤回调启动，脚本伤害触发不到；要真攻击者（本地 NPC 不开火）。服务端帧 0.05 s。
+- 世界伤害（`TakeDamage` from worldspawn）直接扣玩家血，不经过壳。
+2–6、8 没测。
+
 ## 6. HSD 实现
 
 **未实现。** `HSD-Unity/Assets/HSD/Game/Runtime/Combat/` 里没有护盾实体、伤害重定向、状态效果框架、屏幕调色（只读查过 README、`CombatCore.cs`、`CombatVisuals.cs`、`Tacticals.cs`）。

@@ -196,6 +196,10 @@ if 非 Catalyst 的玩家 且（空中 或 滑铲）: v.xy /= 2
 3. **致盲对 NPC 的作用**：NPC 没有屏幕，只有 2 s 减速。原版 AI 是否因 `CONTENTS_BLOCKLOS` 失去目标要在 dedi 上看（spectre 隔墙是否还开枪）。
 4. **子弹穿过**：`PTF_NO_DMG_ON_PASS_THROUGH` 推断为"不掉伤害"。测法：隔墙打 dummie，看伤害数字。
 
+**R5 实测（2026-11-01，combat-w2-rt，详见 [W2-RUNTIME.md](../W2-RUNTIME.md)）**
+- NPC 减速 0.8 = ×0.2（同 `_shared/B-move-slow.md`）。
+- 3（致盲对 NPC）测不了：本地 NPC 不开火（W2-RUNTIME §0）。1、2、4 没测。
+
 ## 6. HSD 实现
 
 **未实现。**

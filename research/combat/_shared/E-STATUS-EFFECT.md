@@ -116,6 +116,11 @@ fn(ent, type, actuallyChanged):
 2. **多个句柄怎么合成**：取最大还是相加。测法：同类型加两个不同严重度（0.2、0.5），读 `GetSeverity`。
 3. `speed_boost` / `move_slow` 严重度到实际速度倍率的换算（移动层，原生）。测法：加 0.15 / 0.9 后读冲刺速度。
 
+**R5 实测（2026-11-01，combat-w2-rt，详见 [W2-RUNTIME.md](../W2-RUNTIME.md)）**
+2. ✅ 同类型多个句柄：`GetSeverity` 和实际效果都**取最大**（move_slow 0.25 + 0.5 → 0.498）。
+3. ✅ move_slow：速度 ×(1 − s)，s ≥ ~0.06 时玩家不能冲刺。严重度存储有 ~1/256 量化（0.25 读回 0.247）。speed_boost 见 M10 R2（0.149 → ×1.298）。
+1. 第 5 参数没单独测；Ash 电击的 move_slow 观察到 0.5 持续 ~1.6 s 后 ~0.9 s 线性淡出，符合"淡出时长"的推断。
+
 ## 6. HSD 实现
 
 **未实现。** HSD Combat 现在每个道具自己存时间戳（例如 `CombatCore.cs:79` `outlinedUntil`、`:77` `slowUntil`）。
