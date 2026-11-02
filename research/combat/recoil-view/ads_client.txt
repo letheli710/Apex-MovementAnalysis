@@ -1,0 +1,25 @@
+void functionref() adsf = void function() {
+	try {
+		entity p = GetLocalClientPlayer()
+		float t0 = Time()
+		while ( Time() - t0 < SECS ) {
+			entity w = p.GetActiveWeapon( eActiveInventorySlot.mainHand )
+			if ( IsValid( w ) ) {
+				entity vm = p.GetViewModelEntity()
+				if ( IsValid( vm ) ) {
+					vector c = p.CameraPosition()
+					vector a = p.CameraAngles()
+					int id = vm.LookupAttachment( "ATTACH" )
+					int mz = vm.LookupAttachment( "muzzle_flash" )
+					vector o = id > 0 ? vm.GetAttachmentOrigin( id ) : <0, 0, 0>
+					vector m = mz > 0 ? vm.GetAttachmentOrigin( mz ) : <0, 0, 0>
+					printt( format( "[RT] ad t=%.4f zf=%.4f fov=%.3f c=%.3f,%.3f,%.3f a=%.3f,%.3f,%.3f id=%d o=%.3f,%.3f,%.3f mz=%.3f,%.3f,%.3f", Time(), p.GetZoomFrac(), p.GetFOV(), c.x, c.y, c.z, a.x, a.y, a.z, id, o.x, o.y, o.z, m.x, m.y, m.z ) )
+				}
+			}
+			WaitFrame()
+		}
+	} catch ( err ) { printt( "[RT] ad err " + string( err ) ) }
+	printt( "[RT] ad end" )
+}
+thread adsf()
+AgentLink_Reply( "ads" )
