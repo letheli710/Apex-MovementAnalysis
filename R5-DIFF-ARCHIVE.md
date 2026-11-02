@@ -260,7 +260,7 @@ U-3 里没测到、按保守写的：落地不算换实体（落地的滑铲规�
 | Arc Star NPC slow | ×0.5, full about 1.7 s + fade about 1 s at 60 u | by distance, no fade | full 1.5 s + fade 1 s, any distance |
 | Arc Star on player | move 0.498, turn 0.698 | turn only | move 0.5, turn 0.7 |
 
-#### 瞄准、后坐和开镜（叠在 HSD-Unity #61 上的 PR，D-87 – D-89；没合并）
+#### 瞄准、后坐和开镜（HSD-Unity #63，叠在 #61 上，D-87 – D-89；没合并）
 
 **R5 指本地混合构建**。"改前"是 #61。
 
