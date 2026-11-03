@@ -4,6 +4,8 @@
 // Log lines:
 //   HSDDIAG LOOKCFG <convar> <value>
 //   HSDDIAG CAM <time> <titan> <cam pitch> <cam yaw> <cam roll> <cam - origin x y z>
+//   HSDDIAG CK <time> <fov> <ck pitch> <ck yaw> <ck roll> <ck - cam x y z>   cockpit model, when there is one
+//   HSDDIAG BD <time> <attachment> <pitch> <yaw> <roll> <x - origin x y z>   body attachments, every 4th frame
 global function HsdDiagTitan_InitClient
 
 void function HsdDiagTitan_InitClient()
@@ -25,11 +27,32 @@ void function HsdDiagTitan_CamLog()
 		WaitFrame()
 		player = GetLocalClientPlayer()
 	}
+	int frameCount = 0
 	while ( IsValid( player ) )
 	{
 		vector a = player.CameraAngles()
 		vector d = player.CameraPosition() - player.GetOrigin()
 		printt( format( "HSDDIAG CAM %.5f %s %.3f %.3f %.3f %.2f %.2f %.2f", Time(), player.IsTitan() ? "1" : "0", a.x, a.y, a.z, d.x, d.y, d.z ) )
+		entity ck = player.GetCockpit()
+		if ( IsValid( ck ) )
+		{
+			vector ca = ck.GetAngles()
+			vector cd = ck.GetOrigin() - player.CameraPosition()
+			printt( format( "HSDDIAG CK %.5f %.2f %.3f %.3f %.3f %.3f %.3f %.3f", Time(), player.GetFOV(), ca.x, ca.y, ca.z, cd.x, cd.y, cd.z ) )
+		}
+		frameCount++
+		if ( frameCount % 4 == 0 && player.IsTitan() )
+		{
+			foreach ( string tag in [ "CHESTFOCUS", "HEADFOCUS", "HAND_R", "HAND_L", "foot_L_sole", "foot_R_sole" ] )
+			{
+				int id = player.LookupAttachment( tag )
+				if ( id <= 0 )
+					continue
+				vector o = player.GetAttachmentOrigin( id ) - player.GetOrigin()
+				vector b = player.GetAttachmentAngles( id )
+				printt( format( "HSDDIAG BD %.5f %s %.2f %.2f %.2f %.2f %.2f %.2f", Time(), tag, b.x, b.y, b.z, o.x, o.y, o.z ) )
+			}
+		}
 		WaitFrame()
 	}
 }

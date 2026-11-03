@@ -479,6 +479,14 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 - 没选：放进本仓库（会泄露本机信息、游戏文件）；只留在本机 `_archive`（没有远端备份）。
 - 早期实测：主 checkout `research/phase2-local/data/` 下 10-20 到 10-24 的 158 次实测（M0–M10、N4 / N6 / N8、C3）的 `platform/` + `rows.csv`，2934 个文件 8.43 GB，一直只在本机原处、没进过 `_archive`。〔10-30 你定了：也存进私有仓库，但要标明。已放在单独的 `apex-early/` 下，清单 `MANIFEST-EARLY.tsv`，README 3.7 逐次列出阶段、用到它的报告、文件数、大小；7 次在公开仓库文档里找不到（M1_loop_s2–s6、M3_gfx_check、M4_pilot_octane），标"出处待查"。两个超过 GitHub 100 MB 的 `rows.csv` 以 `.gz` 存（不用 LFS）。全部压缩后约 1 GiB，没拆第二个仓库。从 GitHub 重新检出逐个对主 checkout 原文件核对：2934 / 2934 一致，不一致 0、缺失 0。主 checkout 原文件没动。〕
 
+### 2026-11-02 – 11-03：泰坦姿态和镜头实测，按实测重做基础模型（D-90 – D-93）
+
+- 会话 titan-pose，建模会话 titan-v2-model。解码 TF2 模型动画（`tf2/expansion/titan/pose/`）并实测三台泰坦。报告：[TITAN-POSE-CAMERA.md](tf2/expansion/titan/pose/TITAN-POSE-CAMERA.md)。
+- 结论：活着时关节不受引擎限制，和铁驭一样由动画决定，写明的关节限制只有死亡布娃娃用的那套。第一人称镜头不跟身体动画走：走路时骨盆起伏 15.5 u，镜头约 0.4 u。被击中的镜头 = 7° + 7 u，乘 min(伤害 / 2000, 1)。dash 左右滚转 8.5°（旧清单写 10°），前后没有。腿钉地，视线偏约 40° 才迈一步，每步约 60°（只分析了 Ion，触发角是推断）。
+- 旧的 713 中模摆得出需要的姿势，但比例和 TF2 差很多，你决定重做。结构先由实测反推，再用 TF2 动画帧验算，最后才建模：[DESIGN.md](tf2/expansion/titan/model/v2-design/DESIGN.md)。
+- 灰盒 4756 面。19 个姿势真实网格没有碰撞；一个关节单独转到限位时手臂会撞身体，这项没过，你看过后通过。Unity 导入：HSD-Unity#64，EditMode 2295 / 2295（基线 2260 / 2260，建模会话报告）；PlayMode 和打包没跑。
+- 模型文件、解包模型和截图不进本仓库。三次实测的运行数据、解包模型和截图进了私有仓库（HSD-RawData#6，还没合并）。
+
 ---
 
 ## 决定总表
@@ -560,6 +568,10 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 | D-74 | 10-30 | 蹲着翻越（R5 样本测试后） | 〔10-30 定了：B + E + F，见 D-75〕**等你定**。R5 610 次：蹲姿时长不是两种，是随按蹲时刻变的（h120 四种、长短在同一条命令上混着）；蹲着不能爬墙（116 / 116）；翻越开始俯仰从 0 淡入。选项 A 按 FND-3 分两种 / B 按原生每帧切换 / C 按实测分段近似 / D 不改；另 E 蹲着不能爬墙、F 俯仰淡入可单独定 | Unity 没改 | `research/phase2-local/D72-REPORT.md` |
 | D-75 | 10-30 | 蹲着翻越 / 蹲着爬墙 / 翻越开始俯仰（D-74 的决定） | B 时长按原生翻越状态（Frida：基础状态开始时选一次、蹲到底 +4、速率按基础状态和眼睛高度；177 / 195 段差 ≤ 1 帧）；E 按着蹲取消爬墙；F 翻越俯仰 0.15 s 淡入。没选：A 两种 / C 分段近似 / D 不改。蹲姿时长平均差 0.061 → 0.043 s；h160 / h200 蹲着 0 / 116 上去（= R5）；第一帧俯仰 ≈ 0（= R5）。h120 短的那种（状态 3）Unity 复现不了 | `ClimbParams.nativeTraversalStates` / `crouchEndsClimb`、`NativeCameraParams.traversalLerpIn`；切回 `-preD72`（单项 `-preD72B` / `E` / `F`） | `research/phase2-local/D72-REPORT.md` §8–§9；HSD-Unity #51（`d72/crouch-mantle`） |
 | D-76 | 10-30 | 不能公开的原始数据放哪 | 进私有仓库 letheli710/HSD-RawData（R5 `platform/` / `rows.csv`、TF2 `raw.log` / `local/`、去用户名前的原文），按公开仓库路径放，附 sha256 清单；`_archive` 保留。没选：进公开仓库（本机路径、启动命令、账号名、游戏文件）/ 只留本机 | — | 私有仓库 README、`MANIFEST.tsv`；工作区 `CLAUDE.md` 留档规则 |
+| D-90 | 11-02 | 泰坦的范围 | 做玩法和简单好看的动画（比如登场）；不做捡电池、拆电池、处决动画。没选：照 TF2 做电池循环和同步处决（要配对动画和第三人称镜头，工作量大，也不适合 HSD）。连带：护盾来源和牛仔骑乘要另定 | `tf2/expansion/TITAN-LIST.md` 第 3 节抉择列 | `tf2/expansion/titan/TITAN-DESIGN.md` 第 2 节 |
+| D-91 | 11-02 | 基础泰坦的结构 | 按实测反推重做（v2）。**TF2 中型**：髋 2.80、膝 1.40、肩 4.2–4.8、顶 5.92、蹲时骨盆 1.82。**v2**：2.85、1.45、4.55、5.88、1.77。方块模型验算：TF2 动画 784 帧 772 帧无碰撞（1.5 % 有）。没选：继续用 713 中模补挂点（**旧模型**：3.60、2.10、5.30、6.25、2.37；腰弯 20° 髋碰躯干底，第一人称炮只露屏幕最右边） | 旧模型改名留在本机 `TF2-Research/expansion/titan/model/_old-713-base-medium/`，没删 | `tf2/expansion/titan/model/v2-design/DESIGN.md` |
+| D-92 | 11-02 | 泰坦腰部转动 | 腰 ±90 为主，骨盆 ±30 只给动作用。TF2 移动时腰扭 −86…88，来自横移时骨盆转向移动方向。旧中模实测腰 85° 只有 1 对零件接触。没选：骨盆 ±30 + 腰 ±55 分担（2 对接触，还要反向补偿腿）；保持 ±35（横移和侧向瞄准的第三人称姿势做不出） | `tf2/expansion/titan/model/v2-design/design.py` 的 `LIMITS` | `tf2/expansion/titan/pose/TITAN-POSE-CAMERA.md` 第 6 节 |
+| D-93 | 11-03 | 泰坦模型怎么进 Unity | 单独 PR，基于 `main`，只加资源和测试，游戏还不用它；1 Unity 单位 = 1 m，FBX 不缩放。没选：叠在战斗 PR #58–#63 上（导入不依赖它们，到 T2 开枪时再接） | `HSD-Unity/Assets/HSD/Titan/` | HSD-Unity#64 |
 
 **D-29 → D-31（C-2 为什么推翻）**：第一次决定时以为 Unity 的 102.5 ms 窗口已经盖住了 R5 的减量段，所以"简化 = 不改代码"。后来按 Unity 自己的翻越时钟重排（Unity 的翻越比 R5 长约 25 ms），发现减量段其实在窗口外面，原来的 Reference 在这段是"切到台面"，并不是"给完整 460"。你随后要求继续做 C-2 并合并。细节见 `research/feel/FEEL.md` §6.4 和 `Climb/README.md`。
 
@@ -604,6 +616,10 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 - **TF2 二段跳的去向**：〔10-30 定了：整理成可复用的包，不绑成道具，见 D-69〕
 - **泰坦清单**：`TF2-Research/expansion/TITAN-LIST.md` 的抉择列；T0 做完，7 台的详细数据在 `titan/titans/`，你从中选 3 台。
 - 暂缓清单里的 E1–E3 见 [DEFERRED-DESIGN-TODO.md](DEFERRED-DESIGN-TODO.md)。
+- **泰坦护盾的来源**：TF2 主要靠电池回，D-90 不做电池，要另定。到做血量和战斗（T2）时定。
+- **牛仔骑乘**：拆电池不要（D-90），骑乘本身你没明说。
+- **v2 的概念图和三视图**：还没按新比例重出。现在只有结构图和灰盒。
+- ~~**泰坦实测原始数据**~~：11-03 存进 HSD-RawData#6（245 个文件，430.9 MiB）。
 
 ---
 

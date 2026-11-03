@@ -74,4 +74,4 @@ from plans_w2 import w2_a, w2_b, w2_c, w2_d  # noqa: E402,F401
 import sys as _sys  # noqa: E402
 from pathlib import Path as _Path  # noqa: E402
 _sys.path.insert(0, str(_Path(__file__).resolve().parent.parent / "expansion" / "titan"))
-from plans_titan import t0_smoke, t0_turn, t0_move, t0_probe, t0_lanes, t0_kit, t0_mouseslow  # noqa: E402,F401
+from plans_titan import t0_smoke, t0_turn, t0_move, t0_probe, t0_lanes, t0_kit, t0_mouseslow, t1_camsmoke, t1_cam, t1_ext, t1_pitch  # noqa: E402,F401

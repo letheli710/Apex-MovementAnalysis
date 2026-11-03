@@ -15,6 +15,12 @@
 //   hsd_lanes x0 y0 x1 y1 step [len] [minfree]   titan-hull (120 x 235) traces from a floor grid in 16
 //                       directions; prints every start / yaw with at least minfree units clear
 //   hsd_core            core meter full (SoulTitanCore_SetNextAvailableTime( soul, 1.0 ), as sh_titancore_utility does)
+//   hsd_hurt <amount> [dirYaw]   damage to the player's titan from a point dirYaw degrees off the view (cockpit jolt direction)
+//   hsd_hurtpet <amount> damage to the spawned auto-titan (seen from outside)
+//   hsd_shield <value>   set shield on the player's (or the spawned) titan
+//   hsd_watch <dist> <relYaw> <height>  put the pilot dist from the spawned titan (relYaw off its facing), looking at its chest
+//   hsd_eject            TitanEjectPlayer on the player's titan (real eject sequence)
+//   hsd_emp <duration>   cockpit EMP feedback (ServerCallback_TitanCockpitEMP + ServerCallback_TitanEMP)
 //   hsd_status <effect> <severity> <duration> [fade]   StatusEffect_AddTimed on the titan soul (or the pilot),
 //                       effect = eStatusEffect name (turn_slow, move_slow, dodge_speed_slow ...)
 // Log lines:
@@ -39,6 +45,12 @@ void function HsdDiagTitan_Init()
 	AddClientCommandCallback( "hsd_core", HsdTitan_CC_Core )
 	AddClientCommandCallback( "hsd_lanes", HsdTitan_CC_Lanes )
 	AddClientCommandCallback( "hsd_status", HsdTitan_CC_Status )
+	AddClientCommandCallback( "hsd_hurt", HsdTitan_CC_Hurt )
+	AddClientCommandCallback( "hsd_eject", HsdTitan_CC_Eject )
+	AddClientCommandCallback( "hsd_hurtpet", HsdTitan_CC_HurtPet )
+	AddClientCommandCallback( "hsd_watch", HsdTitan_CC_Watch )
+	AddClientCommandCallback( "hsd_shield", HsdTitan_CC_Shield )
+	AddClientCommandCallback( "hsd_emp", HsdTitan_CC_Emp )
 	if ( GetConVarBool( "hsd_autorun" ) )
 		AddCallback_OnPlayerRespawned( HsdTitan_OnRespawn )
 }
@@ -263,6 +275,72 @@ bool function HsdTitan_CC_Core( entity player, array<string> args )
 	}
 	SoulTitanCore_SetNextAvailableTime( soul, 1.0 )
 	printt( format( "HSDDIAG TITAN core ready %.4f", Time() ) )
+	return true
+}
+
+bool function HsdTitan_CC_Hurt( entity player, array<string> args )
+{
+	if ( args.len() < 1 || !IsAlive( player ) )
+		return true
+	float yaw = args.len() > 1 ? float( args[1] ) : 0.0
+	vector dir = AnglesToForward( < 0.0, player.EyeAngles().y + yaw, 0.0 > )
+	player.TakeDamage( float( args[0] ), svGlobal.worldspawn, svGlobal.worldspawn, { origin = player.EyePosition() + dir * 600.0, scriptType = 0, damageSourceId = eDamageSourceId.mp_titanweapon_xo16 } )
+	entity soul = player.GetTitanSoul()
+	printt( format( "HSDDIAG TITAN hurt %s hp=%d shield=%d doomed=%s %.4f", args[0], player.GetHealth(), IsValid( soul ) ? soul.GetShieldHealth() : 0, IsValid( soul ) && soul.IsDoomed() ? "1" : "0", Time() ) )
+	return true
+}
+
+bool function HsdTitan_CC_HurtPet( entity player, array<string> args )
+{
+	entity titan = file.titan
+	if ( args.len() < 1 || !IsAlive( titan ) )
+		return true
+	titan.TakeDamage( float( args[0] ), svGlobal.worldspawn, svGlobal.worldspawn, { origin = titan.EyePosition(), scriptType = 0, damageSourceId = eDamageSourceId.mp_titanweapon_xo16 } )
+	entity soul = titan.GetTitanSoul()
+	printt( format( "HSDDIAG TITAN hurtpet %s hp=%d/%d shield=%d doomed=%s %.4f", args[0], titan.GetHealth(), titan.GetMaxHealth(), IsValid( soul ) ? soul.GetShieldHealth() : 0, IsValid( soul ) && soul.IsDoomed() ? "1" : "0", Time() ) )
+	return true
+}
+
+bool function HsdTitan_CC_Watch( entity player, array<string> args )
+{
+	entity titan = file.titan
+	if ( args.len() < 3 || !IsAlive( titan ) )
+		return true
+	vector org = titan.GetOrigin()
+	vector eye = org + AnglesToForward( < 0.0, titan.GetAngles().y + float( args[1] ), 0.0 > ) * float( args[0] ) + < 0.0, 0.0, float( args[2] ) >
+	player.SetVelocity( < 0.0, 0.0, 0.0 > )
+	player.SetOrigin( eye )
+	player.SnapEyeAngles( VectorToAngles( org + < 0.0, 0.0, 130.0 > - ( eye + < 0.0, 0.0, 60.0 > ) ) )
+	return true
+}
+
+bool function HsdTitan_CC_Shield( entity player, array<string> args )
+{
+	entity titan = player.IsTitan() ? player : file.titan
+	if ( args.len() < 1 || !IsAlive( titan ) )
+		return true
+	entity soul = titan.GetTitanSoul()
+	if ( IsValid( soul ) )
+		soul.SetShieldHealth( int( args[0] ) )
+	printt( format( "HSDDIAG TITAN shield %s %.4f", args[0], Time() ) )
+	return true
+}
+
+bool function HsdTitan_CC_Eject( entity player, array<string> args )
+{
+	if ( !IsAlive( player ) || !player.IsTitan() )
+		return true
+	printt( format( "HSDDIAG TITAN eject %.4f", Time() ) )
+	thread TitanEjectPlayer( player )
+	return true
+}
+
+bool function HsdTitan_CC_Emp( entity player, array<string> args )
+{
+	float dur = args.len() > 0 ? float( args[0] ) : 2.0
+	Remote_CallFunction_Replay( player, "ServerCallback_TitanCockpitEMP", dur )
+	Remote_CallFunction_Replay( player, "ServerCallback_TitanEMP", 0.5, dur, 1.0 )
+	printt( format( "HSDDIAG TITAN emp %.2f %.4f", dur, Time() ) )
 	return true
 }
 
