@@ -1,0 +1,1252 @@
+{
+ "name": "titan_m_base_v2",
+ "date": "2026-11-02",
+ "checks": {
+  "tris": {
+   "ok": true,
+   "tris": 4756,
+   "limit": 5000
+  },
+  "hierarchy": {
+   "ok": true,
+   "wrong_parent": [],
+   "missing_sockets": [],
+   "extra_names": [],
+   "joints": 21,
+   "sockets": 26
+  },
+  "rest_joints": {
+   "ok": true,
+   "worst": "J_Shoulder_L",
+   "worst_m": 0.0,
+   "compared": 20
+  },
+  "heights": {
+   "ok": true,
+   "eye": 4.7,
+   "feet": -0.0,
+   "top": 5.88,
+   "top_part": "Torso_Crown",
+   "antenna_top": 6.75,
+   "target_top": 5.88
+  },
+  "shape_rules": {
+   "ok": true,
+   "lower_section_radius": 0.5,
+   "lower_section_limit": 0.5,
+   "upper_width": 1.84,
+   "upper_depth": 2.04,
+   "upper_height": 1.52,
+   "waist_column_radius": 0.32,
+   "waist_column_height": 0.6,
+   "waist_column_exposed": 0.42,
+   "hip_axis": 0.86,
+   "pelvis_half_width": 0.46,
+   "shoulder_axis": 1.3,
+   "cannon_len": 2.0
+  },
+  "pose_joints": {
+   "ok": true,
+   "poses": 19,
+   "worst": "sprint_lean_L",
+   "worst_m": 8e-05,
+   "worst_rot": 1e-05,
+   "per_pose": {
+    "stand_aim": {
+     "pos_m": 5e-05,
+     "rot_abs": 0.0
+    },
+    "aim_up_45": {
+     "pos_m": 5e-05,
+     "rot_abs": 1e-05
+    },
+    "aim_down_45": {
+     "pos_m": 6e-05,
+     "rot_abs": 0.0
+    },
+    "yaw_85_level": {
+     "pos_m": 6e-05,
+     "rot_abs": 0.0
+    },
+    "yaw_-85_level": {
+     "pos_m": 7e-05,
+     "rot_abs": 1e-05
+    },
+    "yaw_85_up": {
+     "pos_m": 6e-05,
+     "rot_abs": 0.0
+    },
+    "yaw_85_down": {
+     "pos_m": 5e-05,
+     "rot_abs": 0.0
+    },
+    "yaw_-85_down": {
+     "pos_m": 5e-05,
+     "rot_abs": 0.0
+    },
+    "crouch": {
+     "pos_m": 5e-05,
+     "rot_abs": 0.0
+    },
+    "crouch_yaw_85": {
+     "pos_m": 7e-05,
+     "rot_abs": 0.0
+    },
+    "sprint_stride": {
+     "pos_m": 6e-05,
+     "rot_abs": 0.0
+    },
+    "sprint_lean_L": {
+     "pos_m": 8e-05,
+     "rot_abs": 0.0
+    },
+    "dash_float_L": {
+     "pos_m": 7e-05,
+     "rot_abs": 0.0
+    },
+    "dash_land": {
+     "pos_m": 6e-05,
+     "rot_abs": 1e-05
+    },
+    "landing_one_knee": {
+     "pos_m": 6e-05,
+     "rot_abs": 0.0
+    },
+    "landing_rise": {
+     "pos_m": 6e-05,
+     "rot_abs": 0.0
+    },
+    "kneel_hatch": {
+     "pos_m": 5e-05,
+     "rot_abs": 0.0
+    },
+    "melee_L": {
+     "pos_m": 7e-05,
+     "rot_abs": 1e-05
+    },
+    "doomed": {
+     "pos_m": 7e-05,
+     "rot_abs": 0.0
+    }
+   }
+  },
+  "collision_poses": {
+   "ok": true,
+   "poses": 19,
+   "failed": {}
+  },
+  "collision_limits": {
+   "ok": false,
+   "cases": 34,
+   "bases": [
+    "rest",
+    "stand_aim",
+    "arms_clear"
+   ],
+   "samples": "each limit at 50% and 100%, one joint at a time",
+   "base_arms_clear": {
+    "s_out_L": 40,
+    "s_flex_L": 10,
+    "e_L": 20,
+    "s_out_R": 40,
+    "s_flex_R": 10,
+    "e_R": 20
+   },
+   "failed_rest": [
+    {
+     "limit": "waist.side",
+     "value": -30.0,
+     "pair": "Hip_Ball_L x Forearm_L",
+     "depth": 0.169
+    },
+    {
+     "limit": "waist.side",
+     "value": -30.0,
+     "pair": "Thigh_L x Forearm_L",
+     "depth": 0.18
+    },
+    {
+     "limit": "waist.side",
+     "value": -30.0,
+     "pair": "Thigh_L x Wrist_Hub",
+     "depth": 0.206
+    },
+    {
+     "limit": "waist.side",
+     "value": -30.0,
+     "pair": "Thigh_L x Palm",
+     "depth": 0.192
+    },
+    {
+     "limit": "waist.side",
+     "value": -30.0,
+     "pair": "Thigh_L x Finger_L_1",
+     "depth": 0.17
+    },
+    {
+     "limit": "waist.side",
+     "value": -15.0,
+     "pair": "Thigh_L x Finger_L_2_Root",
+     "depth": 0.162
+    },
+    {
+     "limit": "waist.side",
+     "value": -15.0,
+     "pair": "Thigh_L x Finger_L_2",
+     "depth": 0.2
+    },
+    {
+     "limit": "waist.side",
+     "value": -15.0,
+     "pair": "Thigh_L x Finger_L_3_Root",
+     "depth": 0.082
+    },
+    {
+     "limit": "waist.side",
+     "value": -15.0,
+     "pair": "Thigh_L x Finger_L_3",
+     "depth": 0.146
+    },
+    {
+     "limit": "waist.side",
+     "value": -30.0,
+     "pair": "UpperArm_Fork_L x Hip_Ball_L",
+     "depth": 0.047
+    },
+    {
+     "limit": "waist.side",
+     "value": -30.0,
+     "pair": "Hip_Ball_L x Elbow_Hub_L",
+     "depth": 0.027
+    },
+    {
+     "limit": "waist.side",
+     "value": -30.0,
+     "pair": "Thigh_L x Finger_L_1_Root",
+     "depth": 0.157
+    },
+    {
+     "limit": "waist.side",
+     "value": 30.0,
+     "pair": "Hip_Ball_R x Cannon_Body",
+     "depth": 0.18
+    },
+    {
+     "limit": "waist.side",
+     "value": 15.0,
+     "pair": "Thigh_R x Cannon_Body",
+     "depth": 0.179
+    },
+    {
+     "limit": "waist.side",
+     "value": 30.0,
+     "pair": "Thigh_R x Cannon_Band",
+     "depth": 0.056
+    },
+    {
+     "limit": "waist.side",
+     "value": 15.0,
+     "pair": "Thigh_R x Cannon_Barrel",
+     "depth": 0.122
+    },
+    {
+     "limit": "waist.side",
+     "value": 15.0,
+     "pair": "Thigh_Plate_R x Cannon_Body",
+     "depth": 0.002
+    },
+    {
+     "limit": "waist.side",
+     "value": 15.0,
+     "pair": "Thigh_Plate_R x Cannon_Band",
+     "depth": 0.02
+    },
+    {
+     "limit": "waist.side",
+     "value": 30.0,
+     "pair": "Thigh_Fork_R x Cannon_Body",
+     "depth": 0.052
+    },
+    {
+     "limit": "waist.side",
+     "value": 15.0,
+     "pair": "Thigh_Fork_R x Cannon_Barrel",
+     "depth": 0.024
+    },
+    {
+     "limit": "waist.side",
+     "value": 15.0,
+     "pair": "Knee_Hub_R x Cannon_Barrel",
+     "depth": 0.059
+    },
+    {
+     "limit": "waist.side",
+     "value": 30.0,
+     "pair": "UpperArm_Fork_R x Hip_Ball_R",
+     "depth": 0.047
+    },
+    {
+     "limit": "waist.side",
+     "value": 30.0,
+     "pair": "Hip_Ball_R x Cannon_Hub",
+     "depth": 0.027
+    },
+    {
+     "limit": "waist.side",
+     "value": 30.0,
+     "pair": "Hip_Ball_R x Cannon_Neck",
+     "depth": 0.084
+    },
+    {
+     "limit": "hip.out_L",
+     "value": 60.0,
+     "pair": "Thigh_L x Palm",
+     "depth": 0.13
+    },
+    {
+     "limit": "hip.out_L",
+     "value": 60.0,
+     "pair": "Thigh_L x Finger_L_1",
+     "depth": 0.19
+    },
+    {
+     "limit": "hip.out_L",
+     "value": 60.0,
+     "pair": "Thigh_L x Finger_L_2_Root",
+     "depth": 0.152
+    },
+    {
+     "limit": "hip.out_L",
+     "value": 30.0,
+     "pair": "Thigh_L x Finger_L_2",
+     "depth": 0.2
+    },
+    {
+     "limit": "hip.out_L",
+     "value": 60.0,
+     "pair": "Thigh_L x Finger_L_3_Root",
+     "depth": 0.202
+    },
+    {
+     "limit": "hip.out_L",
+     "value": 60.0,
+     "pair": "Thigh_L x Finger_L_3",
+     "depth": 0.199
+    },
+    {
+     "limit": "hip.out_L",
+     "value": 60.0,
+     "pair": "Thigh_L x Forearm_L",
+     "depth": 0.034
+    },
+    {
+     "limit": "hip.out_L",
+     "value": 60.0,
+     "pair": "Thigh_L x Wrist_Hub",
+     "depth": 0.12
+    },
+    {
+     "limit": "hip.out_L",
+     "value": 60.0,
+     "pair": "Thigh_L x Finger_L_1_Root",
+     "depth": 0.173
+    },
+    {
+     "limit": "hip.out_R",
+     "value": 30.0,
+     "pair": "Thigh_R x Cannon_Body",
+     "depth": 0.193
+    },
+    {
+     "limit": "hip.out_R",
+     "value": 30.0,
+     "pair": "Thigh_R x Cannon_Band",
+     "depth": 0.03
+    },
+    {
+     "limit": "hip.out_R",
+     "value": 30.0,
+     "pair": "Thigh_R x Cannon_Barrel",
+     "depth": 0.149
+    },
+    {
+     "limit": "hip.out_R",
+     "value": 30.0,
+     "pair": "Thigh_Plate_R x Cannon_Body",
+     "depth": 0.01
+    },
+    {
+     "limit": "hip.out_R",
+     "value": 30.0,
+     "pair": "Thigh_Plate_R x Cannon_Band",
+     "depth": 0.02
+    },
+    {
+     "limit": "hip.out_R",
+     "value": 30.0,
+     "pair": "Thigh_Fork_R x Cannon_Barrel",
+     "depth": 0.006
+    },
+    {
+     "limit": "hip.out_R",
+     "value": 30.0,
+     "pair": "Knee_Hub_R x Cannon_Barrel",
+     "depth": 0.062
+    },
+    {
+     "limit": "hip.out_R",
+     "value": 60.0,
+     "pair": "Hip_Ball_R x Cannon_Body",
+     "depth": 0.065
+    },
+    {
+     "limit": "hip.twist_L",
+     "value": -17.5,
+     "pair": "Thigh_L x Palm",
+     "depth": 0.01
+    },
+    {
+     "limit": "hip.twist_L",
+     "value": 30.0,
+     "pair": "Thigh_L x Finger_L_2",
+     "depth": 0.005
+    },
+    {
+     "limit": "hip.twist_L",
+     "value": 30.0,
+     "pair": "Thigh_Plate_L x Finger_L_2",
+     "depth": 0.03
+    },
+    {
+     "limit": "hip.twist_L",
+     "value": 60.0,
+     "pair": "Hip_Ball_L x Forearm_L",
+     "depth": 0.02
+    },
+    {
+     "limit": "hip.twist_R",
+     "value": -60.0,
+     "pair": "Hip_Ball_R x Cannon_Body",
+     "depth": 0.06
+    },
+    {
+     "limit": "hip.twist_R",
+     "value": -60.0,
+     "pair": "Thigh_R x Cannon_Body",
+     "depth": 0.069
+    },
+    {
+     "limit": "hip.twist_R",
+     "value": -30.0,
+     "pair": "Thigh_R x Cannon_Band",
+     "depth": 0.01
+    },
+    {
+     "limit": "hip.twist_R",
+     "value": -60.0,
+     "pair": "Thigh_Plate_R x Cannon_Body",
+     "depth": 0.12
+    },
+    {
+     "limit": "hip.twist_R",
+     "value": -30.0,
+     "pair": "Thigh_Plate_R x Cannon_Band",
+     "depth": 0.0
+    },
+    {
+     "limit": "hip.twist_R",
+     "value": -60.0,
+     "pair": "Thigh_Plate_R x Cannon_Barrel",
+     "depth": 0.014
+    },
+    {
+     "limit": "shoulder.out_L",
+     "value": -30.0,
+     "pair": "Pelvis_HipAxle_L x Palm",
+     "depth": 0.067
+    },
+    {
+     "limit": "shoulder.out_L",
+     "value": -15.0,
+     "pair": "Hip_Ball_L x Forearm_L",
+     "depth": 0.167
+    },
+    {
+     "limit": "shoulder.out_L",
+     "value": -15.0,
+     "pair": "Hip_Ball_L x Wrist_Hub",
+     "depth": 0.171
+    },
+    {
+     "limit": "shoulder.out_L",
+     "value": -15.0,
+     "pair": "Hip_Ball_L x Palm",
+     "depth": 0.128
+    },
+    {
+     "limit": "shoulder.out_L",
+     "value": -15.0,
+     "pair": "Hip_Ball_L x Finger_L_1_Root",
+     "depth": 0.082
+    },
+    {
+     "limit": "shoulder.out_L",
+     "value": -15.0,
+     "pair": "Hip_Ball_L x Finger_L_1",
+     "depth": 0.063
+    },
+    {
+     "limit": "shoulder.out_L",
+     "value": -15.0,
+     "pair": "Hip_Ball_L x Finger_L_2_Root",
+     "depth": 0.009
+    },
+    {
+     "limit": "shoulder.out_L",
+     "value": -15.0,
+     "pair": "Hip_Ball_L x Finger_L_3_Root",
+     "depth": 0.083
+    },
+    {
+     "limit": "shoulder.out_L",
+     "value": -15.0,
+     "pair": "Hip_Ball_L x Finger_L_3",
+     "depth": 0.064
+    },
+    {
+     "limit": "shoulder.out_L",
+     "value": -15.0,
+     "pair": "Thigh_L x Finger_L_1_Root",
+     "depth": 0.022
+    },
+    {
+     "limit": "shoulder.out_L",
+     "value": -15.0,
+     "pair": "Thigh_L x Finger_L_1",
+     "depth": 0.177
+    },
+    {
+     "limit": "shoulder.out_L",
+     "value": -15.0,
+     "pair": "Thigh_L x Finger_L_2",
+     "depth": 0.034
+    },
+    {
+     "limit": "shoulder.out_L",
+     "value": -15.0,
+     "pair": "Thigh_L x Finger_L_3",
+     "depth": 0.146
+    },
+    {
+     "limit": "shoulder.out_L",
+     "value": -30.0,
+     "pair": "Pelvis_Core x Forearm_L",
+     "depth": 0.063
+    },
+    {
+     "limit": "shoulder.out_L",
+     "value": -30.0,
+     "pair": "Pelvis_Core x Wrist_Hub",
+     "depth": 0.122
+    },
+    {
+     "limit": "shoulder.out_L",
+     "value": -30.0,
+     "pair": "Pelvis_Core x Palm",
+     "depth": 0.297
+    },
+    {
+     "limit": "shoulder.out_L",
+     "value": -30.0,
+     "pair": "Pelvis_Core x Finger_L_1_Root",
+     "depth": 0.086
+    },
+    {
+     "limit": "shoulder.out_L",
+     "value": -30.0,
+     "pair": "Pelvis_Core x Finger_L_1",
+     "depth": 0.103
+    },
+    {
+     "limit": "shoulder.out_L",
+     "value": -30.0,
+     "pair": "Pelvis_Core x Finger_L_2_Root",
+     "depth": 0.292
+    },
+    {
+     "limit": "shoulder.out_L",
+     "value": -30.0,
+     "pair": "Pelvis_Core x Finger_L_2",
+     "depth": 0.31
+    },
+    {
+     "limit": "shoulder.out_L",
+     "value": -30.0,
+     "pair": "Pelvis_Core x Finger_L_3_Root",
+     "depth": 0.19
+    },
+    {
+     "limit": "shoulder.out_L",
+     "value": -30.0,
+     "pair": "Pelvis_Core x Finger_L_3",
+     "depth": 0.207
+    },
+    {
+     "limit": "shoulder.out_L",
+     "value": -30.0,
+     "pair": "Pelvis_HipAxle_L x Wrist_Hub",
+     "depth": 0.031
+    },
+    {
+     "limit": "shoulder.out_L",
+     "value": -30.0,
+     "pair": "Pelvis_HipAxle_L x Finger_L_1_Root",
+     "depth": 0.021
+    },
+    {
+     "limit": "shoulder.out_L",
+     "value": -30.0,
+     "pair": "Pelvis_HipAxle_L x Finger_L_1",
+     "depth": 0.009
+    },
+    {
+     "limit": "shoulder.out_R",
+     "value": -30.0,
+     "pair": "Pelvis_HipAxle_R x Cannon_Body",
+     "depth": 0.204
+    },
+    {
+     "limit": "shoulder.out_R",
+     "value": -15.0,
+     "pair": "Hip_Ball_R x Cannon_Body",
+     "depth": 0.207
+    },
+    {
+     "limit": "shoulder.out_R",
+     "value": -15.0,
+     "pair": "Thigh_R x Cannon_Body",
+     "depth": 0.201
+    },
+    {
+     "limit": "shoulder.out_R",
+     "value": -15.0,
+     "pair": "Thigh_R x Cannon_Band",
+     "depth": 0.03
+    },
+    {
+     "limit": "shoulder.out_R",
+     "value": -15.0,
+     "pair": "Thigh_R x Cannon_Barrel",
+     "depth": 0.129
+    },
+    {
+     "limit": "shoulder.out_R",
+     "value": -15.0,
+     "pair": "Thigh_Plate_R x Cannon_Body",
+     "depth": 0.01
+    },
+    {
+     "limit": "shoulder.out_R",
+     "value": -15.0,
+     "pair": "Thigh_Plate_R x Cannon_Band",
+     "depth": 0.02
+    },
+    {
+     "limit": "shoulder.out_R",
+     "value": -30.0,
+     "pair": "Pelvis_Core x Cannon_Body",
+     "depth": 0.202
+    },
+    {
+     "limit": "shoulder.out_R",
+     "value": -30.0,
+     "pair": "Pelvis_Core x Cannon_Band",
+     "depth": 0.228
+    },
+    {
+     "limit": "shoulder.out_R",
+     "value": -30.0,
+     "pair": "Waist_Column x Cannon_Body",
+     "depth": 0.071
+    },
+    {
+     "limit": "shoulder.twist_L",
+     "value": -22.5,
+     "pair": "Thigh_L x Palm",
+     "depth": 0.01
+    },
+    {
+     "limit": "shoulder.twist_L",
+     "value": 45.0,
+     "pair": "Thigh_L x Finger_L_2",
+     "depth": 0.032
+    },
+    {
+     "limit": "shoulder.twist_R",
+     "value": -45.0,
+     "pair": "Hip_Ball_R x Cannon_Body",
+     "depth": 0.024
+    },
+    {
+     "limit": "shoulder.twist_R",
+     "value": -45.0,
+     "pair": "Thigh_R x Cannon_Body",
+     "depth": 0.054
+    },
+    {
+     "limit": "shoulder.twist_R",
+     "value": -45.0,
+     "pair": "Thigh_R x Cannon_Band",
+     "depth": 0.116
+    },
+    {
+     "limit": "wrist.side",
+     "value": -60.0,
+     "pair": "Hip_Ball_L x Palm",
+     "depth": 0.038
+    },
+    {
+     "limit": "wrist.side",
+     "value": -30.0,
+     "pair": "Thigh_L x Finger_L_2",
+     "depth": 0.155
+    },
+    {
+     "limit": "wrist.side",
+     "value": -60.0,
+     "pair": "Thigh_L x Finger_L_3",
+     "depth": 0.101
+    },
+    {
+     "limit": "wrist.side",
+     "value": -60.0,
+     "pair": "Hip_Ball_L x Finger_L_2_Root",
+     "depth": 0.024
+    },
+    {
+     "limit": "wrist.side",
+     "value": -60.0,
+     "pair": "Hip_Ball_L x Finger_L_2",
+     "depth": 0.153
+    },
+    {
+     "limit": "wrist.side",
+     "value": -60.0,
+     "pair": "Hip_Ball_L x Finger_L_3",
+     "depth": 0.067
+    },
+    {
+     "limit": "wrist.side",
+     "value": -60.0,
+     "pair": "Thigh_L x Finger_L_1",
+     "depth": 0.155
+    }
+   ],
+   "failed_stand_aim": [
+    {
+     "limit": "hip.flex_R",
+     "value": 110.0,
+     "pair": "Foot_R x Cannon_Body",
+     "depth": 0.04
+    },
+    {
+     "limit": "hip.flex_R",
+     "value": 110.0,
+     "pair": "Foot_R x Cannon_Barrel",
+     "depth": 0.073
+    },
+    {
+     "limit": "hip.flex_R",
+     "value": 110.0,
+     "pair": "Foot_Top_R x Cannon_Body",
+     "depth": 0.011
+    },
+    {
+     "limit": "shoulder.out_R",
+     "value": -30.0,
+     "pair": "Torso_Shell x UpperArm_R",
+     "depth": 0.031
+    },
+    {
+     "limit": "shoulder.out_R",
+     "value": -30.0,
+     "pair": "Torso_Shell x UpperArm_Fork_R",
+     "depth": 0.063
+    },
+    {
+     "limit": "shoulder.out_R",
+     "value": -30.0,
+     "pair": "Torso_Shell x Cannon_Hub",
+     "depth": 0.034
+    },
+    {
+     "limit": "shoulder.out_R",
+     "value": -30.0,
+     "pair": "Torso_HingeBracket x Cannon_Body",
+     "depth": 0.119
+    },
+    {
+     "limit": "shoulder.out_R",
+     "value": -30.0,
+     "pair": "Torso_HatchHinge x Cannon_Body",
+     "depth": 0.182
+    },
+    {
+     "limit": "shoulder.out_R",
+     "value": -30.0,
+     "pair": "Hatch_Center x Cannon_Body",
+     "depth": 0.074
+    },
+    {
+     "limit": "shoulder.out_R",
+     "value": -30.0,
+     "pair": "Hatch_Wing_R x Cannon_Body",
+     "depth": 0.131
+    },
+    {
+     "limit": "shoulder.twist_R",
+     "value": 45.0,
+     "pair": "Torso_HingeBracket x Cannon_Body",
+     "depth": 0.106
+    },
+    {
+     "limit": "shoulder.twist_R",
+     "value": 45.0,
+     "pair": "Torso_HatchHinge x Cannon_Body",
+     "depth": 0.148
+    },
+    {
+     "limit": "shoulder.twist_R",
+     "value": 45.0,
+     "pair": "Hatch_Center x Cannon_Body",
+     "depth": 0.078
+    },
+    {
+     "limit": "shoulder.twist_R",
+     "value": 45.0,
+     "pair": "Hatch_Wing_R x Cannon_Body",
+     "depth": 0.116
+    }
+   ],
+   "failed_arms_clear": [
+    {
+     "limit": "shoulder.out_R",
+     "value": -30.0,
+     "pair": "Pelvis_Core x Cannon_Body",
+     "depth": 0.09
+    },
+    {
+     "limit": "shoulder.out_R",
+     "value": -30.0,
+     "pair": "Pelvis_Plate x Cannon_Body",
+     "depth": 0.066
+    }
+   ],
+   "reachable_without_collision": {
+    "rest": {
+     "waist.side": {
+      "low": {
+       "limit": -30,
+       "reaches": -1.0,
+       "stopped_by": "Thigh_L x Palm"
+      },
+      "high": {
+       "limit": 30,
+       "reaches": 0.0,
+       "stopped_by": "Thigh_R x Cannon_Body"
+      }
+     },
+     "hip.out_L": {
+      "high": {
+       "limit": 60,
+       "reaches": 5.0,
+       "stopped_by": "Thigh_L x Finger_L_2"
+      }
+     },
+     "hip.out_R": {
+      "high": {
+       "limit": 60,
+       "reaches": 1.0,
+       "stopped_by": "Thigh_R x Cannon_Body"
+      }
+     },
+     "hip.twist_L": {
+      "low": {
+       "limit": -35,
+       "reaches": -9.0,
+       "stopped_by": "Thigh_L x Palm"
+      },
+      "high": {
+       "limit": 60,
+       "reaches": 11.0,
+       "stopped_by": "Thigh_L x Palm"
+      }
+     },
+     "hip.twist_R": {
+      "low": {
+       "limit": -60,
+       "reaches": -3.0,
+       "stopped_by": "Thigh_R x Cannon_Band"
+      },
+      "high": {
+       "limit": 35,
+       "reaches": 2.0,
+       "stopped_by": "Thigh_R x Cannon_Band"
+      }
+     },
+     "shoulder.out_L": {
+      "low": {
+       "limit": -30,
+       "reaches": 0.0,
+       "stopped_by": "Thigh_L x Palm"
+      }
+     },
+     "shoulder.out_R": {
+      "low": {
+       "limit": -30,
+       "reaches": 0.0,
+       "stopped_by": "Thigh_R x Cannon_Body"
+      }
+     },
+     "shoulder.twist_L": {
+      "low": {
+       "limit": -45,
+       "reaches": -11.0,
+       "stopped_by": "Thigh_L x Palm"
+      },
+      "high": {
+       "limit": 45,
+       "reaches": 11.0,
+       "stopped_by": "Thigh_L x Palm"
+      }
+     },
+     "shoulder.twist_R": {
+      "low": {
+       "limit": -45,
+       "reaches": -2.0,
+       "stopped_by": "Thigh_R x Cannon_Band"
+      },
+      "high": {
+       "limit": 45,
+       "reaches": 2.0,
+       "stopped_by": "Thigh_R x Cannon_Band"
+      }
+     },
+     "wrist.side": {
+      "low": {
+       "limit": -60,
+       "reaches": -7.0,
+       "stopped_by": "Thigh_L x Finger_L_2"
+      }
+     }
+    },
+    "stand_aim": {
+     "hip.flex_R": {
+      "high": {
+       "limit": 110,
+       "reaches": 100.0,
+       "stopped_by": "Foot_R x Cannon_Barrel"
+      }
+     },
+     "shoulder.out_R": {
+      "low": {
+       "limit": -30,
+       "reaches": -17.0,
+       "stopped_by": "Hatch_Wing_R x Cannon_Body"
+      }
+     },
+     "shoulder.twist_R": {
+      "high": {
+       "limit": 45,
+       "reaches": 32.0,
+       "stopped_by": "Hatch_Wing_R x Cannon_Body"
+      }
+     }
+    },
+    "arms_clear": {
+     "shoulder.out_R": {
+      "low": {
+       "limit": -30,
+       "reaches": -7.0,
+       "stopped_by": "Hip_Ball_R x Cannon_Body"
+      }
+     }
+    }
+   }
+  },
+  "collision_hatch": {
+   "ok": true,
+   "step_deg": 15,
+   "required_poses": [
+    "rest",
+    "stand_aim",
+    "kneel_hatch"
+   ],
+   "failed": [],
+   "other_poses_info": []
+  },
+  "first_person": {
+   "ok": true,
+   "muzzle_screen": [
+    0.783,
+    0.248
+   ],
+   "screen_note": "0,0 = lower left, 1,1 = upper right",
+   "cannon_verts_in_frame": 64,
+   "cannon_verts": 96,
+   "muzzle_right_deg": 30.0,
+   "muzzle_down_deg": 16.1,
+   "design_right_deg": 30.0,
+   "design_down_deg": 17.7,
+   "eye_pose_z": 4.636,
+   "from_fixed_capsule_eye": {
+    "right_deg": 30.0,
+    "down_deg": 17.7
+   }
+  },
+  "fbx_roundtrip": {
+   "ok": true,
+   "worst": "J_Launcher_L",
+   "worst_m": 0.0,
+   "missing": [],
+   "mesh_z": [
+    -0.0,
+    5.88
+   ],
+   "setting": "bake_space_transform=False, axis_forward=-Z, axis_up=Y",
+   "note": "Blender re-import only. How Unity reads it is not checked."
+  }
+ },
+ "deviations": [],
+ "not_passed": [
+  "collision_limits"
+ ],
+ "notes": [
+  "S_Eye 跟躯干走。stand_aim 里骨盆比 rest 低 6.4 cm，所以 S_Eye 在 4.636，炮口向下 16.1°；用 design.py 的做法（眼睛固定在碰撞体 4.70）是 17.7°，和 DESIGN 一致。游戏里相机用哪个，接 Unity 时要定。",
+  "腰柱全高 0.60，按 spec 的零件框露出 0.42（骨盆顶 3.23 到躯干下段底 3.65）。DESIGN 第 2 节写'高约 0.6，露在外面'，这里没有为多露而改框。",
+  "这些是 DESIGN 没给、这里自己定的：手指根位置、手指范围 -25…50、其余挂点位置（只有 S_Eye / S_Seat / S_Muzzle 有 spec 坐标）。",
+  "DESIGN 的腕 '±45 / ±60' 按俯仰 ±45、侧向 ±60 读。",
+  "design.fk 没有踝侧向和腕的转动，这里加了 Rx。髋扭转在 fk 里两侧同向，限位检查时右侧按镜像（-60…35）。",
+  "限位检查一次只动一个关节，不查组合；每个限位取 50% 和 100% 两个点，舱门每 15° 一个点。",
+  "骨盆的三个转动带着全身走，不改变零件之间的相对位置，所以只验证了它不产生新碰撞，没有验证脚和地面。",
+  "碰撞只比较真实网格，没有容差。rest 姿势下手臂和大腿之间只留 2 cm。",
+  "FBX 只在 Blender 里重新导入验证过，Unity 读取没有验证，也没有改 HSD-Unity。"
+ ],
+ "tris": 4756,
+ "mesh_objects": 80,
+ "pose_lowest_mesh_z": {
+  "stand_aim": 0.0,
+  "aim_up_45": 0.0,
+  "aim_down_45": 0.0,
+  "yaw_85_level": 0.0,
+  "yaw_-85_level": 0.0,
+  "yaw_85_up": 0.0,
+  "yaw_85_down": 0.0,
+  "yaw_-85_down": 0.0,
+  "crouch": -0.0,
+  "crouch_yaw_85": -0.0,
+  "sprint_stride": 0.0,
+  "sprint_lean_L": 0.073,
+  "dash_float_L": 0.006,
+  "dash_land": 0.0,
+  "landing_one_knee": -0.0,
+  "landing_rise": 0.0,
+  "kneel_hatch": 0.0,
+  "melee_L": 0.0,
+  "doomed": 0.015
+ },
+ "pose_top_z": {
+  "stand_aim": 5.816,
+  "aim_up_45": 6.159,
+  "aim_down_45": 5.851,
+  "yaw_85_level": 5.816,
+  "yaw_-85_level": 5.816,
+  "yaw_85_up": 6.159,
+  "yaw_85_down": 5.851,
+  "yaw_-85_down": 5.851,
+  "crouch": 4.745,
+  "crouch_yaw_85": 4.831,
+  "sprint_stride": 5.402,
+  "sprint_lean_L": 5.813,
+  "dash_float_L": 5.94,
+  "dash_land": 5.871,
+  "landing_one_knee": 4.405,
+  "landing_rise": 5.85,
+  "kneel_hatch": 4.555,
+  "melee_L": 5.913,
+  "doomed": 5.936
+ },
+ "excluded_pairs": [
+  {
+   "a": "Pelvis_Core",
+   "b": "Waist_Column",
+   "reason": "腰柱底插进骨盆（固定连接，同转）"
+  },
+  {
+   "a": "Waist_Column",
+   "b": "Torso_Shell",
+   "reason": "腰柱顶插进躯干下段，转轴就在腰柱上"
+  },
+  {
+   "a": "Pelvis_HipAxle_L",
+   "b": "Hip_Ball_L",
+   "reason": "髋轴伸进髋球（关节支承）"
+  },
+  {
+   "a": "Pelvis_HipAxle_R",
+   "b": "Hip_Ball_R",
+   "reason": "髋轴伸进髋球（关节支承）"
+  },
+  {
+   "a": "Torso_ShoulderMount_L",
+   "b": "Shoulder_Hub_L",
+   "reason": "肩座伸进肩球（关节支承）"
+  },
+  {
+   "a": "Torso_ShoulderMount_R",
+   "b": "Shoulder_Hub_R",
+   "reason": "肩座伸进肩球（关节支承）"
+  },
+  {
+   "a": "Torso_HatchHinge",
+   "b": "Hatch_Center",
+   "reason": "铰链销穿过舱门下边"
+  },
+  {
+   "a": "Torso_HatchHinge",
+   "b": "Hatch_Wing_L",
+   "reason": "铰链销穿过舱门下边"
+  },
+  {
+   "a": "Torso_HatchHinge",
+   "b": "Hatch_Wing_R",
+   "reason": "铰链销穿过舱门下边"
+  },
+  {
+   "a": "Optic_Ball",
+   "b": "Torso_Shell",
+   "reason": "单眼球嵌在躯干前面（球窝）"
+  },
+  {
+   "a": "Optic_Ball",
+   "b": "Torso_Brow",
+   "reason": "单眼球上缘嵌进眉甲（球窝）"
+  },
+  {
+   "a": "Optic_Ball",
+   "b": "Torso_Cockpit",
+   "reason": "单眼球穿过驾驶舱黑面板（球窝）"
+  },
+  {
+   "a": "Launcher_Mount",
+   "b": "Torso_Shell",
+   "reason": "火箭巢底座固定在躯干顶"
+  },
+  {
+   "a": "Wrist_Hub",
+   "b": "Forearm_L",
+   "reason": "腕球伸进前臂端（关节支承）"
+  },
+  {
+   "a": "Finger_L_1_Root",
+   "b": "Palm",
+   "reason": "指根嵌在手掌（关节支承）"
+  },
+  {
+   "a": "Finger_L_2_Root",
+   "b": "Palm",
+   "reason": "指根嵌在手掌（关节支承）"
+  },
+  {
+   "a": "Finger_L_3_Root",
+   "b": "Palm",
+   "reason": "指根嵌在手掌（关节支承）"
+  },
+  {
+   "a": "Finger_L_1",
+   "b": "Palm",
+   "reason": "手指根部贴手掌"
+  },
+  {
+   "a": "Finger_L_2",
+   "b": "Palm",
+   "reason": "手指根部贴手掌"
+  },
+  {
+   "a": "Finger_L_3",
+   "b": "Palm",
+   "reason": "手指根部贴手掌"
+  }
+ ],
+ "collision_method": "BVHTree.overlap on world triangles plus inside-test by ray parity. All mesh pairs on different joints are tested (this includes torso x pelvis, thigh x pelvis, forearm x upper arm). No tolerance: touching counts.",
+ "check_seconds": 23.1,
+ "deviations_note": "没有改任何结构数值：关节坐标、连杆长度、限位、舱门铰链和尺寸都和 spec.json 一致。下面 shape_changes 是外形相对 spec.parts 方块的变化，都是往里收。",
+ "shape_changes": [
+  {
+   "part": "thigh",
+   "spec": "半宽 y 0.25",
+   "now": "0.21",
+   "why": "直臂垂下时炮和左爪贴着大腿外侧，spec 方块在 rest 姿势本身就重叠 5 cm"
+  },
+  {
+   "part": "hip",
+   "spec": "方块，y 偏外 0.02，半宽 0.24",
+   "now": "椭球，不偏移，半宽 0.20",
+   "why": "同上；球形让髋三轴转动不碰骨盆"
+  },
+  {
+   "part": "cannon_R",
+   "spec": "半宽 y 0.24，后端伸过肘 0.20",
+   "now": "半宽 0.21，后端不伸过肘",
+   "why": "同上；后端伸过肘会在肘 0° 时穿进上臂"
+  },
+  {
+   "part": "claw_L",
+   "spec": "半宽 y 0.24",
+   "now": "手掌 0.20",
+   "why": "同上"
+  },
+  {
+   "part": "forearm_L",
+   "spec": "前半厚 0.22",
+   "now": "腕端附近 0.14",
+   "why": "肘 140° 时前臂会穿进肩甲"
+  },
+  {
+   "part": "pauldron",
+   "spec": "z -0.39…+0.49",
+   "now": "z -0.30…+0.36，内侧大倒角",
+   "why": "肩外展 90° 时肩甲上缘会穿进躯干和肩座"
+  },
+  {
+   "part": "thigh / shin / uparm 背面或前面",
+   "spec": "等厚方块",
+   "now": "楔形收窄 + 关节处开叉",
+   "why": "膝 140°、肘 140 / 120° 要能折叠"
+  },
+  {
+   "part": "torso_up 前面",
+   "spec": "x 到 1.07 的整块",
+   "now": "主壳到 0.93，两侧颊甲和眉甲到 1.07",
+   "why": "舱门在 x 0.95–1.05，整块前面会把门埋住"
+  },
+  {
+   "part": "torso 顶",
+   "spec": "torso_up 和 launcher_L 方块重叠",
+   "now": "顶部分开：左边放火箭巢，右边冠甲，中间眉甲",
+   "why": "火箭巢的框在躯干框里面，不分开就看不见，也打不出去"
+  },
+  {
+   "part": "舱门上缘",
+   "spec": "矩形，高 1.35",
+   "now": "中间开缺口到 0.95，两翼到 1.35",
+   "why": "舱门上缘 5.50 高过单眼中心 5.40，不开缺口门会挡住单眼"
+  }
+ ],
+ "outside_spec_boxes": [
+  "单眼镜头前端 x 1.125，比躯干前面 1.07 突出 5.5 cm",
+  "天线顶 6.75（按任务不计入主体顶）",
+  "肩球半径 0.345，在 spec 的肩甲框内，但内缘到 y 0.955"
+ ],
+ "limits_reading": "collision_limits 没通过的项都是手臂和身体相撞：一个关节到限位时，另一段手臂按固定姿势摆着。腿、腰、骨盆、膝、踝、肘、腕、手指、舱门、单眼从 arms_clear 出发都到得了限位。到得了多少度见 checks.collision_limits.reachable_without_collision。这些不是靠改外形能解决的，手臂长度和位置决定了它们；要么接受（动画时避开），要么改结构，由用户定。"
+}
