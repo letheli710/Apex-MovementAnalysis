@@ -487,6 +487,14 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 - 灰盒 4756 面。19 个姿势真实网格没有碰撞；一个关节单独转到限位时手臂会撞身体，这项没过，你看过后通过。Unity 导入：HSD-Unity#64，EditMode 2295 / 2295（基线 2260 / 2260，建模会话报告）；PlayMode 和打包没跑。
 - 模型文件、解包模型和截图不进本仓库。三次实测的运行数据、解包模型和截图进了私有仓库（HSD-RawData#6，还没合并）。
 
+
+### 2026-11-03 – 11-04：基础泰坦完整版（D-96 – D-102）
+
+- 你认可清单和六个默认选择，要求主控只协调。规格：[PLAN.md](tf2/expansion/titan/full/PLAN.md)。TF2 补测：[TF2-GAPS.md](tf2/expansion/titan/full/TF2-GAPS.md)，它改了几处之前的数：腿约 60° 才迈（不是 40°），开机是整个画面分块显现、1.25 s 完成、没有色差和曝光闪，落地只有低头和随机滚转。
+- 会话：titan-base、titan-tf2-gaps、titan-cam、titan-anim、titan-weapon、titan-damage、titan-integrate。代码：HSD-Unity#66（分支 `titan/full` `cc4cbaa`，叠在 #65 上，含 #64 的提交，还没合并）。
+- 集成会话报告 EditMode 2908 / 2908，铁驭移动哈希 741 / 741；`R5MotorV2` 相对基线没有改动（主控核对过）。build 在 `HSD-Build/Titan-Full`，脚本游览跑完，80 张截图看过。
+- **没验证：** 手感和真键鼠（只有脚本输入）、声音好不好听（只测了混音器有输出）、斜坡和台阶上的脚。
+- TF2-GAPS 的运行数据和截图（`runtime/data/20261103_*`、`local/titan-gaps/` 219 MB）还只在本机，没进 HSD-RawData。
 ---
 
 ## 决定总表
@@ -572,6 +580,13 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 | D-91 | 11-02 | 基础泰坦的结构 | 按实测反推重做（v2）。**TF2 中型**：髋 2.80、膝 1.40、肩 4.2–4.8、顶 5.92、蹲时骨盆 1.82。**v2**：2.85、1.45、4.55、5.88、1.77。方块模型验算：TF2 动画 784 帧 772 帧无碰撞（1.5 % 有）。没选：继续用 713 中模补挂点（**旧模型**：3.60、2.10、5.30、6.25、2.37；腰弯 20° 髋碰躯干底，第一人称炮只露屏幕最右边） | 旧模型改名留在本机 `TF2-Research/expansion/titan/model/_old-713-base-medium/`，没删 | `tf2/expansion/titan/model/v2-design/DESIGN.md` |
 | D-92 | 11-02 | 泰坦腰部转动 | 腰 ±90 为主，骨盆 ±30 只给动作用。TF2 移动时腰扭 −86…88，来自横移时骨盆转向移动方向。旧中模实测腰 85° 只有 1 对零件接触。没选：骨盆 ±30 + 腰 ±55 分担（2 对接触，还要反向补偿腿）；保持 ±35（横移和侧向瞄准的第三人称姿势做不出） | `tf2/expansion/titan/model/v2-design/design.py` 的 `LIMITS` | `tf2/expansion/titan/pose/TITAN-POSE-CAMERA.md` 第 6 节 |
 | D-93 | 11-03 | 泰坦模型怎么进 Unity | 单独 PR，基于 `main`，只加资源和测试，游戏还不用它；1 Unity 单位 = 1 m，FBX 不缩放。没选：叠在战斗 PR #58–#63 上（导入不依赖它们，到 T2 开枪时再接） | `HSD-Unity/Assets/HSD/Titan/` | HSD-Unity#64 |
+| D-96 | 11-03 | 泰坦完整版的范围和基线 | 中型底盘、灰盒模型、自动连射炮；基于 `combat/wp4-reload-swap`。没选：基于 `main` 或 `titan/v2-import`（只有模型，没有战斗和手感代码，武器要重写一遍，也会和未合并的战斗线分叉）。不做电池、处决、牛仔骑乘、7 台专属技能、自动泰坦、中模 | 轻、重型只留参数 | [PLAN.md](tf2/expansion/titan/full/PLAN.md)，HSD-Unity#66 |
+| D-97 | 11-03 | 泰坦的跳 | 做落下和落地，加推进器小跳 `[design]`：约 50 u（274 u/s），冷却 1 s，默认开。没选：完全不能跳（TF2 泰坦 jump 0，文件 + T0 实测），因为你要弹跳的表现；关掉开关就是这个方案 | `TitanChassis.hopEnabled` | PLAN 决定 1 |
+| D-98 | 11-03 | 泰坦身体动画 | 程序生成：脚 IK + 关键姿势 + 弹簧，模拟不读动画。骨盆高度由腿长决定（约 20° 膝），走路脚滑 1.9 m / 37.6 m（合成跑分）。没选：AnimationClip（模型没有骨架蒙皮，步幅无法跟速度绑定）；按 TF2 的 15.5 u 起伏写死（膝到 90°，脚滑 7.6 m / 37.6 m）；登场后跪着等（TF2 6.5 s 不起，你要起身） | `sim.animator` 换回 `TitanPlaceholderAnimator` | `Titan/Animation/README.md` |
+| D-99 | 11-03 | 泰坦第一人称的炮和舱框 | 单独相机（层 29，FOV 固定 75），再按实测加晃动：TF2 落地 8.8° 时舱框只动 8 px。上下机、近战、弹射的镜头用少量关键帧加单调三次插值。没选：炮留在世界相机（贴墙穿墙，7° 受击相对画面移动约 76 px）；把 TF2 日志逐帧放进游戏（等于搬动画，只进测试对比表）。FOV 75 暂按 4:3 水平（Unity 垂直 59.9°），还没和 TF2 画面对比 | `TitanCockpitView` 的 `RigLayer`；`TitanCamera.SourceFov` | `Titan/Camera/README.md` |
+| D-100 | 11-03 | 泰坦炮后坐 | R5 弹簧规律 + 设计值 `[design]`：画面 1 发 −0.43°，12 发 −2.06°，回落到 10 % 0.29 s，过冲 0.13°。没选：XO-16 原值（12 发 −0.10°，看不出来，留开关）；Ronin 量级（一发约 −7°，12 发/s 没法瞄） | `TitanWeaponOptions.recoil` | HSD-Unity `Docs/titan-weapon/TITAN-WEAPON.md` |
+| D-101 | 11-03 | 泰坦炮换弹 | 总长 2.46 s `[meas]`；R5 三个时刻：加弹 1.565 s、解锁 2.069 s；解锁后开枪能切掉 `[design]`。动作非线性：前臂最快 20 % 时间走 70 % 的路。抬肘、开炮尾、左爪拿弹鼓是我们的设计。没选：TF2 规则（Monarch 1.06 s 按开火无效，到 2.47 s 结束），留开关 | `TitanWeaponOptions.fireCutsReload` | TITAN-WEAPON.md 第 3、4 节 |
+| D-102 | 11-03 – 11-04 | 泰坦濒死和爆炸 | 只有濒死能三连按 X 弹射，濒死时 X 不下机；濒死流完强制弹出，铁驭活着 `[design]`；爆炸后身体留在火里倒下，6 s 后消失。没选：任何时候都能弹射（TF2，要改基线的单按下机）；濒死流完铁驭同死（TF2，驾驶时战斗层是停的，没有死亡和重生流程）；爆炸时立刻藏身体（死亡动画一次都看不到）。代价：炸毁时身体和躯干碎块重复，见 HSD-Unity#66 已知问题 | `TitanSim.disembarkLocked`；`TitanDamageModule.Finish`、`DeadLinger` | `Titan/Damage/README.md`、`Titan/Integration/README.md` |
 
 **D-29 → D-31（C-2 为什么推翻）**：第一次决定时以为 Unity 的 102.5 ms 窗口已经盖住了 R5 的减量段，所以"简化 = 不改代码"。后来按 Unity 自己的翻越时钟重排（Unity 的翻越比 R5 长约 25 ms），发现减量段其实在窗口外面，原来的 Reference 在这段是"切到台面"，并不是"给完整 460"。你随后要求继续做 C-2 并合并。细节见 `research/feel/FEEL.md` §6.4 和 `Climb/README.md`。
 
@@ -616,7 +631,7 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 - **TF2 二段跳的去向**：〔10-30 定了：整理成可复用的包，不绑成道具，见 D-69〕
 - **泰坦清单**：`TF2-Research/expansion/TITAN-LIST.md` 的抉择列；T0 做完，7 台的详细数据在 `titan/titans/`，你从中选 3 台。
 - 暂缓清单里的 E1–E3 见 [DEFERRED-DESIGN-TODO.md](DEFERRED-DESIGN-TODO.md)。
-- **泰坦护盾的来源**：TF2 主要靠电池回，D-90 不做电池，要另定。到做血量和战斗（T2）时定。
+- **泰坦护盾的来源**：TF2 主要靠电池回，D-90 不做电池，要另定。〔11-04 HSD-Unity#66 先占位：脱战 8 s 后开始回，6 s 回满，新泰坦满护盾 `[placeholder]`，还等你定〕
 - **牛仔骑乘**：拆电池不要（D-90），骑乘本身你没明说。
 - **v2 的概念图和三视图**：还没按新比例重出。现在只有结构图和灰盒。
 - ~~**泰坦实测原始数据**~~：11-03 存进 HSD-RawData#6（245 个文件，430.9 MiB）。
