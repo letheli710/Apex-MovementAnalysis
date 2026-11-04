@@ -9,6 +9,8 @@
 | C 换弹、切枪、近战、抬枪 | [C-MOTIONS.md](C-MOTIONS.md) |
 | D 射速、伤害、弹道和其他 | [D-EXTENSIONS.md](D-EXTENSIONS.md) |
 
+基瞄（11-04）在 [iron-sights/IRON-SIGHTS.md](iron-sights/IRON-SIGHTS.md)：每把枪的基瞄规格，并**改正了 `D-VIEWMODEL` 的开镜枪口（14 把枪）和枪模 FOV**。
+
 之前的后坐、开镜在 [RECOIL-VIEW.md](../RECOIL-VIEW.md)、[ADS-CURVES.md](../ADS-CURVES.md)。
 
 **想直接看结果**：[report/README.md](report/README.md) 按问题整理了全部数据，分 8 卷。
