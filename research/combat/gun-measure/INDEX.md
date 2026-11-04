@@ -11,6 +11,8 @@
 
 之前的后坐、开镜在 [RECOIL-VIEW.md](../RECOIL-VIEW.md)、[ADS-CURVES.md](../ADS-CURVES.md)。
 
+**想直接看结果**：[report/README.md](report/README.md) 按问题整理了全部数据，分 8 卷。
+
 **环境**：本地混合构建，S21 客户端 + S3 dedi。原始记录在私有仓库 `letheli710/HSD-RawData` 的 `apex/research/combat/gun-measure/`。
 
 ## 标记

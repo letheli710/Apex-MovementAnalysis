@@ -1,0 +1,558 @@
+hp_r301_stand_1|rspn101|wait 3.5|6
+hp_r301_stand_2|rspn101|wait 3.5|6
+hp_r301_walk_1|rspn101|down forward; wait 5; up forward; wait 1.5|9
+hp_r301_walk_2|rspn101|down forward; wait 5; up forward; wait 1.5|9
+hp_r301_sprint_1|rspn101|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_r301_sprint_2|rspn101|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_r301_crouch_1|rspn101|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_r301_crouch_2|rspn101|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_r301_crouchwalk_1|rspn101|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_r301_crouchwalk_2|rspn101|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_r301_slide_1|rspn101|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_r301_slide_2|rspn101|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_r301_slidehold_1|rspn101|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_r301_slidehold_2|rspn101|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_r301_jump_1|rspn101|wait 1.0; tap jump; wait 2.5|6
+hp_r301_jump_2|rspn101|wait 1.0; tap jump; wait 2.5|6
+hp_r301_drop_1|rspn101|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_r301_drop_2|rspn101|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_r99_stand_1|r97|wait 3.5|6
+hp_r99_stand_2|r97|wait 3.5|6
+hp_r99_walk_1|r97|down forward; wait 5; up forward; wait 1.5|9
+hp_r99_walk_2|r97|down forward; wait 5; up forward; wait 1.5|9
+hp_r99_sprint_1|r97|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_r99_sprint_2|r97|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_r99_crouch_1|r97|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_r99_crouch_2|r97|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_r99_crouchwalk_1|r97|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_r99_crouchwalk_2|r97|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_r99_slide_1|r97|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_r99_slide_2|r97|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_r99_slidehold_1|r97|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_r99_slidehold_2|r97|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_r99_jump_1|r97|wait 1.0; tap jump; wait 2.5|6
+hp_r99_jump_2|r97|wait 1.0; tap jump; wait 2.5|6
+hp_r99_drop_1|r97|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_r99_drop_2|r97|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_car_stand_1|car|wait 3.5|6
+hp_car_stand_2|car|wait 3.5|6
+hp_car_walk_1|car|down forward; wait 5; up forward; wait 1.5|9
+hp_car_walk_2|car|down forward; wait 5; up forward; wait 1.5|9
+hp_car_sprint_1|car|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_car_sprint_2|car|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_car_crouch_1|car|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_car_crouch_2|car|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_car_crouchwalk_1|car|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_car_crouchwalk_2|car|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_car_slide_1|car|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_car_slide_2|car|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_car_slidehold_1|car|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_car_slidehold_2|car|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_car_jump_1|car|wait 1.0; tap jump; wait 2.5|6
+hp_car_jump_2|car|wait 1.0; tap jump; wait 2.5|6
+hp_car_drop_1|car|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_car_drop_2|car|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_flatline_stand_1|vinson|wait 3.5|6
+hp_flatline_stand_2|vinson|wait 3.5|6
+hp_flatline_walk_1|vinson|down forward; wait 5; up forward; wait 1.5|9
+hp_flatline_walk_2|vinson|down forward; wait 5; up forward; wait 1.5|9
+hp_flatline_sprint_1|vinson|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_flatline_sprint_2|vinson|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_flatline_crouch_1|vinson|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_flatline_crouch_2|vinson|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_flatline_crouchwalk_1|vinson|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_flatline_crouchwalk_2|vinson|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_flatline_slide_1|vinson|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_flatline_slide_2|vinson|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_flatline_slidehold_1|vinson|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_flatline_slidehold_2|vinson|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_flatline_jump_1|vinson|wait 1.0; tap jump; wait 2.5|6
+hp_flatline_jump_2|vinson|wait 1.0; tap jump; wait 2.5|6
+hp_flatline_drop_1|vinson|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_flatline_drop_2|vinson|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_spitfire_stand_1|lmg|wait 3.5|6
+hp_spitfire_stand_2|lmg|wait 3.5|6
+hp_spitfire_walk_1|lmg|down forward; wait 5; up forward; wait 1.5|9
+hp_spitfire_walk_2|lmg|down forward; wait 5; up forward; wait 1.5|9
+hp_spitfire_sprint_1|lmg|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_spitfire_sprint_2|lmg|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_spitfire_crouch_1|lmg|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_spitfire_crouch_2|lmg|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_spitfire_crouchwalk_1|lmg|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_spitfire_crouchwalk_2|lmg|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_spitfire_slide_1|lmg|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_spitfire_slide_2|lmg|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_spitfire_slidehold_1|lmg|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_spitfire_slidehold_2|lmg|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_spitfire_jump_1|lmg|wait 1.0; tap jump; wait 2.5|6
+hp_spitfire_jump_2|lmg|wait 1.0; tap jump; wait 2.5|6
+hp_spitfire_drop_1|lmg|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_spitfire_drop_2|lmg|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_alternator_stand_1|alternator_smg|wait 3.5|6
+hp_alternator_stand_2|alternator_smg|wait 3.5|6
+hp_alternator_walk_1|alternator_smg|down forward; wait 5; up forward; wait 1.5|9
+hp_alternator_walk_2|alternator_smg|down forward; wait 5; up forward; wait 1.5|9
+hp_alternator_sprint_1|alternator_smg|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_alternator_sprint_2|alternator_smg|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_alternator_crouch_1|alternator_smg|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_alternator_crouch_2|alternator_smg|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_alternator_crouchwalk_1|alternator_smg|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_alternator_crouchwalk_2|alternator_smg|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_alternator_slide_1|alternator_smg|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_alternator_slide_2|alternator_smg|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_alternator_slidehold_1|alternator_smg|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_alternator_slidehold_2|alternator_smg|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_alternator_jump_1|alternator_smg|wait 1.0; tap jump; wait 2.5|6
+hp_alternator_jump_2|alternator_smg|wait 1.0; tap jump; wait 2.5|6
+hp_alternator_drop_1|alternator_smg|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_alternator_drop_2|alternator_smg|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_re45_stand_1|autopistol|wait 3.5|6
+hp_re45_stand_2|autopistol|wait 3.5|6
+hp_re45_walk_1|autopistol|down forward; wait 5; up forward; wait 1.5|9
+hp_re45_walk_2|autopistol|down forward; wait 5; up forward; wait 1.5|9
+hp_re45_sprint_1|autopistol|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_re45_sprint_2|autopistol|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_re45_crouch_1|autopistol|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_re45_crouch_2|autopistol|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_re45_crouchwalk_1|autopistol|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_re45_crouchwalk_2|autopistol|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_re45_slide_1|autopistol|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_re45_slide_2|autopistol|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_re45_slidehold_1|autopistol|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_re45_slidehold_2|autopistol|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_re45_jump_1|autopistol|wait 1.0; tap jump; wait 2.5|6
+hp_re45_jump_2|autopistol|wait 1.0; tap jump; wait 2.5|6
+hp_re45_drop_1|autopistol|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_re45_drop_2|autopistol|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_volt_stand_1|volt_smg|wait 3.5|6
+hp_volt_stand_2|volt_smg|wait 3.5|6
+hp_volt_walk_1|volt_smg|down forward; wait 5; up forward; wait 1.5|9
+hp_volt_walk_2|volt_smg|down forward; wait 5; up forward; wait 1.5|9
+hp_volt_sprint_1|volt_smg|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_volt_sprint_2|volt_smg|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_volt_crouch_1|volt_smg|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_volt_crouch_2|volt_smg|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_volt_crouchwalk_1|volt_smg|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_volt_crouchwalk_2|volt_smg|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_volt_slide_1|volt_smg|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_volt_slide_2|volt_smg|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_volt_slidehold_1|volt_smg|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_volt_slidehold_2|volt_smg|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_volt_jump_1|volt_smg|wait 1.0; tap jump; wait 2.5|6
+hp_volt_jump_2|volt_smg|wait 1.0; tap jump; wait 2.5|6
+hp_volt_drop_1|volt_smg|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_volt_drop_2|volt_smg|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_p2020_stand_1|semipistol|wait 3.5|6
+hp_p2020_stand_2|semipistol|wait 3.5|6
+hp_p2020_walk_1|semipistol|down forward; wait 5; up forward; wait 1.5|9
+hp_p2020_walk_2|semipistol|down forward; wait 5; up forward; wait 1.5|9
+hp_p2020_sprint_1|semipistol|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_p2020_sprint_2|semipistol|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_p2020_crouch_1|semipistol|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_p2020_crouch_2|semipistol|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_p2020_crouchwalk_1|semipistol|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_p2020_crouchwalk_2|semipistol|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_p2020_slide_1|semipistol|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_p2020_slide_2|semipistol|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_p2020_slidehold_1|semipistol|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_p2020_slidehold_2|semipistol|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_p2020_jump_1|semipistol|wait 1.0; tap jump; wait 2.5|6
+hp_p2020_jump_2|semipistol|wait 1.0; tap jump; wait 2.5|6
+hp_p2020_drop_1|semipistol|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_p2020_drop_2|semipistol|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_hemlok_stand_1|hemlok|wait 3.5|6
+hp_hemlok_stand_2|hemlok|wait 3.5|6
+hp_hemlok_walk_1|hemlok|down forward; wait 5; up forward; wait 1.5|9
+hp_hemlok_walk_2|hemlok|down forward; wait 5; up forward; wait 1.5|9
+hp_hemlok_sprint_1|hemlok|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_hemlok_sprint_2|hemlok|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_hemlok_crouch_1|hemlok|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_hemlok_crouch_2|hemlok|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_hemlok_crouchwalk_1|hemlok|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_hemlok_crouchwalk_2|hemlok|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_hemlok_slide_1|hemlok|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_hemlok_slide_2|hemlok|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_hemlok_slidehold_1|hemlok|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_hemlok_slidehold_2|hemlok|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_hemlok_jump_1|hemlok|wait 1.0; tap jump; wait 2.5|6
+hp_hemlok_jump_2|hemlok|wait 1.0; tap jump; wait 2.5|6
+hp_hemlok_drop_1|hemlok|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_hemlok_drop_2|hemlok|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_prowler_stand_1|pdw|wait 3.5|6
+hp_prowler_stand_2|pdw|wait 3.5|6
+hp_prowler_walk_1|pdw|down forward; wait 5; up forward; wait 1.5|9
+hp_prowler_walk_2|pdw|down forward; wait 5; up forward; wait 1.5|9
+hp_prowler_sprint_1|pdw|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_prowler_sprint_2|pdw|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_prowler_crouch_1|pdw|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_prowler_crouch_2|pdw|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_prowler_crouchwalk_1|pdw|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_prowler_crouchwalk_2|pdw|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_prowler_slide_1|pdw|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_prowler_slide_2|pdw|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_prowler_slidehold_1|pdw|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_prowler_slidehold_2|pdw|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_prowler_jump_1|pdw|wait 1.0; tap jump; wait 2.5|6
+hp_prowler_jump_2|pdw|wait 1.0; tap jump; wait 2.5|6
+hp_prowler_drop_1|pdw|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_prowler_drop_2|pdw|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_nemesis_stand_1|nemesis|wait 3.5|6
+hp_nemesis_stand_2|nemesis|wait 3.5|6
+hp_nemesis_walk_1|nemesis|down forward; wait 5; up forward; wait 1.5|9
+hp_nemesis_walk_2|nemesis|down forward; wait 5; up forward; wait 1.5|9
+hp_nemesis_sprint_1|nemesis|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_nemesis_sprint_2|nemesis|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_nemesis_crouch_1|nemesis|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_nemesis_crouch_2|nemesis|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_nemesis_crouchwalk_1|nemesis|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_nemesis_crouchwalk_2|nemesis|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_nemesis_slide_1|nemesis|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_nemesis_slide_2|nemesis|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_nemesis_slidehold_1|nemesis|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_nemesis_slidehold_2|nemesis|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_nemesis_jump_1|nemesis|wait 1.0; tap jump; wait 2.5|6
+hp_nemesis_jump_2|nemesis|wait 1.0; tap jump; wait 2.5|6
+hp_nemesis_drop_1|nemesis|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_nemesis_drop_2|nemesis|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_ehemlok_stand_1|auto_hemlok|wait 3.5|6
+hp_ehemlok_stand_2|auto_hemlok|wait 3.5|6
+hp_ehemlok_walk_1|auto_hemlok|down forward; wait 5; up forward; wait 1.5|9
+hp_ehemlok_walk_2|auto_hemlok|down forward; wait 5; up forward; wait 1.5|9
+hp_ehemlok_sprint_1|auto_hemlok|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_ehemlok_sprint_2|auto_hemlok|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_ehemlok_crouch_1|auto_hemlok|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_ehemlok_crouch_2|auto_hemlok|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_ehemlok_crouchwalk_1|auto_hemlok|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_ehemlok_crouchwalk_2|auto_hemlok|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_ehemlok_slide_1|auto_hemlok|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_ehemlok_slide_2|auto_hemlok|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_ehemlok_slidehold_1|auto_hemlok|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_ehemlok_slidehold_2|auto_hemlok|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_ehemlok_jump_1|auto_hemlok|wait 1.0; tap jump; wait 2.5|6
+hp_ehemlok_jump_2|auto_hemlok|wait 1.0; tap jump; wait 2.5|6
+hp_ehemlok_drop_1|auto_hemlok|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_ehemlok_drop_2|auto_hemlok|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_eva8_stand_1|shotgun|wait 3.5|6
+hp_eva8_stand_2|shotgun|wait 3.5|6
+hp_eva8_walk_1|shotgun|down forward; wait 5; up forward; wait 1.5|9
+hp_eva8_walk_2|shotgun|down forward; wait 5; up forward; wait 1.5|9
+hp_eva8_sprint_1|shotgun|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_eva8_sprint_2|shotgun|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_eva8_crouch_1|shotgun|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_eva8_crouch_2|shotgun|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_eva8_crouchwalk_1|shotgun|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_eva8_crouchwalk_2|shotgun|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_eva8_slide_1|shotgun|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_eva8_slide_2|shotgun|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_eva8_slidehold_1|shotgun|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_eva8_slidehold_2|shotgun|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_eva8_jump_1|shotgun|wait 1.0; tap jump; wait 2.5|6
+hp_eva8_jump_2|shotgun|wait 1.0; tap jump; wait 2.5|6
+hp_eva8_drop_1|shotgun|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_eva8_drop_2|shotgun|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_mastiff_stand_1|mastiff|wait 3.5|6
+hp_mastiff_stand_2|mastiff|wait 3.5|6
+hp_mastiff_walk_1|mastiff|down forward; wait 5; up forward; wait 1.5|9
+hp_mastiff_walk_2|mastiff|down forward; wait 5; up forward; wait 1.5|9
+hp_mastiff_sprint_1|mastiff|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_mastiff_sprint_2|mastiff|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_mastiff_crouch_1|mastiff|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_mastiff_crouch_2|mastiff|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_mastiff_crouchwalk_1|mastiff|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_mastiff_crouchwalk_2|mastiff|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_mastiff_slide_1|mastiff|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_mastiff_slide_2|mastiff|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_mastiff_slidehold_1|mastiff|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_mastiff_slidehold_2|mastiff|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_mastiff_jump_1|mastiff|wait 1.0; tap jump; wait 2.5|6
+hp_mastiff_jump_2|mastiff|wait 1.0; tap jump; wait 2.5|6
+hp_mastiff_drop_1|mastiff|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_mastiff_drop_2|mastiff|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_peacekeeper_stand_1|energy_shotgun|wait 3.5|6
+hp_peacekeeper_stand_2|energy_shotgun|wait 3.5|6
+hp_peacekeeper_walk_1|energy_shotgun|down forward; wait 5; up forward; wait 1.5|9
+hp_peacekeeper_walk_2|energy_shotgun|down forward; wait 5; up forward; wait 1.5|9
+hp_peacekeeper_sprint_1|energy_shotgun|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_peacekeeper_sprint_2|energy_shotgun|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_peacekeeper_crouch_1|energy_shotgun|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_peacekeeper_crouch_2|energy_shotgun|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_peacekeeper_crouchwalk_1|energy_shotgun|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_peacekeeper_crouchwalk_2|energy_shotgun|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_peacekeeper_slide_1|energy_shotgun|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_peacekeeper_slide_2|energy_shotgun|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_peacekeeper_slidehold_1|energy_shotgun|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_peacekeeper_slidehold_2|energy_shotgun|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_peacekeeper_jump_1|energy_shotgun|wait 1.0; tap jump; wait 2.5|6
+hp_peacekeeper_jump_2|energy_shotgun|wait 1.0; tap jump; wait 2.5|6
+hp_peacekeeper_drop_1|energy_shotgun|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_peacekeeper_drop_2|energy_shotgun|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_mozambique_stand_1|shotgun_pistol|wait 3.5|6
+hp_mozambique_stand_2|shotgun_pistol|wait 3.5|6
+hp_mozambique_walk_1|shotgun_pistol|down forward; wait 5; up forward; wait 1.5|9
+hp_mozambique_walk_2|shotgun_pistol|down forward; wait 5; up forward; wait 1.5|9
+hp_mozambique_sprint_1|shotgun_pistol|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_mozambique_sprint_2|shotgun_pistol|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_mozambique_crouch_1|shotgun_pistol|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_mozambique_crouch_2|shotgun_pistol|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_mozambique_crouchwalk_1|shotgun_pistol|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_mozambique_crouchwalk_2|shotgun_pistol|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_mozambique_slide_1|shotgun_pistol|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_mozambique_slide_2|shotgun_pistol|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_mozambique_slidehold_1|shotgun_pistol|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_mozambique_slidehold_2|shotgun_pistol|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_mozambique_jump_1|shotgun_pistol|wait 1.0; tap jump; wait 2.5|6
+hp_mozambique_jump_2|shotgun_pistol|wait 1.0; tap jump; wait 2.5|6
+hp_mozambique_drop_1|shotgun_pistol|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_mozambique_drop_2|shotgun_pistol|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_tripletake_stand_1|doubletake|wait 3.5|6
+hp_tripletake_stand_2|doubletake|wait 3.5|6
+hp_tripletake_walk_1|doubletake|down forward; wait 5; up forward; wait 1.5|9
+hp_tripletake_walk_2|doubletake|down forward; wait 5; up forward; wait 1.5|9
+hp_tripletake_sprint_1|doubletake|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_tripletake_sprint_2|doubletake|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_tripletake_crouch_1|doubletake|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_tripletake_crouch_2|doubletake|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_tripletake_crouchwalk_1|doubletake|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_tripletake_crouchwalk_2|doubletake|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_tripletake_slide_1|doubletake|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_tripletake_slide_2|doubletake|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_tripletake_slidehold_1|doubletake|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_tripletake_slidehold_2|doubletake|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_tripletake_jump_1|doubletake|wait 1.0; tap jump; wait 2.5|6
+hp_tripletake_jump_2|doubletake|wait 1.0; tap jump; wait 2.5|6
+hp_tripletake_drop_1|doubletake|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_tripletake_drop_2|doubletake|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_kraber_stand_1|sniper|wait 3.5|6
+hp_kraber_stand_2|sniper|wait 3.5|6
+hp_kraber_walk_1|sniper|down forward; wait 5; up forward; wait 1.5|9
+hp_kraber_walk_2|sniper|down forward; wait 5; up forward; wait 1.5|9
+hp_kraber_sprint_1|sniper|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_kraber_sprint_2|sniper|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_kraber_crouch_1|sniper|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_kraber_crouch_2|sniper|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_kraber_crouchwalk_1|sniper|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_kraber_crouchwalk_2|sniper|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_kraber_slide_1|sniper|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_kraber_slide_2|sniper|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_kraber_slidehold_1|sniper|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_kraber_slidehold_2|sniper|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_kraber_jump_1|sniper|wait 1.0; tap jump; wait 2.5|6
+hp_kraber_jump_2|sniper|wait 1.0; tap jump; wait 2.5|6
+hp_kraber_drop_1|sniper|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_kraber_drop_2|sniper|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_longbow_stand_1|dmr|wait 3.5|6
+hp_longbow_stand_2|dmr|wait 3.5|6
+hp_longbow_walk_1|dmr|down forward; wait 5; up forward; wait 1.5|9
+hp_longbow_walk_2|dmr|down forward; wait 5; up forward; wait 1.5|9
+hp_longbow_sprint_1|dmr|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_longbow_sprint_2|dmr|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_longbow_crouch_1|dmr|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_longbow_crouch_2|dmr|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_longbow_crouchwalk_1|dmr|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_longbow_crouchwalk_2|dmr|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_longbow_slide_1|dmr|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_longbow_slide_2|dmr|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_longbow_slidehold_1|dmr|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_longbow_slidehold_2|dmr|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_longbow_jump_1|dmr|wait 1.0; tap jump; wait 2.5|6
+hp_longbow_jump_2|dmr|wait 1.0; tap jump; wait 2.5|6
+hp_longbow_drop_1|dmr|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_longbow_drop_2|dmr|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_sentinel_stand_1|sentinel|wait 3.5|6
+hp_sentinel_stand_2|sentinel|wait 3.5|6
+hp_sentinel_walk_1|sentinel|down forward; wait 5; up forward; wait 1.5|9
+hp_sentinel_walk_2|sentinel|down forward; wait 5; up forward; wait 1.5|9
+hp_sentinel_sprint_1|sentinel|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_sentinel_sprint_2|sentinel|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_sentinel_crouch_1|sentinel|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_sentinel_crouch_2|sentinel|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_sentinel_crouchwalk_1|sentinel|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_sentinel_crouchwalk_2|sentinel|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_sentinel_slide_1|sentinel|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_sentinel_slide_2|sentinel|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_sentinel_slidehold_1|sentinel|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_sentinel_slidehold_2|sentinel|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_sentinel_jump_1|sentinel|wait 1.0; tap jump; wait 2.5|6
+hp_sentinel_jump_2|sentinel|wait 1.0; tap jump; wait 2.5|6
+hp_sentinel_drop_1|sentinel|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_sentinel_drop_2|sentinel|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_g7_stand_1|g2|wait 3.5|6
+hp_g7_stand_2|g2|wait 3.5|6
+hp_g7_walk_1|g2|down forward; wait 5; up forward; wait 1.5|9
+hp_g7_walk_2|g2|down forward; wait 5; up forward; wait 1.5|9
+hp_g7_sprint_1|g2|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_g7_sprint_2|g2|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_g7_crouch_1|g2|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_g7_crouch_2|g2|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_g7_crouchwalk_1|g2|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_g7_crouchwalk_2|g2|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_g7_slide_1|g2|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_g7_slide_2|g2|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_g7_slidehold_1|g2|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_g7_slidehold_2|g2|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_g7_jump_1|g2|wait 1.0; tap jump; wait 2.5|6
+hp_g7_jump_2|g2|wait 1.0; tap jump; wait 2.5|6
+hp_g7_drop_1|g2|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_g7_drop_2|g2|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_wingman_stand_1|wingman|wait 3.5|6
+hp_wingman_stand_2|wingman|wait 3.5|6
+hp_wingman_walk_1|wingman|down forward; wait 5; up forward; wait 1.5|9
+hp_wingman_walk_2|wingman|down forward; wait 5; up forward; wait 1.5|9
+hp_wingman_sprint_1|wingman|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_wingman_sprint_2|wingman|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_wingman_crouch_1|wingman|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_wingman_crouch_2|wingman|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_wingman_crouchwalk_1|wingman|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_wingman_crouchwalk_2|wingman|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_wingman_slide_1|wingman|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_wingman_slide_2|wingman|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_wingman_slidehold_1|wingman|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_wingman_slidehold_2|wingman|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_wingman_jump_1|wingman|wait 1.0; tap jump; wait 2.5|6
+hp_wingman_jump_2|wingman|wait 1.0; tap jump; wait 2.5|6
+hp_wingman_drop_1|wingman|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_wingman_drop_2|wingman|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_chargerifle_stand_1|defender|wait 3.5|6
+hp_chargerifle_stand_2|defender|wait 3.5|6
+hp_chargerifle_walk_1|defender|down forward; wait 5; up forward; wait 1.5|9
+hp_chargerifle_walk_2|defender|down forward; wait 5; up forward; wait 1.5|9
+hp_chargerifle_sprint_1|defender|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_chargerifle_sprint_2|defender|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_chargerifle_crouch_1|defender|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_chargerifle_crouch_2|defender|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_chargerifle_crouchwalk_1|defender|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_chargerifle_crouchwalk_2|defender|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_chargerifle_slide_1|defender|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_chargerifle_slide_2|defender|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_chargerifle_slidehold_1|defender|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_chargerifle_slidehold_2|defender|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_chargerifle_jump_1|defender|wait 1.0; tap jump; wait 2.5|6
+hp_chargerifle_jump_2|defender|wait 1.0; tap jump; wait 2.5|6
+hp_chargerifle_drop_1|defender|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_chargerifle_drop_2|defender|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_havoc_stand_1|energy_ar|wait 3.5|6
+hp_havoc_stand_2|energy_ar|wait 3.5|6
+hp_havoc_walk_1|energy_ar|down forward; wait 5; up forward; wait 1.5|9
+hp_havoc_walk_2|energy_ar|down forward; wait 5; up forward; wait 1.5|9
+hp_havoc_sprint_1|energy_ar|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_havoc_sprint_2|energy_ar|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_havoc_crouch_1|energy_ar|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_havoc_crouch_2|energy_ar|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_havoc_crouchwalk_1|energy_ar|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_havoc_crouchwalk_2|energy_ar|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_havoc_slide_1|energy_ar|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_havoc_slide_2|energy_ar|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_havoc_slidehold_1|energy_ar|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_havoc_slidehold_2|energy_ar|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_havoc_jump_1|energy_ar|wait 1.0; tap jump; wait 2.5|6
+hp_havoc_jump_2|energy_ar|wait 1.0; tap jump; wait 2.5|6
+hp_havoc_drop_1|energy_ar|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_havoc_drop_2|energy_ar|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_devotion_stand_1|esaw|wait 3.5|6
+hp_devotion_stand_2|esaw|wait 3.5|6
+hp_devotion_walk_1|esaw|down forward; wait 5; up forward; wait 1.5|9
+hp_devotion_walk_2|esaw|down forward; wait 5; up forward; wait 1.5|9
+hp_devotion_sprint_1|esaw|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_devotion_sprint_2|esaw|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_devotion_crouch_1|esaw|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_devotion_crouch_2|esaw|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_devotion_crouchwalk_1|esaw|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_devotion_crouchwalk_2|esaw|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_devotion_slide_1|esaw|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_devotion_slide_2|esaw|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_devotion_slidehold_1|esaw|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_devotion_slidehold_2|esaw|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_devotion_jump_1|esaw|wait 1.0; tap jump; wait 2.5|6
+hp_devotion_jump_2|esaw|wait 1.0; tap jump; wait 2.5|6
+hp_devotion_drop_1|esaw|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_devotion_drop_2|esaw|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_rampage_stand_1|dragon_lmg|wait 3.5|6
+hp_rampage_stand_2|dragon_lmg|wait 3.5|6
+hp_rampage_walk_1|dragon_lmg|down forward; wait 5; up forward; wait 1.5|9
+hp_rampage_walk_2|dragon_lmg|down forward; wait 5; up forward; wait 1.5|9
+hp_rampage_sprint_1|dragon_lmg|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_rampage_sprint_2|dragon_lmg|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_rampage_crouch_1|dragon_lmg|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_rampage_crouch_2|dragon_lmg|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_rampage_crouchwalk_1|dragon_lmg|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_rampage_crouchwalk_2|dragon_lmg|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_rampage_slide_1|dragon_lmg|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_rampage_slide_2|dragon_lmg|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_rampage_slidehold_1|dragon_lmg|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_rampage_slidehold_2|dragon_lmg|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_rampage_jump_1|dragon_lmg|wait 1.0; tap jump; wait 2.5|6
+hp_rampage_jump_2|dragon_lmg|wait 1.0; tap jump; wait 2.5|6
+hp_rampage_drop_1|dragon_lmg|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_rampage_drop_2|dragon_lmg|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_lstar_stand_1|lstar|wait 3.5|6
+hp_lstar_stand_2|lstar|wait 3.5|6
+hp_lstar_walk_1|lstar|down forward; wait 5; up forward; wait 1.5|9
+hp_lstar_walk_2|lstar|down forward; wait 5; up forward; wait 1.5|9
+hp_lstar_sprint_1|lstar|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_lstar_sprint_2|lstar|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_lstar_crouch_1|lstar|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_lstar_crouch_2|lstar|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_lstar_crouchwalk_1|lstar|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_lstar_crouchwalk_2|lstar|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_lstar_slide_1|lstar|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_lstar_slide_2|lstar|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_lstar_slidehold_1|lstar|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_lstar_slidehold_2|lstar|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_lstar_jump_1|lstar|wait 1.0; tap jump; wait 2.5|6
+hp_lstar_jump_2|lstar|wait 1.0; tap jump; wait 2.5|6
+hp_lstar_drop_1|lstar|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_lstar_drop_2|lstar|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_r3030_stand_1|3030|wait 3.5|6
+hp_r3030_stand_2|3030|wait 3.5|6
+hp_r3030_walk_1|3030|down forward; wait 5; up forward; wait 1.5|9
+hp_r3030_walk_2|3030|down forward; wait 5; up forward; wait 1.5|9
+hp_r3030_sprint_1|3030|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_r3030_sprint_2|3030|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_r3030_crouch_1|3030|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_r3030_crouch_2|3030|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_r3030_crouchwalk_1|3030|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_r3030_crouchwalk_2|3030|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_r3030_slide_1|3030|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_r3030_slide_2|3030|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_r3030_slidehold_1|3030|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_r3030_slidehold_2|3030|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_r3030_jump_1|3030|wait 1.0; tap jump; wait 2.5|6
+hp_r3030_jump_2|3030|wait 1.0; tap jump; wait 2.5|6
+hp_r3030_drop_1|3030|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_r3030_drop_2|3030|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_bocek_stand_1|bow|wait 3.5|6
+hp_bocek_stand_2|bow|wait 3.5|6
+hp_bocek_walk_1|bow|down forward; wait 5; up forward; wait 1.5|9
+hp_bocek_walk_2|bow|down forward; wait 5; up forward; wait 1.5|9
+hp_bocek_sprint_1|bow|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_bocek_sprint_2|bow|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_bocek_crouch_1|bow|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_bocek_crouch_2|bow|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_bocek_crouchwalk_1|bow|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_bocek_crouchwalk_2|bow|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_bocek_slide_1|bow|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_bocek_slide_2|bow|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_bocek_slidehold_1|bow|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_bocek_slidehold_2|bow|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_bocek_jump_1|bow|wait 1.0; tap jump; wait 2.5|6
+hp_bocek_jump_2|bow|wait 1.0; tap jump; wait 2.5|6
+hp_bocek_drop_1|bow|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_bocek_drop_2|bow|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_sheila_stand_1|mounted_turret_weapon|wait 3.5|6
+hp_sheila_stand_2|mounted_turret_weapon|wait 3.5|6
+hp_sheila_walk_1|mounted_turret_weapon|down forward; wait 5; up forward; wait 1.5|9
+hp_sheila_walk_2|mounted_turret_weapon|down forward; wait 5; up forward; wait 1.5|9
+hp_sheila_sprint_1|mounted_turret_weapon|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_sheila_sprint_2|mounted_turret_weapon|down forward; down speed; wait 4.5; up speed; up forward; wait 1.5|8.5
+hp_sheila_crouch_1|mounted_turret_weapon|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_sheila_crouch_2|mounted_turret_weapon|down duck; wait 3.5; up duck; wait 1.5|7.5
+hp_sheila_crouchwalk_1|mounted_turret_weapon|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_sheila_crouchwalk_2|mounted_turret_weapon|down duck; wait 0.8; down forward; wait 4.5; up forward; up duck; wait 1.5|9.5
+hp_sheila_slide_1|mounted_turret_weapon|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_sheila_slide_2|mounted_turret_weapon|down forward; down speed; wait 1.2; down duck; wait 2.5; up duck; up speed; up forward; wait 1.5|8
+hp_sheila_slidehold_1|mounted_turret_weapon|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_sheila_slidehold_2|mounted_turret_weapon|down forward; down speed; wait 1.2; down duck; sv thread void function() { entity p = GetPlayerArray()[0] ~ float t0 = Time() ~ while ( Time() - t0 < 2.2 ) { if ( !p.IsOnGround() ) { wait 0.1 ~ continue } ~ p.SetVelocity( <380, 0, p.GetVelocity().z> ) ~ wait 0.1 } }() ~ AgentLink_Reply( "h" ); wait 2.4; up duck; up speed; up forward; wait 1.5|8.5
+hp_sheila_jump_1|mounted_turret_weapon|wait 1.0; tap jump; wait 2.5|6
+hp_sheila_jump_2|mounted_turret_weapon|wait 1.0; tap jump; wait 2.5|6
+hp_sheila_drop_1|mounted_turret_weapon|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
+hp_sheila_drop_2|mounted_turret_weapon|wait 0.5; sv entity p = GetPlayerArray()[0] ~ p.SetOrigin( p.GetOrigin() + <0, 0, 250> ) ~ AgentLink_Reply( "d" ); wait 3.5|6.5
