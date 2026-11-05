@@ -72,7 +72,7 @@
 
 | 传奇 | 槽位 | 能力 | 脚本 | 可视化 | 可复用的系统 | 依据 |
 |---|---|---|---|---|---|---|
-| Lifeline | 战术 | D.O.C. Heal Drone | `mp_ability_lifeline_follow_medic` | 无人机飞行姿态（前倾最大 20°、侧倾最大 17°）、治疗绳（10 节点，接上 / 收回各 0.25 s）、瞬移拖尾 | **指派目标**（45 m、50° 锥内的队友，没有就跟自己）；**跟随运动**（目标点在头顶 70 / 蹲下 46，速度 = 距离×3，远时 +40，叠加目标速度×0.5，上限约目标速度 1.6 倍，每帧按 8·dt 逼近）；**断线瞬移**（断视线 >1 s 或绳断就瞬移回来）。回血每秒 8、持续 20 s | `FollowMedic_MoveThread` 第 801–870 行（分叉会话核过）。可能是 SDK 社区重写的服务端代码，要实测 |
+| Lifeline | 战术 | D.O.C. Heal Drone（11-04 标注：本行的跟随运动是旧说法，以 `_shared/D-FOLLOW-MOTION.md` 为准） | `mp_ability_lifeline_follow_medic` | 无人机飞行姿态（前倾最大 20°、侧倾最大 17°）、治疗绳（10 节点，接上 / 收回各 0.25 s）、瞬移拖尾 | **指派目标**（45 m、50° 锥内的队友，没有就跟自己）；**跟随运动**（目标点在头顶 70 / 蹲下 46，速度 = 距离×3，远时 +40，叠加目标速度×0.5，上限约目标速度 1.6 倍，每帧按 8·dt 逼近）；**断线瞬移**（断视线 >1 s 或绳断就瞬移回来）。回血每秒 8、持续 20 s | `FollowMedic_MoveThread` 第 801–870 行（分叉会话核过）。可能是 SDK 社区重写的服务端代码，要实测 |
 | Conduit | 战术 | Radiant Transfer | `mp_ability_conduit_arc_flash` | 光束特效、锁定 HUD | **指派目标**：`TargetingThread`（第 430 行）、`ScoreTarget`、`IsValidTacTarget`，没目标就给自己（`DoSelfCast`）；临时护盾分阶段回复 | 函数名，待读细节 |
 | Revenant | 大招 | Forged Shadows 暗影护甲 | `mp_ability_shadow_form` | 暗影皮肤、包住玩家的护盾壳、受击 / 破碎特效、屏幕调色 | 护盾实体跟随玩家、处理黏附物（`ShadowShield_TrackStickyEnt_Thread`）、击杀回复和计时延长 | 函数名，待读细节 |
 | Bloodhound | 大招 | Beast of the Hunt 狩猎 | `mp_ability_hunt_mode` | 全屏调色（`HuntMode_UpdatePlayerScreenColorCorrection`）、身体特效、敌人高亮 | 跟随玩家的扫描触发器（`SonarTrigger_*`、`TriggerTrackOwner`），击杀延长时间 | 函数名，待读细节 |
