@@ -208,6 +208,224 @@ U-3 里没测到、按保守写的：落地不算换实体（落地的滑铲规�
 | E 按着蹲爬墙 | 照样爬墙翻到顶（h140 / h160 / h200 蹲 164 / 164） | `WallRun_TryStart` 0x140a4e220：按着蹲不爬；h160 / h200 0 / 116，h140 只有空中蹲到底的 13–15 / 50 | 爬墙开始后下一条按着蹲的命令结束（`CLIMB_CROUCH_END`）；空中蹲到底的身体探台面从抬高 16.5 的原点开始：h160 / h200 0 / 116、h140 13 / 48 | `crouchEndsClimb = false` / `-preD72E` |
 | F 翻越第一帧俯仰 | 每一类第一帧 +1.2 … +4.1°（曲线第一点直接加上） | 第一帧 −0.10 … +0.18°（`traversal_viewLerpInDuration` 0.15 s） | 0.15 s SimpleSpline 淡入：第一帧 −0.09 … +0.02°；只动镜头，S27 判定读的曲线不变 | `traversalLerpIn = 0` / `-preD72F` |
 
+### W3 攻击技能：和 R5 的差别（HSD-Unity #54 / #56 / #57，D-82；都没合并）
+
+各批 PR 里的差别表，按批抄进来。**"R5"多数是读脚本，不是实测**；实测过的只有 `move_slow`、毒气对 NPC、黑洞拉力、D.O.C. 轨迹、Ash 命中和减速（W2-RUNTIME）。#55 当时没验证，没列；11-04 第一次对照，表在下面"#55 投射和掩体"。
+
+| 批 | 项 | R5 | HSD | 切回 / 为什么 |
+|---|---|---|---|---|
+| #54 | EMP 减速 AI | 只减速玩家和训练假人 | 也减速 AI | `emp.slowsAi`；PvE 需要 |
+| #54 | AI 打分身被标记 | 只有玩家会 | AI 也会 | 沿用旧版 |
+| #54 | 分身被打 | 脚本 45 血，"一枪散"未实测 | 一枪散 | 沿用旧版，等实测 |
+| #54 | 模仿模式 | 复制输入 | 复制水平速度，不跳不滑 | 不跑第二个电机 |
+| #54 | 补给舱天空检查 | +10000 往下扫 | 从地面往上打 3000 u | 地图 z=5000 有隐形天花板 |
+| #54 | 暗影壳 | 独立实体，AI 优先级 5 | 玩家身上的伤害规则 | 便宜；代价是 AI 不会单独打壳 |
+| #54 | 跟随稳态落后 | 19.9 u（50 ms 帧） | 移动前 19.9 u，移动后走路 18.2 u | 差 1.66 u，采样点不同，不追 |
+| #56 | 炮弹碰撞 | 地图不挡 | 只在落点上方 4000 / 2000 u 内才碰东西 | 练习图 z≈5000 有天空实体；无开关 |
+| #56 | 破坏球伤害 | 本地 damagedef 300，记录说别用 | 20，都没实测 | `wreckingBall.damage`；要用户定 |
+| #56 | 破坏球震荡时长 | 本地公式 6 → 3 s | 按注释意图 3 → 6 s | `shellshockIntent = false` |
+| #56 | 破坏球滚动物理 | vphysics，本地脚本被 SDK 重写过 | 自己写（反弹 0.4、减速 150，占位） | 无开关 |
+| #56 | 集束弹第 2 层 yaw | 215，疑似 315 的笔误 | 215（照抄） | `knuckleCluster.yawFix` |
+| #56 | Shellshock | 只玩家 | NPC 也吃 | `MoveSlow.shellshockNpc` |
+| #56 | 钻头墙厚 | 原生 `BreachTrace` | 点步进，不算 hull，没有"太薄" | 无开关 |
+| #56 | 钻头失败结果 | 可能建在原点 | 不建（疑似 bug 不抄） | 无开关 |
+| #56 | 陷阱回收 | 对罐子按 Use | J 收最近的（120 u 占位） | 无开关 |
+| #57 | 黑洞逃跑限速（d≈86） | 公式 124.3，实测高 4–7 | 124.4，比 R5 低 4–6 u/s（约 4–5%） | 拟合原则内；另限向外 wish，否则实测 148 |
+| #57 | 黑洞 NPC 定身 | 本地实测不生效，原因没查到 | 默认开（照脚本） | `blackHole.holdNpcs = false`；要用户确认 |
+| #57 | Ash 拴住 | 本地完全无效 | 按静态记录做，拉回数学是 HSD 近似 | `snare.pull = false` |
+| #57 | 拦截塔回复 | 回盾 | 回血（HSD 没有护盾） | `healHp` |
+| #57 | Catalyst 黑幕 | 挡视线，柱子 125 血 | 不挡 AI 视线，柱子不能打 | 按 PvE 过滤只留减速和可视化 |
+| #57 | Newcastle 跳跃 | 引擎内，未实测 | 直线分段 | `castle.leap = false` |
+| #57 | Newcastle 击退 | 只打玩家 | 也打 NPC | `knockNpcs` |
+| #57 | Newcastle 城墙 | 约 3 s 铺开，挡身体 | 一次铺完，不挡身体 | 无开关 |
+| #57 | `move_slow` 对空中和滑铲 | 未实测（只测了地面） | 跟随移动倍率，滑铲起步和空中加速也变小 | `motorHooks` 总开关 |
+
+### 道具和武器：和 R5 的差别（HSD-Unity #59 / #60，D-85、D-86；都没合并）
+
+从两个 PR 正文抄来，**R5 指本地混合构建**。
+
+#### #59 道具
+
+**R5 / Unity before / Unity after**
+
+| Item | R5 | Before | After |
+|---|---|---|---|
+| Burn per stack | 25 | 24 | 25 |
+| First burn tick | on entry | 0.43 s later | on entry |
+| Fire out, after ignition | about 8 s | up to 8.5 s | 8 s |
+| Full fire total | 275 | about 288 (calculated) | 275 |
+| Thermite bounce | 0.6 / 0.4 / 0.2 (record) | 0.5 / 0.3 / 0.3 | 0.6 / 0.4 / 0.2 |
+| Fire wall climb | about 126 u (record, inferred) | 46 u | 126 u |
+| Arc Star stuck hit | +10 | 0 | +10 |
+| Arc Star NPC slow | ×0.5, full about 1.7 s + fade about 1 s at 60 u | by distance, no fade | full 1.5 s + fade 1 s, any distance |
+| Arc Star on player | move 0.498, turn 0.698 | turn only | move 0.5, turn 0.7 |
+
+#### 瞄准、后坐和开镜（HSD-Unity #63，叠在 #61 上，D-87 – D-89；没合并）
+
+**R5 指本地混合构建**。"改前"是 #61。
+
+| 项 | R5 | 改前 | 改后 |
+|---|---|---|---|
+| 子弹眼高（站 / 蹲） | 从眼睛出发 | 60 / 36 u | 70 / 32 u（原生镜头） |
+| 后坐 | 画面和子弹一起走，弹簧回落 | 只动子弹，0.4 s 后一次回零 | 同 R5 模型 |
+| R-301 开镜回落到 50 % | 0.244 s | 没有回落过程 | 0.175 s |
+| R-301 腰射回落到 50 % | 0.365 s | 没有回落过程 | 0.350 s |
+| 开镜视野 | smoothstep，R-301 89 → 69.97 | 不放大 | 同 R5 |
+| 开镜时枪的路径 | 每把枪一条动画，zf 约 0.5 就位 | 直线 | R-301、Spitfire、Wingman 按实测，其余按枪类借用 |
+
+R-301 开镜差 0.069 s，测试为这一项放宽到 0.075。**推断**来自混合构建的服务端纠正，没证实。
+
+**还没做，gun-measure（research #95）已有数据：** 空中开镜后坐 ×2；punch roll；后坐表走到最后一行停住（只测了 R-301，Unity 现在从 `loop_offset` 循环，这是提交时已知的差别）；换弹三个时刻；换枪的收枪时间；冲刺到开火。
+
+**还没做，没有实测：** 鼠标下压抵消 punch（只有反编译 `0x140a33ff0`）；开镜灵敏度（只有反编译）。
+
+**其他：** 开镜 view drift 没做；Sheila 还走旧路径；瞄具没有自己的视野窗口；开镜连射时枪口焰盖住准星周围；钩爪红字在准星下面；曳光从眼睛出发。
+
+**子弹比客户端 punch 越积越高（R-301 第 5 发 0.93° 对 0.30°）没有照做**：推断是 S3 dedi 和 S21 客户端的差别，没证实。
+
+#### 后坐的缩放、横滚和枪模跳动（HSD-Unity #67，叠在 #65 上，D-94、D-95；没合并）
+
+**R5 指本地混合构建**。"改前"是 #65。
+
+| 项 | R5 | 改前 | 改后 |
+|---|---|---|---|
+| 每发缩放（Mastiff 腰射第一发） | 2.03 | 1 | 2.0 |
+| R-301 腰射第 20 发幅度 ÷ 表累计 | 0.57 | 没有缩放 | 0.52 |
+| 横滚 | 自己的弹簧，全部进画面 | 没有 | 同 R5 模型 |
+| 枪模开镜后跳（R-99 峰值） | −0.610 u | 0 | −0.607 u |
+| 枪模腰射跳动（R-301 第一发俯仰） | −0.60° | 0 | −0.481°（拟合，不是规则） |
+| 单发枪开镜跳动（Mastiff 前后） | +0.49 u | 0 | 0，**没做** |
+
+**开关：** `arsenal.recoilScales`、`arsenal.gunKick`，Esc 页，关掉是改前的做法。关掉 `recoilScales` 时开镜跳动也没有，腰射拟合还在。
+
+**留着的差别：** Devotion 腰射缩放 R5 1.02、Unity 1.2；Kraber 开镜 R5 1.37、Unity 1.5；回落 Unity 0.203 s、R5 0.244 s；L-STAR 前后峰值差 0.07 u；枪的横滚比规则低约 10 %；左右位移实测比公式大 1.2–4 倍（只有 0.01–0.04 u）；下蹲比例 Unity 只有 0 / 1。
+
+**还没做：** 开镜漂移；鼠标下压抵消（要真实鼠标）；枪模 `+0x1de0` 矩阵的写入方；武器 `+0x17a8` 的位置项；屏幕抖动来源。
+
+#### 换弹、切枪、持枪、枪相机、曳光（HSD-Unity #65，叠在 #63 上，D-113 – D-118；没合并）
+
+**R5 指本地混合构建。**
+
+| 项 | 开关（关掉是旧做法） | 旧做法 | 现在 |
+|---|---|---|---|
+| 换弹三个时刻（D-113） | `arsenal.reloadMoments` | 整个换弹不能开枪，结束才加满 | 按枪记加弹、解锁、结束；开火切掉剩余动画；加弹前切枪或近战丢掉这次换弹 |
+| 切枪（D-114） | `arsenal.swapHolster` | 隐藏等完 `deploy_time`，满弹匣 | 先收旧枪，新枪提前能开火，每把枪留自己的弹匣 |
+| 持枪（D-115） | `arsenal.holdPose` | 一个腰射位置，不动 | 每把枪的位置，冲刺、蹲、滑铲、空中、摆动、落地、转身 |
+| 枪相机（D-116） | 没有开关 | 跟镜头 FOV | 单独相机，第 30 层，约 65.5°（粗估，#68 D-105 按 IRON-SIGHTS 改） |
+| 曳光（D-117） | `arsenal.tracerFromMuzzle` | 从眼睛出发 | 从枪口出发，收拢到子弹线上。子弹仍从眼睛飞 |
+
+**[猜] 都写在代码里**：曳光收拢距离 600 u；打断后落定 0.05 s；弹匣路径；枪相机 FOV；切枪下放形状。
+
+**解锁表改前和改后（D-118，HSD-Unity #65，没合并）。** 这是算出来的：比例 × 字段。Sheila、L-STAR、Bocek 没有数据，用中位数（战术 0.636 / 0.841 改成 0.639 / 0.872）。Mastiff、30-30 走手写的逐发表，这次没变：Mastiff 空仓解锁 3.17 对 RM 3.175，30-30 空仓 2.53 对 RM 2.524。**战术没对照到：** RM 和 C 批次差 0.05 s（Mastiff 1.257 / 1.307，30-30 1.090 / 1.141），没查。
+
+| 枪 | 类型 | 字段 s | R5 解锁（RM） | 改前 Unity | 改后 Unity | 改前差 | 改后差 |
+|---|---|---:|---:|---:|---:|---:|---:|
+| alternator | 空仓 | 2.23 | 2.055 | 2.035 | 2.056 | -0.020 | +0.001 |
+| alternator | 战术 | 1.9 | 1.575 | 1.566 | 1.577 | -0.009 | +0.002 |
+| car | 空仓 | 2.13 | 1.949 | 1.762 | 1.947 | -0.187 | -0.002 |
+| car | 战术 | 1.7 | 1.431 | 1.274 | 1.431 | -0.157 | +0.000 |
+| chargerifle | 空仓 | 4.6 | 4.304 | 4.147 | 4.312 | -0.157 | +0.008 |
+| chargerifle | 战术 | 3.5 | 3.222 | 3.018 | 3.220 | -0.204 | -0.002 |
+| devotion | 空仓 | 4.1 | 3.530 | 3.517 | 3.531 | -0.013 | +0.001 |
+| devotion | 战术 | 3.2 | 2.711 | 2.692 | 2.693 | -0.019 | -0.018 |
+| ehemlok | 空仓 | 2.55 | 2.347 | 2.186 | 2.348 | -0.161 | +0.001 |
+| ehemlok | 战术 | 2.3 | 1.945 | 1.790 | 1.945 | -0.155 | +0.000 |
+| eva8 | 空仓 | 2.5 | 2.325 | 2.163 | 2.328 | -0.162 | +0.003 |
+| eva8 | 战术 | 2.3 | 2.082 | 1.981 | 2.081 | -0.101 | -0.001 |
+| flatline | 空仓 | 3.1 | 2.841 | 2.831 | 2.839 | -0.010 | -0.002 |
+| flatline | 战术 | 2.4 | 2.091 | 2.057 | 2.094 | -0.034 | +0.003 |
+| g7 | 空仓 | 3 | 2.609 | 2.592 | 2.610 | -0.017 | +0.001 |
+| g7 | 战术 | 2.4 | 2.040 | 2.030 | 2.043 | -0.010 | +0.003 |
+| havoc | 空仓 | 3.2 | 2.816 | 2.636 | 2.819 | -0.180 | +0.003 |
+| havoc | 战术 | 3.2 | 2.814 | 2.651 | 2.826 | -0.163 | +0.012 |
+| hemlok | 空仓 | 2.85 | 2.628 | 2.591 | 2.625 | -0.037 | -0.003 |
+| hemlok | 战术 | 2.4 | 2.035 | 2.037 | 2.034 | +0.002 | -0.001 |
+| kraber | 空仓 | 4.3 | 4.043 | 3.875 | 4.039 | -0.168 | -0.004 |
+| kraber | 战术 | 3.2 | 2.766 | 2.709 | 2.809 | -0.057 | +0.043 |
+| longbow | 空仓 | 3.66 | 3.269 | 3.066 | 3.265 | -0.203 | -0.004 |
+| longbow | 战术 | 2.66 | 2.130 | 2.031 | 2.129 | -0.099 | -0.001 |
+| mozambique | 空仓 | 2.3 | 2.153 | 1.987 | 2.153 | -0.166 | +0.000 |
+| mozambique | 战术 | 1.9 | 1.707 | 1.548 | 1.708 | -0.159 | +0.001 |
+| nemesis | 空仓 | 3 | 2.615 | 2.451 | 2.614 | -0.164 | -0.001 |
+| nemesis | 战术 | 2.7 | 2.466 | 2.281 | 2.465 | -0.185 | -0.001 |
+| p2020 | 空仓 | 1.25 | 1.094 | 1.070 | 1.096 | -0.024 | +0.002 |
+| p2020 | 战术 | 1.25 | 1.099 | 1.103 | 1.099 | +0.004 | +0.000 |
+| peacekeeper | 空仓 | 3.5 | 3.307 | 3.295 | 3.306 | -0.012 | -0.001 |
+| peacekeeper | 战术 | 2.5 | 2.225 | 2.157 | 2.227 | -0.068 | +0.002 |
+| prowler | 空仓 | 2.6 | 2.346 | 2.181 | 2.349 | -0.165 | +0.003 |
+| prowler | 战术 | 2 | 1.702 | 1.540 | 1.703 | -0.162 | +0.001 |
+| r301 | 空仓 | 3.2 | 2.425 | 2.413 | 2.425 | -0.012 | +0.000 |
+| r301 | 战术 | 2.4 | 1.643 | 1.615 | 1.646 | -0.028 | +0.003 |
+| r99 | 空仓 | 2.45 | 2.193 | 2.194 | 2.193 | +0.001 | +0.000 |
+| r99 | 战术 | 1.8 | 1.605 | 1.589 | 1.604 | -0.016 | -0.001 |
+| rampage | 空仓 | 4 | 3.605 | 3.422 | 3.603 | -0.183 | -0.002 |
+| rampage | 战术 | 3.1 | 2.760 | 2.599 | 2.758 | -0.161 | -0.002 |
+| re45 | 空仓 | 1.95 | 1.751 | 1.595 | 1.754 | -0.156 | +0.003 |
+| re45 | 战术 | 1.5 | 1.307 | 1.149 | 1.309 | -0.158 | +0.002 |
+| sentinel | 空仓 | 4 | 3.577 | 3.411 | 3.536 | -0.166 | -0.041 |
+| sentinel | 战术 | 3 | 2.367 | 2.269 | 2.372 | -0.098 | +0.005 |
+| spitfire | 空仓 | 4.2 | 3.833 | 3.818 | 3.832 | -0.015 | -0.001 |
+| spitfire | 战术 | 3.4 | 2.841 | 2.800 | 2.842 | -0.041 | +0.001 |
+| tripletake | 空仓 | 3.4 | 2.990 | 2.825 | 2.990 | -0.165 | +0.000 |
+| tripletake | 战术 | 2.6 | 2.298 | 2.199 | 2.301 | -0.099 | +0.003 |
+| volt | 空仓 | 2.5 | 2.285 | 2.269 | 2.287 | -0.016 | +0.002 |
+| volt | 战术 | 2 | 1.581 | 1.589 | 1.582 | +0.008 | +0.001 |
+| wingman | 空仓 | 2.1 | 1.941 | 1.922 | 1.941 | -0.019 | +0.000 |
+| wingman | 战术 | 2.1 | 1.941 | 1.915 | 1.942 | -0.026 | +0.001 |
+
+**加弹还有 4 组对不上**：Charge Rifle 空仓 RM 3.799 / C 批次 3.905，战术 2.735 / 2.80；Flatline 战术 1.571 / 1.62；Kraber 战术 1.911 / 1.95。C 批次只用同一时钟算也是这样，所以**不是时钟的问题，原因没查**。现在用 RM 的值。
+
+#### #55 投射和掩体（第一次对照，11-04 从技术解析 A2 §5.5 抄入）
+
+"R5" 多数是读脚本。W2 没测这批任何一项，`[自定]`、`[推断]`、`[近似]` 都在证据列。
+
+| 技能 | 实现方式 | 关键数值 | 证据 |
+|---|---|---|---|
+| Valkyrie Missile Swarm | `MissileSwarmCaster` + `SwarmMissile : CurvedMissile`；`RepeatHitFalloff` + `SwarmStun` | 12 枚（升级 20），25/s；抛 0.55–0.85 s；15，r150，×0.2 / 5 s；晕 2 s（0.75）淡 1.5；2–4 s，行 / 列 0.15 / 0.05；25 s | `[R5 文件]`；网格和路径 `[近似]` |
+| Seer Focus of Attention | `FocusCaster` + `FocusBlast`，一次性胶囊判定 | 前移 20，长 2362，r200；1 s；扫描 2.5 s；AI：沉默 8 s，打断 0.25 s，减速 0.25 / 0.5 s；伤害关（5）；20 s | `[R5 文件]`；对 AI 的效果 `[自定]`；胸口下移 20 `[自定]` |
+| Ballistic Whistler（AI 版） | `LockOnSelector` + `WhistlerRound : HomingProjectile` + 感应区 + 伤害链积热 | 3000，5°，0.3 s；1500 / 3000 u/s；15；r150，1 s + 5 s，10；debuff 12 s；热 100 → 硬直 1 s + 30（不致死）；近战 +34，远程 +28；25 s | `[R5 文件]`；AI 积热 `[自定]`；`homingTurn` 含义 `[推断]` |
+| Gibraltar Dome | `DomeDisc` → `Dome : Deployable` + `DomeShield` + `AuraZone` | 800；1 s + 12 s，最后 5 s 闪；r240；无血；EMP 摧毁；13 s | `[R5 文件]`；半径、展开、冷却 `[推断]` |
+| Gibraltar Gun Shield | `GunShield`，`PanelShield` + 不进世界的 `PoolUnit` + `ShieldOverflow` | r18，高 32，85°，左偏 25°；10 s 后一次补满；血 75 | `[R5 文件·SDK]`；血 75 和手臂位置 `[自定]` |
+| Rampart Amped Cover | `AmpedCover : Deployable` + 两块 `PanelShield` | 120 → 400；2 s；盾 175；放行 cos 0.55，×1.2；4 面，3 格 / 20 s；回收 0.5 s，64 u；电弧星 ×1.5 | `[R5 文件·SDK]`；3D 点积 `[推断]`；宽 60、高 80 `[推断]` |
+| Sheila 手持 | `SheilaHmg` + `SpinUpGun` | 1.25 s 转满，20/s，14，爆头 ×2（2500 内）；扩散 3° −0.18° 每发，下限 0.5°，停火 0.1 s 后 12°/s 回；173 发，43 起用，1.44/s；开镜 ×0.4 | `[R5 文件·SDK]`；曲线 `[推断]`；射程 8000 即时命中 `[近似]` |
+| Sheila 炮台 | `SheilaTurret : Deployable`，自动开火 | 350 血；3 台；32–92 u；EMP 15 s；回收 +50%；150 + 300 发；8.667 s；锁敌 1181 | 数值 `[R5 文件]`；自动模式 `[自定]` |
+| Vantage Sniper's Mark | `SniperMarkWeapon` + `MarkAmp` | 50，爆头 ×1.5；标记 10 s；再打 ×2.5，队友 ×1.15；擦过 120 u | `[R5 文件]`；射程 12000 即时命中 `[近似]`；满弹开局 `[自定]` |
+
+#### #60 武器
+
+**For `R5-DIFF-ARCHIVE.md`: S21 versus local R5 (D-85)**
+
+Default is S21. `sdkLocalNumbers` switches the first three rows to local R5.
+
+| Weapon | S21 (default) | Local R5 |
+|---|---|---|
+| 30-30 charged, body | 60.2 | 43 (head 57) |
+| L-STAR overheat lock | 3.69 s | about 3.25 s |
+| Nemesis fully heated gap | 0.18 s | 0.19 s |
+| Rampage, Sentinel energize | fields: 3.7 s feed, −0.74 s a shot (Rampage), 88 damage (Sentinel) | could not be triggered |
+
+**Nemesis 涡轮热量（用户 11-01 定）：** 默认 S21 的 0.125；本地 R5 是涡轮不改变，开关 `nemesisTurboS21Heat`。#60 改默认值时同步。
+
+**R5 / Unity before / Unity after**
+
+| Thing | R5 | Before | After | Switch |
+|---|---|---|---|---|
+| Vantage shot | round; about 1.7 s period | hitscan; 1.2 s | round; 1.7 s | `skillWeaponsBeforeWP3` |
+| Vantage head on a dummy | not measured on this gun (0.8 helmet rule seen on others) | ×1.5, helmet ignored | 50 + 0.8 × 25 = 70 | same |
+| Sheila | fires a round; firing closes the local client, so unmeasured | hitscan, no recoil, helmet ignored | field round, table recoil, helmet applied | same |
+| Sheila turret spread recovery | field 3 | 12 | 3 | none (now the turret's field) |
+
+**Small gaps left as they are**
+
+- Mastiff ADS: formula 1.50°, R5 1.45°.
+- Bocek full draw: 26891 u/s by the SDK's curve, field 27000.
+- Damage keeps fractions and R5 shows whole numbers: R-301 head 18.6 vs 19, 30-30 local head 56.8 vs 57.
+- Devotion top rate: 15 / s by field, R5 about 15.4 / s.
+- Vantage: fields alone give 1.53 s, R5 about 1.7 s, so `rechamber_time` is overridden.
+- R-301 ADS spread uses the measured 0.35°, while the field says 0 and R5 reads 0 while firing ADS. The report doesn't explain this, so it may be the wrong number.
+- R5's shotgun group sat about 11 u low at 300 u, also unexplained and not modelled.
+- Sheila's measured clip of 150 is the turret's field; the hand gun keeps 173.
+
 ## 二、还和 R5 不一样、没有改的
 
 | 编号 | 内容 | 旧版 = 现在 | R5 | 状态 |
