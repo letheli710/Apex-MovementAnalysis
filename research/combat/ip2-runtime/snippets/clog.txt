@@ -1,0 +1,31 @@
+void functionref() clf = void function() {
+	try {
+		entity p = GetLocalClientPlayer()
+		float t0 = Time()
+		int c0 = -1
+		vector ea0 = p.EyeAngles()
+		float chg0 = -1.0
+		int rel0 = -1
+		while ( Time() - t0 < SECS ) {
+			entity w = p.GetActiveWeapon( eActiveInventorySlot.mainHand )
+			if ( IsValid( w ) ) {
+				int c = w.GetWeaponPrimaryClipCount()
+				float chg = w.GetWeaponChargeFraction()
+				int rel = w.IsReloading() ? 1 : 0
+				if ( c != c0 || fabs( chg - chg0 ) > 0.08 || rel != rel0 ) {
+					chg0 = chg
+					rel0 = rel
+					vector ea = p.EyeAngles()
+					float hv = 0.0
+					if ( w.GetWeaponClassName() == "mp_weapon_nemesis" ) hv = w.GetHeatValue()
+					printt( format( "[RT] cl t=%.4f c=%d ea=%.4f,%.4f spread=%.3f heat=%.4f charge=%.3f zoom=%.2f rel=%d", Time() - t0, c, ea.x, ea.y, w.GetAttackSpreadAngle(), hv, w.GetWeaponChargeFraction(), p.GetZoomFrac(), w.IsReloading() ? 1 : 0 ) )
+					c0 = c
+				}
+			}
+			WaitFrame()
+		}
+	} catch ( err ) { printt( "[RT] cl err " + string( err ) ) }
+	printt( "[RT] cl end" )
+}
+thread clf()
+AgentLink_Reply( "clog" )
