@@ -9,7 +9,7 @@
 | C 换弹、切枪、近战、抬枪 | [C-MOTIONS.md](C-MOTIONS.md) |
 | D 射速、伤害、弹道和其他 | [D-EXTENSIONS.md](D-EXTENSIONS.md) |
 
-基瞄（11-04）在 [iron-sights/IRON-SIGHTS.md](iron-sights/IRON-SIGHTS.md)：每把枪的基瞄规格，并**改正了 `D-VIEWMODEL` 的开镜枪口（14 把枪）和枪模 FOV**。
+基瞄（11-04，11-05 改正）在 [iron-sights/IRON-SIGHTS.md](iron-sights/IRON-SIGHTS.md)：每把枪的基瞄规格，枪模 FOV 规则（含装瞄具），并**作废了 `D-VIEWMODEL`**（[原因](D-VIEWMODEL.STALE.md)）。
 
 之前的后坐、开镜在 [RECOIL-VIEW.md](../RECOIL-VIEW.md)、[ADS-CURVES.md](../ADS-CURVES.md)。
 
@@ -155,7 +155,7 @@ D 批次在 04:35 卡住，空转约 3 小时 20 分：Sheila 后客户端退出
 | 6 | 归零默认开（`zeroing = true`，注释写未实测） | S3 dedi 上没有归零 | **待定**，见下 |
 | 7 | 打断换弹的规则 | 换枪、近战打断；冲刺、跳、开镜、开火在解锁前不打断 | 对一遍 |
 | 8 | Boosted Loader 只读了 Config | Hemlok 弹匣 1–5 时 1.80 s 到 30 发；Wingman 弹匣 1 时到 7 发，弹匣 0 和满的时候普通 | 对一遍窗口 |
-| 9 | 枪口焰、枪模 | 枪模每发向后跳，字段方向对，幅度实测偏大 | 占位模型用 `D-VIEWMODEL.tsv` 定枪口点 |
+| 9 | 枪口焰、枪模 | 枪模每发向后跳，字段方向对，幅度实测偏大 | 占位模型定枪口点：腰射用 `hold-pose/HP-POSE.tsv`，开镜用 `iron-sights/data/IS-GUNS.tsv`。**`D-VIEWMODEL.tsv` 已作废**，见 [D-VIEWMODEL.STALE.md](D-VIEWMODEL.STALE.md) |
 
 **第 6 项有两种选法，等用户定**：
 
