@@ -2,6 +2,8 @@
 
 [回到目录](README.md)
 
+> **11-04 更正（D-118）**：本卷的"解锁"列来自 `C-RELOAD-SUMMARY.tsv` 的 `flag`，算的时候跨了脚本和 Frida 两份日志，**作废**，最多偏早 0.13 s。解锁用 `reload-motion/RM-SUMMARY.tsv` 的 `unlock`：R-301 战术 1.64 s，C.A.R. 战术 1.43 s，Longbow 空仓 3.27 s。差值分两档的原因推断是两个时钟的偏移，没查到底。
+
 ## 结论
 
 1. **长度就是字段**，差不到 0.05 s。
@@ -18,7 +20,7 @@
 
 {{reload_all}}
 
-L-STAR、Bocek 没有弹匣，这种方式换不了。Sheila 开火会关掉客户端，**[没测]**。Mastiff 和 30-30 是逐发装填，见第 5 节。
+L-STAR、Bocek 没有弹匣，这种方式换不了。Sheila 开火会关掉客户端（11-04 更正：那次给的是炮台枪 `mounted_turret_weapon`，手持 `mobile_hmg` 没测过），**[没测]**。Mastiff 和 30-30 是逐发装填，见第 5 节。
 
 **几个观察：**
 

@@ -329,7 +329,7 @@ t = clamp((累计值 − LerpStart) / (LerpEnd − LerpStart))；Start = End 时
 
 ### 10.4 Unity
 
-`ViewKick.cs` 按上面改了，开关 `arsenal.recoilScales`（D-94），关掉是之前的做法。Sheila 也改走同一套，R5 这把枪一开火客户端就退出，**未实测**。
+`ViewKick.cs` 按上面改了，开关 `arsenal.recoilScales`（D-94），关掉是之前的做法。Sheila 也改走同一套，**未实测**。〔11-04 更正：原来写"R5 这把枪一开火客户端就退出"。IP2 那次给的是炮台枪 `mounted_turret_weapon`，退出只对炮台成立；手持 `mobile_hmg` 从没测过。〕
 
 **Unity 本体的幅度**（`TheAmplitudeMatchesRecoilView`，不带随机，步长 1/120 s，实际幅度 ÷ 表累计）：
 

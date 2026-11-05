@@ -30,6 +30,7 @@ def main():
         cl = G(runs, t)
         on = next((x["t"] for x in cl if x["rel"]), None)
         off = next((x["t"] for i, x in enumerate(cl) if i and cl[i - 1]["rel"] and not x["rel"]), None)
+        # D-118: off is on the script log's clock, t0 on the Frida log's, so the flag column reads up to 0.13 s early. Kept to reproduce the table; use reload-motion/RM-SUMMARY.tsv's unlock.
         cyc = [r for r in rel]
         rows[g[1], g[2]].append(dict(state=t1 - t0, rise=rr[0][0] if rr else float("nan"), n=len(rr), amount=sum(b for _, b in rr), flag=(off - t0) if off else float("nan"), low=min(r["clip"] for r in fr), end=fr[-1]["clip"], seqs=len({r["seq"] for r in rel})))
     out = []
