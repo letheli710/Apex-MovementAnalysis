@@ -608,6 +608,35 @@ kick 每发 + spread_kick_on_fire，不超过 spread_max_kick
 
 **配件不加新机制，只改字段**。〔11-04 更正：原写"量不大（5–15 %）"，实测不止：枪托 `zoom_time` ×0.75；`corrupted_laser` 换弹 ×0.6、后坐 ×1.6，`gun-measure` 04 卷。〕见 T4。金色、hop-up 有脚本逻辑 [数据，枪族 attachments、hopups]。实测部分等全枪械（§11）。
 
+### 7.10 枪模 FOV [反编译 + 实测，IRON-SIGHTS "枪模 FOV"；D-120；Unity D-122]
+
+枪有自己的 FOV，和世界 FOV 分开。**新枪、新瞄具都按这条，不要按 `zoom_fov` 直接换算。**
+
+```
+t = clamp01((zf − ads_fov_zoomfrac_start) / (ads_fov_zoomfrac_end − ads_fov_zoomfrac_start))
+
+写了 zoom_fov_viewmodel（> 0）：  V = 70 + (字段 − 70) × (3 − 2t)t²     不看 cl_fovScale
+没写：                            tan(V/2) = tan(35°) × tan(R/2) / tan(R基础/2)
+腰射（zf = 0）：                  两条都等于 70
+```
+
+`V` 是 R5 度数，4:3 水平。换成 Unity 垂直 FOV：`2 × atan(tan(V/2) × 3/4)`。1600×900 下每单位正切 `600 / tan(V/2)` 像素。
+
+| 状态（本地 `cl_fovScale` 1.27217，基础 89） | V | px/tan | 垂直 FOV | 实测 px/tan |
+|---|---:|---:|---:|---:|
+| 腰射 | 70 | 857 | 55.4° | R-301 833–863 |
+| 机瞄，`zoom_fov` 60 | 58.5 | 1071 | 45.6° | 没量 |
+| 机瞄，`zoom_fov` 55 | 53.0 | 1203 | 41.0° | R-301 1187，Sentinel 1221 |
+| 3x，字段 14 | 14 | 4887 | 10.5° | R-301 4914 |
+
+- 实测是看图，精度约 3 %，只测了 R-301 和 Sentinel。其余枪是公式。
+- 过渡曲线和世界 FOV 相同是 [推断]，只量了两端。
+- **瞄具的 FOV 和开镜位置要一起改**：瞄具把枪往前推，同时收窄枪模 FOV。只改 FOV 不改位置，3x 和 2–4x 会大 2 倍（IRON-SIGHTS "装瞄具时的枪"）。
+- **全屏瞄准镜**（Kraber 默认镜、`optic_sniper*`）：代码里到位后 V = 70，开镜看不到枪，没实测。
+- **枪口和曳光起点的屏幕位置都跟着枪模 FOV 变**。比枪口坐标查不出这种变化，要比屏幕位置。
+
+**Unity 怎么对应（D-122）：** Unity 没有 `cl_fovScale`。R 和 R基础用 `AdsCurves.FovRatio`（常数 1.27217、89），和世界相机同一个比例，不看 Unity 自己的基础 FOV。滑铲和兴奋剂的 FOV 不进这个比例，R5 的分母会加这类增量，没测。开关 `arsenal.gunFovWorldRule`，关 = 按 `zoom_fov`。Kraber 是例外，保持 `zoom_fov`，因为 Unity 没有全屏瞄准镜画面，环是模型画的，等用户定。
+
 ## 8. 移动和技能（支撑）
 
 ### 8.1 移动的数字
