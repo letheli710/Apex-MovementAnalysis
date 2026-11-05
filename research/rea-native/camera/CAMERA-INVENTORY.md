@@ -39,7 +39,7 @@
 | id | 内容 | 位置 |
 |---|---|---|
 | BND-01 | 手臂和武器模型的晃动（viewmodel shake、蹲下偏移） | `0x14085bdb0`、`0x14085c3e0`；`viewmodelShake`、`shake_viewmodelFactor_*`、`viewmodelDuckOffset` |
-| BND-02 | 武器后坐力 | 武器 `viewkick_*` 键、netvar `m_vecPunchWeapon_*` |
+| BND-02 | 武器后坐力 | 武器 `viewkick_*` 键、netvar `m_vecPunchWeapon_*`；11-02 已实测，见 [RECOIL-VIEW](../../combat/RECOIL-VIEW.md) |
 | BND-03 | 受伤或被技能打中的 punch | `sh_damage_utility.gnut`、`_pilot_passive_newcastle.gnut` |
 
 ## 2. 初步观察
