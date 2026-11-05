@@ -9,6 +9,7 @@
 - **道具**：注射器 `health_pickup_health_small`、医疗包 `_health_large`、小电池 `_combo_small`、大电池 `_combo_large`、凤凰 `_combo_full`、大招加速 `_ultimate`（`survival_loot.csv:240-245`）。全部共用一把武器 `mp_ability_consumable`，靠 mod 区分。
 - **一句话**：把"读条"做成一把**蓄力武器**：切过去 → 蓄力（charge）→ 蓄满自动开火 → 开火时才加血、才扣物品。中途切走就算取消，什么都不扣。
 - **更正 filter**：filter 写"读条使用 + 移动减速 + 被打断"。
+  - 〔11-04 回填：下一句已被 IP2 推翻。读条有减速：`move_slow` 0.4（`mp_ability_consumable.nut:749`），实测走 195 → 101.7 u/s，×0.6 之外多约 ×0.85，来源没查。〕
   - **没有移动减速**。`.txt` 没有 `move_speed` 字段。只是**不能冲刺**（`offhand_blocks_sprint 1`，`txt:48`）和**不能攀爬**（`DisableMantle`，`nut:660`）。效果上是走路速度。
   - **被打不打断**（脚本里）。打断只来自玩家自己的按键和切武器（3.2.3）。
 - **分类**：系统（通用"读条使用"部件）。
