@@ -7,7 +7,7 @@
 | [D-RATE.tsv](D-RATE.tsv)、[D-RATE-INTERVALS.tsv](D-RATE-INTERVALS.tsv) | 31 把枪：按住、连点、开镜按住；每发间隔 |
 | [D-DAMAGE.tsv](D-DAMAGE.tsv)、[D-DAMAGE-BY-DIST.tsv](D-DAMAGE-BY-DIST.tsv) | 10 把枪：距离 300–5000，头、身、腿 |
 | [D-DROP.tsv](D-DROP.tsv)、[D-DROP-FIRST.tsv](D-DROP-FIRST.tsv) | 5 把枪：距离 1000–6000 的落点 |
-| [D-JOLT.tsv](D-JOLT.tsv)、[D-VIEWMODEL.tsv](D-VIEWMODEL.tsv) | 30 把枪：第一发时的枪模跳动，枪口相对镜头的位置 |
+| [D-JOLT.tsv](D-JOLT.tsv)、[D-VIEWMODEL.tsv](D-VIEWMODEL.tsv)（**后者作废**，见 [D-VIEWMODEL.STALE.md](D-VIEWMODEL.STALE.md)） | 30 把枪：第一发时的枪模跳动，枪口相对镜头的位置 |
 | [D-FLINCH.tsv](D-FLINCH.tsv)、[D-TABLE-END.tsv](D-TABLE-END.tsv)、[D-TABLE-END2.tsv](D-TABLE-END2.tsv) | 受击、表尾 |
 | [D-STATIC-FIELDS.tsv](D-STATIC-FIELDS.tsv) | 运行时读回的字段：抖动、枪口、曳光、命中体积、穿透 |
 
@@ -114,6 +114,8 @@
 - **Punch roll** 每发都有，带随机：R-301 0.08–0.41°，Spitfire −0.20 到 −0.52°。
 
 ## 6. 枪模位置（给占位模型定尺寸）
+
+**（11-05：`D-VIEWMODEL` 已作废，见 [D-VIEWMODEL.STALE.md](D-VIEWMODEL.STALE.md)。下表 Wingman 的 U 也错，应为 −1.73。原因是眼睛带俯仰时按世界轴相减。）**
 
 枪口相对镜头，开火前 0.3 s 的平均。全部 30 把见 D-VIEWMODEL。单位是游戏单位，前 / 右 / 上。
 

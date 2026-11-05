@@ -32,7 +32,7 @@
 
 ## 1. 站立的腰射位置
 
-每把枪各不相同，直接查 `HP-POSE.tsv` 的 `stand` 行。和 `D-VIEWMODEL.tsv` 对比：中位数差 0.43 u；Bocek 差 4.8 u，Sentinel 2.0 u，Kraber 1.8 u。差别的原因没查；这次站立窗口更长（约 5.3 s），两次之间差不到 0.01 u，**建议以这张为准**。
+每把枪各不相同，直接查 `HP-POSE.tsv` 的 `stand` 行。和 `D-VIEWMODEL.tsv` 对比：中位数差 0.43 u；Bocek 差 4.8 u，Sentinel 2.0 u，Kraber 1.8 u。差别的原因当时没查（11-05：主要是 `D-VIEWMODEL` 在眼睛带俯仰时按世界轴相减，见 [D-VIEWMODEL.STALE.md](../D-VIEWMODEL.STALE.md)）；这次站立窗口更长（约 5.3 s），两次之间差不到 0.01 u，**建议以这张为准**。
 
 站立有轻微呼吸：上下摆中位数 ±0.23 u，最大 ±0.76 u，周期约 1.2 s。
 

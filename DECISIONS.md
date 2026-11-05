@@ -500,6 +500,16 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 - D.O.C. 轨迹 = 公式（站立偏移 0 差，走 / 冲刺稳态落后 19.9 / ~36 u）。
 - Ash 拴住本地完全无效（dummie 走到离锚点 552 u）。
 
+### 2026-11-05：枪模 FOV 规则和 `D-VIEWMODEL` 改正（IS，D-120、D-121）
+
+技术解析复核查出 IRON-SIGHTS 和 ADS-CURVES 对枪模 FOV 说法相反，旧表也没标作废。查的结果是两边各错一半，我自己写的两处都要改：
+
+- 枪模 FOV 代码有两个分支。写了 `zoom_fov_viewmodel`（瞄具）用字段值；没写（机瞄、1x、2x HCOG）跟世界 FOV 按正切比例变。ADS-CURVES 只读了第一支；IRON-SIGHTS 的证明恰好在 `cl_fovScale` 1 下做，那里两个说法分不开 [D-120]。
+- `D-VIEWMODEL` 错的原因不是之前写的"开镜动画没停"。看了旧日志，枪当时已经停了。真正的原因是眼睛带 −1.175° 俯仰时按世界轴相减 [D-121]。
+- 实测了 R-301 六种瞄具：瞄具把枪推远，同时收窄枪模 FOV，两者配对。只改 FOV 不改位置，3x 和 2–4x 会大 2 倍 [D-120]。
+
+研究没改 Unity。报告 `research/combat/gun-measure/iron-sights/IRON-SIGHTS.md`，原始数据在 HSD-RawData `apex/research/combat/gun-measure/iron-sights/optic/`。
+
 ## 决定总表
 
 | # | 日期 | 主题 | 决定 | 怎么改 | 记录 |
@@ -582,6 +592,8 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 | D-78 | 10-31 | 攻击类技能怎么过滤（PvE） | 每个技能看三样：效果（伤害 / 控制）、可视化、可复用系统，有一样就研究。保留 20、防御待定 5、参考（系统 / 可视化）15、不要 6、移动线已做的不重复。没选：只按效果过滤（扫描、分身、烟雾一律不要）/ "太基础不做"（同日用户改掉，5 项拿回） | — | `research/combat/C0-ABILITY-FILTER.md` |
 | D-79 | 10-31 | 每项技能研究交什么 | 研究结果 + 数据 + 实现之外，带一份 `SYSTEM.md`：概要和可拆部件、实现手段、流程、代码（行号 + 伪代码）、参数全表、要实测、HSD 实现；共用系统写进 `_shared/`。为以后改参数、改实现、融合拆分组合 | — | `research/combat/SYSTEM-RECORD-TEMPLATE.md` |
 | D-80 | 10-31 | 攻击研究怎么排 | 第一波静态记录并行（5 会话，已完成）；第二波先做 Unity 公共框架（状态效果、多来源减速、伤害修正链、放置物基类）和 R5 实测（排 GAME-LOCK），再按批实现。没选：每批一上来就实测 + 实现（游戏只能一个会话用，会互卡） | — | `research/combat/{A..E}-SUMMARY.md` |
+| D-120 | 11-05 | 枪模 FOV 规则（研究改正，没改 Unity） | **选中**：写了 `zoom_fov_viewmodel` 用字段值，70 到它，smoothstep；没写 `tan(V/2) = tan(35°) tan(R/2) / tan(R基础/2)`；狙击镜分支 70（代码，没测到）。数据：`cl_fovScale` 1.27，R-301 机瞄 R5 1187 px/tan、代码 1206、按 `zoom_fov` 1153；Sentinel 机瞄 1221；2x HCOG 1847、1847、1714；3x 4914、4887、2571；1x 全息 3337、3403、1039。**没选**：开镜直接等于 `zoom_fov`（IRON-SIGHTS 原文，`cl_fovScale` 1 才成立，瞄具差 1.8–3.2 倍）；只有写了字段才变（ADS-CURVES 原文，机瞄实测也变）。瞄具开镜位置：挂点放到 `offset_ads` 第二项 − 2。Unity 的 `GunSights.GunFov` 现在读 `zoom_fov`，要枪模和配装页改 |
+| D-121 | 11-05 | `D-VIEWMODEL.tsv` 作废（留档不删） | **选中**：腰射改用 `HP-POSE`，开镜改用 `IS-GUNS`，瞄具用 `IS-OPTIC-FOV`。14 把开镜 U 差 0.43–1.12 u；俯仰 −1.175° 的 11 把转到镜头坐标后差 −0.01 到 +0.14 u。**没选**：原因写"动画没停"（之前的推断，旧日志里 Wingman 在窗口内变化 0.00）；转正后继续用（Mastiff 对不上，L-STAR、Bocek 没有俯仰记录）。没查清：Mastiff 旧表 −1.40 怎么来的、Bocek 的 F 差 1.08、−1.175° 从哪来。见 `research/combat/gun-measure/D-VIEWMODEL.STALE.md` |
 
 **D-29 → D-31（C-2 为什么推翻）**：第一次决定时以为 Unity 的 102.5 ms 窗口已经盖住了 R5 的减量段，所以"简化 = 不改代码"。后来按 Unity 自己的翻越时钟重排（Unity 的翻越比 R5 长约 25 ms），发现减量段其实在窗口外面，原来的 Reference 在这段是"切到台面"，并不是"给完整 460"。你随后要求继续做 C-2 并合并。细节见 `research/feel/FEEL.md` §6.4 和 `Climb/README.md`。
 

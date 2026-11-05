@@ -125,7 +125,7 @@ R-301 开镜，每 0.05 `zf`（约 13.5 ms）的值 [实测]。`横向归一` �
 |---|---|---|
 | 鼠标灵敏度 | 乘 `tan(当前 FOV / 2) / tan(基础 FOV / 2)`，当前 FOV 就是第 1 节的 smoothstep。R-301 开镜到位约 ×0.712（用实测 FOV 算）。只在按住开镜时生效；松开时条件变了，看代码是直接回到 ×1（另一个条件 `0x1407f9510` 没查，**不确定**） | `0x1408372b0`、`0x140906d10` |
 | 分镜灵敏度 | `mouse_use_per_scope_sensitivity_scalars` 这里是 0，所以没有走这条；开了的话也是同一个 smoothstep。`mouse_zoomed_sensitivity_scalar_0` 这里是 1 [实测读值] | `0x140906d10` |
-| 视图模型 FOV | 只有写了 `zoom_fov_viewmodel` 的（瞄具 mod）才变，同一个 smoothstep。这三把枪没有写 | `0x140838830` |
+| 视图模型 FOV | **（11-05 改正，原文"只有写了 `zoom_fov_viewmodel` 的才变"是错的：只读了第一个分支。）** 写了 `zoom_fov_viewmodel` 的（瞄具 mod）：70 到这个值，同一个 smoothstep，不看 `cl_fovScale`。没写的（这三把枪的机瞄，以及 1x、2x HCOG）：`tan(V/2) = tan(35°) × tan(R/2) / tan(R基础/2)`，跟着世界 FOV 按正切比例变。规则和实测见 [IRON-SIGHTS.md](gun-measure/iron-sights/IRON-SIGHTS.md)"枪模 FOV"一节 | `0x140838830` |
 | 视图模型屏幕震动 | `shake_viewmodelFactor_human` 0.1 → `_ads_human` 0.01，**线性** `zf` [实测读值] | `0x14085c3e0` |
 | 走路晃动 | 在 `zoom_scope_frac_start` 之前线性淡出 | `0x14085bdb0` |
 | 武器 punch 分配 | fraction 线性 `zf`（RECOIL-VIEW §1.1） | `0x140af0c90` |
