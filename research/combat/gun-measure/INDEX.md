@@ -11,6 +11,8 @@
 
 基瞄（11-04，11-05 改正）在 [iron-sights/IRON-SIGHTS.md](iron-sights/IRON-SIGHTS.md)：每把枪的基瞄规格，枪模 FOV 规则（含装瞄具），并**作废了 `D-VIEWMODEL`**（[原因](D-VIEWMODEL.STALE.md)）。
 
+霰弹枪准心和命中弹丸点（11-07）在 [shotgun-reticle/SHOTGUN-RETICLE.md](shotgun-reticle/SHOTGUN-RETICLE.md)：四把霰弹枪的腰射准心（形状、随 FOV 的大小表），每颗命中弹丸一个点（红 / 爆头黄，0.75 秒，固定在屏幕上），D-128。
+
 之前的后坐、开镜在 [RECOIL-VIEW.md](../RECOIL-VIEW.md)、[ADS-CURVES.md](../ADS-CURVES.md)。
 
 **想直接看结果**：[report/README.md](report/README.md) 按问题整理了全部数据，分 8 卷。
