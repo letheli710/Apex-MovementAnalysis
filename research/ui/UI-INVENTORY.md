@@ -9,7 +9,7 @@ R5 的界面分三层：**引擎报事件**（打中了、受伤了、换弹进�
 四层的情况：
 
 1. **武器**：每把枪有自己的腰射准星，31 把枪用了 9 种形状（三角、十字、十字加点、Alternator 式、霰弹、Mastiff、Charge Rifle、L-STAR、Bocek）。准星张开多大由当前扩散角实时决定（`weapon_spread`），每把枪再加一个固定的 `base_spread`。开镜的瞄具、枪身上的弹量屏都是贴在枪模网格上的 RUI，一共 112 个资源。右下角是弹药和两把枪的标签，准星旁边有低弹量 / 换弹 / 换枪提示。
-2. **命中反馈**：准星上一个 X（一个 RUI 反复重启，不叠加；按命中类型分 8 种：护盾、爆头、无效距离等，击杀和击倒共用一个变体），默认带护盾等级图标。伤害数字默认是**累加式**（0.25 s 内的连续命中合成一个数，最后一击后再留 1.0 s）。**用户说的霰弹枪红色命中图标是 `projectile_hit_dot`**：一颗弹丸打中就在世界里的命中点放一个点，只对一发多弹丸的枪（EVA-8 8、Peacekeeper 9、Mastiff 5、Mozambique 3、Triple Take 3）。受伤方向默认是 3D 箭头（不是 2D 圆环）。
+2. **命中反馈**：准星上一个 X（一个 RUI 反复重启，不叠加；按命中类型分 8 种：护盾、爆头、无效距离等，击杀和击倒共用一个变体），默认带护盾等级图标。伤害数字默认是**累加式**（0.25 s 内的连续命中合成一个数，最后一击后再留 1.0 s）。**用户说的霰弹枪红色命中图标是 `projectile_hit_dot`**：一颗弹丸打中就在命中点当时的屏幕位置放一个红点（暴击黄），钉在屏幕上 0.75 s，只对一发多弹丸的枪（EVA-8 8、Peacekeeper 9、Mastiff 5、Mozambique 3、Triple Take 3）。受伤方向默认是 3D 箭头（不是 2D 圆环）。
 3. **移动**：**R5 S21 在移动时不显示任何界面**。翻越、跳、滑铲、滑索、跳板起飞、爬墙都只有粒子、声音和镜头。例外只有：Pathfinder 钩爪的常驻射程准星、Valkyrie 喷气燃料条、滑索枪的放置界面、Flowstate 移植的 S27 翻越加速时机圈。HSD 现在的滑索上索提示、跳板二段跳提示、速度条都是 HSD 自己加的。
 4. **技能**：Valkyrie 导弹群预览是 **12 个圈（4 排 × 3 列）**，升级后 20 个（4 × 5）。原生网格函数、`burst_fire_count 12`、本地化文字"4x3 改成 4x5"三处一致。用户记得的 9 个和 S21 对不上。HSD 也画 12 个圈，但排成 5 + 5 + 2，排法错了（§5.1）。技能预览大多是**世界里的粒子**（地面圈、标记、抛物线），颜色常在脚本里（Fuse 绿 / 橙 / 红），大小靠控制点；底部技能栏用一个 RUI 显示冷却比例和充能格数。
 
@@ -89,7 +89,7 @@ HSD 现在全部是 IMGUI 调试占位：一个通用准星点、一个通用命
 
 - EVA-8、Peacekeeper 共用 `crosshair_shotgun`（EVA 再 +1 `base_spread`），Peacekeeper 扼流换 `crosshair_shotgun_hopup`；Mastiff 自己的 `crosshair_mastiff`；Mozambique 用三角（`tri_adjusted_alpha`）。
 - 准星 RUI 没有接收图案参数，所以**图案形状是画死在每个 RUI 资源里的**（推断）。和图案对不对得上、开镜收拢（Mastiff 1.45°）时准星跟不跟，要截图。
-- `shotgun-reticle` 会话（`combat/shotgun-reticle`，`research/combat/gun-measure/shotgun-reticle/`）正在实测这一块和 H-04，结果以它为准。
+- `shotgun-reticle` 会话实测了这一块和 H-04（`combat/shotgun-reticle`，`SHOTGUN-RETICLE.md`，决定 D-128 在 `combat/shotgun-reticle-records`），以它为准。其中 `crosshair_shotgun` 的大小随 FOV 的关系 G(FOV) 是实测的表，不是一个角度（报告 §3.1），所以 W-02 的推断公式不适用于霰弹。Unity 实现在 HSD-Unity `combat/wp5-shotgun-reticle`（叠在 #69 上，IMGUI，`ShotgunReticle.cs`）。
 
 ### W-04 开镜瞄具 [字段]
 
@@ -169,7 +169,7 @@ HSD 现在全部是 IMGUI 调试占位：一个通用准星点、一个通用命
 - 每次伤害事件，只要这把枪 `GetProjectilesPerShot() > 1`，就在**世界命中点**新建一个 RUI，带 `isCrit`（`cl_hud.gnut:636-643`）。一颗弹丸打中一个点。
 - 和 X 的设置无关；**射击场里关掉**（`:845-846`）。
 - 适用：EVA-8 8、Mastiff 5、Peacekeeper 9（某模式 6）、Mozambique 3、Triple Take 3；mod 可能让 30-30、Bocek、Alternator 也大于 1。
-- 颜色、大小、寿命、转视角时是不是钉在世界里 [要截图]。`shotgun-reticle` 会话的 `sr.py` 正在测（`dots / life / turn`）。
+- 〔11-07 `shotgun-reticle` 实测，`research/combat/gun-measure/shotgun-reticle/SHOTGUN-RETICLE.md`，分支 `combat/shotgun-reticle`〕**命中那一刻按命中点的屏幕位置放下，之后钉在屏幕上，不跟世界**（真 EVA-8 开枪 0.04 s 后转 4°，世界移了 43 px，点不动；合成点转 6° 也一样，报告 §2）。红 (237,1,1) 约 6 px，暴击黄 (237,237,1) 约 8 px；0–0.45 s 全色，之后线性光淡出，0.75 s 消失；大小不随距离；开镜时也画；护盾、击杀不改颜色。
 
 ### H-05 伤害数字 [脚本]
 
@@ -323,7 +323,7 @@ HSD 的界面全在 IMGUI（`OnGUI`）：`CombatHud.cs`（命中、数字、血�
 |---|---|---|---|
 | W-01 | 每把枪的准星 | 一个通用点，颜色跟钩爪状态 | 没有 |
 | W-02 | 扩散显示 | `ArsenalHud.AimMarks`：下一发点 + 扩散角位置的 4 个点（真角度投影） | 占位（规则对，样子不对） |
-| W-03 | 霰弹图案准星 | — | 没有（等 `shotgun-reticle`） |
+| W-03 | 霰弹图案准星 | `combat/wp5-shotgun-reticle`（IMGUI，没合并） | 占位（规则按 R5 实测） |
 | W-04 | 开镜瞄具 | 机瞄发光标记、光学瞄具画面都没有（`HeldModels`："No scope picture is built yet"） | 没有 |
 | W-05 | 枪身弹量屏 | — | 没有 |
 | W-06 | 右下武器 HUD | 文字 `[LMB] 名字 弹匣/容量` | 占位 |
@@ -332,7 +332,7 @@ HSD 的界面全在 IMGUI（`OnGUI`）：`CombatHud.cs`（命中、数字、血�
 | H-01 | 命中 X | 白色 X 0.15 s，击杀红 0.3 s | 占位；8 种类型和护盾图标没有 |
 | H-02 | 命中声音 | 没找到 | 没有 |
 | H-03 | 破盾 / 护盾受击 | — | 没有 |
-| H-04 | 霰弹命中点 | — | 没有 |
+| H-04 | 霰弹命中点 | `combat/wp5-shotgun-reticle`（IMGUI，没合并） | 占位（规则按 R5 实测） |
 | H-05 | 伤害数字 | 浮动式，每次 1 s，上升 30 u/s，白 / 爆头黄 / 击杀红 / 打自己红 | 占位（R5 默认是累加式） |
 | H-06 | 受伤方向 | — | 没有 |
 | H-07 | 受伤屏幕效果 | 受伤闪屏、低血量都没有；只有震撼、毒气、燃烧的屏幕染色（`SkillHud`） | 没有（染色是占位） |
@@ -361,7 +361,7 @@ HSD 的界面全在 IMGUI（`OnGUI`）：`CombatHud.cs`（命中、数字、血�
 |---|---|---|---|
 | S-1 | 每类准星的样子和扩散系数 | 每类一把枪；站、蹲、走、冲刺、空中；连射 10 发后；开镜 0.3 / 0.6；同时记 `GetAttackSpreadAngle()` | W-01、W-02 公式 |
 | S-2 | 命中 X 每种类型 | 打 2 级护甲假人：护盾、破盾那一枪、肉身、爆头、击杀；远距离（无效） | H-01、H-03 |
-| S-3 | 霰弹命中点 | **交给 `shotgun-reticle`** | H-04、W-03 |
+| S-3 | 霰弹命中点 | 〔已测，`shotgun-reticle` 11-07〕 | H-04、W-03 |
 | S-4 | 累加数字 | 每个护盾等级、暴击、破盾动画、停手后的淡出 | H-05 |
 | S-5 | 受伤方向和闪屏 | 服务端 `TakeDamage` 从左、右、后；伤害 10 / 50 / 100 | H-06、H-07 |
 | S-6 | 低血量 | 100 / 75 / 50 / 25 % | H-07 |
