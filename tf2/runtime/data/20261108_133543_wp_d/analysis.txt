@@ -1,0 +1,493 @@
+== ar_hip_try  client 18.470-19.979  clock(server-client) +0.080
+  weapon mp_weapon_rocket_launcher clip 1 stock 7
+  spread min 0.785 max 3.000 last 3.000
+== ar_soldier  client 19.979-26.340  clock(server-client) +0.071
+  weapon mp_weapon_rocket_launcher clip 1 stock 7
+  spread min 0.200 max 3.000 last 3.000
+  +zoom at 0.2001: zoomfrac from 0.000, 0.5@0.1847 0.99@0.3569
+  -zoom at 5.9515: zoomfrac from 1.000, 0.01@0.3544 0.5@0.1875
+== ar_wall_unlocked  client 26.340-31.100  clock(server-client) +0.076
+  weapon mp_weapon_rocket_launcher clip 1 stock 7
+  spread min 0.200 max 3.000 last 3.000
+  +zoom at 0.2017: zoomfrac from 0.000, 0.5@0.1834 0.99@0.3552
+  -zoom at 4.3486: zoomfrac from 1.000, 0.01@0.3552 0.5@0.1874
+== zoom  client 31.100-33.513  clock(server-client) +0.067
+  weapon mp_weapon_rocket_launcher clip 1 stock 7
+  spread min 0.200 max 3.000 last 3.000
+  +zoom at 0.4019: zoomfrac from 0.000, 0.5@0.1819 0.99@0.3582
+  -zoom at 1.4084: zoomfrac from 1.000, 0.01@0.3582 0.5@0.1875
+== sp_stand  client 33.513-34.320  clock(server-client) +0.070
+  weapon mp_weapon_rocket_launcher clip 1 stock 7
+  spread min 3.000 max 3.000 last 3.000
+== sp_crouch  client 34.320-35.533  clock(server-client) +0.080
+  weapon mp_weapon_rocket_launcher clip 1 stock 7
+  spread min 3.000 max 3.000 last 3.000
+== sp_walk  client 35.533-36.838  clock(server-client) +0.083
+  weapon mp_weapon_rocket_launcher clip 1 stock 7
+  spread min 3.000 max 3.000 last 3.000
+== sp_sprint  client 36.838-38.349  clock(server-client) +0.079
+  weapon mp_weapon_rocket_launcher clip 1 stock 7
+  ready 1->0 at 0.6045 (clip 1 rel 0)
+  ready 0->1 at 0.8405 (clip 1 rel 0)
+  spread min 3.000 max 3.000 last 3.000
+== sp_air  client 38.349-39.744  clock(server-client) +0.084
+  weapon mp_weapon_rocket_launcher clip 1 stock 7
+  spread min 3.000 max 3.000 last 3.000
+== sp_ads  client 39.744-42.765  clock(server-client) +0.073
+  weapon mp_weapon_rocket_launcher clip 1 stock 7
+  spread min 0.200 max 3.000 last 3.000
+  +zoom at 0.0000: zoomfrac from 0.000, 0.5@0.1876 0.99@0.3592
+  -zoom at 0.8054: zoomfrac from 1.000, 0.01@0.3551 0.5@0.1873
+== ar_titan_864  client 42.765-49.124  clock(server-client) +0.068
+  weapon mp_weapon_rocket_launcher clip 1 stock 7
+  shots 1 at 2.8528
+  first shot 0.0069 s after +attack
+  clip drops 1
+  spread at shots 0.200
+  view change pitch +0.940 yaw +1.200 (before first shot -> 0.6 s after last)
+  ready 1->0 at 2.8528 (clip 0 rel 0)
+  spread min 0.200 max 3.000 last 3.000
+  reload start 3.8558 (clip 0) refill +2.0360 -> 1 end not in segment
+  +zoom at 0.2060: zoomfrac from 0.000, 0.5@0.1872 0.99@0.3553
+  -zoom at 5.9544: zoomfrac from 0.000, 0.01@0.0000 0.5@0.0000
+  smart ammo: first target 0.5752, full lock 1.6862, max targets 1
+  proj rpg_missile mp_weapon_rocket_launcher t=45.7167 launch |v|=1200.0 dir pitch -5.878 yaw 90.000 (eye -4.943 91.197; d -0.935 -1.197) pos-eye -0.0 -0.1 0.0
+    first frame covers 0.199 s of flight (frame 0.100 s)
+    free 7 frames 0.600 s: g(median dvz)=7.3 g(vz first-last)=12.7 speed(median dpos)=1200.0 hspeed 1193.7 -> 1194.5 along 834 lateral max -16.2 last -16.2
+    stop/bounce at t+0.700 pos 22.8 -1025.0 143.9 vel 0.0 0.0 0.0 planted 0
+    end t+0.800 at 22.8 -1025.0 143.9 (8 samples)
+  hit 46.3333 npc_titan#86 hp 10000 sh 0 dmg 2250.00 hg 2 hb 32 head 0 crit 1.000 flags 1 src 117 inf rpg_missile dist 843.6 pos 22.77 -1024.95 143.87
+== ar_titan_400  client 49.124-55.479  clock(server-client) +0.076
+  weapon mp_weapon_rocket_launcher clip 1 stock 7
+  shots 1 at 2.8431
+  first shot 0.0070 s after +attack
+  clip drops 1
+  spread at shots 0.200
+  view change pitch +0.590 yaw -0.100 (before first shot -> 0.6 s after last)
+  ready 0->1 at 0.1805 (clip 1 rel 0)
+  ready 1->0 at 2.8431 (clip 0 rel 0)
+  spread min 0.200 max 3.000 last 3.000
+  reload start 3.8439 (clip 0) refill +2.0408 -> 1 end not in segment
+  +zoom at 0.2014: zoomfrac from 0.000, 0.5@0.1824 0.99@0.3556
+  -zoom at 5.9468: zoomfrac from 0.000, 0.01@0.0000 0.5@0.0000
+  smart ammo: first target 0.5709, full lock 1.6446, max targets 1
+  proj rpg_missile mp_weapon_rocket_launcher t=52.1167 launch |v|=1200.0 dir pitch -12.284 yaw 90.140 (eye -11.950 89.903; d -0.334 0.237) pos-eye -0.2 175.6 38.6
+    first frame covers 0.100 s of flight (frame 0.100 s)
+    free 2 frames 0.100 s: g(median dvz)=nan g(vz first-last)=31.2 speed(median dpos)=nan hspeed 1172.5 -> 1173.2 along 117 lateral max 0.6 last 0.6
+    stop/bounce at t+0.200 pos 23.0 -1024.7 142.7 vel 0.0 0.0 0.0 planted 0
+    end t+0.400 at 23.0 -1024.7 142.7 (4 samples)
+  hit 52.3000 npc_titan#86 hp 7750 sh 0 dmg 2250.00 hg 2 hb 32 head 0 crit 1.000 flags 1 src 117 inf rpg_missile dist 385.1 pos 22.98 -1024.69 142.74
+== ar_titan_off6  client 55.479-61.836  clock(server-client) +0.071
+  weapon mp_weapon_rocket_launcher clip 1 stock 7
+  shots 1 at 2.8474
+  first shot 0.0069 s after +attack
+  clip drops 1
+  spread at shots 0.200
+  view change pitch +0.940 yaw +0.280 (before first shot -> 0.6 s after last)
+  ready 0->1 at 0.1736 (clip 1 rel 0)
+  ready 1->0 at 2.8474 (clip 0 rel 0)
+  spread min 0.200 max 3.000 last 3.000
+  reload start 3.8531 (clip 0) refill +2.0389 -> 1 end not in segment
+  +zoom at 0.2014: zoomfrac from 0.000, 0.5@0.1830 0.99@0.3556
+  -zoom at 5.9474: zoomfrac from 0.000, 0.01@0.0000 0.5@0.0000
+  smart ammo: first target 0.5709, full lock 1.6836, max targets 1
+  proj rpg_missile mp_weapon_rocket_launcher t=58.4167 launch |v|=1200.0 dir pitch -5.878 yaw 95.998 (eye -4.944 96.279; d -0.934 -0.281) pos-eye 0.0 -0.1 0.0
+    first frame covers 0.190 s of flight (frame 0.100 s)
+    free 7 frames 0.600 s: g(median dvz)=8.0 g(vz first-last)=13.2 speed(median dpos)=1200.0 hspeed 1193.7 -> 1194.5 along 819 lateral max -85.9 last -85.9
+    stop/bounce at t+0.700 pos 20.8 -1023.8 144.0 vel 0.0 0.0 0.0 planted 0
+    end t+0.800 at 20.8 -1023.8 144.0 (8 samples)
+  hit 59.0333 npc_titan#86 hp 5500 sh 0 dmg 2250.00 hg 2 hb 32 head 0 crit 1.000 flags 1 src 117 inf rpg_missile dist 844.8 pos 20.77 -1023.80 143.99
+== ar_titan_off11  client 61.836-68.085  clock(server-client) +0.080
+  weapon mp_weapon_rocket_launcher clip 1 stock 7
+  ready 0->1 at 0.1791 (clip 1 rel 0)
+  spread min 0.200 max 3.000 last 3.000
+  +zoom at 0.2072: zoomfrac from 0.000, 0.5@0.1862 0.99@0.3593
+  -zoom at 5.8444: zoomfrac from 1.000, 0.01@0.3556 0.5@0.1831
+  smart ammo: first target 0.5734, full lock 1.6629, max targets 1
+== ar_titan_off20  client 68.085-74.442  clock(server-client) +0.082
+  weapon mp_weapon_rocket_launcher clip 1 stock 7
+  shots 1 at 2.8479
+  first shot 0.0069 s after +attack
+  clip drops 1
+  spread at shots 0.200
+  view change pitch +0.840 yaw -0.300 (before first shot -> 0.6 s after last)
+  ready 1->0 at 2.8479 (clip 0 rel 0)
+  spread min 0.200 max 3.000 last 3.000
+  reload start 3.8538 (clip 0) refill +2.0420 -> 1 end not in segment
+  +zoom at 0.2024: zoomfrac from 0.000, 0.5@0.1831 0.99@0.3557
+  -zoom at 5.9514: zoomfrac from 0.000, 0.01@0.0000 0.5@0.0000
+  smart ammo: first target 0.5721, full lock 1.6666, max targets 1
+  proj rpg_missile mp_weapon_rocket_launcher t=71.0167 launch |v|=1200.0 dir pitch -5.878 yaw 109.995 (eye -5.878 109.995; d 0.000 0.000) pos-eye 0.0 0.0 0.0
+    first frame covers 0.184 s of flight (frame 0.100 s)
+    free 5 frames 0.400 s: g(median dvz)=155.8 g(vz first-last)=233.6 speed(median dpos)=1199.9 hspeed 1193.7 -> 1199.6 along 579 lateral max 21.9 last 21.9
+    stop/bounce at t+0.500 pos -202.6 -1309.8 94.1 vel 0.0 0.0 0.0 planted 0
+    end t+0.600 at -202.6 -1309.8 94.1 (6 samples)
+  hit 71.4333 npc_super_spectre#100 hp 3500 sh 0 dmg 2250.00 hg 0 hb 0 head 0 crit 1.000 flags 1 src 117 inf rpg_missile dist 600.2 pos -202.60 -1309.76 94.13
+== ar_reaper  client 74.442-80.799  clock(server-client) +0.074
+  weapon mp_weapon_rocket_launcher clip 1 stock 7
+  shots 1 at 2.8438
+  first shot 0.0069 s after +attack
+  clip drops 1
+  spread at shots 0.200
+  view change pitch -0.460 yaw +0.650 (before first shot -> 0.6 s after last)
+  ready 0->1 at 0.1799 (clip 1 rel 0)
+  ready 1->0 at 2.8438 (clip 0 rel 0)
+  spread min 0.200 max 3.000 last 3.000
+  reload start 3.8452 (clip 0) refill +2.0393 -> 1 end not in segment
+  +zoom at 0.2007: zoomfrac from 0.000, 0.5@0.1875 0.99@0.3587
+  -zoom at 5.9466: zoomfrac from 0.000, 0.01@0.0000 0.5@0.0000
+  smart ammo: first target 0.5664, full lock 1.6619, max targets 1
+  proj rpg_missile mp_weapon_rocket_launcher t=77.4167 launch |v|=1200.0 dir pitch -2.467 yaw 112.081 (eye -2.249 112.315; d -0.218 -0.234) pos-eye -58.4 145.2 5.9
+    first frame covers 0.100 s of flight (frame 0.100 s)
+    free 4 frames 0.300 s: g(median dvz)=-81.9 g(vz first-last)=-83.5 speed(median dpos)=1200.0 hspeed 1198.9 -> 1197.5 along 359 lateral max 0.5 last 0.5
+    stop/bounce at t+0.400 pos -199.2 -1320.0 91.2 vel 0.0 0.0 0.0 planted 0
+    end t+0.600 at -199.2 -1320.0 91.2 (6 samples)
+  hit 77.7833 npc_super_spectre#100 hp 1250 sh 0 dmg 2250.00 hg 2 hb 2 head 0 crit 1.000 flags 1 src 117 inf rpg_missile dist 588.9 pos -199.22 -1320.05 91.15
+== ar_titan_short  client 80.799-87.758  clock(server-client) +0.084
+  weapon mp_weapon_rocket_launcher clip 1 stock 7
+  ready 0->1 at 0.1681 (clip 1 rel 0)
+  ready 1->0 at 4.7038 (clip 1 rel 0)
+  ready 0->1 at 5.4552 (clip 1 rel 0)
+  spread min 0.200 max 3.000 last 3.000
+  +zoom at 0.2028: zoomfrac from 0.000, 0.5@0.1831 0.99@0.3579
+  -zoom at 4.2452: zoomfrac from 1.000, 0.01@0.3548 0.5@0.1877
+  smart ammo: first target 0.5676, full lock 1.6815, max targets 1
+== ar_fastlock_titan  client 87.758-96.418  clock(server-client) +0.075
+  weapon mp_weapon_rocket_launcher clip 1 stock 7
+  shots 1 at 2.8445
+  first shot 0.0070 s after +attack
+  clip drops 1
+  spread at shots 0.200
+  view change pitch +0.330 yaw +0.660 (before first shot -> 0.6 s after last)
+  ready 1->0 at 2.8445 (clip 0 rel 0)
+  ready 0->1 at 7.1576 (clip 1 rel 0)
+  spread min 0.200 max 3.000 last 3.000
+  reload start 3.8497 (clip 0) refill +2.0420 -> 1 end +2.5409
+  +zoom at 0.2018: zoomfrac from 0.000, 0.5@0.1833 0.99@0.3580
+  -zoom at 5.9476: zoomfrac from 0.000, 0.01@0.0000 0.5@0.0000
+  smart ammo: first target 0.5667, full lock 1.1189, max targets 1
+  proj rpg_missile mp_weapon_rocket_launcher t=90.7167 launch |v|=1200.0 dir pitch -5.878 yaw 90.000 (eye -5.545 90.656; d -0.333 -0.656) pos-eye -0.0 -0.0 0.0
+    first frame covers 0.214 s of flight (frame 0.100 s)
+    free 6 frames 0.500 s: g(median dvz)=7.2 g(vz first-last)=13.9 speed(median dpos)=1200.0 hspeed 1193.7 -> 1194.4 along 733 lateral max -7.4 last -7.4
+    stop/bounce at t+0.600 pos 22.8 -1025.0 143.9 vel 0.0 0.0 0.0 planted 0
+    end t+0.800 at 22.8 -1025.0 143.9 (8 samples)
+  hit 91.3167 npc_titan#86 hp 3250 sh 0 dmg 2250.00 hg 2 hb 32 head 0 crit 1.000 flags 1 src 117 inf rpg_missile dist 843.6 pos 22.77 -1024.95 143.87
+== reload_empty  client 96.418-101.331  clock(server-client) +0.082
+  weapon mp_weapon_rocket_launcher clip 1 stock 7
+  shots 1 at 0.0347
+  clip drops 1
+  spread at shots 3.000
+  view change pitch +0.000 yaw +0.000 (before first shot -> 0.6 s after last)
+  ready 1->0 at 0.0347 (clip 0 rel 1)
+  ready 0->1 at 2.6890 (clip 1 rel 0)
+  spread min 3.000 max 3.000 last 3.000
+  reload start 0.0347 (clip 0) refill +2.0125 -> 1 end +2.6543
+== rcut_e_0.80  client 101.331-110.617  clock(server-client) +0.086
+  weapon mp_weapon_rocket_launcher clip 1 stock 6
+  shots 1 at 0.2709
+  clip drops 1
+  spread at shots 3.000
+  view change pitch +0.000 yaw +0.000 (before first shot -> 0.6 s after last)
+  ready 1->0 at 0.5183 (clip 0 rel 1)
+  ready 0->1 at 2.1070 (clip 0 rel 0)
+  ready 1->0 at 2.7766 (clip 0 rel 0)
+  ready 0->1 at 6.0406 (clip 1 rel 0)
+  spread min 1.250 max 3.000 last 3.000
+  reload start 0.5183 (clip 0) refill +4.6025 -> 1 end +0.8011
+  reload start 3.4931 (clip 0) refill +1.6278 -> 1 end +2.5475
+== rcut_e_1.60  client 110.617-120.706  clock(server-client) +0.067
+  weapon mp_weapon_rocket_launcher clip 1 stock 6
+  shots 1 at 0.2396
+  clip drops 1
+  spread at shots 3.000
+  view change pitch +0.000 yaw +0.000 (before first shot -> 0.6 s after last)
+  ready 1->0 at 0.2396 (clip 0 rel 1)
+  ready 0->1 at 2.9125 (clip 0 rel 0)
+  ready 1->0 at 3.5826 (clip 0 rel 0)
+  ready 0->1 at 5.3673 (clip 1 rel 0)
+  spread min 3.000 max 3.000 last 3.000
+  reload start 0.2396 (clip 0) refill +4.2709 -> 1 end +1.8857
+  reload start 4.2945 (clip 0) refill +0.2161 -> 1 end +1.0728
+== rcut_e_2.20  client 120.706-131.406  clock(server-client) +0.094
+  weapon mp_weapon_rocket_launcher clip 1 stock 6
+  shots 1 at 0.2453
+  clip drops 1 1
+  spread at shots 3.000
+  view change pitch +0.000 yaw +0.000 (before first shot -> 0.6 s after last)
+  ready 1->0 at 0.2453 (clip 0 rel 1)
+  ready 0->1 at 3.5107 (clip 0 rel 0)
+  ready 1->0 at 4.1834 (clip 0 rel 0)
+  ready 0->1 at 5.2823 (clip 1 rel 0)
+  spread min 3.000 max 3.000 last 3.000
+  reload start 0.2453 (clip 0) refill +1.9930 -> 1 end +2.4792
+== swap  client 131.406-138.037  clock(server-client) +0.077
+  weapon mp_weapon_rocket_launcher clip 1 stock 6
+  ready 1->0 at 0.0069 (clip 1 rel 0)
+  ready 0->1 at 0.7970 (clip 0 rel 0)
+  ready 1->0 at 1.5686 (clip 0 rel 0)
+  ready 0->1 at 2.6659 (clip 1 rel 0)
+  ready 1->0 at 4.4000 (clip 24 rel 0)
+  ready 0->1 at 5.5740 (clip 24 rel 0)
+  spread min 2.000 max 3.000 last 2.000
+== hitscan_rspn101  client 138.037-142.753  clock(server-client) +0.063
+  weapon mp_weapon_rspn101 clip 24 stock 240
+  shots 1 at 0.8483
+  first shot 0.0069 s after +attack
+  clip drops 1 17
+  spread at shots 0.000
+  view change pitch +0.000 yaw +0.000 (before first shot -> 0.6 s after last)
+  ready 1->0 at 0.8483 (clip 23 rel 0)
+  ready 0->1 at 0.9247 (clip 23 rel 0)
+  ready 1->0 at 2.4674 (clip 6 rel 0)
+  ready 0->1 at 3.2105 (clip 6 rel 0)
+  spread min 0.000 max 8.000 last 8.000
+  +zoom at 0.2065: zoomfrac from 0.000, 0.5@0.1387 0.99@0.2568
+  -zoom at 2.1034: zoomfrac from 1.000, 0.01@0.2099 0.5@0.1120
+== hitscan_dmr  client 142.753-147.474  clock(server-client) +0.080
+  weapon mp_weapon_dmr clip 6 stock 60
+  shots 1 at 0.8527
+  first shot 0.0069 s after +attack
+  clip drops 1
+  spread at shots 0.050
+  view change pitch -0.240 yaw +0.000 (before first shot -> 0.6 s after last)
+  ready 1->0 at 0.8527 (clip 5 rel 0)
+  ready 0->1 at 1.1865 (clip 5 rel 0)
+  ready 1->0 at 2.4498 (clip 6 rel 0)
+  ready 0->1 at 2.8318 (clip 6 rel 0)
+  spread min 0.050 max 8.000 last 1.000
+  +zoom at 0.2062: zoomfrac from 0.000, 0.5@0.2074 0.99@0.4088
+  -zoom at 2.1086: zoomfrac from 1.000, 0.01@0.3064 0.5@0.1603
+== hitscan_wingman  client 147.474-152.185  clock(server-client) +0.076
+  weapon mp_weapon_wingman clip 6 stock 160
+  shots 1 at 0.8467
+  first shot 0.0067 s after +attack
+  clip drops 1
+  spread at shots 0.000
+  view change pitch +0.040 yaw +0.210 (before first shot -> 0.6 s after last)
+  ready 1->0 at 0.8467 (clip 5 rel 0)
+  ready 0->1 at 1.2346 (clip 5 rel 0)
+  ready 1->0 at 2.4322 (clip 14 rel 0)
+  ready 0->1 at 3.2264 (clip 14 rel 0)
+  spread min 0.000 max 5.500 last 5.500
+  +zoom at 0.2014: zoomfrac from 0.000, 0.5@0.1111 0.99@0.2101
+  -zoom at 2.0985: zoomfrac from 1.000, 0.01@0.1598 0.5@0.0840
+== hitscan_g2  client 152.185-156.897  clock(server-client) +0.065
+  weapon mp_weapon_g2 clip 14 stock 140
+  shots 1 at 0.8441
+  first shot 0.0070 s after +attack
+  clip drops 1 7
+  spread at shots 0.000
+  view change pitch +0.000 yaw +0.030 (before first shot -> 0.6 s after last)
+  ready 1->0 at 0.8441 (clip 13 rel 0)
+  ready 0->1 at 1.0311 (clip 13 rel 0)
+  ready 1->0 at 2.4207 (clip 6 rel 0)
+  ready 0->1 at 2.8193 (clip 6 rel 0)
+  spread min 0.000 max 5.500 last 0.000
+  +zoom at 0.2010: zoomfrac from 0.000, 0.5@0.1319 0.99@0.2569
+  -zoom at 2.0941: zoomfrac from 1.000, 0.01@0.2082 0.5@0.1111
+== hitscan_wingman_n  client 156.897-161.611  clock(server-client) +0.086
+  weapon mp_weapon_wingman_n clip 6 stock 160
+  shots 1 at 0.8472
+  first shot 0.0070 s after +attack
+  clip drops 1
+  spread at shots 0.000
+  view change pitch +0.000 yaw +0.000 (before first shot -> 0.6 s after last)
+  ready 1->0 at 0.8472 (clip 5 rel 0)
+  ready 0->1 at 1.2330 (clip 5 rel 0)
+  ready 1->0 at 2.4570 (clip 6 rel 0)
+  ready 0->1 at 3.6486 (clip 6 rel 0)
+  spread min 0.000 max 8.000 last 8.000
+  +zoom at 0.2024: zoomfrac from 0.000, 0.5@0.1102 0.99@0.2075
+  -zoom at 2.1021: zoomfrac from 1.000, 0.01@0.1604 0.5@0.0840
+== hitscan_shotgun  client 161.611-166.324  clock(server-client) +0.072
+  weapon mp_weapon_shotgun clip 6 stock 60
+  shots 1 at 0.8472
+  first shot 0.0069 s after +attack
+  clip drops 1 1
+  spread at shots 8.000
+  view change pitch -0.150 yaw +0.740 (before first shot -> 0.6 s after last)
+  ready 1->0 at 0.8472 (clip 5 rel 0)
+  ready 0->1 at 1.2165 (clip 5 rel 0)
+  ready 1->0 at 2.4465 (clip 4 rel 0)
+  ready 0->1 at 3.4043 (clip 4 rel 0)
+  spread min 0.000 max 8.000 last 0.000
+  +zoom at 0.2016: zoomfrac from 0.000, 0.5@0.1321 0.99@0.2571
+  -zoom at 2.1000: zoomfrac from 1.000, 0.01@0.2059 0.5@0.1111
+  hit 162.5132 npc_soldier#101 hp 20000 sh 0 dmg 31.00 hg 0 hb 7 head 0 crit 1.000 flags 67191808 src 104 inf weaponx dist 0.0 pos -14.32 -1354.54 45.34
+== hitscan_mastiff  client 166.324-171.146  clock(server-client) +0.076
+  weapon mp_weapon_mastiff clip 4 stock 40
+  shots 1 at 0.8475
+  first shot 0.0070 s after +attack
+  clip drops 1
+  spread at shots 0.000
+  view change pitch +0.000 yaw +0.000 (before first shot -> 0.6 s after last)
+  ready 1->0 at 0.8475 (clip 3 rel 0)
+  ready 0->1 at 1.6227 (clip 3 rel 0)
+  ready 1->0 at 2.4791 (clip 12 rel 0)
+  ready 0->1 at 3.9360 (clip 12 rel 0)
+  spread min 0.000 max 8.000 last 8.000
+  +zoom at 0.2013: zoomfrac from 0.000, 0.5@0.1321 0.99@0.2570
+  -zoom at 2.1029: zoomfrac from 1.000, 0.01@0.2084 0.5@0.1110
+  proj crossbow_bolt mp_weapon_mastiff t=167.3167 launch |v|=3000.4 dir pitch 2.587 yaw 91.720 (eye 2.401 90.000; d 0.186 1.720) pos-eye -13.1 435.7 -19.0
+    first frame covers 0.100 s of flight (frame 0.100 s)
+    free 2 frames 0.100 s: g(median dvz)=nan g(vz first-last)=67.5 speed(median dpos)=nan hspeed 2997.4 -> 2997.4 along 300 lateral max 9.0 last 9.0
+    stop/bounce at t+0.200 pos -0.1 -1062.5 25.0 vel 0.0 0.0 0.0 planted 0
+    end t+0.300 at -0.1 -1062.5 25.0 (3 samples)
+  proj crossbow_bolt mp_weapon_mastiff t=167.3167 launch |v|=3000.4 dir pitch 2.588 yaw 89.570 (eye 2.401 90.000; d 0.187 -0.430) pos-eye 3.3 435.9 -19.0
+    free 1 frames 0.000 s: g(median dvz)=nan g(vz first-last)=nan speed(median dpos)=nan hspeed 2997.4 -> 2997.4 along 0 lateral max 0.0 last 0.0
+    stop/bounce at t+0.100 pos 28.4 -1275.8 35.1 vel 0.0 0.0 0.0 planted 0
+    end t+0.300 at 28.4 -1275.8 35.1 (3 samples)
+  proj crossbow_bolt mp_weapon_mastiff t=167.3167 launch |v|=3000.4 dir pitch 2.588 yaw 89.140 (eye 2.401 90.000; d 0.187 -0.860) pos-eye 6.5 435.8 -19.0
+    free 1 frames 0.000 s: g(median dvz)=nan g(vz first-last)=nan speed(median dpos)=nan hspeed 2997.4 -> 2997.4 along 0 lateral max 0.0 last 0.0
+    stop/bounce at t+0.100 pos 32.8 -1276.0 35.1 vel 0.0 0.0 0.0 planted 0
+    end t+0.300 at 32.8 -1276.0 35.1 (3 samples)
+  proj crossbow_bolt mp_weapon_mastiff t=167.3167 launch |v|=3000.4 dir pitch 2.587 yaw 88.280 (eye 2.401 90.000; d 0.186 -1.720) pos-eye 13.1 435.7 -19.0
+    free 1 frames 0.000 s: g(median dvz)=nan g(vz first-last)=nan speed(median dpos)=nan hspeed 2997.4 -> 2997.4 along 0 lateral max 0.0 last 0.0
+    stop/bounce at t+0.100 pos 41.6 -1276.0 35.1 vel 0.0 0.0 0.0 planted 0
+    end t+0.300 at 41.6 -1276.0 35.1 (3 samples)
+  proj crossbow_bolt mp_weapon_mastiff t=167.3167 launch |v|=3000.4 dir pitch 2.588 yaw 90.215 (eye 2.401 90.000; d 0.187 0.215) pos-eye -1.6 435.9 -19.0
+    first frame covers 0.100 s of flight (frame 0.100 s)
+    free 2 frames 0.100 s: g(median dvz)=nan g(vz first-last)=67.5 speed(median dpos)=nan hspeed 2997.4 -> 2997.4 along 300 lateral max 1.1 last 1.1
+    stop/bounce at t+0.200 pos 20.5 -929.0 18.5 vel 0.0 0.0 0.0 planted 0
+    end t+0.400 at 20.5 -929.0 18.5 (4 samples)
+  proj crossbow_bolt mp_weapon_mastiff t=167.3167 launch |v|=3000.4 dir pitch 2.588 yaw 90.430 (eye 2.401 90.000; d 0.187 0.430) pos-eye -3.3 435.9 -19.0
+    first frame covers 0.100 s of flight (frame 0.100 s)
+    free 2 frames 0.100 s: g(median dvz)=nan g(vz first-last)=67.5 speed(median dpos)=nan hspeed 2997.4 -> 2997.4 along 300 lateral max 2.3 last 2.3
+    stop/bounce at t+0.200 pos 17.0 -932.5 18.7 vel 0.0 0.0 0.0 planted 0
+    end t+0.400 at 17.0 -932.5 18.7 (4 samples)
+  proj crossbow_bolt mp_weapon_mastiff t=167.3167 launch |v|=3000.4 dir pitch 2.588 yaw 89.785 (eye 2.401 90.000; d 0.187 -0.215) pos-eye 1.6 435.9 -19.0
+    first frame covers 0.100 s of flight (frame 0.100 s)
+    free 2 frames 0.100 s: g(median dvz)=nan g(vz first-last)=67.5 speed(median dpos)=nan hspeed 2997.4 -> 2997.4 along 300 lateral max -1.1 last -1.1
+    stop/bounce at t+0.200 pos 27.5 -925.6 18.4 vel 0.0 0.0 0.0 planted 0
+    end t+0.400 at 27.5 -925.6 18.4 (4 samples)
+  proj crossbow_bolt mp_weapon_mastiff t=167.3167 launch |v|=3000.4 dir pitch 2.588 yaw 90.860 (eye 2.401 90.000; d 0.187 0.860) pos-eye -6.5 435.8 -19.0
+    first frame covers 0.100 s of flight (frame 0.100 s)
+    free 2 frames 0.100 s: g(median dvz)=nan g(vz first-last)=67.5 speed(median dpos)=nan hspeed 2997.4 -> 2997.4 along 300 lateral max 4.5 last 4.5
+    stop/bounce at t+0.200 pos 10.1 -939.8 19.1 vel 0.0 0.0 0.0 planted 0
+    end t+0.400 at 10.1 -939.8 19.1 (4 samples)
+  hit 167.4833 npc_titan#86 hp 1000 sh 0 dmg 10.00 hg 7 hb 21 head 0 crit 1.000 flags 67191808 src 105 inf crossbow_bolt dist 935.6 pos 20.49 -929.01 18.54
+  hit 167.4833 npc_titan#86 hp 1000 sh 0 dmg 10.00 hg 7 hb 20 head 0 crit 1.000 flags 67191808 src 105 inf crossbow_bolt dist 932.1 pos 17.01 -932.54 18.71
+  hit 167.4833 npc_titan#86 hp 1000 sh 0 dmg 10.00 hg 7 hb 20 head 0 crit 1.000 flags 67191808 src 105 inf crossbow_bolt dist 924.8 pos 10.13 -939.84 19.07
+  hit 167.5000 npc_titan#86 hp 1000 sh 0 dmg 10.00 hg 7 hb 21 head 0 crit 1.000 flags 67191808 src 105 inf crossbow_bolt dist 939.0 pos 27.52 -925.62 18.37
+== dt2_z30  client 171.146-173.707  clock(server-client) +0.087
+  weapon mp_weapon_doubletake clip 12 stock 120
+  shots 1 at 0.9004
+  first shot 0.0069 s after +attack
+  clip drops 2
+  spread at shots 0.000
+  view change pitch -0.410 yaw +0.000 (before first shot -> 0.6 s after last)
+  ready 1->0 at 0.9004 (clip 10 rel 0)
+  ready 0->1 at 1.4069 (clip 10 rel 0)
+  spread min 0.000 max 8.000 last 8.000
+  +zoom at 0.1531: zoomfrac from 0.000, 0.5@0.2081 0.99@0.4094
+  -zoom at 2.1514: zoomfrac from 1.000, 0.01@0.3055 0.5@0.1598
+== dt2_z50  client 173.707-176.261  clock(server-client) +0.093
+  weapon mp_weapon_doubletake clip 12 stock 120
+  shots 1 at 0.8971
+  first shot 0.0069 s after +attack
+  clip drops 2
+  spread at shots 0.000
+  view change pitch -0.490 yaw +0.000 (before first shot -> 0.6 s after last)
+  ready 1->0 at 0.8971 (clip 10 rel 0)
+  ready 0->1 at 1.3971 (clip 10 rel 0)
+  spread min 0.000 max 8.000 last 8.000
+  +zoom at 0.1527: zoomfrac from 0.000, 0.5@0.2096 0.99@0.4042
+  -zoom at 2.1488: zoomfrac from 1.000, 0.01@0.3073 0.5@0.1609
+  proj crossbow_bolt mp_weapon_doubletake t=174.7167 launch |v|=10000.0 dir pitch 1.371 yaw 89.450 (eye 0.581 89.610; d 0.790 -0.160) pos-eye 0.0 0.1 0.0
+    end t+0.100 at 24.0 -1863.8 61.0 (1 samples)
+  proj crossbow_bolt mp_weapon_doubletake t=174.7167 launch |v|=10000.0 dir pitch 1.371 yaw 89.665 (eye 0.581 89.610; d 0.790 0.055) pos-eye 0.0 0.1 0.0
+    end t+0.100 at 24.0 -1863.8 61.0 (1 samples)
+  proj crossbow_bolt mp_weapon_doubletake t=174.7167 launch |v|=10000.0 dir pitch 1.371 yaw 89.235 (eye 0.581 89.610; d 0.790 -0.375) pos-eye 0.0 0.1 0.0
+    end t+0.100 at 24.0 -1863.8 61.0 (1 samples)
+== dt2_z70  client 176.261-178.821  clock(server-client) +0.072
+  weapon mp_weapon_doubletake clip 12 stock 120
+  shots 1 at 0.9002
+  first shot 0.0069 s after +attack
+  clip drops 2
+  spread at shots 0.000
+  view change pitch -0.360 yaw +0.000 (before first shot -> 0.6 s after last)
+  ready 1->0 at 0.9002 (clip 10 rel 0)
+  ready 0->1 at 1.4002 (clip 10 rel 0)
+  spread min 0.000 max 8.000 last 8.000
+  +zoom at 0.1532: zoomfrac from 0.000, 0.5@0.2081 0.99@0.4095
+  -zoom at 2.1492: zoomfrac from 1.000, 0.01@0.3065 0.5@0.1609
+== dt2_z88  client 178.821-181.377  clock(server-client) +0.079
+  weapon mp_weapon_doubletake clip 12 stock 120
+  shots 1 at 0.8989
+  first shot 0.0068 s after +attack
+  clip drops 2
+  spread at shots 0.000
+  view change pitch -0.470 yaw +0.000 (before first shot -> 0.6 s after last)
+  ready 1->0 at 0.8989 (clip 10 rel 0)
+  ready 0->1 at 1.4020 (clip 10 rel 0)
+  spread min 0.000 max 8.000 last 8.000
+  +zoom at 0.1540: zoomfrac from 0.000, 0.5@0.2084 0.99@0.4030
+  -zoom at 2.1465: zoomfrac from 1.000, 0.01@0.3047 0.5@0.1593
+  proj crossbow_bolt mp_weapon_doubletake t=179.8167 launch |v|=10000.0 dir pitch -2.400 yaw 88.998 (eye -3.099 89.610; d 0.699 -0.612) pos-eye 0.0 0.0 0.0
+    end t+0.100 at 24.0 -1864.2 61.0 (1 samples)
+  proj crossbow_bolt mp_weapon_doubletake t=179.8167 launch |v|=10000.0 dir pitch -2.400 yaw 89.213 (eye -3.099 89.610; d 0.699 -0.397) pos-eye 0.0 0.0 0.0
+    end t+0.100 at 24.0 -1864.2 61.0 (1 samples)
+  proj crossbow_bolt mp_weapon_doubletake t=179.8167 launch |v|=10000.0 dir pitch -2.400 yaw 88.783 (eye -3.099 89.610; d 0.699 -0.827) pos-eye 0.0 0.0 0.0
+    end t+0.100 at 24.0 -1864.2 61.0 (1 samples)
+WPT spawn 15.0333 npc_soldier#93 24.00 -1364.00 1.00 hp 20000/20000
+WPT frozen 15.3167 npc_soldier#93 -16.51 -1330.99 1.03 hp 20000
+WPT kill 41.1333
+WPT spawn 41.4333 npc_titan#86 24.00 -1000.00 1.00 hp 10000/10000 shield 0
+WPT frozen 41.7167 npc_titan#86 24.00 -1000.00 1.00 hp 10000
+WPT spawn 42.0333 npc_super_spectre#100 -200.00 -1300.00 1.00 hp 3500/3500
+WPT frozen 42.3167 npc_super_spectre#100 -200.00 -1300.00 1.00 hp 3500
+WPT spawn 134.6000 npc_soldier#101 24.00 -1364.00 1.00 hp 20000/20000
+WPT frozen 134.8167 npc_soldier#101 -17.46 -1347.84 1.03 hp 20000
+WPT kill 181.4500
+WPAMMO 18.4500 mp_weapon_rocket_launcher clip 1 stock 7
+WPAMMO 26.3167 mp_weapon_rocket_launcher clip 1 stock 7
+WPAMMO 31.0667 mp_weapon_rocket_launcher clip 1 stock 7
+WPAMMO 49.1000 mp_weapon_rocket_launcher clip 1 stock 7
+WPAMMO 55.4500 mp_weapon_rocket_launcher clip 1 stock 7
+WPAMMO 61.8167 mp_weapon_rocket_launcher clip 1 stock 7
+WPAMMO 68.0667 mp_weapon_rocket_launcher clip 1 stock 7
+WPAMMO 74.4167 mp_weapon_rocket_launcher clip 1 stock 7
+WPAMMO 80.7667 mp_weapon_rocket_launcher clip 1 stock 7
+WPAMMO 85.4333 mp_weapon_rocket_launcher clip 1 stock 7
+WPAMMO 87.7333 mp_weapon_rocket_launcher clip 1 stock 7
+WPAMMO 94.0833 mp_weapon_rocket_launcher clip 1 stock 7
+WPAMMO 96.3833 mp_weapon_rocket_launcher clip 1 stock 7
+WPAMMO 101.4167 mp_weapon_rocket_launcher clip 1 stock 7
+WPAMMO 110.6833 mp_weapon_rocket_launcher clip 1 stock 7
+WPAMMO 120.8000 mp_weapon_rocket_launcher clip 1 stock 7
+WPAMMO 138.0167 mp_weapon_rspn101 clip 24 stock 240
+WPAMMO 142.7333 mp_weapon_dmr clip 6 stock 60
+WPAMMO 147.4500 mp_weapon_wingman clip 6 stock 160
+WPAMMO 152.1667 mp_weapon_g2 clip 14 stock 140
+WPAMMO 156.8667 mp_weapon_wingman_n clip 6 stock 160
+WPAMMO 161.5833 mp_weapon_shotgun clip 6 stock 60
+WPAMMO 166.3000 mp_weapon_mastiff clip 4 stock 40
+WPAMMO 171.0167 mp_weapon_doubletake clip 12 stock 120
+WPAMMO 171.1333 mp_weapon_doubletake clip 12 stock 120
+WPAMMO 173.6833 mp_weapon_doubletake clip 12 stock 120
+WPAMMO 176.2333 mp_weapon_doubletake clip 12 stock 120
+WPAMMO 178.8000 mp_weapon_doubletake clip 12 stock 120
+WPAMMO 181.3500 mp_weapon_doubletake clip 12 stock 120
+WP init
+INFO settings pilot_grapple_male
+INFO active mp_weapon_rspn101
+INFO main mp_weapon_rspn101
+INFO main mp_weapon_defender
+INFO main mp_weapon_autopistol
+INFO offhand mp_weapon_frag_grenade
+INFO offhand mp_ability_grapple
+INFO offhand melee_pilot_emptyhanded
+INFO report 0
+INFO phase 0 14.7333
+WEAPON mp_weapon_rocket_launcher 16.2500
+WEAPON mp_weapon_rocket_launcher fast_lock 85.5333
+WEAPON mp_weapon_rocket_launcher 94.2000
+WEAPON mp_weapon_rspn101 135.8167
+WEAPON mp_weapon_dmr 140.5333
+WEAPON mp_weapon_wingman 145.2333
+WEAPON mp_weapon_g2 149.9500
+WEAPON mp_weapon_wingman_n 154.6500
+WEAPON mp_weapon_shotgun 159.3833
+WEAPON mp_weapon_mastiff 164.1000
+WEAPON mp_weapon_doubletake 168.8167
+NPC err no_target all

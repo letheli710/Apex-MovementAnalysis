@@ -1,0 +1,333 @@
+untyped
+// HSD.TF2Diag add-on, session tf2-weapons (2026-11-08): TF2-only pilot weapons.
+// Not part of the shared mod folder: weapons/tools/runner_wp.py copies this file into the installed
+// mod for its own runs only, so other sessions' runs never load it.
+// Server commands:
+//   hsd_wp_track <sec>                 every server frame, log each projectile the player owns:
+//                                        HSDDIAG PJNEW <t> <idx> <class> <weapon> eye <x y z> ang <pitch yaw> vel <vx vy vz> pos <x y z>
+//                                        HSDDIAG PJ <t> <idx> <x y z> <vx vy vz> planted <0/1> target <class|none>
+//                                        HSDDIAG PJEND <t> <idx> <last x y z>
+//   hsd_wp_ammo                        fill the active weapon's clip and stockpile
+//   hsd_wp_clip <n>                    set the active weapon's clip to n
+//   hsd_wp_titan <x> <y> <z> <yaw> [hp]  spawn a passive enemy Atlas titan target, frozen after 0.25 s
+//   hsd_wp_reaper <x> <y> <z> <yaw>    spawn a passive enemy reaper (npc_super_spectre), frozen after 0.25 s
+//   hsd_wp_soldier <x> <y> <z> <yaw> [hp] spawn a passive enemy soldier, frozen after 0.25 s, then put back on <x y z> (wp_a: the W1 static
+//                                      soldier walked ~93 u before its 0.6 s freeze and Double Take bolts passed through it)
+//   hsd_wp_kill                        remove the titan / reaper / soldier targets
+//   hsd_wp_aim <x> <y> <z>             print the view angles from the player's eye to a point
+//   hsd_wp_look <pitch> <yaw>          set the view angles only (no teleport); prints position and eye
+//   hsd_wp_up [dist]                   world traces from the eye: straight up, and 8 directions at pitch -45 / 0
+// Every hit on an NPC or a player prints
+//   HSDDIAG WDMG <t> <victim>#<idx> hp <hp before> sh <shield> dmg <d> hg <hitgroup> hb <hitbox> head <0/1> crit <scale>
+//                flags <custom damage type> src <source id> inf <inflictor class> dist <from attack origin> pos <x y z>
+global function HsdWp_InitServer
+
+struct {
+	float trackEnd = 0.0
+	bool tracking = false
+	array<entity> targets
+} file
+
+void function HsdWp_InitServer()
+{
+	AddClientCommandCallback( "hsd_wp_track", HsdWp_CC_Track )
+	AddClientCommandCallback( "hsd_wp_ammo", HsdWp_CC_Ammo )
+	AddClientCommandCallback( "hsd_wp_clip", HsdWp_CC_Clip )
+	AddClientCommandCallback( "hsd_wp_titan", HsdWp_CC_Titan )
+	AddClientCommandCallback( "hsd_wp_reaper", HsdWp_CC_Reaper )
+	AddClientCommandCallback( "hsd_wp_kill", HsdWp_CC_Kill )
+	AddClientCommandCallback( "hsd_wp_soldier", HsdWp_CC_Soldier )
+	AddClientCommandCallback( "hsd_wp_aim", HsdWp_CC_Aim )
+	AddClientCommandCallback( "hsd_wp_look", HsdWp_CC_Look )
+	AddClientCommandCallback( "hsd_wp_up", HsdWp_CC_Up )
+	foreach ( string c in [ "player", "npc_soldier", "npc_spectre", "npc_stalker", "npc_super_spectre", "npc_titan", "npc_prowler", "npc_drone" ] )
+		AddDamageCallback( c, HsdWp_OnDamage )
+	printt( "HSDDIAG WP init" )
+}
+
+string function HsdWp_V( vector v )
+{
+	return format( "%.2f %.2f %.2f", v.x, v.y, v.z )
+}
+
+bool function HsdWp_CC_Track( entity player, array<string> args )
+{
+	float sec = args.len() > 0 ? float( args[0] ) : 3.0
+	file.trackEnd = Time() + sec
+	if ( !file.tracking )
+		thread HsdWp_TrackLoop( player )
+	printt( format( "HSDDIAG WPTRACK %.4f until %.4f", Time(), file.trackEnd ) )
+	return true
+}
+
+void function HsdWp_TrackLoop( entity player )
+{
+	file.tracking = true
+	OnThreadEnd(
+		function() : ()
+		{
+			file.tracking = false
+		}
+	)
+	player.EndSignal( "OnDestroy" )
+	table<int, vector> last = {}
+	while ( Time() < file.trackEnd )
+	{
+		table<int, bool> now = {}
+		foreach ( entity p in GetProjectileArray() )
+		{
+			if ( !IsValid( p ) )
+				continue
+			entity owner = p.GetOwner()
+			if ( owner != player )
+				continue
+			int idx = p.GetEntIndex()
+			now[ idx ] <- true
+			vector o = p.GetOrigin()
+			vector v = p.GetVelocity()
+			if ( !( idx in last ) )
+			{
+				string wcls = "?"
+				try { wcls = p.ProjectileGetWeaponClassName() } catch ( e ) {}
+				vector a = player.EyeAngles()
+				printt( format( "HSDDIAG PJNEW %.4f %d %s %s eye %s ang %.3f %.3f vel %s pos %s", Time(), idx, p.GetClassName(), wcls,
+					HsdWp_V( player.EyePosition() ), a.x, a.y, HsdWp_V( v ), HsdWp_V( o ) ) )
+			}
+			int planted = 0
+			try { planted = p.proj.isPlanted ? 1 : 0 } catch ( e2 ) {}
+			string tgt = "none"
+			if ( p.GetClassName() == "rpg_missile" )
+			{
+				try
+				{
+					entity t = p.GetMissileTarget()
+					if ( IsValid( t ) )
+						tgt = t.GetClassName() + "#" + t.GetEntIndex()
+				}
+				catch ( e3 ) {}
+			}
+			printt( format( "HSDDIAG PJ %.4f %d %s %s planted %d target %s", Time(), idx, HsdWp_V( o ), HsdWp_V( v ), planted, tgt ) )
+			last[ idx ] <- o
+		}
+		array<int> gone = []
+		foreach ( int idx, vector o in last )
+		{
+			if ( !( idx in now ) )
+				gone.append( idx )
+		}
+		foreach ( int idx in gone )
+		{
+			printt( format( "HSDDIAG PJEND %.4f %d %s", Time(), idx, HsdWp_V( last[ idx ] ) ) )
+			delete last[ idx ]
+		}
+		WaitFrame()
+	}
+}
+
+bool function HsdWp_CC_Ammo( entity player, array<string> args )
+{
+	entity w = player.GetActiveWeapon()
+	if ( !IsValid( w ) )
+		return true
+	try
+	{
+		w.SetWeaponPrimaryClipCount( w.GetWeaponPrimaryClipCountMax() )
+		w.SetWeaponPrimaryAmmoCount( 999 )
+	}
+	catch ( e ) { printt( "HSDDIAG WP ammo_err " + e ) }
+	printt( format( "HSDDIAG WPAMMO %.4f %s clip %d stock %d", Time(), w.GetWeaponClassName(), w.GetWeaponPrimaryClipCount(), w.GetWeaponPrimaryAmmoCount() ) )
+	return true
+}
+
+bool function HsdWp_CC_Clip( entity player, array<string> args )
+{
+	entity w = player.GetActiveWeapon()
+	if ( !IsValid( w ) || args.len() < 1 )
+		return true
+	try { w.SetWeaponPrimaryClipCount( int( args[0] ) ) } catch ( e ) { printt( "HSDDIAG WP clip_err " + e ) }
+	printt( format( "HSDDIAG WPCLIP %.4f %s clip %d stock %d", Time(), w.GetWeaponClassName(), w.GetWeaponPrimaryClipCount(), w.GetWeaponPrimaryAmmoCount() ) )
+	return true
+}
+
+void function HsdWp_Passive( entity npc, string kind, vector home = < 0, 0, 0 >, bool sendHome = false )
+{
+	npc.EndSignal( "OnDestroy" )
+	npc.EndSignal( "OnDeath" )
+	try
+	{
+		npc.EnableNPCFlag( NPC_IGNORE_ALL | NPC_DISABLE_SENSING )
+		npc.ClearEnemy()
+	}
+	catch ( e0 ) { printt( "HSDDIAG WPT flag_err " + e0 ) }
+	// smoke run 20261108_033208: with a 1.0 s wait the titan walked ~150 u before the freeze
+	wait 0.25
+	try
+	{
+		npc.ClearEnemy()
+		foreach ( entity w in npc.GetMainWeapons() )
+			npc.TakeWeapon( w.GetWeaponClassName() )
+		npc.Freeze()
+		// wp_b: every soldier slid 25-45 u sideways in its first 0.25 s; put it back where it was asked for
+		if ( sendHome )
+			npc.SetOrigin( home )
+	}
+	catch ( e ) { printt( "HSDDIAG WPT passive_err " + e ) }
+	printt( format( "HSDDIAG WPT frozen %.4f %s#%d %s hp %d", Time(), kind, npc.GetEntIndex(), HsdWp_V( npc.GetOrigin() ), npc.GetHealth() ) )
+}
+
+bool function HsdWp_CC_Titan( entity player, array<string> args )
+{
+	if ( args.len() < 4 )
+		return true
+	vector pos = < float( args[0] ), float( args[1] ), float( args[2] ) >
+	int team = GetOtherTeam( player.GetTeam() )
+	entity npc
+	try
+	{
+		npc = CreateAtlas( team, pos, < 0, float( args[3] ), 0 > )
+		DispatchSpawn( npc )
+	}
+	catch ( e )
+	{
+		printt( "HSDDIAG WPT titan_err " + e )
+		return true
+	}
+	if ( args.len() > 4 )
+	{
+		npc.SetMaxHealth( int( args[4] ) )
+		npc.SetHealth( int( args[4] ) )
+	}
+	file.targets.append( npc )
+	int sh = -1
+	try { sh = npc.GetTitanSoul().GetShieldHealth() } catch ( e2 ) {}
+	printt( format( "HSDDIAG WPT spawn %.4f npc_titan#%d %s hp %d/%d shield %d", Time(), npc.GetEntIndex(), HsdWp_V( npc.GetOrigin() ),
+		npc.GetHealth(), npc.GetMaxHealth(), sh ) )
+	thread HsdWp_Passive( npc, "npc_titan" )
+	return true
+}
+
+bool function HsdWp_CC_Reaper( entity player, array<string> args )
+{
+	if ( args.len() < 4 )
+		return true
+	vector pos = < float( args[0] ), float( args[1] ), float( args[2] ) >
+	int team = GetOtherTeam( player.GetTeam() )
+	entity npc
+	try
+	{
+		npc = CreateNPC( "npc_super_spectre", team, pos, < 0, float( args[3] ), 0 > )
+		DispatchSpawn( npc )
+	}
+	catch ( e )
+	{
+		printt( "HSDDIAG WPT reaper_err " + e )
+		return true
+	}
+	file.targets.append( npc )
+	printt( format( "HSDDIAG WPT spawn %.4f npc_super_spectre#%d %s hp %d/%d", Time(), npc.GetEntIndex(), HsdWp_V( npc.GetOrigin() ),
+		npc.GetHealth(), npc.GetMaxHealth() ) )
+	thread HsdWp_Passive( npc, "npc_super_spectre" )
+	return true
+}
+
+bool function HsdWp_CC_Kill( entity player, array<string> args )
+{
+	foreach ( entity npc in file.targets )
+	{
+		if ( IsValid( npc ) )
+			npc.Destroy()
+	}
+	file.targets.clear()
+	printt( format( "HSDDIAG WPT kill %.4f", Time() ) )
+	return true
+}
+
+bool function HsdWp_CC_Aim( entity player, array<string> args )
+{
+	if ( args.len() < 3 )
+		return true
+	vector d = < float( args[0] ), float( args[1] ), float( args[2] ) > - player.EyePosition()
+	vector a = VectorToAngles( d )
+	printt( format( "HSDDIAG WPAIM %.4f eye %s pitch %.3f yaw %.3f dist %.1f", Time(), HsdWp_V( player.EyePosition() ), a.x, a.y, Length( d ) ) )
+	return true
+}
+
+void function HsdWp_OnDamage( entity ent, var damageInfo )
+{
+	entity inf = DamageInfo_GetInflictor( damageInfo )
+	vector p = DamageInfo_GetDamagePosition( damageInfo )
+	int flags = DamageInfo_GetCustomDamageType( damageInfo )
+	int sh = 0
+	try
+	{
+		if ( ent.IsTitan() && IsValid( ent.GetTitanSoul() ) )
+			sh = ent.GetTitanSoul().GetShieldHealth()
+	}
+	catch ( e ) {}
+	float crit = 0.0
+	try { crit = DamageInfo_GetDamageCriticalHitScale( damageInfo ) } catch ( e2 ) {}
+	printt( format( "HSDDIAG WDMG %.4f %s#%d hp %d sh %d dmg %.2f hg %d hb %d head %d crit %.3f flags %d src %d inf %s dist %.1f pos %s",
+		Time(), ent.GetClassName(), ent.GetEntIndex(), ent.GetHealth(), sh, DamageInfo_GetDamage( damageInfo ),
+		DamageInfo_GetHitGroup( damageInfo ), DamageInfo_GetHitBox( damageInfo ), ( flags & DF_HEADSHOT ) ? 1 : 0, crit, flags,
+		DamageInfo_GetDamageSourceIdentifier( damageInfo ), IsValid( inf ) ? inf.GetClassName() : "none",
+		DamageInfo_GetDistFromAttackOrigin( damageInfo ), HsdWp_V( p ) ) )
+}
+
+bool function HsdWp_CC_Look( entity player, array<string> args )
+{
+	if ( args.len() < 2 )
+		return true
+	player.SetAngles( < float( args[0] ), float( args[1] ), 0.0 > )
+	printt( format( "HSDDIAG WPLOOK %.4f pos %s eye %s ang %s %s", Time(), HsdWp_V( player.GetOrigin() ), HsdWp_V( player.EyePosition() ), args[0], args[1] ) )
+	return true
+}
+
+bool function HsdWp_CC_Up( entity player, array<string> args )
+{
+	float dist = args.len() > 0 ? float( args[0] ) : 8000.0
+	vector e = player.EyePosition()
+	printt( format( "HSDDIAG WPUP origin %s eye %s", HsdWp_V( player.GetOrigin() ), HsdWp_V( e ) ) )
+	array<vector> dirs = [ < 0, 0, 1 > ]
+	foreach ( float pitch in [ -45.0, -20.0, 0.0 ] )
+		for ( int yaw = 0; yaw < 360; yaw += 45 )
+			dirs.append( AnglesToForward( < pitch, float( yaw ), 0.0 > ) )
+	foreach ( vector d in dirs )
+	{
+		TraceResults tr = TraceLine( e, e + d * dist, player, TRACE_MASK_SHOT, TRACE_COLLISION_GROUP_NONE )
+		vector a = VectorToAngles( d )
+		printt( format( "HSDDIAG WPUP dir %.0f %.0f hit %s frac %.4f dist %.0f sky %d", a.x, a.y, HsdWp_V( tr.endPos ), tr.fraction,
+			tr.fraction * dist, tr.hitSky ? 1 : 0 ) )
+	}
+	return true
+}
+
+bool function HsdWp_CC_Soldier( entity player, array<string> args )
+{
+	if ( args.len() < 4 )
+		return true
+	vector pos = < float( args[0] ), float( args[1] ), float( args[2] ) >
+	int team = GetOtherTeam( player.GetTeam() )
+	entity npc
+	try
+	{
+		npc = CreateNPC( "npc_soldier", team, pos, < 0, float( args[3] ), 0 > )
+		DispatchSpawn( npc )
+		if ( args.len() > 4 )
+		{
+			npc.SetMaxHealth( int( args[4] ) )
+			npc.SetHealth( int( args[4] ) )
+		}
+	}
+	catch ( e )
+	{
+		printt( "HSDDIAG WPT soldier_err " + e )
+		return true
+	}
+	file.targets.append( npc )
+	printt( format( "HSDDIAG WPT spawn %.4f npc_soldier#%d %s hp %d/%d", Time(), npc.GetEntIndex(), HsdWp_V( npc.GetOrigin() ),
+		npc.GetHealth(), npc.GetMaxHealth() ) )
+	// wp_b/wp_c: soldiers slide 25-45 u sideways before the freeze (the "hits behind the soldier" at y -1275 in
+	// wp_a/wp_b were a thin map wall, not the body). Put the soldier back on the asked-for point after the freeze.
+	thread HsdWp_Passive( npc, "npc_soldier", pos, true )
+	return true
+}
