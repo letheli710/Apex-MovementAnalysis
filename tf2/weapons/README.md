@@ -12,7 +12,7 @@
   3. Thunderbolt 脚本写的重力 5 没有效果，电球不受重力。
   4. 换弹"能开火"比文件时长早 0.3–0.55 s；中途打断后，下次只换剩下的一段（`reload_time_late*` 的含义），但节点位置要逐把枪测（只有两把正好在 `T − late_k`）。
 - **Apex 有对应的 22 把**里，按文件比较值得单独写页的是 4 把：EVA-8（不发弹丸）、Mastiff + Mozambique（慢速弹）、L-STAR（另一套过热）。这次没写页，只在 [VARIANTS.md](VARIANTS.md) 里列了差别。
-- 没测成的：打人的部分伤害和爆头倍率（靶子滑开，`wp_f` 补测，见各页）、画面后坐弹簧（脚本读不到）、腰射散布的分布形状、几处原生细节。每页"不知道的"一节列全了。
+- 打人和爆头倍率已补测（`wp_f`、`wp_g`：Double Take × 2、Cold War / SMR × 1.25，打腿不减伤）。没测成的：画面后坐弹簧（脚本读不到）、腰射散布的分布形状、几处原生细节。每页"不知道的"一节列全了。
 
 ## 研究清单（第一步）
 
@@ -162,7 +162,7 @@ R5 的 `late` 键和 TF2 在多把枪上比例相同（[VARIANTS.md](VARIANTS.md
 **能照做（规则 + 数值 + 实测对照都有）**：
 - 7 把武器的开火时序（半自动、连发、蓄力连发、全自动、开镜才能打、锁定才能打）、弹道（速度、重力、继承玩家速度、引信、粘住、磁吸、电球、漂移）、伤害（直接 / 爆炸 / 重甲 / 爆炸衰减）、散布、开镜、永久后坐、换弹三个时刻和中断。
 - 原值全表 [data/wpn-values.tsv](data/wpn-values.tsv)（31 把枪的多人 / 战役 / mod 值），每页附录有分组表。
-- 实测对照：`runtime/data/` 下 8 次运行（smoke、`wp_a`–`wp_f`）的 `diag.tsv`、`analysis.txt`、`sky.txt`；原始日志在 `HSD-RawData`。
+- 实测对照：`runtime/data/` 下 9 次运行（smoke × 2、`wp_a`–`wp_g`）的 `diag.tsv`、`analysis.txt`、`sky.txt`；原始日志在 `HSD-RawData`。
 - 原生代码：MGL 磁吸、导弹漂移的反编译原文在 `HSD-RawData` 的 `tf2/local/ghidra-weapons/`，读法写在各页。
 
 **还缺**：
