@@ -1,0 +1,1152 @@
+tree	selector	order	entry	native_class	condition	disabled	line
+behavior_drone	Common	1	SelectSchedule_Flinch			0	3
+behavior_drone	Common	2	SelectSchedule_LayeredBehavior			0	4
+behavior_drone	Idle	1	SelectSchedule_PatrolRun			0	11
+behavior_drone	Idle	2	SelectSchedule_IdleStand			0	12
+behavior_drone	Alert	1	SelectSchedule_PatrolRun			0	19
+behavior_drone	Alert	2	SelectSchedule_IdleStand			0	20
+behavior_drone	Combat	1	SelectSchedule_EnemyTooClose			0	27
+behavior_drone	Combat	2	SelectSchedule_StationaryLowAmmo			0	28
+behavior_drone	Combat	3	SelectSchedule_ChaseEnemy			0	29
+behavior_drone	Combat	4	SelectSchedule_RangeAttack			0	30
+behavior_drone	Combat	5	SelectSchedule_IdleStand			0	31
+behavior_dropship	Common	1	SelectSchedule_LayeredBehavior			0	2
+behavior_dropship	Idle	1	SelectSchedule_IdleStand			0	8
+behavior_dropship	Alert	1	SelectSchedule_IdleStand			0	14
+behavior_dropship	Combat	1	SelectSchedule_IdleStand			0	20
+behavior_flyer	Common	1	SelectSchedule_Flinch			0	3
+behavior_flyer	Common	2	SelectSchedule_LayeredBehavior			0	4
+behavior_flyer	Idle	1	SelectSchedule_PatrolRun			0	11
+behavior_flyer	Idle	2	SelectSchedule_IdleStand			0	12
+behavior_flyer	Alert	1	SelectSchedule_PatrolRun			0	19
+behavior_flyer	Alert	2	SelectSchedule_IdleStand			0	20
+behavior_flyer	Combat	1	SelectSchedule_FearEnemy			0	27
+behavior_flyer	Combat	2	SelectSchedule_SyncedMeleeAttack			0	28
+behavior_flyer	Combat	3	SelectSchedule_MeleeAttack			0	29
+behavior_flyer	Combat	4	SelectSchedule_ChaseEnemy			0	30
+behavior_flyer	Combat	5	SelectSchedule_IdleStand			0	31
+behavior_frag_drone	Common	1	SelectSchedule_LayeredBehavior			0	3
+behavior_frag_drone	Idle	1	SelectSchedule_Idle			0	10
+behavior_frag_drone	Alert	1	SelectSchedule_Alert			0	17
+behavior_frag_drone	Combat	1	SelectSchedule_ChaseEnemy			0	24
+behavior_frag_drone	Combat	2	SelectSchedule_CombatFace			0	25
+behavior_goliath	Common	1	SelectSchedule_FallToGround			0	3
+behavior_goliath	Common	2	SelectSchedule_Flinch			0	4
+behavior_goliath	Common	3	SelectSchedule_LayeredBehavior			0	5
+behavior_goliath	Idle	1	SelectSchedule_Idle			0	12
+behavior_goliath	Alert	1	SelectSchedule_Alert			0	19
+behavior_goliath	Combat	1	SelectSchedule_FearEnemy			0	26
+behavior_goliath	Combat	2	SelectSchedule_NewEnemySignal			0	27
+behavior_goliath	Combat	3	SelectSchedule_MeleeAttack			0	28
+behavior_goliath	Combat	4	SelectSchedule_ChaseEnemy			0	29
+behavior_gunship	Common	1	SelectSchedule_MissileDodge			0	3
+behavior_gunship	Common	2	SelectSchedule_LayeredBehavior			0	4
+behavior_gunship	Idle	1	SelectSchedule_PatrolRun			0	10
+behavior_gunship	Alert	1	SelectSchedule_PatrolRun			0	16
+behavior_gunship	Combat	1	SelectSchedule_EnemyTooClose			0	21
+behavior_gunship	Combat	2	SelectSchedule_StrafeDodge			0	22
+behavior_gunship	Combat	3	SelectSchedule_AttackRun			0	23
+behavior_gunship	Combat	4	SelectSchedule_CircleStrafe			0	24
+behavior_gunship	Combat	5	SelectSchedule_StationaryLowAmmo			0	25
+behavior_gunship	Combat	6	SelectSchedule_RangeAttack			0	26
+behavior_gunship	Combat	7	SelectSchedule_CantSeeEnemy			0	27
+behavior_gunship	Combat	8	SelectSchedule_MoveToWeaponRange			0	28
+behavior_gunship	Combat	9	SelectSchedule_ChaseEnemy			0	29
+behavior_marvin	Common	1	SelectSchedule_FallToGround			0	3
+behavior_marvin	Common	2	SelectSchedule_Flinch			0	4
+behavior_marvin	Common	3	SelectSchedule_LayeredBehavior			0	5
+behavior_marvin	Common	4	SelectSchedule_Idle			0	6
+behavior_mp_auto_titan	Common	1	SelectSchedule_FallToGround			0	3
+behavior_mp_auto_titan	Common	2	SelectSchedule_MissileDodge			0	4
+behavior_mp_auto_titan	Common	3	SelectSchedule_PhysEntKnock	CNPC_Titan		0	5
+behavior_mp_auto_titan	Common	4	SelectSchedule_Flinch			0	6
+behavior_mp_auto_titan	Common	5	SelectSchedule_DisplaceFromDangerousArea			0	7
+behavior_mp_auto_titan	Common	6	SelectSchedule_ChangeToDesiredStance			0	8
+behavior_mp_auto_titan	Common	7	SelectSchedule_GotoDefensivePlacement	CNPC_Titan		0	9
+behavior_mp_auto_titan	Common	8	SelectSchedule_LayeredBehavior			0	10
+behavior_mp_auto_titan	Idle	1	SelectSchedule_Idle			0	16
+behavior_mp_auto_titan	Alert	1	SelectSchedule_Alert			0	22
+behavior_mp_auto_titan	Combat		SelectSchedule_StrafeDodge			1	28
+behavior_mp_auto_titan	Combat		SelectSchedule_ForwardDodge			1	29
+behavior_mp_auto_titan	Combat	1	SelectSchedule_MeleeAttack			0	30
+behavior_mp_auto_titan	Combat		SelectSchedule_EvasiveLowAmmo			1	31
+behavior_mp_auto_titan	Combat		SelectSchedule_ChaseEnemy			1	32
+behavior_mp_auto_titan	Combat		SelectSchedule_EngagementDistMax			1	33
+behavior_mp_auto_titan	Combat	2	SelectSchedule_StationaryLowAmmo			0	34
+behavior_mp_auto_titan	Combat		SelectSchedule_RangeAttackEvasive			1	35
+behavior_mp_auto_titan	Combat	3	SelectSchedule_RangeAttack			0	36
+behavior_mp_auto_titan	Combat		SelectSchedule_EngagementDistMin			1	37
+behavior_mp_auto_titan	Combat	4	SelectSchedule_WeaponBlocked			0	38
+behavior_mp_auto_titan	Combat	5	SelectSchedule_CantSeeEnemy			0	39
+behavior_mp_auto_titan	Combat		SelectSchedule_MoveToWeaponRange			1	40
+behavior_mp_auto_titan	Combat	6	SelectSchedule_CombatFace			0	41
+behavior_mp_auto_titan	CombatEvasive	1	SelectSchedule_StrafeDodge			0	47
+behavior_mp_auto_titan	CombatEvasive	2	SelectSchedule_MeleeAttack			0	48
+behavior_mp_auto_titan	CombatEvasive		SelectSchedule_BackwardDodge			1	49
+behavior_mp_auto_titan	CombatEvasive	3	SelectSchedule_TakeCoverFromEnemy		health > 0.1	0	50
+behavior_mp_auto_titan	CombatEvasive	4	SelectSchedule_EvasiveLowAmmo			0	51
+behavior_mp_auto_titan	CombatEvasive	5	SelectSchedule_RangeAttackEvasive			0	52
+behavior_mp_auto_titan	CombatEvasive	6	SelectSchedule_RangeAttack			0	53
+behavior_mp_auto_titan	CombatEvasive	7	SelectSchedule_EngagementDistMin			0	54
+behavior_mp_auto_titan	CombatEvasive	8	SelectSchedule_WeaponBlocked			0	55
+behavior_mp_auto_titan	CombatEvasive	9	SelectSchedule_CantSeeEnemy			0	56
+behavior_mp_auto_titan	CombatEvasive	10	SelectSchedule_CombatFace			0	57
+behavior_mp_auto_titan_enhanced	Common	1	SelectSchedule_FallToGround			0	3
+behavior_mp_auto_titan_enhanced	Common	2	SelectSchedule_MissileDodge			0	4
+behavior_mp_auto_titan_enhanced	Common	3	SelectSchedule_PhysEntKnock	CNPC_Titan		0	5
+behavior_mp_auto_titan_enhanced	Common	4	SelectSchedule_Flinch			0	6
+behavior_mp_auto_titan_enhanced	Common	5	SelectSchedule_DisplaceFromDangerousArea			0	7
+behavior_mp_auto_titan_enhanced	Common	6	SelectSchedule_ChangeToDesiredStance			0	8
+behavior_mp_auto_titan_enhanced	Common	7	SelectSchedule_GotoDefensivePlacement	CNPC_Titan		0	9
+behavior_mp_auto_titan_enhanced	Common	8	SelectSchedule_LayeredBehavior			0	10
+behavior_mp_auto_titan_enhanced	Idle	1	SelectSchedule_Idle			0	16
+behavior_mp_auto_titan_enhanced	Alert	1	SelectSchedule_Alert			0	22
+behavior_mp_auto_titan_enhanced	Combat	1	SelectSchedule_StrafeDodge			0	28
+behavior_mp_auto_titan_enhanced	Combat	2	SelectSchedule_ForwardDodge			0	29
+behavior_mp_auto_titan_enhanced	Combat	3	SelectSchedule_MeleeAttack			0	30
+behavior_mp_auto_titan_enhanced	Combat		SelectSchedule_EvasiveLowAmmo			1	31
+behavior_mp_auto_titan_enhanced	Combat	4	SelectSchedule_ChaseEnemy			0	32
+behavior_mp_auto_titan_enhanced	Combat		SelectSchedule_EngagementDistMax			1	33
+behavior_mp_auto_titan_enhanced	Combat	5	SelectSchedule_CircleStrafe			0	34
+behavior_mp_auto_titan_enhanced	Combat	6	SelectSchedule_StationaryLowAmmo			0	35
+behavior_mp_auto_titan_enhanced	Combat	7	SelectSchedule_RangeAttackEvasive			0	36
+behavior_mp_auto_titan_enhanced	Combat	8	SelectSchedule_RangeAttack			0	37
+behavior_mp_auto_titan_enhanced	Combat		SelectSchedule_EngagementDistMin			1	38
+behavior_mp_auto_titan_enhanced	Combat	9	SelectSchedule_WeaponBlocked			0	39
+behavior_mp_auto_titan_enhanced	Combat	10	SelectSchedule_CantSeeEnemy			0	40
+behavior_mp_auto_titan_enhanced	Combat		SelectSchedule_MoveToWeaponRange			1	41
+behavior_mp_auto_titan_enhanced	Combat	11	SelectSchedule_CombatFace			0	42
+behavior_mp_auto_titan_enhanced	CombatEvasive	1	SelectSchedule_StrafeDodge			0	48
+behavior_mp_auto_titan_enhanced	CombatEvasive	2	SelectSchedule_MeleeAttack			0	49
+behavior_mp_auto_titan_enhanced	CombatEvasive	3	SelectSchedule_BackwardDodge			0	50
+behavior_mp_auto_titan_enhanced	CombatEvasive	4	SelectSchedule_TakeCoverFromEnemy		health > 0.1	0	51
+behavior_mp_auto_titan_enhanced	CombatEvasive	5	SelectSchedule_EvasiveLowAmmo			0	52
+behavior_mp_auto_titan_enhanced	CombatEvasive	6	SelectSchedule_RangeAttackEvasive			0	53
+behavior_mp_auto_titan_enhanced	CombatEvasive	7	SelectSchedule_RangeAttack			0	54
+behavior_mp_auto_titan_enhanced	CombatEvasive	8	SelectSchedule_EngagementDistMin			0	55
+behavior_mp_auto_titan_enhanced	CombatEvasive	9	SelectSchedule_WeaponBlocked			0	56
+behavior_mp_auto_titan_enhanced	CombatEvasive	10	SelectSchedule_CantSeeEnemy			0	57
+behavior_mp_auto_titan_enhanced	CombatEvasive	11	SelectSchedule_CombatFace			0	58
+behavior_mp_auto_titan_enhanced_guard	Common	1	SelectSchedule_FallToGround			0	3
+behavior_mp_auto_titan_enhanced_guard	Common	2	SelectSchedule_MissileDodge			0	4
+behavior_mp_auto_titan_enhanced_guard	Common	3	SelectSchedule_PhysEntKnock	CNPC_Titan		0	5
+behavior_mp_auto_titan_enhanced_guard	Common	4	SelectSchedule_Flinch			0	6
+behavior_mp_auto_titan_enhanced_guard	Common	5	SelectSchedule_DisplaceFromDangerousArea			0	7
+behavior_mp_auto_titan_enhanced_guard	Common	6	SelectSchedule_ChangeToDesiredStance			0	8
+behavior_mp_auto_titan_enhanced_guard	Common	7	SelectSchedule_GotoDefensivePlacement	CNPC_Titan		0	9
+behavior_mp_auto_titan_enhanced_guard	Common	8	SelectSchedule_LayeredBehavior			0	10
+behavior_mp_auto_titan_enhanced_guard	Idle	1	SelectSchedule_Idle			0	16
+behavior_mp_auto_titan_enhanced_guard	Alert	1	SelectSchedule_Alert			0	22
+behavior_mp_auto_titan_enhanced_guard	Combat	1	SelectSchedule_StrafeDodge			0	28
+behavior_mp_auto_titan_enhanced_guard	Combat	2	SelectSchedule_MeleeAttack			0	29
+behavior_mp_auto_titan_enhanced_guard	Combat	3	SelectSchedule_EvasiveLowAmmo			0	30
+behavior_mp_auto_titan_enhanced_guard	Combat	4	SelectSchedule_ChaseEnemy			0	31
+behavior_mp_auto_titan_enhanced_guard	Combat	5	SelectSchedule_CircleStrafe			0	32
+behavior_mp_auto_titan_enhanced_guard	Combat	6	SelectSchedule_StationaryLowAmmo			0	33
+behavior_mp_auto_titan_enhanced_guard	Combat	7	SelectSchedule_RangeAttackEvasive			0	34
+behavior_mp_auto_titan_enhanced_guard	Combat	8	SelectSchedule_RangeAttack			0	35
+behavior_mp_auto_titan_enhanced_guard	Combat	9	SelectSchedule_WeaponBlockedByFriend			0	36
+behavior_mp_auto_titan_enhanced_guard	Combat	10	SelectSchedule_CombatFace			0	37
+behavior_mp_auto_titan_guard	Common	1	SelectSchedule_FallToGround			0	3
+behavior_mp_auto_titan_guard	Common		SelectSchedule_MissileDodge			1	4
+behavior_mp_auto_titan_guard	Common	2	SelectSchedule_PhysEntKnock	CNPC_Titan		0	5
+behavior_mp_auto_titan_guard	Common	3	SelectSchedule_Flinch			0	6
+behavior_mp_auto_titan_guard	Common	4	SelectSchedule_DisplaceFromDangerousArea			0	7
+behavior_mp_auto_titan_guard	Common	5	SelectSchedule_ChangeToDesiredStance			0	8
+behavior_mp_auto_titan_guard	Common	6	SelectSchedule_GotoDefensivePlacement	CNPC_Titan		0	9
+behavior_mp_auto_titan_guard	Common	7	SelectSchedule_LayeredBehavior			0	10
+behavior_mp_auto_titan_guard	Idle	1	SelectSchedule_Idle			0	16
+behavior_mp_auto_titan_guard	Alert	1	SelectSchedule_Alert			0	22
+behavior_mp_auto_titan_guard	Combat		SelectSchedule_StrafeDodge			1	28
+behavior_mp_auto_titan_guard	Combat		SelectSchedule_ForwardDodge			1	29
+behavior_mp_auto_titan_guard	Combat	1	SelectSchedule_MeleeAttack			0	30
+behavior_mp_auto_titan_guard	Combat		SelectSchedule_EvasiveLowAmmo			1	31
+behavior_mp_auto_titan_guard	Combat		SelectSchedule_ChaseEnemy			1	32
+behavior_mp_auto_titan_guard	Combat		SelectSchedule_EngagementDistMax			1	33
+behavior_mp_auto_titan_guard	Combat	2	SelectSchedule_StationaryLowAmmo			0	34
+behavior_mp_auto_titan_guard	Combat		SelectSchedule_RangeAttackEvasive			1	35
+behavior_mp_auto_titan_guard	Combat	3	SelectSchedule_RangeAttack2			0	36
+behavior_mp_auto_titan_guard	Combat	4	SelectSchedule_RangeAttack			0	37
+behavior_mp_auto_titan_guard	Combat		SelectSchedule_EngagementDistMin			1	38
+behavior_mp_auto_titan_guard	Combat	5	SelectSchedule_WeaponBlockedByFriend			0	39
+behavior_mp_auto_titan_guard	Combat		SelectSchedule_CantSeeEnemy			1	40
+behavior_mp_auto_titan_guard	Combat		SelectSchedule_MoveToWeaponRange			1	41
+behavior_mp_auto_titan_guard	Combat	6	SelectSchedule_CombatFace			0	42
+behavior_pilot_elite	Common	1	SelectSchedule_RodeoAttack			0	3
+behavior_pilot_elite	Common	2	SelectSchedule_FallToGround			0	4
+behavior_pilot_elite	Common	3	SelectSchedule_MissileDodge			0	5
+behavior_pilot_elite	Common	4	SelectSchedule_Flinch			0	6
+behavior_pilot_elite	Common	5	SelectSchedule_DisplaceFromDangerousArea			0	7
+behavior_pilot_elite	Common		SelectSchedule_ChangeToDesiredStance			1	8
+behavior_pilot_elite	Common	6	SelectSchedule_SyncedMeleeAttack			0	9
+behavior_pilot_elite	Common	7	SelectSchedule_LayeredBehavior			0	10
+behavior_pilot_elite	Idle	1	SelectSchedule_Idle			0	16
+behavior_pilot_elite	Alert	1	SelectSchedule_Alert			0	22
+behavior_pilot_elite	Combat		SelectSchedule_StrafeDodge			1	28
+behavior_pilot_elite	Combat		SelectSchedule_ForwardDodge			1	29
+behavior_pilot_elite	Combat	1	SelectSchedule_MeleeAttack			0	31
+behavior_pilot_elite	Combat		SelectSchedule_CombatNewEnemy	CAI_Combatant		1	33
+behavior_pilot_elite	Combat	2	SelectSchedule_SwitchWeapon			0	34
+behavior_pilot_elite	Combat	3	SelectSchedule_EvasiveLowAmmo			0	35
+behavior_pilot_elite	Combat	4	SelectSchedule_CircleStrafe			0	37
+behavior_pilot_elite	Combat	5	SelectSchedule_ShootingCover	CAI_Combatant		0	38
+behavior_pilot_elite	Combat		SelectSchedule_Taunt		health > 0.8	1	39
+behavior_pilot_elite	Combat	6	SelectSchedule_ThrowGrenade			0	41
+behavior_pilot_elite	Combat	7	SelectSchedule_RangeAttackEvasive			0	42
+behavior_pilot_elite	Combat	8	SelectSchedule_RangeAttackTwitch			0	43
+behavior_pilot_elite	Combat	9	SelectSchedule_RangeAttack			0	44
+behavior_pilot_elite	Combat		SelectSchedule_ChaseEnemy		health > 0.4	1	45
+behavior_pilot_elite	Combat	10	SelectSchedule_CombatFace			0	47
+behavior_pilot_elite	CombatEvasive	1	SelectSchedule_StrafeDodge			0	52
+behavior_pilot_elite	CombatEvasive	2	SelectSchedule_BackwardDodge			0	53
+behavior_pilot_elite	CombatEvasive	3	SelectSchedule_StationaryLowAmmo			0	54
+behavior_pilot_elite	CombatEvasive	4	SelectSchedule_RangeAttack2			0	55
+behavior_pilot_elite	CombatEvasive	5	SelectSchedule_RangeAttack			0	56
+behavior_pilot_elite	CombatEvasive	6	SelectSchedule_ChaseEnemy		health > 0.4	0	57
+behavior_pilot_elite	CombatEvasive	7	SelectSchedule_EnemyTooClose			0	58
+behavior_pilot_elite	CombatEvasive	8	SelectSchedule_WeaponBlocked			0	59
+behavior_pilot_elite	CombatEvasive	9	SelectSchedule_CantSeeEnemy			0	60
+behavior_pilot_elite	CombatEvasive	10	SelectSchedule_CircleStrafe			0	61
+behavior_pilot_elite	CombatEvasive	11	SelectSchedule_CombatFace			0	62
+behavior_pilot_elite_assassin	Common	1	SelectSchedule_RodeoAttack			0	3
+behavior_pilot_elite_assassin	Common	2	SelectSchedule_FallToGround			0	4
+behavior_pilot_elite_assassin	Common	3	SelectSchedule_MissileDodge			0	5
+behavior_pilot_elite_assassin	Common	4	SelectSchedule_Flinch			0	6
+behavior_pilot_elite_assassin	Common	5	SelectSchedule_SyncedMeleeAttack			0	7
+behavior_pilot_elite_assassin	Common	6	SelectSchedule_LayeredBehavior			0	8
+behavior_pilot_elite_assassin	Idle	1	SelectSchedule_Idle			0	14
+behavior_pilot_elite_assassin	Alert	1	SelectSchedule_Alert			0	20
+behavior_pilot_elite_assassin	Combat	1	SelectSchedule_LongJump			0	26
+behavior_pilot_elite_assassin	Combat	2	SelectSchedule_StrafeDodge			0	27
+behavior_pilot_elite_assassin	Combat	3	SelectSchedule_ForwardDodge			0	28
+behavior_pilot_elite_assassin	Combat	4	SelectSchedule_MeleeAttack			0	29
+behavior_pilot_elite_assassin	Combat	5	SelectSchedule_StationaryLowAmmo			0	30
+behavior_pilot_elite_assassin	Combat	6	SelectSchedule_RangeAttack2			0	31
+behavior_pilot_elite_assassin	Combat	7	SelectSchedule_RangeAttack			0	32
+behavior_pilot_elite_assassin	Combat		SelectSchedule_Taunt		health > 0.8	1	33
+behavior_pilot_elite_assassin	Combat	8	SelectSchedule_ChaseEnemy		health > 0.4	0	34
+behavior_pilot_elite_assassin	Combat	9	SelectSchedule_EnemyTooClose			0	35
+behavior_pilot_elite_assassin	Combat	10	SelectSchedule_WeaponBlocked			0	36
+behavior_pilot_elite_assassin	Combat	11	SelectSchedule_CantSeeEnemy			0	37
+behavior_pilot_elite_assassin	Combat	12	SelectSchedule_MoveToWeaponRange			0	38
+behavior_pilot_elite_assassin	Combat	13	SelectSchedule_CircleStrafe			0	39
+behavior_pilot_elite_assassin	Combat	14	SelectSchedule_CombatFace			0	40
+behavior_pilot_elite_assassin	CombatEvasive	1	SelectSchedule_StrafeDodge			0	46
+behavior_pilot_elite_assassin	CombatEvasive	2	SelectSchedule_BackwardDodge			0	47
+behavior_pilot_elite_assassin	CombatEvasive	3	SelectSchedule_StationaryLowAmmo			0	48
+behavior_pilot_elite_assassin	CombatEvasive	4	SelectSchedule_RangeAttack2			0	49
+behavior_pilot_elite_assassin	CombatEvasive	5	SelectSchedule_RangeAttack			0	50
+behavior_pilot_elite_assassin	CombatEvasive	6	SelectSchedule_ChaseEnemy		health > 0.4	0	51
+behavior_pilot_elite_assassin	CombatEvasive	7	SelectSchedule_EnemyTooClose			0	52
+behavior_pilot_elite_assassin	CombatEvasive	8	SelectSchedule_WeaponBlocked			0	53
+behavior_pilot_elite_assassin	CombatEvasive	9	SelectSchedule_CantSeeEnemy			0	54
+behavior_pilot_elite_assassin	CombatEvasive	10	SelectSchedule_CircleStrafe			0	55
+behavior_pilot_elite_assassin	CombatEvasive	11	SelectSchedule_CombatFace			0	56
+behavior_pilot_elite_assassin_cqb	Common	1	SelectSchedule_RodeoAttack			0	3
+behavior_pilot_elite_assassin_cqb	Common	2	SelectSchedule_FallToGround			0	4
+behavior_pilot_elite_assassin_cqb	Common	3	SelectSchedule_MissileDodge			0	5
+behavior_pilot_elite_assassin_cqb	Common	4	SelectSchedule_Flinch			0	6
+behavior_pilot_elite_assassin_cqb	Common	5	SelectSchedule_LayeredBehavior			0	7
+behavior_pilot_elite_assassin_cqb	Idle	1	SelectSchedule_Idle			0	13
+behavior_pilot_elite_assassin_cqb	Alert	1	SelectSchedule_Alert			0	19
+behavior_pilot_elite_assassin_cqb	Combat	1	SelectSchedule_LongJump			0	25
+behavior_pilot_elite_assassin_cqb	Combat	2	SelectSchedule_StrafeDodge			0	26
+behavior_pilot_elite_assassin_cqb	Combat		SelectSchedule_DisengageAfterMeleeAttack			1	27
+behavior_pilot_elite_assassin_cqb	Combat	3	SelectSchedule_ForwardDodge			0	28
+behavior_pilot_elite_assassin_cqb	Combat	4	SelectSchedule_SyncedMeleeAttack			0	29
+behavior_pilot_elite_assassin_cqb	Combat	5	SelectSchedule_MeleeAttack			0	30
+behavior_pilot_elite_assassin_cqb	Combat	6	SelectSchedule_StationaryLowAmmo			0	31
+behavior_pilot_elite_assassin_cqb	Combat		SelectSchedule_Taunt			1	32
+behavior_pilot_elite_assassin_cqb	Combat	7	SelectSchedule_MoveToWeaponRange			0	33
+behavior_pilot_elite_assassin_cqb	Combat	8	SelectSchedule_ChaseEnemy			0	34
+behavior_pilot_elite_assassin_cqb	Combat	9	SelectSchedule_RangeAttack2			0	35
+behavior_pilot_elite_assassin_cqb	Combat	10	SelectSchedule_RangeAttack			0	36
+behavior_pilot_elite_assassin_cqb	Combat	11	SelectSchedule_EnemyTooClose			0	37
+behavior_pilot_elite_assassin_cqb	Combat	12	SelectSchedule_WeaponBlocked			0	38
+behavior_pilot_elite_assassin_cqb	Combat	13	SelectSchedule_CantSeeEnemy			0	39
+behavior_pilot_elite_assassin_cqb	Combat	14	SelectSchedule_CircleStrafe			0	40
+behavior_pilot_elite_assassin_cqb	Combat	15	SelectSchedule_CombatFace			0	41
+behavior_pilot_elite_assassin_cqb	CombatEvasive	1	SelectSchedule_LongJump			0	47
+behavior_pilot_elite_assassin_cqb	CombatEvasive	2	SelectSchedule_StrafeDodge			0	48
+behavior_pilot_elite_assassin_cqb	CombatEvasive	3	SelectSchedule_DisengageAfterMeleeAttack			0	49
+behavior_pilot_elite_assassin_cqb	CombatEvasive	4	SelectSchedule_BackwardDodge			0	50
+behavior_pilot_elite_assassin_cqb	CombatEvasive	5	SelectSchedule_SyncedMeleeAttack			0	51
+behavior_pilot_elite_assassin_cqb	CombatEvasive	6	SelectSchedule_MeleeAttack			0	52
+behavior_pilot_elite_assassin_cqb	CombatEvasive	7	SelectSchedule_StationaryLowAmmo			0	53
+behavior_pilot_elite_assassin_cqb	CombatEvasive		SelectSchedule_RangeAttack2			1	54
+behavior_pilot_elite_assassin_cqb	CombatEvasive		SelectSchedule_RangeAttack			1	55
+behavior_pilot_elite_assassin_cqb	CombatEvasive		SelectSchedule_Taunt			1	56
+behavior_pilot_elite_assassin_cqb	CombatEvasive	8	SelectSchedule_ChaseEnemy			0	57
+behavior_pilot_elite_assassin_cqb	CombatEvasive	9	SelectSchedule_EnemyTooClose			0	58
+behavior_pilot_elite_assassin_cqb	CombatEvasive	10	SelectSchedule_WeaponBlocked			0	59
+behavior_pilot_elite_assassin_cqb	CombatEvasive	11	SelectSchedule_CantSeeEnemy			0	60
+behavior_pilot_elite_assassin_cqb	CombatEvasive	12	SelectSchedule_MoveToWeaponRange			0	61
+behavior_pilot_elite_assassin_cqb	CombatEvasive	13	SelectSchedule_CircleStrafe			0	62
+behavior_pilot_elite_assassin_cqb	CombatEvasive	14	SelectSchedule_CombatFace			0	63
+behavior_pilot_elite_assassin_sniper	Common	1	SelectSchedule_RodeoAttack			0	3
+behavior_pilot_elite_assassin_sniper	Common	2	SelectSchedule_FallToGround			0	4
+behavior_pilot_elite_assassin_sniper	Common	3	SelectSchedule_MissileDodge			0	5
+behavior_pilot_elite_assassin_sniper	Common	4	SelectSchedule_Flinch			0	6
+behavior_pilot_elite_assassin_sniper	Common	5	SelectSchedule_SyncedMeleeAttack			0	7
+behavior_pilot_elite_assassin_sniper	Common	6	SelectSchedule_LayeredBehavior			0	8
+behavior_pilot_elite_assassin_sniper	Idle	1	SelectSchedule_Idle			0	14
+behavior_pilot_elite_assassin_sniper	Alert	1	SelectSchedule_Alert			0	20
+behavior_pilot_elite_assassin_sniper	Combat	1	SelectSchedule_LongJump			0	26
+behavior_pilot_elite_assassin_sniper	Combat	2	SelectSchedule_StrafeDodge			0	27
+behavior_pilot_elite_assassin_sniper	Combat	3	SelectSchedule_DisengageAfterMeleeAttack			0	28
+behavior_pilot_elite_assassin_sniper	Combat	4	SelectSchedule_Snipe	CAI_Combatant		0	29
+behavior_pilot_elite_assassin_sniper	Combat	5	SelectSchedule_ForwardDodge			0	30
+behavior_pilot_elite_assassin_sniper	Combat	6	SelectSchedule_MeleeAttack			0	31
+behavior_pilot_elite_assassin_sniper	Combat	7	SelectSchedule_StationaryLowAmmo			0	32
+behavior_pilot_elite_assassin_sniper	Combat		SelectSchedule_RangeAttack			1	33
+behavior_pilot_elite_assassin_sniper	Combat		SelectSchedule_Taunt			1	34
+behavior_pilot_elite_assassin_sniper	Combat	8	SelectSchedule_ChaseEnemy			0	35
+behavior_pilot_elite_assassin_sniper	Combat	9	SelectSchedule_EnemyTooClose			0	36
+behavior_pilot_elite_assassin_sniper	Combat	10	SelectSchedule_WeaponBlocked			0	37
+behavior_pilot_elite_assassin_sniper	Combat	11	SelectSchedule_CantSeeEnemy			0	38
+behavior_pilot_elite_assassin_sniper	Combat	12	SelectSchedule_MoveToWeaponRange			0	39
+behavior_pilot_elite_assassin_sniper	Combat	13	SelectSchedule_CircleStrafe			0	40
+behavior_pilot_elite_assassin_sniper	Combat	14	SelectSchedule_CombatFace			0	41
+behavior_pilot_elite_assassin_sniper	CombatEvasive	1	SelectSchedule_LongJump			0	47
+behavior_pilot_elite_assassin_sniper	CombatEvasive	2	SelectSchedule_StrafeDodge			0	48
+behavior_pilot_elite_assassin_sniper	CombatEvasive	3	SelectSchedule_DisengageAfterMeleeAttack			0	49
+behavior_pilot_elite_assassin_sniper	CombatEvasive	4	SelectSchedule_Snipe	CAI_Combatant		0	50
+behavior_pilot_elite_assassin_sniper	CombatEvasive	5	SelectSchedule_BackwardDodge			0	51
+behavior_pilot_elite_assassin_sniper	CombatEvasive	6	SelectSchedule_MeleeAttack			0	52
+behavior_pilot_elite_assassin_sniper	CombatEvasive	7	SelectSchedule_StationaryLowAmmo			0	53
+behavior_pilot_elite_assassin_sniper	CombatEvasive		SelectSchedule_RangeAttack2			1	54
+behavior_pilot_elite_assassin_sniper	CombatEvasive		SelectSchedule_RangeAttack			1	55
+behavior_pilot_elite_assassin_sniper	CombatEvasive		SelectSchedule_Taunt			1	56
+behavior_pilot_elite_assassin_sniper	CombatEvasive	8	SelectSchedule_ChaseEnemy			0	57
+behavior_pilot_elite_assassin_sniper	CombatEvasive	9	SelectSchedule_EnemyTooClose			0	58
+behavior_pilot_elite_assassin_sniper	CombatEvasive	10	SelectSchedule_WeaponBlocked			0	59
+behavior_pilot_elite_assassin_sniper	CombatEvasive	11	SelectSchedule_CantSeeEnemy			0	60
+behavior_pilot_elite_assassin_sniper	CombatEvasive	12	SelectSchedule_MoveToWeaponRange			0	61
+behavior_pilot_elite_assassin_sniper	CombatEvasive	13	SelectSchedule_CircleStrafe			0	62
+behavior_pilot_elite_assassin_sniper	CombatEvasive	14	SelectSchedule_CombatFace			0	63
+behavior_prowler	Common	1	SelectSchedule_FallToGround			0	3
+behavior_prowler	Common	2	SelectSchedule_Flinch			0	4
+behavior_prowler	Common	3	SelectSchedule_DisplaceFromDangerousArea			0	5
+behavior_prowler	Common		SelectSchedule_ReactJumpedOver			1	6
+behavior_prowler	Common	4	SelectSchedule_ReactCloak			0	7
+behavior_prowler	Common	5	SelectSchedule_ReactBullet			0	8
+behavior_prowler	Common	6	SelectSchedule_ReactSurprised			0	9
+behavior_prowler	Common	7	SelectSchedule_SyncedMeleeAttack			0	10
+behavior_prowler	Common	8	SelectSchedule_PressToInitiateSyncedMeleeAttack			0	11
+behavior_prowler	Common	9	SelectSchedule_LayeredBehavior			0	12
+behavior_prowler	Idle	1	SelectSchedule_Idle			0	19
+behavior_prowler	Alert	1	SelectSchedule_Alert			0	26
+behavior_prowler	Combat	1	SelectSchedule_FearEnemy			0	33
+behavior_prowler	Combat	2	SelectSchedule_NewEnemySignal			0	34
+behavior_prowler	Combat	3	SelectSchedule_MeleeAttack			0	35
+behavior_prowler	Combat	4	SelectSchedule_MeleeAttackJumpUp			0	36
+behavior_prowler	Combat	5	SelectSchedule_CircleStrafe			0	37
+behavior_prowler	Combat	6	SelectSchedule_ChaseEnemy			0	38
+behavior_prowler	Combat	7	SelectSchedule_TakeCoverFromUnreachableEnemy			0	39
+behavior_prowler	Combat	8	SelectSchedule_MeleeAttackWait			0	40
+behavior_prowler_cqb	Common	1	SelectSchedule_FallToGround			0	3
+behavior_prowler_cqb	Common	2	SelectSchedule_Flinch			0	4
+behavior_prowler_cqb	Common	3	SelectSchedule_DisplaceFromDangerousArea			0	5
+behavior_prowler_cqb	Common	4	SelectSchedule_ReactCloak			0	6
+behavior_prowler_cqb	Common	5	SelectSchedule_ReactBullet			0	7
+behavior_prowler_cqb	Common	6	SelectSchedule_ReactSurprised			0	8
+behavior_prowler_cqb	Common	7	SelectSchedule_SyncedMeleeAttack			0	9
+behavior_prowler_cqb	Common	8	SelectSchedule_PressToInitiateSyncedMeleeAttack			0	10
+behavior_prowler_cqb	Common	9	SelectSchedule_LayeredBehavior			0	11
+behavior_prowler_cqb	Idle	1	SelectSchedule_Idle			0	18
+behavior_prowler_cqb	Alert	1	SelectSchedule_Alert			0	25
+behavior_prowler_cqb	Combat	1	SelectSchedule_MeleeAttack			0	32
+behavior_prowler_cqb	Combat	2	SelectSchedule_MeleeAttackJumpUp			0	33
+behavior_prowler_cqb	Combat	3	SelectSchedule_NewEnemySignal			0	34
+behavior_prowler_cqb	Combat	4	SelectSchedule_ChaseEnemy			0	35
+behavior_prowler_cqb	Combat	5	SelectSchedule_MeleeAttackWait			0	36
+behavior_soldier	Common	1	SelectSchedule_FallToGround			0	3
+behavior_soldier	Common	2	SelectSchedule_Flinch			0	4
+behavior_soldier	Common	3	SelectSchedule_DisplaceFromDangerousArea			0	5
+behavior_soldier	Common	4	SelectSchedule_ReactJumpedOver			0	6
+behavior_soldier	Common	5	SelectSchedule_ReactCloak			0	7
+behavior_soldier	Common	6	SelectSchedule_ReactSurprised			0	8
+behavior_soldier	Common	7	SelectSchedule_ReactBullet			0	9
+behavior_soldier	Common	8	SelectSchedule_ReactFriendlyPlayer			0	10
+behavior_soldier	Common	9	SelectSchedule_FearEnemy			0	11
+behavior_soldier	Common	10	SelectSchedule_ChangeToDesiredStance			0	12
+behavior_soldier	Common	11	SelectSchedule_SyncedMeleeAttack			0	13
+behavior_soldier	Common	12	SelectSchedule_PressToInitiateSyncedMeleeAttack			0	14
+behavior_soldier	Common	13	SelectSchedule_LayeredBehavior			0	15
+behavior_soldier	Idle	1	SelectSchedule_Idle			0	21
+behavior_soldier	Alert	1	SelectSchedule_ShootingCover	CAI_Combatant		0	27
+behavior_soldier	Alert	2	SelectSchedule_Alert			0	28
+behavior_soldier	Combat	1	SelectSchedule_AntiMassiveEnemy			0	34
+behavior_soldier	Combat	2	SelectSchedule_MeleeAttack			0	36
+behavior_soldier	Combat	3	SelectSchedule_ShootingCover	CAI_Combatant		0	37
+behavior_soldier	Combat	4	SelectSchedule_ChaseEnemy			0	38
+behavior_soldier	Combat	5	SelectSchedule_CombatNewEnemy	CAI_Combatant		0	40
+behavior_soldier	Combat	6	SelectSchedule_EvasiveLowAmmo			0	41
+behavior_soldier	Combat	7	SelectSchedule_MoveToSquadAssignedNode	CAI_Combatant		0	43
+behavior_soldier	Combat		SelectSchedule_ThrowGrenade			1	44
+behavior_soldier	Combat	8	SelectSchedule_RangeAttackEvasive			0	45
+behavior_soldier	Combat	9	SelectSchedule_RangeAttackTwitch			0	46
+behavior_soldier	Combat	10	SelectSchedule_RangeAttack			0	47
+behavior_soldier	Combat	11	SelectSchedule_CombatOccludedEnemy	CAI_Combatant		0	49
+behavior_soldier	Combat	12	SelectSchedule_EnemyNotAttackable	CAI_Combatant		0	50
+behavior_soldier	Combat	13	SelectSchedule_CombatFace			0	52
+behavior_sp_auto_titan	Common	1	SelectSchedule_FallToGround			0	3
+behavior_sp_auto_titan	Common	2	SelectSchedule_MissileDodge			0	4
+behavior_sp_auto_titan	Common	3	SelectSchedule_TitanCore	CNPC_Titan		0	5
+behavior_sp_auto_titan	Common	4	SelectSchedule_PhysEntKnock	CNPC_Titan		0	6
+behavior_sp_auto_titan	Common	5	SelectSchedule_Flinch			0	7
+behavior_sp_auto_titan	Common	6	SelectSchedule_ChangeToDesiredStance			0	8
+behavior_sp_auto_titan	Common	7	SelectSchedule_GotoDefensivePlacement	CNPC_Titan		0	9
+behavior_sp_auto_titan	Common	8	SelectSchedule_LayeredBehavior			0	10
+behavior_sp_auto_titan	Idle	1	SelectSchedule_Idle			0	16
+behavior_sp_auto_titan	Alert	1	SelectSchedule_Alert			0	22
+behavior_sp_auto_titan	Combat	1	SelectSchedule_StrafeDodge			0	28
+behavior_sp_auto_titan	Combat	2	SelectSchedule_ForwardDodge			0	29
+behavior_sp_auto_titan	Combat	3	SelectSchedule_BackwardDodge			0	30
+behavior_sp_auto_titan	Combat	4	SelectSchedule_MeleeAttack			0	31
+behavior_sp_auto_titan	Combat		SelectSchedule_EvasiveLowAmmo			1	32
+behavior_sp_auto_titan	Combat		SelectSchedule_ChaseEnemy			1	33
+behavior_sp_auto_titan	Combat		SelectSchedule_EngagementDistMax			1	34
+behavior_sp_auto_titan	Combat	5	SelectSchedule_StationaryLowAmmo			0	35
+behavior_sp_auto_titan	Combat	6	SelectSchedule_RangeAttackEvasive			0	36
+behavior_sp_auto_titan	Combat	7	SelectSchedule_RangeAttack2			0	37
+behavior_sp_auto_titan	Combat	8	SelectSchedule_RangeAttack			0	38
+behavior_sp_auto_titan	Combat	9	SelectSchedule_EngagementDistMin			0	39
+behavior_sp_auto_titan	Combat	10	SelectSchedule_WeaponBlocked			0	40
+behavior_sp_auto_titan	Combat	11	SelectSchedule_CantSeeEnemy			0	41
+behavior_sp_auto_titan	Combat		SelectSchedule_MoveToWeaponRange			1	42
+behavior_sp_auto_titan	Combat	12	SelectSchedule_CombatFace			0	43
+behavior_sp_auto_titan	CombatAggressive	1	SelectSchedule_StrafeDodge			0	48
+behavior_sp_auto_titan	CombatAggressive	2	SelectSchedule_ForwardDodge			0	49
+behavior_sp_auto_titan	CombatAggressive	3	SelectSchedule_MeleeAttack			0	50
+behavior_sp_auto_titan	CombatAggressive	4	SelectSchedule_ChaseEnemy			0	51
+behavior_sp_auto_titan	CombatAggressive	5	SelectSchedule_CircleStrafe			0	52
+behavior_sp_auto_titan	CombatAggressive	6	SelectSchedule_StationaryLowAmmo			0	53
+behavior_sp_auto_titan	CombatAggressive	7	SelectSchedule_RangeAttackEvasive			0	54
+behavior_sp_auto_titan	CombatAggressive	8	SelectSchedule_RangeAttack2			0	55
+behavior_sp_auto_titan	CombatAggressive	9	SelectSchedule_RangeAttack			0	56
+behavior_sp_auto_titan	CombatAggressive	10	SelectSchedule_WeaponBlocked			0	57
+behavior_sp_auto_titan	CombatAggressive	11	SelectSchedule_CantSeeEnemy			0	58
+behavior_sp_auto_titan	CombatAggressive	12	SelectSchedule_CombatFace			0	59
+behavior_sp_auto_titan	CombatEvasive		SelectSchedule_FearEnemy			1	65
+behavior_sp_auto_titan	CombatEvasive	1	SelectSchedule_MeleeAttack			0	66
+behavior_sp_auto_titan	CombatEvasive	2	SelectSchedule_BackwardDodge			0	67
+behavior_sp_auto_titan	CombatEvasive	3	SelectSchedule_StrafeDodge			0	68
+behavior_sp_auto_titan	CombatEvasive	4	SelectSchedule_TakeCoverFromEnemy		health > 0.5	0	69
+behavior_sp_auto_titan	CombatEvasive	5	SelectSchedule_EvasiveLowAmmo			0	70
+behavior_sp_auto_titan	CombatEvasive	6	SelectSchedule_RangeAttackEvasive			0	71
+behavior_sp_auto_titan	CombatEvasive	7	SelectSchedule_RangeAttack2			0	72
+behavior_sp_auto_titan	CombatEvasive	8	SelectSchedule_RangeAttack			0	73
+behavior_sp_auto_titan	CombatEvasive	9	SelectSchedule_CircleStrafe			0	74
+behavior_sp_auto_titan	CombatEvasive	10	SelectSchedule_EngagementDistMin			0	75
+behavior_sp_auto_titan	CombatEvasive	11	SelectSchedule_WeaponBlocked			0	76
+behavior_sp_auto_titan	CombatEvasive	12	SelectSchedule_CantSeeEnemy			0	77
+behavior_sp_auto_titan	CombatEvasive	13	SelectSchedule_CombatFace			0	78
+behavior_sp_npc_titan_proto_stasisgun	Common	1	SelectSchedule_FallToGround			0	3
+behavior_sp_npc_titan_proto_stasisgun	Common	2	SelectSchedule_MissileDodge			0	4
+behavior_sp_npc_titan_proto_stasisgun	Common	3	SelectSchedule_PhysEntKnock	CNPC_Titan		0	5
+behavior_sp_npc_titan_proto_stasisgun	Common	4	SelectSchedule_Flinch			0	6
+behavior_sp_npc_titan_proto_stasisgun	Common	5	SelectSchedule_ChangeToDesiredStance			0	7
+behavior_sp_npc_titan_proto_stasisgun	Common	6	SelectSchedule_GotoDefensivePlacement	CNPC_Titan		0	8
+behavior_sp_npc_titan_proto_stasisgun	Common	7	SelectSchedule_LayeredBehavior			0	9
+behavior_sp_npc_titan_proto_stasisgun	Idle	1	SelectSchedule_Idle			0	15
+behavior_sp_npc_titan_proto_stasisgun	Alert	1	SelectSchedule_Alert			0	21
+behavior_sp_npc_titan_proto_stasisgun	Combat	1	SelectSchedule_StrafeDodge			0	27
+behavior_sp_npc_titan_proto_stasisgun	Combat		SelectSchedule_ForwardDodge			1	28
+behavior_sp_npc_titan_proto_stasisgun	Combat	2	SelectSchedule_MeleeAttack			0	29
+behavior_sp_npc_titan_proto_stasisgun	Combat	3	SelectSchedule_EngagementDistMin			0	30
+behavior_sp_npc_titan_proto_stasisgun	Combat		SelectSchedule_EvasiveLowAmmo			1	31
+behavior_sp_npc_titan_proto_stasisgun	Combat	4	SelectSchedule_ChaseEnemy			0	32
+behavior_sp_npc_titan_proto_stasisgun	Combat		SelectSchedule_EngagementDistMax			1	33
+behavior_sp_npc_titan_proto_stasisgun	Combat	5	SelectSchedule_StationaryLowAmmo			0	34
+behavior_sp_npc_titan_proto_stasisgun	Combat		SelectSchedule_RangeAttackEvasive			1	35
+behavior_sp_npc_titan_proto_stasisgun	Combat	6	SelectSchedule_RangeAttack2			0	36
+behavior_sp_npc_titan_proto_stasisgun	Combat	7	SelectSchedule_RangeAttack			0	37
+behavior_sp_npc_titan_proto_stasisgun	Combat	8	SelectSchedule_WeaponBlocked			0	38
+behavior_sp_npc_titan_proto_stasisgun	Combat	9	SelectSchedule_CantSeeEnemy			0	39
+behavior_sp_npc_titan_proto_stasisgun	Combat		SelectSchedule_MoveToWeaponRange			1	40
+behavior_sp_npc_titan_proto_stasisgun	Combat	10	SelectSchedule_CombatFace			0	41
+behavior_sp_npc_titan_proto_stasisgun	CombatEvasive		SelectSchedule_FearEnemy			1	47
+behavior_sp_npc_titan_proto_stasisgun	CombatEvasive	1	SelectSchedule_StrafeDodge			0	48
+behavior_sp_npc_titan_proto_stasisgun	CombatEvasive	2	SelectSchedule_MeleeAttack			0	49
+behavior_sp_npc_titan_proto_stasisgun	CombatEvasive		SelectSchedule_BackwardDodge			1	50
+behavior_sp_npc_titan_proto_stasisgun	CombatEvasive	3	SelectSchedule_TakeCoverFromEnemy		health > 0.1	0	51
+behavior_sp_npc_titan_proto_stasisgun	CombatEvasive	4	SelectSchedule_EvasiveLowAmmo			0	52
+behavior_sp_npc_titan_proto_stasisgun	CombatEvasive	5	SelectSchedule_RangeAttackEvasive			0	53
+behavior_sp_npc_titan_proto_stasisgun	CombatEvasive	6	SelectSchedule_RangeAttack2			0	54
+behavior_sp_npc_titan_proto_stasisgun	CombatEvasive	7	SelectSchedule_RangeAttack			0	55
+behavior_sp_npc_titan_proto_stasisgun	CombatEvasive	8	SelectSchedule_EngagementDistMin			0	56
+behavior_sp_npc_titan_proto_stasisgun	CombatEvasive	9	SelectSchedule_WeaponBlocked			0	57
+behavior_sp_npc_titan_proto_stasisgun	CombatEvasive	10	SelectSchedule_CantSeeEnemy			0	58
+behavior_sp_npc_titan_proto_stasisgun	CombatEvasive	11	SelectSchedule_CombatFace			0	59
+behavior_sp_soldier	Common	1	SelectSchedule_FallToGround			0	3
+behavior_sp_soldier	Common	2	SelectSchedule_Flinch			0	4
+behavior_sp_soldier	Common	3	SelectSchedule_DisplaceFromDangerousArea			0	5
+behavior_sp_soldier	Common	4	SelectSchedule_ReactJumpedOver			0	6
+behavior_sp_soldier	Common	5	SelectSchedule_ReactCloak			0	7
+behavior_sp_soldier	Common	6	SelectSchedule_ReactSurprised			0	8
+behavior_sp_soldier	Common	7	SelectSchedule_ReactBullet			0	9
+behavior_sp_soldier	Common	8	SelectSchedule_ReactFriendlyPlayer			0	10
+behavior_sp_soldier	Common	9	SelectSchedule_FearEnemy			0	11
+behavior_sp_soldier	Common	10	SelectSchedule_ChangeToDesiredStance			0	12
+behavior_sp_soldier	Common	11	SelectSchedule_SyncedMeleeAttack			0	13
+behavior_sp_soldier	Common	12	SelectSchedule_PressToInitiateSyncedMeleeAttack			0	14
+behavior_sp_soldier	Common	13	SelectSchedule_LayeredBehavior			0	15
+behavior_sp_soldier	Idle	1	SelectSchedule_Idle			0	21
+behavior_sp_soldier	Alert	1	SelectSchedule_ShootingCover	CAI_Combatant		0	27
+behavior_sp_soldier	Alert	2	SelectSchedule_Alert			0	28
+behavior_sp_soldier	Combat	1	SelectSchedule_AntiMassiveEnemy			0	34
+behavior_sp_soldier	Combat	2	SelectSchedule_MeleeAttack			0	36
+behavior_sp_soldier	Combat	3	SelectSchedule_SwitchWeapon			0	37
+behavior_sp_soldier	Combat	4	SelectSchedule_ShootingCover	CAI_Combatant		0	38
+behavior_sp_soldier	Combat	5	SelectSchedule_ChaseEnemy			0	39
+behavior_sp_soldier	Combat	6	SelectSchedule_CombatNewEnemy	CAI_Combatant		0	41
+behavior_sp_soldier	Combat	7	SelectSchedule_MoveToSquadAssignedNode	CAI_Combatant		0	42
+behavior_sp_soldier	Combat	8	SelectSchedule_EvasiveLowAmmo			0	44
+behavior_sp_soldier	Combat	9	SelectSchedule_EngagementDistMax			0	45
+behavior_sp_soldier	Combat	10	SelectSchedule_BreakEnemyLosIfOutsideEngageDist			0	46
+behavior_sp_soldier	Combat	11	SelectSchedule_ThrowGrenade			0	48
+behavior_sp_soldier	Combat	12	SelectSchedule_RangeAttackEvasive			0	49
+behavior_sp_soldier	Combat	13	SelectSchedule_RangeAttackTwitch			0	50
+behavior_sp_soldier	Combat	14	SelectSchedule_RangeAttack			0	51
+behavior_sp_soldier	Combat	15	SelectSchedule_CombatOccludedEnemy	CAI_Combatant		0	53
+behavior_sp_soldier	Combat	16	SelectSchedule_EnemyNotAttackable	CAI_Combatant		0	54
+behavior_sp_soldier	Combat	17	SelectSchedule_CombatFace			0	56
+behavior_spectre	Common	1	SelectSchedule_FallToGround			0	3
+behavior_spectre	Common	2	SelectSchedule_Flinch			0	4
+behavior_spectre	Common	3	SelectSchedule_ReactJumpedOver			0	5
+behavior_spectre	Common	4	SelectSchedule_ChangeToDesiredStance			0	6
+behavior_spectre	Common	5	SelectSchedule_SyncedMeleeAttack			0	7
+behavior_spectre	Common	6	SelectSchedule_PressToInitiateSyncedMeleeAttack			0	8
+behavior_spectre	Common	7	SelectSchedule_LayeredBehavior			0	9
+behavior_spectre	Idle	1	SelectSchedule_Idle			0	15
+behavior_spectre	Alert	1	SelectSchedule_ShootingCover	CAI_Combatant		0	21
+behavior_spectre	Alert	2	SelectSchedule_Alert			0	22
+behavior_spectre	Combat	1	SelectSchedule_AntiMassiveEnemy			0	28
+behavior_spectre	Combat	2	SelectSchedule_MeleeAttack			0	30
+behavior_spectre	Combat	3	SelectSchedule_ShootingCover	CAI_Combatant		0	31
+behavior_spectre	Combat	4	SelectSchedule_EvasiveLowAmmo			0	32
+behavior_spectre	Combat	5	SelectSchedule_MoveToSquadAssignedNode	CAI_Combatant		0	34
+behavior_spectre	Combat		SelectSchedule_ThrowGrenade			1	35
+behavior_spectre	Combat		SelectSchedule_RangeAttackEvasive			1	36
+behavior_spectre	Combat		SelectSchedule_LongJump			1	37
+behavior_spectre	Combat	6	SelectSchedule_RangeAttackTwitch			0	38
+behavior_spectre	Combat	7	SelectSchedule_RangeAttack			0	39
+behavior_spectre	Combat	8	SelectSchedule_EnemyTooClose			0	41
+behavior_spectre	Combat	9	SelectSchedule_CantSeeEnemy			0	42
+behavior_spectre	Combat	10	SelectSchedule_MoveToWeaponRange			0	43
+behavior_spectre	Combat	11	SelectSchedule_ChaseEnemy			0	44
+behavior_spectre	Combat	12	SelectSchedule_AtEnemyLKP			0	45
+behavior_spectre	Combat	13	SelectSchedule_CombatFace			0	46
+behavior_stalker	Common	1	SelectSchedule_FallToGround			0	3
+behavior_stalker	Common	2	SelectSchedule_Flinch			0	4
+behavior_stalker	Common	3	SelectSchedule_ReactJumpedOver			0	5
+behavior_stalker	Common	4	SelectSchedule_ChangeToDesiredStance			0	6
+behavior_stalker	Common	5	SelectSchedule_SyncedMeleeAttack			0	7
+behavior_stalker	Common	6	SelectSchedule_PressToInitiateSyncedMeleeAttack			0	8
+behavior_stalker	Common	7	SelectSchedule_LayeredBehavior			0	9
+behavior_stalker	Idle	1	SelectSchedule_Idle			0	15
+behavior_stalker	Alert	1	SelectSchedule_Alert			0	21
+behavior_stalker	Combat	1	SelectSchedule_MeleeAttack			0	27
+behavior_stalker	Combat	2	SelectSchedule_ChaseEnemy			0	28
+behavior_stalker	Combat	3	SelectSchedule_StationaryLowAmmo			0	30
+behavior_stalker	Combat	4	SelectSchedule_RangeAttack2			0	31
+behavior_stalker	Combat	5	SelectSchedule_RangeAttack			0	32
+behavior_stalker	Combat	6	SelectSchedule_EnemyTooClose			0	34
+behavior_stalker	Combat	7	SelectSchedule_CantSeeEnemy			0	35
+behavior_stalker	Combat	8	SelectSchedule_MoveToWeaponRange			0	36
+behavior_stalker	Combat	9	SelectSchedule_AtEnemyLKP			0	37
+behavior_stalker	Combat	10	SelectSchedule_CombatFace			0	38
+behavior_stalker_crawling	Common	1	SelectSchedule_FallToGround			0	3
+behavior_stalker_crawling	Common	2	SelectSchedule_SyncedMeleeAttack			0	5
+behavior_stalker_crawling	Common	3	SelectSchedule_MeleeAttack			0	6
+behavior_stalker_crawling	Common	4	SelectSchedule_ChaseEnemy			0	7
+behavior_stalker_crawling	Common	5	SelectSchedule_LayeredBehavior			0	9
+behavior_stalker_crawling	Idle	1	SelectSchedule_IdleStand			0	16
+behavior_stalker_crawling	Alert	1	SelectSchedule_CombatFace			0	23
+behavior_stalker_crawling	Combat	1	SelectSchedule_CombatFace			0	30
+behavior_super_spectre	Common		SelectSchedule_FallToGround			1	3
+behavior_super_spectre	Common	1	SelectSchedule_Flinch			0	4
+behavior_super_spectre	Common	2	SelectSchedule_DisplaceFromDangerousArea			0	5
+behavior_super_spectre	Common	3	SelectSchedule_ReactSurprised			0	6
+behavior_super_spectre	Common	4	SelectSchedule_LayeredBehavior			0	7
+behavior_super_spectre	Idle	1	SelectSchedule_Idle			0	13
+behavior_super_spectre	Alert	1	SelectSchedule_Alert			0	19
+behavior_super_spectre	Combat	1	SelectSchedule_MissileDodge			0	25
+behavior_super_spectre	Combat	2	SelectSchedule_LongJump			0	26
+behavior_super_spectre	Combat	3	SelectSchedule_StrafeDodge			0	27
+behavior_super_spectre	Combat	4	SelectSchedule_ForwardDodge			0	28
+behavior_super_spectre	Combat	5	SelectSchedule_MeleeAttack			0	29
+behavior_super_spectre	Combat	6	SelectSchedule_SpecialAttack			0	30
+behavior_super_spectre	Combat	7	SelectSchedule_RangeAttack			0	31
+behavior_super_spectre	Combat	8	SelectSchedule_WeaponBlocked			0	32
+behavior_super_spectre	Combat	9	SelectSchedule_ChargeAttack			0	33
+behavior_super_spectre	Combat	10	SelectSchedule_CantSeeEnemy			0	34
+behavior_super_spectre	Combat	11	SelectSchedule_EngagementDistMax			0	35
+behavior_super_spectre	Combat		SelectSchedule_EngagementDistMin			1	36
+behavior_super_spectre	Combat	12	SelectSchedule_CombatFace			0	37
+behavior_super_spectre	CombatEvasive	1	SelectSchedule_MissileDodge			0	43
+behavior_super_spectre	CombatEvasive	2	SelectSchedule_BackwardDodge			0	44
+behavior_super_spectre	CombatEvasive	3	SelectSchedule_StrafeDodge			0	45
+behavior_super_spectre	CombatEvasive	4	SelectSchedule_MeleeAttack			0	46
+behavior_super_spectre	CombatEvasive	5	SelectSchedule_EnemyAimDodge			0	47
+behavior_super_spectre	CombatEvasive		SelectSchedule_TakeCoverFromEnemy		health > 0.1	1	48
+behavior_super_spectre	CombatEvasive	6	SelectSchedule_SpecialAttack			0	49
+behavior_super_spectre	CombatEvasive	7	SelectSchedule_RangeAttack			0	50
+behavior_super_spectre	CombatEvasive	8	SelectSchedule_ChaseEnemy			0	51
+behavior_super_spectre	CombatEvasive		SelectSchedule_EnemyTooClose			1	52
+behavior_super_spectre	CombatEvasive	9	SelectSchedule_WeaponBlocked			0	53
+behavior_super_spectre	CombatEvasive	10	SelectSchedule_CantSeeEnemy			0	54
+behavior_super_spectre	CombatEvasive	11	SelectSchedule_EngagementDistMax			0	55
+behavior_super_spectre	CombatEvasive		SelectSchedule_EngagementDistMin			1	56
+behavior_super_spectre	CombatEvasive	12	SelectSchedule_CombatFace			0	57
+behavior_titan	Common	1	SelectSchedule_MissileDodge			0	3
+behavior_titan	Common	2	SelectSchedule_TitanCore	CNPC_Titan		0	4
+behavior_titan	Common	3	SelectSchedule_PhysEntKnock	CNPC_Titan		0	5
+behavior_titan	Common	4	SelectSchedule_Flinch			0	6
+behavior_titan	Common	5	SelectSchedule_DisplaceFromDangerousArea			0	7
+behavior_titan	Common	6	SelectSchedule_ChangeToDesiredStance			0	8
+behavior_titan	Common	7	SelectSchedule_SyncedMeleeAttack			0	9
+behavior_titan	Common	8	SelectSchedule_PressToInitiateSyncedMeleeAttack			0	10
+behavior_titan	Common	9	SelectSchedule_GotoDefensivePlacement	CNPC_Titan		0	11
+behavior_titan	Common	10	SelectSchedule_LayeredBehavior			0	12
+behavior_titan	Idle	1	SelectSchedule_Idle			0	18
+behavior_titan	Alert	1	SelectSchedule_Alert			0	24
+behavior_titan	Combat	1	SelectSchedule_StrafeDodge			0	30
+behavior_titan	Combat		SelectSchedule_ForwardDodge			1	31
+behavior_titan	Combat	2	SelectSchedule_MeleeAttack			0	32
+behavior_titan	Combat		SelectSchedule_EvasiveLowAmmo			1	33
+behavior_titan	Combat		SelectSchedule_ChaseEnemy			1	34
+behavior_titan	Combat	3	SelectSchedule_EngagementDistMax			0	35
+behavior_titan	Combat	4	SelectSchedule_CircleStrafe			0	36
+behavior_titan	Combat	5	SelectSchedule_StationaryLowAmmo			0	37
+behavior_titan	Combat	6	SelectSchedule_RangeAttackEvasive			0	38
+behavior_titan	Combat	7	SelectSchedule_RangeAttack2			0	39
+behavior_titan	Combat	8	SelectSchedule_RangeAttack			0	40
+behavior_titan	Combat	9	SelectSchedule_EngagementDistMin			0	41
+behavior_titan	Combat	10	SelectSchedule_WeaponBlocked			0	42
+behavior_titan	Combat	11	SelectSchedule_CantSeeEnemy			0	43
+behavior_titan	Combat		SelectSchedule_MoveToWeaponRange			1	44
+behavior_titan	Combat	12	SelectSchedule_CombatFace			0	45
+behavior_titan	CombatAggressive	1	SelectSchedule_MeleeAttack			0	50
+behavior_titan	CombatAggressive	2	SelectSchedule_StrafeDodge			0	51
+behavior_titan	CombatAggressive	3	SelectSchedule_ForwardDodge			0	52
+behavior_titan	CombatAggressive	4	SelectSchedule_ChaseEnemy			0	53
+behavior_titan	CombatAggressive		SelectSchedule_CircleStrafe			1	54
+behavior_titan	CombatAggressive	5	SelectSchedule_StationaryLowAmmo			0	55
+behavior_titan	CombatAggressive	6	SelectSchedule_RangeAttackEvasive			0	56
+behavior_titan	CombatAggressive	7	SelectSchedule_RangeAttack2			0	57
+behavior_titan	CombatAggressive	8	SelectSchedule_RangeAttack			0	58
+behavior_titan	CombatAggressive	9	SelectSchedule_WeaponBlocked			0	59
+behavior_titan	CombatAggressive	10	SelectSchedule_CantSeeEnemy			0	60
+behavior_titan	CombatAggressive	11	SelectSchedule_CombatFace			0	61
+behavior_titan	CombatEvasive		SelectSchedule_FearEnemy			1	67
+behavior_titan	CombatEvasive	1	SelectSchedule_MeleeAttack			0	68
+behavior_titan	CombatEvasive	2	SelectSchedule_BackwardDodge			0	69
+behavior_titan	CombatEvasive	3	SelectSchedule_StrafeDodge			0	70
+behavior_titan	CombatEvasive	4	SelectSchedule_TakeCoverFromEnemy		health > 0.1	0	71
+behavior_titan	CombatEvasive	5	SelectSchedule_CircleStrafe			0	72
+behavior_titan	CombatEvasive	6	SelectSchedule_EvasiveLowAmmo			0	73
+behavior_titan	CombatEvasive	7	SelectSchedule_RangeAttackEvasive			0	74
+behavior_titan	CombatEvasive	8	SelectSchedule_RangeAttack2			0	75
+behavior_titan	CombatEvasive	9	SelectSchedule_RangeAttack			0	76
+behavior_titan	CombatEvasive	10	SelectSchedule_EngagementDistMin			0	77
+behavior_titan	CombatEvasive	11	SelectSchedule_WeaponBlocked			0	78
+behavior_titan	CombatEvasive		SelectSchedule_CantSeeEnemy			1	79
+behavior_titan	CombatEvasive	12	SelectSchedule_CombatFace			0	80
+behavior_titan_buddy	Common	1	SelectSchedule_MissileDodge			0	3
+behavior_titan_buddy	Common		SelectSchedule_TitanCore	CNPC_Titan		1	4
+behavior_titan_buddy	Common	2	SelectSchedule_PhysEntKnock	CNPC_Titan		0	5
+behavior_titan_buddy	Common	3	SelectSchedule_Flinch			0	6
+behavior_titan_buddy	Common	4	SelectSchedule_DisplaceFromDangerousArea			0	7
+behavior_titan_buddy	Common	5	SelectSchedule_ChangeToDesiredStance			0	8
+behavior_titan_buddy	Common	6	SelectSchedule_SyncedMeleeAttack			0	9
+behavior_titan_buddy	Common	7	SelectSchedule_PressToInitiateSyncedMeleeAttack			0	10
+behavior_titan_buddy	Common	8	SelectSchedule_GotoDefensivePlacement	CNPC_Titan		0	11
+behavior_titan_buddy	Common	9	SelectSchedule_LayeredBehavior			0	12
+behavior_titan_buddy	Idle	1	SelectSchedule_Idle			0	18
+behavior_titan_buddy	Alert	1	SelectSchedule_Alert			0	24
+behavior_titan_buddy	Combat	1	SelectSchedule_StrafeDodge			0	30
+behavior_titan_buddy	Combat	2	SelectSchedule_ForwardDodge			0	31
+behavior_titan_buddy	Combat	3	SelectSchedule_MeleeAttack			0	32
+behavior_titan_buddy	Combat		SelectSchedule_EvasiveLowAmmo			1	33
+behavior_titan_buddy	Combat		SelectSchedule_ChaseEnemy			1	34
+behavior_titan_buddy	Combat	4	SelectSchedule_EngagementDistMax			0	35
+behavior_titan_buddy	Combat	5	SelectSchedule_CircleStrafe			0	36
+behavior_titan_buddy	Combat	6	SelectSchedule_StationaryLowAmmo			0	37
+behavior_titan_buddy	Combat	7	SelectSchedule_RangeAttackEvasive			0	38
+behavior_titan_buddy	Combat	8	SelectSchedule_RangeAttack2			0	39
+behavior_titan_buddy	Combat	9	SelectSchedule_RangeAttack			0	40
+behavior_titan_buddy	Combat	10	SelectSchedule_EngagementDistMin			0	41
+behavior_titan_buddy	Combat	11	SelectSchedule_WeaponBlocked			0	42
+behavior_titan_buddy	Combat	12	SelectSchedule_CantSeeEnemy			0	43
+behavior_titan_buddy	Combat		SelectSchedule_MoveToWeaponRange			1	44
+behavior_titan_buddy	Combat	13	SelectSchedule_CombatFace			0	45
+behavior_titan_buddy	CombatAggressive	1	SelectSchedule_MeleeAttack			0	50
+behavior_titan_buddy	CombatAggressive	2	SelectSchedule_StrafeDodge			0	51
+behavior_titan_buddy	CombatAggressive	3	SelectSchedule_ForwardDodge			0	52
+behavior_titan_buddy	CombatAggressive		SelectSchedule_ChaseEnemy			1	53
+behavior_titan_buddy	CombatAggressive		SelectSchedule_CircleStrafe			1	54
+behavior_titan_buddy	CombatAggressive	4	SelectSchedule_StationaryLowAmmo			0	55
+behavior_titan_buddy	CombatAggressive	5	SelectSchedule_RangeAttackEvasive			0	56
+behavior_titan_buddy	CombatAggressive	6	SelectSchedule_RangeAttack2			0	57
+behavior_titan_buddy	CombatAggressive	7	SelectSchedule_RangeAttack			0	58
+behavior_titan_buddy	CombatAggressive	8	SelectSchedule_WeaponBlocked			0	59
+behavior_titan_buddy	CombatAggressive	9	SelectSchedule_CantSeeEnemy			0	60
+behavior_titan_buddy	CombatAggressive	10	SelectSchedule_CombatFace			0	61
+behavior_titan_buddy	CombatEvasive		SelectSchedule_FearEnemy			1	67
+behavior_titan_buddy	CombatEvasive	1	SelectSchedule_MeleeAttack			0	68
+behavior_titan_buddy	CombatEvasive	2	SelectSchedule_BackwardDodge			0	69
+behavior_titan_buddy	CombatEvasive	3	SelectSchedule_StrafeDodge			0	70
+behavior_titan_buddy	CombatEvasive	4	SelectSchedule_TakeCoverFromEnemy		health > 0.1	0	71
+behavior_titan_buddy	CombatEvasive	5	SelectSchedule_CircleStrafe			0	72
+behavior_titan_buddy	CombatEvasive	6	SelectSchedule_EvasiveLowAmmo			0	73
+behavior_titan_buddy	CombatEvasive	7	SelectSchedule_RangeAttackEvasive			0	74
+behavior_titan_buddy	CombatEvasive	8	SelectSchedule_RangeAttack2			0	75
+behavior_titan_buddy	CombatEvasive	9	SelectSchedule_RangeAttack			0	76
+behavior_titan_buddy	CombatEvasive	10	SelectSchedule_EngagementDistMin			0	77
+behavior_titan_buddy	CombatEvasive	11	SelectSchedule_WeaponBlocked			0	78
+behavior_titan_buddy	CombatEvasive	12	SelectSchedule_CantSeeEnemy			0	79
+behavior_titan_buddy	CombatEvasive	13	SelectSchedule_CombatFace			0	80
+behavior_titan_long_range	Common	1	SelectSchedule_MissileDodge			0	3
+behavior_titan_long_range	Common	2	SelectSchedule_TitanCore	CNPC_Titan		0	4
+behavior_titan_long_range	Common	3	SelectSchedule_PhysEntKnock	CNPC_Titan		0	5
+behavior_titan_long_range	Common	4	SelectSchedule_Flinch			0	6
+behavior_titan_long_range	Common	5	SelectSchedule_DisplaceFromDangerousArea			0	7
+behavior_titan_long_range	Common	6	SelectSchedule_ChangeToDesiredStance			0	8
+behavior_titan_long_range	Common	7	SelectSchedule_SyncedMeleeAttack			0	9
+behavior_titan_long_range	Common	8	SelectSchedule_GotoDefensivePlacement	CNPC_Titan		0	10
+behavior_titan_long_range	Common	9	SelectSchedule_LayeredBehavior			0	11
+behavior_titan_long_range	Idle	1	SelectSchedule_Idle			0	17
+behavior_titan_long_range	Alert	1	SelectSchedule_Alert			0	23
+behavior_titan_long_range	Combat	1	SelectSchedule_StrafeDodge			0	29
+behavior_titan_long_range	Combat		SelectSchedule_ForwardDodge			1	30
+behavior_titan_long_range	Combat	2	SelectSchedule_MeleeAttack			0	31
+behavior_titan_long_range	Combat		SelectSchedule_EvasiveLowAmmo			1	32
+behavior_titan_long_range	Combat		SelectSchedule_ChaseEnemy			1	33
+behavior_titan_long_range	Combat	3	SelectSchedule_BackwardDodge			0	34
+behavior_titan_long_range	Combat	4	SelectSchedule_EngagementDistMax			0	35
+behavior_titan_long_range	Combat	5	SelectSchedule_EngagementDistMin			0	36
+behavior_titan_long_range	Combat	6	SelectSchedule_CircleStrafe			0	37
+behavior_titan_long_range	Combat	7	SelectSchedule_EvasiveLowAmmo		health < 0.5	0	38
+behavior_titan_long_range	Combat	8	SelectSchedule_StationaryLowAmmo			0	39
+behavior_titan_long_range	Combat	9	SelectSchedule_RangeAttackEvasive			0	40
+behavior_titan_long_range	Combat	10	SelectSchedule_RangeAttack			0	41
+behavior_titan_long_range	Combat	11	SelectSchedule_WeaponBlocked			0	42
+behavior_titan_long_range	Combat	12	SelectSchedule_CantSeeEnemy			0	43
+behavior_titan_long_range	Combat	13	SelectSchedule_CombatFace			0	44
+behavior_titan_long_range	CombatAggressive	1	SelectSchedule_MeleeAttack			0	50
+behavior_titan_long_range	CombatAggressive	2	SelectSchedule_StrafeDodge			0	51
+behavior_titan_long_range	CombatAggressive	3	SelectSchedule_ForwardDodge			0	52
+behavior_titan_long_range	CombatAggressive	4	SelectSchedule_ChaseEnemy			0	53
+behavior_titan_long_range	CombatAggressive		SelectSchedule_CircleStrafe			1	54
+behavior_titan_long_range	CombatAggressive	5	SelectSchedule_StationaryLowAmmo			0	55
+behavior_titan_long_range	CombatAggressive	6	SelectSchedule_RangeAttackEvasive			0	56
+behavior_titan_long_range	CombatAggressive	7	SelectSchedule_RangeAttack			0	57
+behavior_titan_long_range	CombatAggressive	8	SelectSchedule_WeaponBlocked			0	58
+behavior_titan_long_range	CombatAggressive	9	SelectSchedule_CantSeeEnemy			0	59
+behavior_titan_long_range	CombatAggressive	10	SelectSchedule_CombatFace			0	60
+behavior_titan_long_range	CombatEvasive		SelectSchedule_FearEnemy			1	66
+behavior_titan_long_range	CombatEvasive	1	SelectSchedule_MeleeAttack			0	67
+behavior_titan_long_range	CombatEvasive	2	SelectSchedule_BackwardDodge			0	68
+behavior_titan_long_range	CombatEvasive	3	SelectSchedule_StrafeDodge			0	69
+behavior_titan_long_range	CombatEvasive	4	SelectSchedule_TakeCoverFromEnemy		health > 0.1	0	70
+behavior_titan_long_range	CombatEvasive	5	SelectSchedule_EngagementDistMin			0	71
+behavior_titan_long_range	CombatEvasive	6	SelectSchedule_CircleStrafe			0	72
+behavior_titan_long_range	CombatEvasive	7	SelectSchedule_EvasiveLowAmmo			0	73
+behavior_titan_long_range	CombatEvasive	8	SelectSchedule_RangeAttackEvasive			0	74
+behavior_titan_long_range	CombatEvasive	9	SelectSchedule_RangeAttack			0	75
+behavior_titan_long_range	CombatEvasive	10	SelectSchedule_WeaponBlocked			0	76
+behavior_titan_long_range	CombatEvasive	11	SelectSchedule_CantSeeEnemy			0	77
+behavior_titan_long_range	CombatEvasive	12	SelectSchedule_CombatFace			0	78
+behavior_titan_melee	Common	1	SelectSchedule_MissileDodge			0	3
+behavior_titan_melee	Common	2	SelectSchedule_TitanCore	CNPC_Titan		0	4
+behavior_titan_melee	Common	3	SelectSchedule_PhysEntKnock	CNPC_Titan		0	5
+behavior_titan_melee	Common	4	SelectSchedule_Flinch			0	6
+behavior_titan_melee	Common	5	SelectSchedule_DisplaceFromDangerousArea			0	7
+behavior_titan_melee	Common	6	SelectSchedule_ChangeToDesiredStance			0	8
+behavior_titan_melee	Common	7	SelectSchedule_SyncedMeleeAttack			0	9
+behavior_titan_melee	Common	8	SelectSchedule_PressToInitiateSyncedMeleeAttack			0	10
+behavior_titan_melee	Common	9	SelectSchedule_GotoDefensivePlacement	CNPC_Titan		0	11
+behavior_titan_melee	Common	10	SelectSchedule_LayeredBehavior			0	12
+behavior_titan_melee	Idle	1	SelectSchedule_Idle			0	18
+behavior_titan_melee	Alert	1	SelectSchedule_Alert			0	24
+behavior_titan_melee	Combat	1	SelectSchedule_StrafeDodge			0	30
+behavior_titan_melee	Combat	2	SelectSchedule_ForwardDodge			0	31
+behavior_titan_melee	Combat	3	SelectSchedule_MeleeAttack			0	32
+behavior_titan_melee	Combat		SelectSchedule_EvasiveLowAmmo			1	33
+behavior_titan_melee	Combat	4	SelectSchedule_ChaseEnemy			0	34
+behavior_titan_melee	Combat	5	SelectSchedule_EngagementDistMax			0	35
+behavior_titan_melee	Combat	6	SelectSchedule_StationaryLowAmmo			0	36
+behavior_titan_melee	Combat		SelectSchedule_RangeAttackEvasive			1	37
+behavior_titan_melee	Combat	7	SelectSchedule_RangeAttack2			0	38
+behavior_titan_melee	Combat	8	SelectSchedule_RangeAttack			0	39
+behavior_titan_melee	Combat	9	SelectSchedule_EngagementDistMin			0	40
+behavior_titan_melee	Combat	10	SelectSchedule_WeaponBlocked			0	41
+behavior_titan_melee	Combat	11	SelectSchedule_CantSeeEnemy			0	42
+behavior_titan_melee	Combat		SelectSchedule_MoveToWeaponRange			1	43
+behavior_titan_melee	Combat	12	SelectSchedule_CombatFace			0	44
+behavior_titan_melee	CombatAggressive	1	SelectSchedule_MeleeAttack			0	49
+behavior_titan_melee	CombatAggressive	2	SelectSchedule_StrafeDodge			0	50
+behavior_titan_melee	CombatAggressive	3	SelectSchedule_ForwardDodge			0	51
+behavior_titan_melee	CombatAggressive	4	SelectSchedule_ChaseEnemy			0	52
+behavior_titan_melee	CombatAggressive	5	SelectSchedule_EngagementDistMax			0	53
+behavior_titan_melee	CombatAggressive	6	SelectSchedule_StationaryLowAmmo			0	54
+behavior_titan_melee	CombatAggressive		SelectSchedule_RangeAttackEvasive			1	55
+behavior_titan_melee	CombatAggressive	7	SelectSchedule_RangeAttack2			0	56
+behavior_titan_melee	CombatAggressive	8	SelectSchedule_RangeAttack			0	57
+behavior_titan_melee	CombatAggressive	9	SelectSchedule_WeaponBlocked			0	58
+behavior_titan_melee	CombatAggressive	10	SelectSchedule_CantSeeEnemy			0	59
+behavior_titan_melee	CombatAggressive	11	SelectSchedule_CombatFace			0	60
+behavior_titan_melee	CombatEvasive		SelectSchedule_FearEnemy			1	66
+behavior_titan_melee	CombatEvasive	1	SelectSchedule_MeleeAttack			0	67
+behavior_titan_melee	CombatEvasive	2	SelectSchedule_BackwardDodge			0	68
+behavior_titan_melee	CombatEvasive	3	SelectSchedule_StrafeDodge			0	69
+behavior_titan_melee	CombatEvasive	4	SelectSchedule_TakeCoverFromEnemy		health > 0.1	0	70
+behavior_titan_melee	CombatEvasive	5	SelectSchedule_CircleStrafe			0	71
+behavior_titan_melee	CombatEvasive	6	SelectSchedule_EvasiveLowAmmo			0	72
+behavior_titan_melee	CombatEvasive		SelectSchedule_RangeAttackEvasive			1	73
+behavior_titan_melee	CombatEvasive	7	SelectSchedule_RangeAttack2			0	74
+behavior_titan_melee	CombatEvasive	8	SelectSchedule_RangeAttack			0	75
+behavior_titan_melee	CombatEvasive	9	SelectSchedule_EngagementDistMin			0	76
+behavior_titan_melee	CombatEvasive	10	SelectSchedule_WeaponBlocked			0	77
+behavior_titan_melee	CombatEvasive	11	SelectSchedule_CantSeeEnemy			0	78
+behavior_titan_melee	CombatEvasive	12	SelectSchedule_CombatFace			0	79
+behavior_titan_melee_core	Common	1	SelectSchedule_MissileDodge			0	3
+behavior_titan_melee_core	Common	2	SelectSchedule_TitanCore	CNPC_Titan		0	4
+behavior_titan_melee_core	Common	3	SelectSchedule_PhysEntKnock	CNPC_Titan		0	5
+behavior_titan_melee_core	Common	4	SelectSchedule_Flinch			0	6
+behavior_titan_melee_core	Common	5	SelectSchedule_DisplaceFromDangerousArea			0	7
+behavior_titan_melee_core	Common	6	SelectSchedule_ChangeToDesiredStance			0	8
+behavior_titan_melee_core	Common	7	SelectSchedule_SyncedMeleeAttack			0	9
+behavior_titan_melee_core	Common	8	SelectSchedule_LayeredBehavior			0	10
+behavior_titan_melee_core	Idle	1	SelectSchedule_Idle			0	16
+behavior_titan_melee_core	Alert	1	SelectSchedule_Alert			0	22
+behavior_titan_melee_core	Combat	1	SelectSchedule_MeleeAttack			0	28
+behavior_titan_melee_core	Combat	2	SelectSchedule_ForwardDodge			0	29
+behavior_titan_melee_core	Combat	3	SelectSchedule_ChaseEnemy			0	30
+behavior_titan_melee_core	Combat	4	SelectSchedule_EngagementDistMax			0	31
+behavior_titan_melee_core	Combat	5	SelectSchedule_CircleStrafe			0	32
+behavior_titan_melee_core	Combat	6	SelectSchedule_StationaryLowAmmo			0	33
+behavior_titan_melee_core	Combat	7	SelectSchedule_WeaponBlocked			0	34
+behavior_titan_melee_core	Combat	8	SelectSchedule_CantSeeEnemy			0	35
+behavior_titan_melee_core	Combat	9	SelectSchedule_CombatFace			0	36
+behavior_titan_ogre_meteor	Common	1	SelectSchedule_MissileDodge			0	3
+behavior_titan_ogre_meteor	Common	2	SelectSchedule_TitanCore	CNPC_Titan		0	4
+behavior_titan_ogre_meteor	Common	3	SelectSchedule_PhysEntKnock	CNPC_Titan		0	5
+behavior_titan_ogre_meteor	Common	4	SelectSchedule_Flinch			0	6
+behavior_titan_ogre_meteor	Common	5	SelectSchedule_DisplaceFromDangerousArea			0	7
+behavior_titan_ogre_meteor	Common	6	SelectSchedule_ChangeToDesiredStance			0	8
+behavior_titan_ogre_meteor	Common	7	SelectSchedule_SyncedMeleeAttack			0	9
+behavior_titan_ogre_meteor	Common	8	SelectSchedule_PressToInitiateSyncedMeleeAttack			0	10
+behavior_titan_ogre_meteor	Common	9	SelectSchedule_GotoDefensivePlacement	CNPC_Titan		0	11
+behavior_titan_ogre_meteor	Common	10	SelectSchedule_LayeredBehavior			0	12
+behavior_titan_ogre_meteor	Idle	1	SelectSchedule_Idle			0	18
+behavior_titan_ogre_meteor	Alert	1	SelectSchedule_Alert			0	24
+behavior_titan_ogre_meteor	Combat	1	SelectSchedule_StrafeDodge			0	30
+behavior_titan_ogre_meteor	Combat		SelectSchedule_ForwardDodge			1	31
+behavior_titan_ogre_meteor	Combat	2	SelectSchedule_MeleeAttack			0	32
+behavior_titan_ogre_meteor	Combat		SelectSchedule_EvasiveLowAmmo			1	33
+behavior_titan_ogre_meteor	Combat	3	SelectSchedule_ChaseEnemy			0	34
+behavior_titan_ogre_meteor	Combat	4	SelectSchedule_EngagementDistMax			0	35
+behavior_titan_ogre_meteor	Combat	5	SelectSchedule_CircleStrafe			0	36
+behavior_titan_ogre_meteor	Combat	6	SelectSchedule_StationaryLowAmmo			0	37
+behavior_titan_ogre_meteor	Combat	7	SelectSchedule_RangeAttackEvasive			0	38
+behavior_titan_ogre_meteor	Combat	8	SelectSchedule_RangeAttack2			0	39
+behavior_titan_ogre_meteor	Combat	9	SelectSchedule_RangeAttack			0	40
+behavior_titan_ogre_meteor	Combat	10	SelectSchedule_EngagementDistMin			0	41
+behavior_titan_ogre_meteor	Combat	11	SelectSchedule_WeaponBlocked			0	42
+behavior_titan_ogre_meteor	Combat	12	SelectSchedule_CantSeeEnemy			0	43
+behavior_titan_ogre_meteor	Combat		SelectSchedule_MoveToWeaponRange			1	44
+behavior_titan_ogre_meteor	Combat	13	SelectSchedule_CombatFace			0	45
+behavior_titan_ogre_meteor	CombatAggressive	1	SelectSchedule_MeleeAttack			0	50
+behavior_titan_ogre_meteor	CombatAggressive	2	SelectSchedule_StrafeDodge			0	51
+behavior_titan_ogre_meteor	CombatAggressive	3	SelectSchedule_ForwardDodge			0	52
+behavior_titan_ogre_meteor	CombatAggressive	4	SelectSchedule_ChaseEnemy			0	53
+behavior_titan_ogre_meteor	CombatAggressive	5	SelectSchedule_CircleStrafe			0	54
+behavior_titan_ogre_meteor	CombatAggressive	6	SelectSchedule_StationaryLowAmmo			0	55
+behavior_titan_ogre_meteor	CombatAggressive		SelectSchedule_RangeAttackEvasive			1	56
+behavior_titan_ogre_meteor	CombatAggressive	7	SelectSchedule_RangeAttack2			0	57
+behavior_titan_ogre_meteor	CombatAggressive	8	SelectSchedule_RangeAttack			0	58
+behavior_titan_ogre_meteor	CombatAggressive	9	SelectSchedule_WeaponBlocked			0	59
+behavior_titan_ogre_meteor	CombatAggressive	10	SelectSchedule_CantSeeEnemy			0	60
+behavior_titan_ogre_meteor	CombatAggressive	11	SelectSchedule_CombatFace			0	61
+behavior_titan_ogre_meteor	CombatEvasive		SelectSchedule_FearEnemy			1	67
+behavior_titan_ogre_meteor	CombatEvasive	1	SelectSchedule_MeleeAttack			0	68
+behavior_titan_ogre_meteor	CombatEvasive	2	SelectSchedule_BackwardDodge			0	69
+behavior_titan_ogre_meteor	CombatEvasive	3	SelectSchedule_StrafeDodge			0	70
+behavior_titan_ogre_meteor	CombatEvasive	4	SelectSchedule_TakeCoverFromEnemy		health > 0.1	0	71
+behavior_titan_ogre_meteor	CombatEvasive	5	SelectSchedule_CircleStrafe			0	72
+behavior_titan_ogre_meteor	CombatEvasive	6	SelectSchedule_EvasiveLowAmmo			0	73
+behavior_titan_ogre_meteor	CombatEvasive	7	SelectSchedule_RangeAttackEvasive			0	74
+behavior_titan_ogre_meteor	CombatEvasive	8	SelectSchedule_RangeAttack2			0	75
+behavior_titan_ogre_meteor	CombatEvasive	9	SelectSchedule_RangeAttack			0	76
+behavior_titan_ogre_meteor	CombatEvasive	10	SelectSchedule_EngagementDistMin			0	77
+behavior_titan_ogre_meteor	CombatEvasive	11	SelectSchedule_WeaponBlocked			0	78
+behavior_titan_ogre_meteor	CombatEvasive		SelectSchedule_CantSeeEnemy			1	79
+behavior_titan_ogre_meteor	CombatEvasive	12	SelectSchedule_CombatFace			0	80
+behavior_titan_ogre_minigun	Common	1	SelectSchedule_MissileDodge			0	3
+behavior_titan_ogre_minigun	Common	2	SelectSchedule_TitanCore	CNPC_Titan		0	4
+behavior_titan_ogre_minigun	Common	3	SelectSchedule_PhysEntKnock	CNPC_Titan		0	5
+behavior_titan_ogre_minigun	Common	4	SelectSchedule_Flinch			0	6
+behavior_titan_ogre_minigun	Common	5	SelectSchedule_DisplaceFromDangerousArea			0	7
+behavior_titan_ogre_minigun	Common	6	SelectSchedule_ChangeToDesiredStance			0	8
+behavior_titan_ogre_minigun	Common	7	SelectSchedule_SyncedMeleeAttack			0	9
+behavior_titan_ogre_minigun	Common	8	SelectSchedule_GotoDefensivePlacement	CNPC_Titan		0	10
+behavior_titan_ogre_minigun	Common	9	SelectSchedule_LayeredBehavior			0	11
+behavior_titan_ogre_minigun	Idle	1	SelectSchedule_Idle			0	17
+behavior_titan_ogre_minigun	Alert	1	SelectSchedule_Alert			0	23
+behavior_titan_ogre_minigun	Combat	1	SelectSchedule_StrafeDodge			0	29
+behavior_titan_ogre_minigun	Combat		SelectSchedule_ForwardDodge			1	30
+behavior_titan_ogre_minigun	Combat	2	SelectSchedule_MeleeAttack			0	31
+behavior_titan_ogre_minigun	Combat		SelectSchedule_EvasiveLowAmmo			1	32
+behavior_titan_ogre_minigun	Combat	3	SelectSchedule_ChaseEnemy			0	33
+behavior_titan_ogre_minigun	Combat		SelectSchedule_EngagementDistMax			1	34
+behavior_titan_ogre_minigun	Combat		SelectSchedule_CircleStrafe			1	35
+behavior_titan_ogre_minigun	Combat	4	SelectSchedule_StationaryLowAmmo			0	36
+behavior_titan_ogre_minigun	Combat	5	SelectSchedule_RangeAttackEvasive			0	37
+behavior_titan_ogre_minigun	Combat	6	SelectSchedule_RangeAttack			0	38
+behavior_titan_ogre_minigun	Combat	7	SelectSchedule_EngagementDistMin			0	39
+behavior_titan_ogre_minigun	Combat	8	SelectSchedule_WeaponBlocked			0	40
+behavior_titan_ogre_minigun	Combat	9	SelectSchedule_CantSeeEnemy			0	41
+behavior_titan_ogre_minigun	Combat		SelectSchedule_MoveToWeaponRange			1	42
+behavior_titan_ogre_minigun	Combat	10	SelectSchedule_CombatFace			0	43
+behavior_titan_ogre_minigun	CombatAggressive	1	SelectSchedule_MeleeAttack			0	48
+behavior_titan_ogre_minigun	CombatAggressive	2	SelectSchedule_StrafeDodge			0	49
+behavior_titan_ogre_minigun	CombatAggressive		SelectSchedule_ForwardDodge			1	50
+behavior_titan_ogre_minigun	CombatAggressive	3	SelectSchedule_ChaseEnemy			0	51
+behavior_titan_ogre_minigun	CombatAggressive		SelectSchedule_CircleStrafe			1	52
+behavior_titan_ogre_minigun	CombatAggressive	4	SelectSchedule_StationaryLowAmmo			0	53
+behavior_titan_ogre_minigun	CombatAggressive		SelectSchedule_RangeAttackEvasive			1	54
+behavior_titan_ogre_minigun	CombatAggressive	5	SelectSchedule_RangeAttack			0	55
+behavior_titan_ogre_minigun	CombatAggressive	6	SelectSchedule_WeaponBlocked			0	56
+behavior_titan_ogre_minigun	CombatAggressive	7	SelectSchedule_CantSeeEnemy			0	57
+behavior_titan_ogre_minigun	CombatAggressive	8	SelectSchedule_CombatFace			0	58
+behavior_titan_ogre_minigun	CombatEvasive		SelectSchedule_FearEnemy			1	64
+behavior_titan_ogre_minigun	CombatEvasive	1	SelectSchedule_MeleeAttack			0	65
+behavior_titan_ogre_minigun	CombatEvasive	2	SelectSchedule_BackwardDodge			0	66
+behavior_titan_ogre_minigun	CombatEvasive	3	SelectSchedule_StrafeDodge			0	67
+behavior_titan_ogre_minigun	CombatEvasive	4	SelectSchedule_TakeCoverFromEnemy		health > 0.1	0	68
+behavior_titan_ogre_minigun	CombatEvasive	5	SelectSchedule_CircleStrafe			0	69
+behavior_titan_ogre_minigun	CombatEvasive	6	SelectSchedule_EvasiveLowAmmo			0	70
+behavior_titan_ogre_minigun	CombatEvasive	7	SelectSchedule_RangeAttackEvasive			0	71
+behavior_titan_ogre_minigun	CombatEvasive	8	SelectSchedule_RangeAttack			0	72
+behavior_titan_ogre_minigun	CombatEvasive	9	SelectSchedule_EngagementDistMin			0	73
+behavior_titan_ogre_minigun	CombatEvasive	10	SelectSchedule_WeaponBlocked			0	74
+behavior_titan_ogre_minigun	CombatEvasive	11	SelectSchedule_CantSeeEnemy			0	75
+behavior_titan_ogre_minigun	CombatEvasive	12	SelectSchedule_CombatFace			0	76
+behavior_titan_ogre_minigun_nuke	Common	1	SelectSchedule_MissileDodge			0	3
+behavior_titan_ogre_minigun_nuke	Common	2	SelectSchedule_TitanCore	CNPC_Titan		0	4
+behavior_titan_ogre_minigun_nuke	Common	3	SelectSchedule_PhysEntKnock	CNPC_Titan		0	5
+behavior_titan_ogre_minigun_nuke	Common	4	SelectSchedule_Flinch			0	6
+behavior_titan_ogre_minigun_nuke	Common	5	SelectSchedule_DisplaceFromDangerousArea			0	7
+behavior_titan_ogre_minigun_nuke	Common	6	SelectSchedule_ChangeToDesiredStance			0	8
+behavior_titan_ogre_minigun_nuke	Common	7	SelectSchedule_SyncedMeleeAttack			0	9
+behavior_titan_ogre_minigun_nuke	Common		SelectSchedule_GotoDefensivePlacement	CNPC_Titan		1	10
+behavior_titan_ogre_minigun_nuke	Common	8	SelectSchedule_LayeredBehavior			0	11
+behavior_titan_ogre_minigun_nuke	Idle	1	SelectSchedule_Idle			0	17
+behavior_titan_ogre_minigun_nuke	Alert	1	SelectSchedule_Alert			0	23
+behavior_titan_ogre_minigun_nuke	Combat	1	SelectSchedule_StrafeDodge			0	29
+behavior_titan_ogre_minigun_nuke	Combat		SelectSchedule_ForwardDodge			1	30
+behavior_titan_ogre_minigun_nuke	Combat	2	SelectSchedule_MeleeAttack			0	31
+behavior_titan_ogre_minigun_nuke	Combat		SelectSchedule_EvasiveLowAmmo			1	32
+behavior_titan_ogre_minigun_nuke	Combat	3	SelectSchedule_ChaseEnemy			0	33
+behavior_titan_ogre_minigun_nuke	Combat		SelectSchedule_EngagementDistMax			1	34
+behavior_titan_ogre_minigun_nuke	Combat		SelectSchedule_CircleStrafe			1	35
+behavior_titan_ogre_minigun_nuke	Combat	4	SelectSchedule_StationaryLowAmmo			0	36
+behavior_titan_ogre_minigun_nuke	Combat	5	SelectSchedule_RangeAttackEvasive			0	37
+behavior_titan_ogre_minigun_nuke	Combat	6	SelectSchedule_RangeAttack			0	38
+behavior_titan_ogre_minigun_nuke	Combat	7	SelectSchedule_EngagementDistMin			0	39
+behavior_titan_ogre_minigun_nuke	Combat	8	SelectSchedule_WeaponBlocked			0	40
+behavior_titan_ogre_minigun_nuke	Combat	9	SelectSchedule_CantSeeEnemy			0	41
+behavior_titan_ogre_minigun_nuke	Combat		SelectSchedule_MoveToWeaponRange			1	42
+behavior_titan_ogre_minigun_nuke	Combat	10	SelectSchedule_CombatFace			0	43
+behavior_titan_ogre_minigun_nuke	CombatAggressive	1	SelectSchedule_MeleeAttack			0	48
+behavior_titan_ogre_minigun_nuke	CombatAggressive	2	SelectSchedule_StrafeDodge			0	49
+behavior_titan_ogre_minigun_nuke	CombatAggressive		SelectSchedule_ForwardDodge			1	50
+behavior_titan_ogre_minigun_nuke	CombatAggressive	3	SelectSchedule_ChaseEnemy			0	51
+behavior_titan_ogre_minigun_nuke	CombatAggressive		SelectSchedule_CircleStrafe			1	52
+behavior_titan_ogre_minigun_nuke	CombatAggressive	4	SelectSchedule_StationaryLowAmmo			0	53
+behavior_titan_ogre_minigun_nuke	CombatAggressive		SelectSchedule_RangeAttackEvasive			1	54
+behavior_titan_ogre_minigun_nuke	CombatAggressive	5	SelectSchedule_RangeAttack			0	55
+behavior_titan_ogre_minigun_nuke	CombatAggressive	6	SelectSchedule_WeaponBlocked			0	56
+behavior_titan_ogre_minigun_nuke	CombatAggressive	7	SelectSchedule_CantSeeEnemy			0	57
+behavior_titan_ogre_minigun_nuke	CombatAggressive	8	SelectSchedule_CombatFace			0	58
+behavior_titan_ogre_minigun_nuke	CombatEvasive		SelectSchedule_FearEnemy			1	64
+behavior_titan_ogre_minigun_nuke	CombatEvasive	1	SelectSchedule_MeleeAttack			0	65
+behavior_titan_ogre_minigun_nuke	CombatEvasive	2	SelectSchedule_BackwardDodge			0	66
+behavior_titan_ogre_minigun_nuke	CombatEvasive	3	SelectSchedule_StrafeDodge			0	67
+behavior_titan_ogre_minigun_nuke	CombatEvasive	4	SelectSchedule_TakeCoverFromEnemy		health > 0.1	0	68
+behavior_titan_ogre_minigun_nuke	CombatEvasive	5	SelectSchedule_CircleStrafe			0	69
+behavior_titan_ogre_minigun_nuke	CombatEvasive	6	SelectSchedule_EvasiveLowAmmo			0	70
+behavior_titan_ogre_minigun_nuke	CombatEvasive	7	SelectSchedule_RangeAttackEvasive			0	71
+behavior_titan_ogre_minigun_nuke	CombatEvasive	8	SelectSchedule_RangeAttack			0	72
+behavior_titan_ogre_minigun_nuke	CombatEvasive	9	SelectSchedule_EngagementDistMin			0	73
+behavior_titan_ogre_minigun_nuke	CombatEvasive	10	SelectSchedule_WeaponBlocked			0	74
+behavior_titan_ogre_minigun_nuke	CombatEvasive	11	SelectSchedule_CantSeeEnemy			0	75
+behavior_titan_ogre_minigun_nuke	CombatEvasive	12	SelectSchedule_CombatFace			0	76
+behavior_titan_rocketeer	Common	1	SelectSchedule_MissileDodge			0	3
+behavior_titan_rocketeer	Common	2	SelectSchedule_TitanCore	CNPC_Titan		0	4
+behavior_titan_rocketeer	Common	3	SelectSchedule_PhysEntKnock	CNPC_Titan		0	5
+behavior_titan_rocketeer	Common	4	SelectSchedule_Flinch			0	6
+behavior_titan_rocketeer	Common	5	SelectSchedule_DisplaceFromDangerousArea			0	7
+behavior_titan_rocketeer	Common	6	SelectSchedule_ChangeToDesiredStance			0	8
+behavior_titan_rocketeer	Common	7	SelectSchedule_SyncedMeleeAttack			0	9
+behavior_titan_rocketeer	Common	8	SelectSchedule_GotoDefensivePlacement	CNPC_Titan		0	10
+behavior_titan_rocketeer	Common	9	SelectSchedule_LayeredBehavior			0	11
+behavior_titan_rocketeer	Idle	1	SelectSchedule_Idle			0	17
+behavior_titan_rocketeer	Alert	1	SelectSchedule_Alert			0	23
+behavior_titan_rocketeer	Combat	1	SelectSchedule_StrafeDodge			0	29
+behavior_titan_rocketeer	Combat	2	SelectSchedule_ShootJump			0	30
+behavior_titan_rocketeer	Combat	3	SelectSchedule_MeleeAttack			0	31
+behavior_titan_rocketeer	Combat		SelectSchedule_EvasiveLowAmmo			1	32
+behavior_titan_rocketeer	Combat		SelectSchedule_ChaseEnemy			1	33
+behavior_titan_rocketeer	Combat	4	SelectSchedule_EngagementDistMax			0	34
+behavior_titan_rocketeer	Combat	5	SelectSchedule_CircleStrafe			0	35
+behavior_titan_rocketeer	Combat	6	SelectSchedule_StationaryLowAmmo			0	36
+behavior_titan_rocketeer	Combat	7	SelectSchedule_RangeAttackEvasive			0	37
+behavior_titan_rocketeer	Combat	8	SelectSchedule_RangeAttack2			0	38
+behavior_titan_rocketeer	Combat	9	SelectSchedule_RangeAttack			0	39
+behavior_titan_rocketeer	Combat		SelectSchedule_ForwardDodge			1	40
+behavior_titan_rocketeer	Combat	10	SelectSchedule_EngagementDistMin			0	41
+behavior_titan_rocketeer	Combat	11	SelectSchedule_WeaponBlocked			0	42
+behavior_titan_rocketeer	Combat	12	SelectSchedule_CantSeeEnemy			0	43
+behavior_titan_rocketeer	Combat		SelectSchedule_MoveToWeaponRange			1	44
+behavior_titan_rocketeer	Combat	13	SelectSchedule_CombatFace			0	45
+behavior_titan_rocketeer	CombatAggressive	1	SelectSchedule_MeleeAttack			0	50
+behavior_titan_rocketeer	CombatAggressive	2	SelectSchedule_StrafeDodge			0	51
+behavior_titan_rocketeer	CombatAggressive	3	SelectSchedule_ShootJump			0	52
+behavior_titan_rocketeer	CombatAggressive	4	SelectSchedule_ForwardDodge			0	53
+behavior_titan_rocketeer	CombatAggressive	5	SelectSchedule_ChaseEnemy			0	54
+behavior_titan_rocketeer	CombatAggressive		SelectSchedule_CircleStrafe			1	55
+behavior_titan_rocketeer	CombatAggressive	6	SelectSchedule_StationaryLowAmmo			0	56
+behavior_titan_rocketeer	CombatAggressive	7	SelectSchedule_RangeAttackEvasive			0	57
+behavior_titan_rocketeer	CombatAggressive	8	SelectSchedule_RangeAttack2			0	58
+behavior_titan_rocketeer	CombatAggressive	9	SelectSchedule_RangeAttack			0	59
+behavior_titan_rocketeer	CombatAggressive	10	SelectSchedule_WeaponBlocked			0	60
+behavior_titan_rocketeer	CombatAggressive	11	SelectSchedule_CantSeeEnemy			0	61
+behavior_titan_rocketeer	CombatAggressive	12	SelectSchedule_CombatFace			0	62
+behavior_titan_rocketeer	CombatEvasive		SelectSchedule_FearEnemy			1	68
+behavior_titan_rocketeer	CombatEvasive	1	SelectSchedule_MeleeAttack			0	69
+behavior_titan_rocketeer	CombatEvasive	2	SelectSchedule_BackwardDodge			0	70
+behavior_titan_rocketeer	CombatEvasive	3	SelectSchedule_StrafeDodge			0	71
+behavior_titan_rocketeer	CombatEvasive	4	SelectSchedule_ShootJump			0	72
+behavior_titan_rocketeer	CombatEvasive	5	SelectSchedule_TakeCoverFromEnemy		health > 0.1	0	73
+behavior_titan_rocketeer	CombatEvasive	6	SelectSchedule_CircleStrafe			0	74
+behavior_titan_rocketeer	CombatEvasive	7	SelectSchedule_EvasiveLowAmmo			0	75
+behavior_titan_rocketeer	CombatEvasive	8	SelectSchedule_RangeAttackEvasive			0	76
+behavior_titan_rocketeer	CombatEvasive	9	SelectSchedule_RangeAttack2			0	77
+behavior_titan_rocketeer	CombatEvasive	10	SelectSchedule_RangeAttack			0	78
+behavior_titan_rocketeer	CombatEvasive	11	SelectSchedule_EngagementDistMin			0	79
+behavior_titan_rocketeer	CombatEvasive	12	SelectSchedule_WeaponBlocked			0	80
+behavior_titan_rocketeer	CombatEvasive	13	SelectSchedule_CantSeeEnemy			0	81
+behavior_titan_rocketeer	CombatEvasive	14	SelectSchedule_CombatFace			0	82
+behavior_titan_shotgun	Common	1	SelectSchedule_MissileDodge			0	3
+behavior_titan_shotgun	Common	2	SelectSchedule_TitanCore	CNPC_Titan		0	4
+behavior_titan_shotgun	Common	3	SelectSchedule_PhysEntKnock	CNPC_Titan		0	5
+behavior_titan_shotgun	Common	4	SelectSchedule_Flinch			0	6
+behavior_titan_shotgun	Common	5	SelectSchedule_DisplaceFromDangerousArea			0	7
+behavior_titan_shotgun	Common	6	SelectSchedule_ChangeToDesiredStance			0	8
+behavior_titan_shotgun	Common	7	SelectSchedule_SyncedMeleeAttack			0	9
+behavior_titan_shotgun	Common	8	SelectSchedule_PressToInitiateSyncedMeleeAttack			0	10
+behavior_titan_shotgun	Common	9	SelectSchedule_GotoDefensivePlacement	CNPC_Titan		0	11
+behavior_titan_shotgun	Common	10	SelectSchedule_LayeredBehavior			0	12
+behavior_titan_shotgun	Idle	1	SelectSchedule_Idle			0	18
+behavior_titan_shotgun	Alert	1	SelectSchedule_Alert			0	24
+behavior_titan_shotgun	Combat	1	SelectSchedule_StrafeDodge			0	30
+behavior_titan_shotgun	Combat	2	SelectSchedule_ForwardDodge			0	31
+behavior_titan_shotgun	Combat	3	SelectSchedule_MeleeAttack			0	32
+behavior_titan_shotgun	Combat	4	SelectSchedule_ChaseEnemy			0	33
+behavior_titan_shotgun	Combat		SelectSchedule_EngagementDistMax			1	34
+behavior_titan_shotgun	Combat	5	SelectSchedule_CircleStrafe			0	35
+behavior_titan_shotgun	Combat	6	SelectSchedule_EvasiveLowAmmo			0	36
+behavior_titan_shotgun	Combat	7	SelectSchedule_StationaryLowAmmo			0	37
+behavior_titan_shotgun	Combat	8	SelectSchedule_RangeAttackEvasive			0	38
+behavior_titan_shotgun	Combat	9	SelectSchedule_RangeAttack2			0	39
+behavior_titan_shotgun	Combat	10	SelectSchedule_RangeAttack			0	40
+behavior_titan_shotgun	Combat	11	SelectSchedule_EngagementDistMin			0	41
+behavior_titan_shotgun	Combat	12	SelectSchedule_WeaponBlocked			0	42
+behavior_titan_shotgun	Combat	13	SelectSchedule_CantSeeEnemy			0	43
+behavior_titan_shotgun	Combat		SelectSchedule_MoveToWeaponRange			1	44
+behavior_titan_shotgun	Combat	14	SelectSchedule_CombatFace			0	45
+behavior_titan_shotgun	CombatAggressive	1	SelectSchedule_MeleeAttack			0	50
+behavior_titan_shotgun	CombatAggressive	2	SelectSchedule_StrafeDodge			0	51
+behavior_titan_shotgun	CombatAggressive	3	SelectSchedule_ForwardDodge			0	52
+behavior_titan_shotgun	CombatAggressive	4	SelectSchedule_ChaseEnemy			0	53
+behavior_titan_shotgun	CombatAggressive		SelectSchedule_CircleStrafe			1	54
+behavior_titan_shotgun	CombatAggressive		SelectSchedule_EvasiveLowAmmo			1	55
+behavior_titan_shotgun	CombatAggressive	5	SelectSchedule_StationaryLowAmmo			0	56
+behavior_titan_shotgun	CombatAggressive	6	SelectSchedule_RangeAttackEvasive			0	57
+behavior_titan_shotgun	CombatAggressive	7	SelectSchedule_RangeAttack2			0	58
+behavior_titan_shotgun	CombatAggressive	8	SelectSchedule_RangeAttack			0	59
+behavior_titan_shotgun	CombatAggressive	9	SelectSchedule_WeaponBlocked			0	60
+behavior_titan_shotgun	CombatAggressive	10	SelectSchedule_CantSeeEnemy			0	61
+behavior_titan_shotgun	CombatAggressive	11	SelectSchedule_CombatFace			0	62
+behavior_titan_shotgun	CombatEvasive		SelectSchedule_FearEnemy			1	68
+behavior_titan_shotgun	CombatEvasive	1	SelectSchedule_MeleeAttack			0	69
+behavior_titan_shotgun	CombatEvasive	2	SelectSchedule_BackwardDodge			0	70
+behavior_titan_shotgun	CombatEvasive	3	SelectSchedule_StrafeDodge			0	71
+behavior_titan_shotgun	CombatEvasive	4	SelectSchedule_TakeCoverFromEnemy		health > 0.1	0	72
+behavior_titan_shotgun	CombatEvasive	5	SelectSchedule_CircleStrafe			0	73
+behavior_titan_shotgun	CombatEvasive	6	SelectSchedule_EvasiveLowAmmo			0	74
+behavior_titan_shotgun	CombatEvasive	7	SelectSchedule_RangeAttackEvasive			0	75
+behavior_titan_shotgun	CombatEvasive	8	SelectSchedule_RangeAttack2			0	76
+behavior_titan_shotgun	CombatEvasive	9	SelectSchedule_RangeAttack			0	77
+behavior_titan_shotgun	CombatEvasive	10	SelectSchedule_EngagementDistMin			0	78
+behavior_titan_shotgun	CombatEvasive	11	SelectSchedule_WeaponBlocked			0	79
+behavior_titan_shotgun	CombatEvasive	12	SelectSchedule_CantSeeEnemy			0	80
+behavior_titan_shotgun	CombatEvasive	13	SelectSchedule_CombatFace			0	81
+behavior_titan_sniper	Common	1	SelectSchedule_FallToGround			0	3
+behavior_titan_sniper	Common	2	SelectSchedule_MissileDodge			0	4
+behavior_titan_sniper	Common	3	SelectSchedule_TitanFlightCore	CNPC_Titan		0	5
+behavior_titan_sniper	Common	4	SelectSchedule_PhysEntKnock	CNPC_Titan		0	6
+behavior_titan_sniper	Common	5	SelectSchedule_Flinch			0	7
+behavior_titan_sniper	Common	6	SelectSchedule_DisplaceFromDangerousArea			0	8
+behavior_titan_sniper	Common	7	SelectSchedule_ChangeToDesiredStance			0	9
+behavior_titan_sniper	Common	8	SelectSchedule_SyncedMeleeAttack			0	10
+behavior_titan_sniper	Common	9	SelectSchedule_GotoDefensivePlacement	CNPC_Titan		0	11
+behavior_titan_sniper	Common	10	SelectSchedule_LayeredBehavior			0	12
+behavior_titan_sniper	Idle	1	SelectSchedule_Idle			0	18
+behavior_titan_sniper	Alert	1	SelectSchedule_Alert			0	24
+behavior_titan_sniper	Combat	1	SelectSchedule_StrafeDodge			0	30
+behavior_titan_sniper	Combat	2	SelectSchedule_ShootJump			0	31
+behavior_titan_sniper	Combat	3	SelectSchedule_MeleeAttack			0	32
+behavior_titan_sniper	Combat	4	SelectSchedule_BackwardDodge			0	33
+behavior_titan_sniper	Combat		SelectSchedule_EngagementDistMax			1	34
+behavior_titan_sniper	Combat	5	SelectSchedule_EngagementDistMin			0	35
+behavior_titan_sniper	Combat		SelectSchedule_ChaseEnemy			1	36
+behavior_titan_sniper	Combat		SelectSchedule_ForwardDodge			1	37
+behavior_titan_sniper	Combat	6	SelectSchedule_EvasiveLowAmmo		health < 0.5	0	38
+behavior_titan_sniper	Combat	7	SelectSchedule_StationaryLowAmmo			0	39
+behavior_titan_sniper	Combat	8	SelectSchedule_RangeAttackEvasive			0	40
+behavior_titan_sniper	Combat	9	SelectSchedule_RangeAttack2			0	41
+behavior_titan_sniper	Combat	10	SelectSchedule_RangeAttack			0	42
+behavior_titan_sniper	Combat	11	SelectSchedule_WeaponBlocked			0	43
+behavior_titan_sniper	Combat	12	SelectSchedule_CantSeeEnemy			0	44
+behavior_titan_sniper	Combat	13	SelectSchedule_CombatFace			0	45
+behavior_titan_sniper	CombatAggressive	1	SelectSchedule_MeleeAttack			0	51
+behavior_titan_sniper	CombatAggressive	2	SelectSchedule_StrafeDodge			0	52
+behavior_titan_sniper	CombatAggressive	3	SelectSchedule_ShootJump			0	53
+behavior_titan_sniper	CombatAggressive	4	SelectSchedule_ForwardDodge			0	54
+behavior_titan_sniper	CombatAggressive	5	SelectSchedule_ChaseEnemy			0	55
+behavior_titan_sniper	CombatAggressive	6	SelectSchedule_StationaryLowAmmo			0	56
+behavior_titan_sniper	CombatAggressive	7	SelectSchedule_RangeAttackEvasive			0	57
+behavior_titan_sniper	CombatAggressive	8	SelectSchedule_RangeAttack2			0	58
+behavior_titan_sniper	CombatAggressive	9	SelectSchedule_RangeAttack			0	59
+behavior_titan_sniper	CombatAggressive	10	SelectSchedule_WeaponBlocked			0	60
+behavior_titan_sniper	CombatAggressive	11	SelectSchedule_CantSeeEnemy			0	61
+behavior_titan_sniper	CombatAggressive	12	SelectSchedule_CombatFace			0	62
+behavior_titan_sniper	CombatEvasive	1	SelectSchedule_MeleeAttack			0	68
+behavior_titan_sniper	CombatEvasive	2	SelectSchedule_BackwardDodge			0	69
+behavior_titan_sniper	CombatEvasive	3	SelectSchedule_StrafeDodge			0	70
+behavior_titan_sniper	CombatEvasive	4	SelectSchedule_ShootJump			0	71
+behavior_titan_sniper	CombatEvasive	5	SelectSchedule_TakeCoverFromEnemy		health > 0.1	0	72
+behavior_titan_sniper	CombatEvasive	6	SelectSchedule_EngagementDistMin			0	73
+behavior_titan_sniper	CombatEvasive	7	SelectSchedule_CircleStrafe			0	74
+behavior_titan_sniper	CombatEvasive	8	SelectSchedule_EvasiveLowAmmo			0	75
+behavior_titan_sniper	CombatEvasive	9	SelectSchedule_RangeAttackEvasive			0	76
+behavior_titan_sniper	CombatEvasive	10	SelectSchedule_RangeAttack2			0	77
+behavior_titan_sniper	CombatEvasive	11	SelectSchedule_RangeAttack			0	78
+behavior_titan_sniper	CombatEvasive	12	SelectSchedule_WeaponBlocked			0	79
+behavior_titan_sniper	CombatEvasive	13	SelectSchedule_CantSeeEnemy			0	80
+behavior_titan_sniper	CombatEvasive	14	SelectSchedule_CombatFace			0	81
