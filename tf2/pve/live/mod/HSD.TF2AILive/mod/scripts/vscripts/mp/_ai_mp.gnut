@@ -1,0 +1,101 @@
+// HSD tf2-ai-live: copy of Northstar.CustomServers 1.31.14 mp/_ai_mp.gnut
+// (sha256 6c05a5ab2f541f256f28f006f02a7915e6bf4bd2b4261364eb40ac5f85a1033b) with one log line
+// per call of SPMP_Callback_ForceAIMissPlayer. The decision logic, its order and its
+// RandomFloat calls are unchanged. Installed only during tf2-ai-live runs (pve/live/ai_runner.py).
+//   HSDDIAG MISS <time> <npc ehandle> <npc class> <branch> <lethality> <chance> <roll> <miss 0/1>
+//                <fast 0/1> <ground> <wallrun> <speed> <smoothed speed>
+global function MpInitAILoadouts
+global function SetProficiency
+global function SPMP_UpdateNPCProficiency
+global function SPMP_Callback_ForceAIMissPlayer
+global function IsAutoPopulateEnabled
+
+void function MpInitAILoadouts()
+{
+}
+
+void function SetProficiency( entity npc )
+{
+	// unsure what the logic for deciding this should be so just going to default good
+	npc.kv.WeaponProficiency = eWeaponProficiency.VERYGOOD
+}
+
+void function SPMP_UpdateNPCProficiency( entity npc )
+{
+}
+
+bool function IsAutoPopulateEnabled( var team = null )
+{
+	if ( IsNPCSpawningEnabled() == false )
+		return false
+
+	if ( Flag( "disable_npcs" ) )
+		return false
+
+	if ( team == TEAM_MILITIA && Flag( "Disable_MILITIA" ) )
+		return false
+	if ( team == TEAM_IMC && Flag( "Disable_IMC" ) )
+		return false
+
+	return true
+}
+
+void function HsdMiss_Log( entity npc, entity player, string branch, int lethality, float chance, float roll, bool miss )
+{
+	bool pilot = IsAlive( player ) && !player.IsTitan()
+	vector v = player.GetVelocity()
+	vector sv = player.GetSmoothedVelocity()
+	printt( format( "HSDDIAG MISS %.4f %d %s %s %d %.4f %.4f %d %d %d %d %.1f %.1f", Time(), npc.GetEncodedEHandle(), npc.GetClassName(),
+		branch, lethality, chance, roll, miss ? 1 : 0, pilot && IsFastPilot( player ) ? 1 : 0, player.IsOnGround() ? 1 : 0,
+		player.IsWallRunning() ? 1 : 0, Length( v ), Length( sv ) ) )
+}
+
+bool function SPMP_Callback_ForceAIMissPlayer( entity npc, entity player )
+{
+	if ( GetGameState() >= eGameState.Postmatch )
+	{
+		HsdMiss_Log( npc, player, "postmatch", -1, -1.0, -1.0, true )
+		return true
+	}
+
+	if ( player.IsTitan() )
+	{
+		HsdMiss_Log( npc, player, "titan", -1, -1.0, -1.0, false )
+		return false
+	}
+
+	int lethality = Riff_AILethality()
+	if ( lethality <= eAILethality.Medium )
+		if ( player.GetTitanSoulBeingRodeoed() != null )
+		{
+			HsdMiss_Log( npc, player, "rodeo", lethality, -1.0, -1.0, true )
+			return true
+		}
+
+	if ( Bleedout_IsBleedoutLogicActive() && Bleedout_ShouldAIMissBleedingPlayer( player ) )
+	{
+		HsdMiss_Log( npc, player, "bleedout", lethality, -1.0, -1.0, true )
+		return true
+	}
+
+	if ( player.ContextAction_IsActive() )
+	{
+		float r = RandomFloat( 1 )
+		HsdMiss_Log( npc, player, "context", lethality, 0.25, r, r >= 0.25 )
+		return r >= 0.25
+	}
+
+	if ( IsFastPilot( player ) )
+	{
+		float chance = ( lethality + 1 ) * 0.125
+		if ( lethality <= eAILethality.Medium && npc.IsMechanical() )
+			chance /= 1.25
+
+		float r = RandomFloat( 1 )
+		HsdMiss_Log( npc, player, "fast", lethality, chance, r, r >= chance )
+		return r >= chance
+	}
+
+	HsdMiss_Log( npc, player, "slow", lethality, -1.0, -1.0, false )
+	return false
+}

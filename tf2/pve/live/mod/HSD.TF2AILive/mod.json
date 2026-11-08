@@ -1,0 +1,16 @@
+{
+	"Name": "HSD.TF2AILive",
+	"Description": "HSD research tf2-ai-live: NPC shot, forced-miss, perception and schedule log (local server only; installed only during tf2-ai-live runs)",
+	"Version": "0.1.0",
+	"LoadPriority": 3,
+	"RequiredOnClient": false,
+	"Scripts": [
+		{
+			"Path": "hsd_ailive.gnut",
+			"RunOn": "SERVER && MP",
+			"ServerCallback": {
+				"After": "HsdAiLive_Init"
+			}
+		}
+	]
+}

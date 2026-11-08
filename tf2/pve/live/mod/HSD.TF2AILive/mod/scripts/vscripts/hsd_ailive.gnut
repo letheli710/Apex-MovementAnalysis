@@ -1,0 +1,484 @@
+// HSD tf2-ai-live: NPC shot / perception / schedule log and a few test commands.
+// Installed only for tf2-ai-live runs (pve/live/ai_runner.py), next to HSD.TF2Diag, whose
+// hsd_npc command names its targets "HSD <id>" (SetTitle); <id> below is that number
+// (-1 for NPCs it did not spawn). <eh> is the NPC's encoded ehandle.
+// Log lines (server, every server frame):
+//   HSDDIAG ANPC <t> <eh> <id> <class> team=<n> x y z weapon=<w> prof=<p> acc=<a> aiset=<settings>
+//   HSDDIAG NSHOT <t> <eh> <id> <n> <clip> <npc x y z> <player x y z> <dist> <ground> <wallrun> <slide> <sprint> <speed> <fast> <cansee> <enemy=player>
+//   HSDDIAG NATK <t> <eh> <id> <next attack time>        (weapon's next-attack time moved forward = a shot)
+//   HSDDIAG NRELOAD <t> <eh> <id> <clip>
+//   HSDDIAG NENEMY <t> <eh> <id> <enemy class|none>
+//   HSDDIAG NSEE <t> <eh> <id> <0|1>                      (npc.CanSee( player ))
+//   HSDDIAG NSTATE <t> <eh> <id> <idle|alert|combat|...>
+//   HSDDIAG NSCHED <t> <eh> <id> <schedule name>
+//   HSDDIAG NP <t> <eh> <id> x y z yaw pitch hp           (every 0.1 s while tracking is on)
+//   HSDDIAG PST <t> x y z vx vy vz yaw <ground> <wallrun> <slide> <sprint> <cloaked> <fast>   (every 0.1 s)
+// Commands:
+//   hsd_ai_info                        lethality, proficiency, weapon NPC keys, miss ConVars
+//   hsd_ai_hold <id|all> <1|0>          1: keep the NPC on its spot (assault point, fight radius 0)
+//   hsd_ai_give <id|all> <weapon>       replace the NPC's main weapon
+//   hsd_ai_cloak <seconds>              cloak the player (0 = uncloak)
+//   hsd_ai_face <yaw> [pitch]           set only the player's view angles
+//   hsd_ai_track <0|1>                  NP / PST lines on or off (default on)
+//   hsd_ai_class <npc_class> <aisettings|-> x y z yaw [blind]  spawn an enemy NPC (id -1, "last"); blind 1 = senses off
+//   hsd_ai_sense <sel> <1|0>            senses on (time logged) / off (and enemy cleared)
+//   hsd_ai_kill <sel>                   remove
+//   hsd_ai_entrance <pod|reaper|titan> x y z yaw [content|aisettings|setfile]  Northstar entrance helpers, timed
+//     HSDDIAG ENTR start|pod_anim|squad|reaper_ready|titan_spawned|end ...
+//   hsd_ai_seq <sel|pod> <anim[+event]> ...  sequence length (s) and event time on that entity
+//     HSDDIAG ASEQ <class> <anim> <duration> [<event> <cycle frac> <time>] | missing
+//   <sel> for hsd_ai_*: all | last | c.<class> | e<ehandle> | hsd_npc id
+global function HsdAiLive_Init
+
+struct NpcWatch
+{
+	int clip = -999
+	float nextAtk = -1.0
+	string enemy = "?"
+	int see = -1
+	string state = "?"
+	string sched = "?"
+}
+
+struct
+{
+	table<int, NpcWatch> watch
+	bool track = true
+	float lastPeriodic = 0.0
+	entity last
+} file
+
+void function HsdAiLive_Init()
+{
+	AddClientCommandCallback( "hsd_ai_info", HsdAi_CC_Info )
+	AddClientCommandCallback( "hsd_ai_hold", HsdAi_CC_Hold )
+	AddClientCommandCallback( "hsd_ai_give", HsdAi_CC_Give )
+	AddClientCommandCallback( "hsd_ai_cloak", HsdAi_CC_Cloak )
+	AddClientCommandCallback( "hsd_ai_face", HsdAi_CC_Face )
+	AddClientCommandCallback( "hsd_ai_track", HsdAi_CC_Track )
+	AddClientCommandCallback( "hsd_ai_class", HsdAi_CC_Class )
+	AddClientCommandCallback( "hsd_ai_sense", HsdAi_CC_Sense )
+	AddClientCommandCallback( "hsd_ai_kill", HsdAi_CC_Kill )
+	AddClientCommandCallback( "hsd_ai_entrance", HsdAi_CC_Entrance )
+	AddClientCommandCallback( "hsd_ai_seq", HsdAi_CC_Seq )
+	RegisterSignal( "HsdAiHoldStop" )
+	thread HsdAi_Watch()
+	printt( "HSDDIAG AI init ailive 0.2.0" )
+}
+
+int function HsdAi_Id( entity npc )
+{
+	string t = npc.GetTitle()
+	if ( t.len() > 4 && t.slice( 0, 4 ) == "HSD " )
+		return int( t.slice( 4 ) )
+	return -1
+}
+
+// which: "all" (every live NPC), "last" (last hsd_ai_class spawn), "e<ehandle>", or an hsd_npc id
+array<entity> function HsdAi_Pick( string which )
+{
+	array<entity> out
+	foreach ( entity npc in GetNPCArray() )
+	{
+		if ( !IsAlive( npc ) )
+			continue
+		if ( which == "all" )
+			out.append( npc )
+		else if ( which == "last" )
+		{
+			if ( IsValid( file.last ) && npc == file.last )
+				out.append( npc )
+		}
+		else if ( which.len() > 2 && which.slice( 0, 2 ) == "c." )
+		{
+			if ( npc.GetClassName() == which.slice( 2 ) )
+				out.append( npc )
+		}
+		else if ( which.len() > 1 && which.slice( 0, 1 ) == "e" )
+		{
+			if ( npc.GetEncodedEHandle() == int( which.slice( 1 ) ) )
+				out.append( npc )
+		}
+		else if ( HsdAi_Id( npc ) >= 0 && HsdAi_Id( npc ) == int( which ) )
+			out.append( npc )
+	}
+	if ( out.len() == 0 )
+		printt( "HSDDIAG AI err no_target " + which )
+	return out
+}
+
+entity function HsdAi_Player()
+{
+	array<entity> players = GetPlayerArray()
+	return players.len() > 0 ? players[0] : null
+}
+
+string function HsdAi_B( bool b )
+{
+	return b ? "1" : "0"
+}
+
+bool function HsdAi_Fast( entity player )
+{
+	return IsAlive( player ) && !player.IsTitan() && IsFastPilot( player )
+}
+
+void function HsdAi_Watch()
+{
+	while ( true )
+	{
+		entity player = HsdAi_Player()
+		float now = Time()
+		bool periodic = file.track && now - file.lastPeriodic >= 0.1
+		if ( periodic )
+			file.lastPeriodic = now
+		if ( periodic && IsAlive( player ) )
+		{
+			vector o = player.GetOrigin()
+			vector v = player.GetVelocity()
+			vector a = player.EyeAngles()
+			printt( format( "HSDDIAG PST %.4f %.1f %.1f %.1f %.1f %.1f %.1f %.1f %s %s %s %s %s %s", now, o.x, o.y, o.z, v.x, v.y, v.z, a.y,
+				HsdAi_B( player.IsOnGround() ), HsdAi_B( player.IsWallRunning() ), HsdAi_B( player.IsSliding() ), HsdAi_B( player.IsSprinting() ),
+				HsdAi_B( IsCloaked( player ) ), HsdAi_B( HsdAi_Fast( player ) ) ) )
+		}
+		foreach ( entity npc in GetNPCArray() )
+		{
+			if ( !IsAlive( npc ) )
+				continue
+			int eh = npc.GetEncodedEHandle()
+			int id = HsdAi_Id( npc )
+			if ( !( eh in file.watch ) )
+			{
+				NpcWatch nw
+				file.watch[ eh ] <- nw
+				vector so = npc.GetOrigin()
+				entity sw = npc.GetActiveWeapon()
+				printt( format( "HSDDIAG ANPC %.4f %d %d %s team=%d %.1f %.1f %.1f weapon=%s prof=%s acc=%s aiset=%s", now, eh, id, npc.GetClassName(),
+					npc.GetTeam(), so.x, so.y, so.z, IsValid( sw ) ? sw.GetWeaponClassName() : "none", string( npc.kv.WeaponProficiency ),
+					string( npc.kv.AccuracyMultiplier ), npc.GetAISettingsName() ) )
+			}
+			NpcWatch w = file.watch[ eh ]
+			entity weapon = npc.GetActiveWeapon()
+			if ( IsValid( weapon ) )
+			{
+				int clip = weapon.GetWeaponPrimaryClipCount()
+				if ( w.clip != -999 && clip < w.clip && IsValid( player ) )
+				{
+					vector no = npc.GetOrigin()
+					vector po = player.GetOrigin()
+					printt( format( "HSDDIAG NSHOT %.4f %d %d %d %d %.1f %.1f %.1f %.1f %.1f %.1f %.1f %s %s %s %s %.1f %s %s %s", now, eh, id, w.clip - clip, clip,
+						no.x, no.y, no.z, po.x, po.y, po.z, Distance( no, po ),
+						HsdAi_B( player.IsOnGround() ), HsdAi_B( player.IsWallRunning() ), HsdAi_B( player.IsSliding() ), HsdAi_B( player.IsSprinting() ),
+						Length( player.GetVelocity() ), HsdAi_B( HsdAi_Fast( player ) ), HsdAi_B( npc.CanSee( player ) ), HsdAi_B( npc.GetEnemy() == player ) ) )
+				}
+				else if ( w.clip != -999 && clip > w.clip )
+				{
+					printt( format( "HSDDIAG NRELOAD %.4f %d %d %d", now, eh, id, clip ) )
+				}
+				w.clip = clip
+				float na = weapon.GetNextAttackAllowedTime()
+				if ( na > w.nextAtk + 0.001 && w.nextAtk >= 0.0 )
+					printt( format( "HSDDIAG NATK %.4f %d %d %.4f", now, eh, id, na ) )
+				w.nextAtk = na
+			}
+			entity enemy = npc.GetEnemy()
+			string en = IsValid( enemy ) ? enemy.GetClassName() : "none"
+			if ( en != w.enemy )
+			{
+				w.enemy = en
+				printt( format( "HSDDIAG NENEMY %.4f %d %d %s", now, eh, id, en ) )
+			}
+			if ( IsAlive( player ) )
+			{
+				int see = npc.CanSee( player ) ? 1 : 0
+				if ( see != w.see )
+				{
+					w.see = see
+					printt( format( "HSDDIAG NSEE %.4f %d %d %d", now, eh, id, see ) )
+				}
+			}
+			string st = npc.GetNPCState()
+			if ( st != w.state )
+			{
+				w.state = st
+				printt( format( "HSDDIAG NSTATE %.4f %d %d %s", now, eh, id, st ) )
+			}
+			string sc = npc.GetCurScheduleName()
+			if ( sc != w.sched )
+			{
+				w.sched = sc
+				printt( format( "HSDDIAG NSCHED %.4f %d %d %s", now, eh, id, sc ) )
+			}
+			if ( periodic )
+			{
+				vector o = npc.GetOrigin()
+				vector a = npc.EyeAngles()
+				printt( format( "HSDDIAG NP %.4f %d %d %.1f %.1f %.1f %.1f %.1f %d", now, eh, id, o.x, o.y, o.z, a.y, a.x, npc.GetHealth() ) )
+			}
+		}
+		WaitFrame()
+	}
+}
+
+bool function HsdAi_CC_Info( entity player, array<string> args )
+{
+	printt( format( "HSDDIAG AI info lethality=%d playlist=%s riff_ai_lethality=%d", Riff_AILethality(), GetCurrentPlaylistName(),
+		GetCurrentPlaylistVarInt( "riff_ai_lethality", -1 ) ) )
+	foreach ( string cv in [ "ai_missFastPlayer_sideWindowYMin", "ai_missFastPlayer_sideWindowYMax", "ai_missFastPlayer_sideWindowZMin",
+		"ai_missFastPlayer_sideWindowZMax", "ai_missFastPlayer_topWindowYMin", "ai_missFastPlayer_topWindowYMax", "ai_missFastPlayer_topWindowZMin",
+		"ai_missFastPlayer_topWindowZMax", "ai_range_attack_twitch_debounce", "ai_react_far_dist", "ai_cloaked_enemy_free_knowledge_duration" ] )
+		printt( "HSDDIAG AI cvar " + cv + " " + GetConVarString( cv ) )
+	foreach ( string wn in [ "mp_weapon_rspn101", "mp_weapon_lstar", "mp_weapon_r97", "mp_weapon_hemlok_smg", "mp_weapon_car" ] )
+	{
+		string line = "HSDDIAG AI weapon " + wn
+		foreach ( string k in [ "npc_miss_fast_player", "proficiency_very_good_spreadscale", "proficiency_very_good_bias", "proficiency_average_spreadscale",
+			"proficiency_average_bias", "npc_spread_cone_focus_time", "npc_spread_defocused_cone_multiplier", "npc_spread_pattern_focus_time",
+			"npc_min_burst", "npc_max_burst", "npc_rest_time_between_bursts_min", "npc_rest_time_between_bursts_max", "npc_accuracy_multiplier_pilot" ] )
+		{
+			var v = GetWeaponInfoFileKeyField_Global( wn, k )
+			line += " " + k + "=" + ( v == null ? "null" : string( v ) )
+		}
+		printt( line )
+	}
+	foreach ( entity npc in GetNPCArray() )
+	{
+		entity w = npc.GetActiveWeapon()
+		printt( format( "HSDDIAG AI npc %d %d %s prof=%s acc=%s weapon=%s aiset=%s state=%s", npc.GetEncodedEHandle(), HsdAi_Id( npc ), npc.GetClassName(),
+			string( npc.kv.WeaponProficiency ), string( npc.kv.AccuracyMultiplier ), IsValid( w ) ? w.GetWeaponClassName() : "none",
+			npc.GetAISettingsName(), npc.GetNPCState() ) )
+	}
+	return true
+}
+
+// hold: assault point on its own spot with fight radius 0 (the guard-mode recipe of
+// mp/_titan_npc.nut NPCTitanGuardModeInit); release: fight radius back to a large value
+bool function HsdAi_CC_Hold( entity player, array<string> args )
+{
+	if ( args.len() < 2 )
+		return true
+	bool hold = args[1] == "1"
+	foreach ( entity npc in HsdAi_Pick( args[0] ) )
+	{
+		npc.Signal( "HsdAiHoldStop" )
+		if ( hold )
+			thread HsdAi_HoldThread( npc, npc.GetOrigin() )
+		else
+		{
+			npc.AssaultSetFightRadius( 2000 )
+			npc.AssaultSetGoalRadius( 2000 )
+		}
+		vector o = npc.GetOrigin()
+		printt( format( "HSDDIAG AI hold %d %d %.1f %.1f %.1f %.4f", HsdAi_Id( npc ), hold ? 1 : 0, o.x, o.y, o.z, Time() ) )
+	}
+	return true
+}
+
+bool function HsdAi_CC_Give( entity player, array<string> args )
+{
+	if ( args.len() < 2 )
+		return true
+	foreach ( entity npc in HsdAi_Pick( args[0] ) )
+	{
+		foreach ( entity w in npc.GetMainWeapons() )
+			npc.TakeWeapon( w.GetWeaponClassName() )
+		npc.GiveWeapon( args[1] )
+		npc.SetActiveWeaponByName( args[1] )
+		entity aw = npc.GetActiveWeapon()
+		printt( format( "HSDDIAG AI give %d %s active=%s %.4f", HsdAi_Id( npc ), args[1], IsValid( aw ) ? aw.GetWeaponClassName() : "none", Time() ) )
+	}
+	return true
+}
+
+bool function HsdAi_CC_Cloak( entity player, array<string> args )
+{
+	float dur = args.len() > 0 ? float( args[0] ) : 0.0
+	if ( dur > 0.0 )
+		EnableCloak( player, dur )
+	else
+		DisableCloak( player )
+	printt( format( "HSDDIAG AI cloak %.2f %.4f", dur, Time() ) )
+	return true
+}
+
+bool function HsdAi_CC_Face( entity player, array<string> args )
+{
+	if ( args.len() < 1 )
+		return true
+	float pitch = args.len() > 1 ? float( args[1] ) : 0.0
+	player.SetAngles( < pitch, float( args[0] ), 0.0 > )
+	printt( format( "HSDDIAG AI face %.1f %.1f %.4f", float( args[0] ), pitch, Time() ) )
+	return true
+}
+
+bool function HsdAi_CC_Track( entity player, array<string> args )
+{
+	file.track = args.len() > 0 && args[0] == "1"
+	return true
+}
+
+// hsd_ai_class <npc_class> <aisettings|-> x y z yaw [blind] : spawn an enemy with given settings (no HSD id)
+bool function HsdAi_CC_Class( entity player, array<string> args )
+{
+	if ( args.len() < 6 )
+		return true
+	vector origin = < float( args[2] ), float( args[3] ), float( args[4] ) >
+	entity npc = CreateNPC( args[0], GetOtherTeam( player.GetTeam() ), origin, < 0.0, float( args[5] ), 0.0 > )
+	if ( args[1] != "-" )
+		SetSpawnOption_AISettings( npc, args[1] )
+	DispatchSpawn( npc )
+	if ( !IsValid( npc ) )
+	{
+		printt( "HSDDIAG AI err class_spawn_failed " + args[0] )
+		return true
+	}
+	bool blind = args.len() > 6 && args[6] == "1"
+	if ( blind )
+		npc.EnableNPCFlag( NPC_DISABLE_SENSING )
+	file.last = npc
+	vector o = npc.GetOrigin()
+	entity w = npc.GetActiveWeapon()
+	printt( format( "HSDDIAG AI class %d %s %s %.1f %.1f %.1f blind=%d weapon=%s %.4f", npc.GetEncodedEHandle(), npc.GetClassName(), npc.GetAISettingsName(),
+		o.x, o.y, o.z, blind ? 1 : 0, IsValid( w ) ? w.GetWeaponClassName() : "none", Time() ) )
+	return true
+}
+
+bool function HsdAi_CC_Sense( entity player, array<string> args )
+{
+	if ( args.len() < 2 )
+		return true
+	bool on = args[1] == "1"
+	foreach ( entity npc in HsdAi_Pick( args[0] ) )
+	{
+		if ( on )
+			npc.DisableNPCFlag( NPC_DISABLE_SENSING )
+		else
+		{
+			npc.EnableNPCFlag( NPC_DISABLE_SENSING )
+			npc.ClearEnemy()
+		}
+		printt( format( "HSDDIAG AI sense %d %d %.4f", npc.GetEncodedEHandle(), on ? 1 : 0, Time() ) )
+	}
+	return true
+}
+
+bool function HsdAi_CC_Kill( entity player, array<string> args )
+{
+	foreach ( entity npc in HsdAi_Pick( args.len() > 0 ? args[0] : "last" ) )
+	{
+		printt( format( "HSDDIAG AI kill %d %.4f", npc.GetEncodedEHandle(), Time() ) )
+		npc.Destroy()
+	}
+	return true
+}
+
+// hsd_ai_entrance <pod|reaper|titan> x y z yaw [extra]: Northstar's _ai_gamemodes.gnut entrances
+// (drop pod with 4 NPCs, reaper warpfall, NPC titanfall), with time stamps
+bool function HsdAi_CC_Entrance( entity player, array<string> args )
+{
+	if ( args.len() < 5 )
+		return true
+	vector pos = < float( args[1] ), float( args[2] ), float( args[3] ) >
+	vector rot = < 0.0, float( args[4] ), 0.0 >
+	thread HsdAi_EntranceThread( args[0], pos, rot, GetOtherTeam( player.GetTeam() ), args.len() > 5 ? args[5] : "" )
+	return true
+}
+
+void function HsdAi_EntranceThread( string kind, vector pos, vector rot, int team, string extra )
+{
+	float t0 = Time()
+	printt( format( "HSDDIAG ENTR start %s %.1f %.1f %.1f %.4f", kind, pos.x, pos.y, pos.z, t0 ) )
+	if ( kind == "pod" )
+	{
+		printt( "HSDDIAG ENTR pod_anim " + string( GetDropPodAnimDuration() ) + format( " %.4f", Time() ) )
+		waitthread AiGameModes_SpawnDropPod( pos, rot, team, extra == "" ? "npc_soldier" : extra, HsdAi_OnSquad )
+	}
+	else if ( kind == "reaper" )
+		waitthread AiGameModes_SpawnReaper( pos, rot, team, extra, HsdAi_OnReaper )
+	else if ( kind == "titan" )
+		waitthread AiGameModes_SpawnTitan( pos, rot, team, extra == "" ? "titan_atlas_tracker" : extra, "", HsdAi_OnTitan )
+	printt( format( "HSDDIAG ENTR end %s %.4f dt=%.4f", kind, Time(), Time() - t0 ) )
+}
+
+void function HsdAi_OnSquad( array<entity> guys )
+{
+	printt( format( "HSDDIAG ENTR squad %d %.4f", guys.len(), Time() ) )
+}
+
+void function HsdAi_OnReaper( entity reaper )
+{
+	vector o = reaper.GetOrigin()
+	printt( format( "HSDDIAG ENTR reaper_ready %d %.1f %.1f %.1f %.4f", reaper.GetEncodedEHandle(), o.x, o.y, o.z, Time() ) )
+}
+
+void function HsdAi_OnTitan( entity titan )
+{
+	vector o = titan.GetOrigin()
+	printt( format( "HSDDIAG ENTR titan_spawned %d %.1f %.1f %.1f %.4f", titan.GetEncodedEHandle(), o.x, o.y, o.z, Time() ) )
+}
+
+// hsd_ai_seq <sel|pod> <anim[+event]> ... : animation lengths the entrance scripts read from the models
+bool function HsdAi_CC_Seq( entity player, array<string> args )
+{
+	if ( args.len() < 2 )
+		return true
+	array<entity> ents
+	entity temp
+	if ( args[0] == "pod" )
+	{
+		temp = CreateDropPod()
+		ents.append( temp )
+	}
+	else
+	{
+		array<entity> picked = HsdAi_Pick( args[0] )
+		if ( picked.len() > 0 )
+			ents.append( picked[0] )
+	}
+	foreach ( entity e in ents )
+	{
+		for ( int i = 1; i < args.len(); i++ )
+		{
+			array<string> parts = split( args[i], "+" )
+			if ( parts.len() == 0 )
+				continue
+			string anim = parts[0]
+			if ( e.LookupSequence( anim ) == -1 )
+			{
+				printt( "HSDDIAG ASEQ " + e.GetClassName() + " " + anim + " missing" )
+				continue
+			}
+			float dur = e.GetSequenceDuration( anim )
+			string line = format( "HSDDIAG ASEQ %s %s %.4f", e.GetClassName(), anim, dur )
+			for ( int k = 1; k < parts.len(); k++ )
+			{
+				float frac = e.GetScriptedAnimEventCycleFrac( anim, parts[k] )
+				line += format( " %s %.4f %.4f", parts[k], frac, frac * dur )
+			}
+			printt( line )
+		}
+	}
+	if ( IsValid( temp ) )
+		temp.Destroy()
+	return true
+}
+
+// keeps the NPC on its spot: the assault point with fight radius 0 alone did not hold
+// (20261108_131457: an NPC walked 1200 u toward the player after ~40 s), so re-send it
+// every 0.5 s and log a line whenever the NPC had moved more than 40 u
+void function HsdAi_HoldThread( entity npc, vector spot )
+{
+	npc.EndSignal( "OnDeath" )
+	npc.EndSignal( "OnDestroy" )
+	npc.EndSignal( "HsdAiHoldStop" )
+	while ( true )
+	{
+		npc.AssaultSetFightRadius( 0 )
+		npc.AssaultSetGoalRadius( 32 )
+		npc.AssaultSetArrivalTolerance( 16 )
+		npc.AssaultPoint( spot )
+		float d = Distance2D( npc.GetOrigin(), spot )
+		if ( d > 40.0 )
+			printt( format( "HSDDIAG AI drift %d %.1f %.4f", npc.GetEncodedEHandle(), d, Time() ) )
+		wait 0.5
+	}
+}
