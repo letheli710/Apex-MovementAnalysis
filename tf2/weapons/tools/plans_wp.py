@@ -376,3 +376,13 @@ def wp_f():
         s += give(cls) + blk_hits(cls, [("%s_%s" % (cls[10:], n), pt) for n, pt in pts])
     s += end()
     return s
+
+
+def wp_g():
+    """Headshots (wp_f aimed z 62 and went over the head): Double Take and SMR at z 50-60, soldier at S2."""
+    s = [C("hsd_info"), C("hsd_hp 5000"), setup(), W(0.3), soldier(pos=S2), W(1.5)]
+    pts = [("z%d" % z, (S2[0], S2[1], float(z))) for z in (50, 54, 57, 60)]
+    for cls in ("mp_weapon_doubletake", "mp_weapon_smr", "mp_weapon_pulse_lmg"):
+        s += give(cls) + blk_hits(cls, [("%s_head_%s" % (cls[10:], n), pt) for n, pt in pts])
+    s += end()
+    return s
