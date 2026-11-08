@@ -1,0 +1,54 @@
+// HSD.TF2Diag titan kits (2026-11-08, tf2-titan-kits), client side: kit state every client frame
+// while the local player is a titan (only with hsd_autorun 1). The server KIT line is 10 Hz;
+// this one is the client frame rate (~144 Hz), for phase, charge, zoom and reload timings.
+// Log line:
+//   HSDDIAG KC <time> <phase> <act> <clip> <charge> <reloading> <zoom> <o0> <o1> <o2> <energy>
+//     oN = "clip:charge" of offhand N (- if none)
+global function HsdDiagKit_InitClient
+
+void function HsdDiagKit_InitClient()
+{
+	if ( !GetConVarBool( "hsd_autorun" ) )
+		return
+	thread HsdDiagKit_ClientLog()
+}
+
+string function HsdKitCl_Off( entity player, int slot )
+{
+	entity w = player.GetOffhandWeapon( slot )
+	if ( !IsValid( w ) )
+		return "-"
+	return format( "%d:%.3f", w.GetWeaponPrimaryClipCount(), w.GetWeaponChargeFraction() )
+}
+
+void function HsdDiagKit_ClientLog()
+{
+	entity player = GetLocalClientPlayer()
+	while ( player == null || !IsAlive( player ) )
+	{
+		WaitFrame()
+		player = GetLocalClientPlayer()
+	}
+	while ( IsValid( player ) )
+	{
+		if ( IsAlive( player ) && player.IsTitan() )
+		{
+			entity act = player.GetActiveWeapon()
+			string name = "-"
+			int clip = -1
+			float chg = 0.0
+			bool rl = false
+			if ( IsValid( act ) )
+			{
+				name = act.GetWeaponClassName()
+				clip = act.GetWeaponPrimaryClipCount()
+				chg = act.GetWeaponChargeFraction()
+				rl = act.IsReloading()
+			}
+			printt( format( "HSDDIAG KC %.5f %s %s %d %.3f %s %.3f %s %s %s %d", Time(), player.IsPhaseShifted() ? "1" : "0", name, clip, chg,
+				rl ? "1" : "0", player.GetZoomFrac(), HsdKitCl_Off( player, 0 ), HsdKitCl_Off( player, 1 ), HsdKitCl_Off( player, 2 ),
+				player.GetSharedEnergyCount() ) )
+		}
+		WaitFrame()
+	}
+}

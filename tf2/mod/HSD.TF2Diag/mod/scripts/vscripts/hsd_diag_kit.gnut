@@ -1,0 +1,542 @@
+// HSD.TF2Diag titan kits (2026-11-08, session tf2-titan-kits): an enemy NPC titan target, kit state
+// per server frame, damage on titans. See ../../../../../expansion/titan/kits/README.md.
+// Commands (client console -> server):
+//   hsd_kit_pas <class> <slot 1-6> <ref|->   set passive<slot> on the default loadout of <class> (ion, monarch ...)
+//                       before hsd_titan spawns it ("-" clears); the default table keeps it until changed
+//   hsd_kit_give <ref>  give a titan passive to the player's soul now (vanguard core1-9, a few kit passives)
+//   hsd_kit_foe <setfile> x y z yaw [hp] [mode]   enemy npc_titan (CreateNPCTitan + npc_<setfile> AI settings)
+//                       mode: static (frozen, no guns, ignores all) | idle (not frozen, no guns, ignores all)
+//                             | hostile (normal AI, shoots the player)
+//   hsd_kit_foe_hp <v> | hsd_kit_foe_shield <v> | hsd_kit_foe_kill | hsd_kit_foe_mode <mode>
+//   hsd_kit_energy <v>  set the player's shared energy (Ion)
+//   hsd_kit_hp <v>      set the player titan's max health and health (keeps it alive under fire)
+//   hsd_kit_info        offhands with mods, soul passives (vanguard cores), health, shield
+//   hsd_kit_refill [slot]  offhand clips to max and charge to 0 (as Monarch's rearm does), all slots 0-2 or one
+//   hsd_kit_sky x0 y0 x1 y1 step [ztop] [need]   floor point with the most titan-hull headroom (up to 1500 u), or with
+//                       need > 0 the one closest to the player with at least need; teleports the
+//                       player there. Floors are found by tracing down from ztop (default: the player's z + 150)
+//   hsd_kit_titanhere <class> <dist>   hsd_titan (via the client) on the floor dist ahead of the player, facing away
+//   hsd_kit_hurtfrom <amount> <relYaw> <dist>  put the foe dist away at relYaw off the player's view, then damage
+//                       the player with the foe as attacker (bullet, XO-16 source): for angle rules like sword block
+// Log lines:
+//   HSDDIAG KIT <t> <titan> <phase> <energy> <grav> <act> <clip> <chg> <lvl> <zoom> <o0> <o1> <o2> <o3> <hp> <maxhp>
+//              <shield> <shieldmax> <upg> <move_slow> <turn_slow> <dodge_slow> <vortexBullets> <vortexProj>
+//              <foeHp> <foeShield> <foeTrackers> <foeX> <foeY> <foeZ> <foeMoveSlow> <foeVx> <foeVy> <foeVz>
+//     every server frame while autorun and the player is a titan; oN = "clip:charge" of offhand N (- if none)
+//   HSDDIAG KDMG <t> <victim> <dmg> <hp before> <shield before> <source id> <damage type> <inflictor class> <x y z>
+//     each hit on an npc_titan or on the player's titan (victim = foe | self | npc_titan)
+//   HSDDIAG KFIN <t> <victim class> <dmg> <source id> <inflictor class> <inflictor ehandle>   final damage (after all callbacks)
+//   HSDDIAG KFOE <event> ... / HSDDIAG KINFO ...
+global function HsdDiagKit_Init
+
+struct
+{
+	entity foe
+	array<string> foeWeapons
+	bool foeFrozen = false
+} file
+
+void function HsdDiagKit_Init()
+{
+	AddClientCommandCallback( "hsd_kit_pas", HsdKit_CC_Pas )
+	AddClientCommandCallback( "hsd_kit_give", HsdKit_CC_Give )
+	AddClientCommandCallback( "hsd_kit_foe", HsdKit_CC_Foe )
+	AddClientCommandCallback( "hsd_kit_foe_hp", HsdKit_CC_FoeHp )
+	AddClientCommandCallback( "hsd_kit_foe_shield", HsdKit_CC_FoeShield )
+	AddClientCommandCallback( "hsd_kit_foe_kill", HsdKit_CC_FoeKill )
+	AddClientCommandCallback( "hsd_kit_foe_mode", HsdKit_CC_FoeMode )
+	AddClientCommandCallback( "hsd_kit_energy", HsdKit_CC_Energy )
+	AddClientCommandCallback( "hsd_kit_hp", HsdKit_CC_Hp )
+	AddClientCommandCallback( "hsd_kit_info", HsdKit_CC_Info )
+	AddClientCommandCallback( "hsd_kit_refill", HsdKit_CC_Refill )
+	AddClientCommandCallback( "hsd_kit_sky", HsdKit_CC_Sky )
+	AddClientCommandCallback( "hsd_kit_hurtfrom", HsdKit_CC_HurtFrom )
+	AddClientCommandCallback( "hsd_kit_titanhere", HsdKit_CC_TitanHere )
+	AddDamageCallback( "npc_titan", HsdKit_OnTitanDamaged )
+	AddDamageCallback( "player", HsdKit_OnPlayerDamaged )
+	// after every per-weapon callback (block, heat-shield cone, trap clamp ...): what the target really takes
+	AddDamageFinalCallback( "npc_titan", HsdKit_OnFinalDamage )
+	AddDamageFinalCallback( "npc_soldier", HsdKit_OnFinalDamage )
+	AddDamageFinalCallback( "player", HsdKit_OnFinalDamage )
+	if ( GetConVarBool( "hsd_autorun" ) )
+		AddCallback_OnPlayerRespawned( HsdKit_OnRespawn )
+	printt( "HSDDIAG KINFO init" )
+}
+
+string function HsdKit_Short( string cls )
+{
+	foreach ( string p in [ "mp_titanweapon_", "mp_titanability_", "mp_titancore_", "mp_weapon_" ] )
+	{
+		if ( cls.find( p ) == 0 )
+			return cls.slice( p.len() )
+	}
+	return cls
+}
+
+string function HsdKit_Offhand( entity player, int slot )
+{
+	entity w = player.GetOffhandWeapon( slot )
+	if ( !IsValid( w ) )
+		return "-"
+	return format( "%d:%.3f", w.GetWeaponPrimaryClipCount(), w.GetWeaponChargeFraction() )
+}
+
+void function HsdKit_OnRespawn( entity player )
+{
+	thread HsdKit_StateLog( player )
+}
+
+void function HsdKit_StateLog( entity player )
+{
+	player.EndSignal( "OnDestroy" )
+	while ( true )
+	{
+		WaitFrame()
+		if ( !IsAlive( player ) || !player.IsTitan() )
+			continue
+		entity soul = player.GetTitanSoul()
+		entity act = player.GetActiveWeapon()
+		string actName = "-"
+		int clip = -1
+		float chg = 0.0
+		int lvl = 0
+		if ( IsValid( act ) )
+		{
+			actName = HsdKit_Short( act.GetWeaponClassName() )
+			clip = act.GetWeaponPrimaryClipCount()
+			if ( act.IsReloading() )
+				actName += "+R"
+			chg = act.GetWeaponChargeFraction()
+			if ( actName == "sniper" )  // sticky_40mm has no charge fire mode: a script error (run 20261108_140910_kit_b)
+				lvl = act.GetWeaponChargeLevel()
+		}
+		int upg = -1
+		if ( IsValid( soul ) && player.GetPlayerSettings().find( "vanguard" ) != null )
+			upg = soul.GetTitanSoulNetInt( "upgradeCount" )
+		entity fx = IsValid( soul ) ? soul : player
+		int vb = -1
+		int vp = -1
+		entity def = player.GetOffhandWeapon( OFFHAND_LEFT )
+		if ( IsValid( def ) )
+		{
+			entity sphere = def.GetWeaponUtilityEntity()
+			if ( IsValid( sphere ) && sphere.GetClassName() == "vortex_sphere" )
+			{
+				vb = sphere.GetBulletAbsorbedCount()
+				vp = sphere.GetProjectileAbsorbedCount()
+			}
+		}
+		string foe = "- - - - - - - - - -"
+		if ( IsAlive( file.foe ) )
+		{
+			entity fsoul = file.foe.GetTitanSoul()
+			int trk = -1
+			entity ord = player.GetOffhandWeapon( OFFHAND_ORDNANCE )
+			if ( IsValid( ord ) && ord.GetWeaponClassName() == "mp_titanweapon_tracker_rockets" )
+				trk = ord.SmartAmmo_GetNumTrackersOnEntity( file.foe )
+			vector o = file.foe.GetOrigin()
+			vector fv = file.foe.GetVelocity()
+			foe = format( "%d %d %d %.1f %.1f %.1f %.3f %.1f %.1f %.1f", file.foe.GetHealth(), IsValid( fsoul ) ? fsoul.GetShieldHealth() : -1, trk,
+				o.x, o.y, o.z, StatusEffect_Get( IsValid( fsoul ) ? fsoul : file.foe, eStatusEffect.move_slow ), fv.x, fv.y, fv.z )
+		}
+		printt( format( "HSDDIAG KIT %.4f 1 %s %d %s %s %d %.3f %d %.3f %s %s %s %s %d %d %d %d %d %.3f %.3f %.3f %d %d %s",
+			Time(), player.IsPhaseShifted() ? "1" : "0", player.GetSharedEnergyCount(), string( player.kv.gravity ),
+			actName, clip, chg, lvl, player.GetZoomFrac(),
+			HsdKit_Offhand( player, 0 ), HsdKit_Offhand( player, 1 ), HsdKit_Offhand( player, 2 ), HsdKit_Offhand( player, 3 ),
+			player.GetHealth(), player.GetMaxHealth(), IsValid( soul ) ? soul.GetShieldHealth() : 0, IsValid( soul ) ? soul.GetShieldHealthMax() : 0,
+			upg, StatusEffect_Get( fx, eStatusEffect.move_slow ), StatusEffect_Get( fx, eStatusEffect.turn_slow ),
+			StatusEffect_Get( fx, eStatusEffect.dodge_speed_slow ), vb, vp, foe ) )
+	}
+}
+
+void function HsdKit_LogDamage( string victim, entity ent, var damageInfo )
+{
+	entity soul = ent.GetTitanSoul()
+	entity inflictor = DamageInfo_GetInflictor( damageInfo )
+	vector p = DamageInfo_GetDamagePosition( damageInfo )
+	printt( format( "HSDDIAG KDMG %.4f %s %.1f %d %d %d %d %s %.1f %.1f %.1f", Time(), victim, DamageInfo_GetDamage( damageInfo ), ent.GetHealth(),
+		IsValid( soul ) ? soul.GetShieldHealth() : 0, DamageInfo_GetDamageSourceIdentifier( damageInfo ), DamageInfo_GetCustomDamageType( damageInfo ),
+		IsValid( inflictor ) ? inflictor.GetClassName() : "-", p.x, p.y, p.z ) )
+}
+
+void function HsdKit_OnTitanDamaged( entity ent, var damageInfo )
+{
+	HsdKit_LogDamage( ent == file.foe ? "foe" : "npc_titan", ent, damageInfo )
+}
+
+void function HsdKit_OnFinalDamage( entity ent, var damageInfo )
+{
+	if ( ent.IsPlayer() && !ent.IsTitan() )
+		return
+	entity inflictor = DamageInfo_GetInflictor( damageInfo )
+	printt( format( "HSDDIAG KFIN %.4f %s %.1f %d %s %d", Time(), ent == file.foe ? "foe" : ent.GetClassName(), DamageInfo_GetDamage( damageInfo ),
+		DamageInfo_GetDamageSourceIdentifier( damageInfo ), IsValid( inflictor ) ? inflictor.GetClassName() : "-",
+		IsValid( inflictor ) ? inflictor.GetEncodedEHandle() : -1 ) )
+}
+
+void function HsdKit_OnPlayerDamaged( entity ent, var damageInfo )
+{
+	if ( ent.IsTitan() )
+		HsdKit_LogDamage( "self", ent, damageInfo )
+}
+
+// --- passives -------------------------------------------------------------
+
+int function HsdKit_PassiveEnum( string ref )
+{
+	switch ( ref )
+	{
+		case "pas_vanguard_core1": return ePassives.PAS_VANGUARD_CORE1
+		case "pas_vanguard_core2": return ePassives.PAS_VANGUARD_CORE2
+		case "pas_vanguard_core3": return ePassives.PAS_VANGUARD_CORE3
+		case "pas_vanguard_core4": return ePassives.PAS_VANGUARD_CORE4
+		case "pas_vanguard_core5": return ePassives.PAS_VANGUARD_CORE5
+		case "pas_vanguard_core6": return ePassives.PAS_VANGUARD_CORE6
+		case "pas_vanguard_core7": return ePassives.PAS_VANGUARD_CORE7
+		case "pas_vanguard_core8": return ePassives.PAS_VANGUARD_CORE8
+		case "pas_vanguard_core9": return ePassives.PAS_VANGUARD_CORE9
+	}
+	return -1
+}
+
+bool function HsdKit_CC_Pas( entity player, array<string> args )
+{
+	if ( args.len() < 3 )
+		return true
+	string cls = args[0] == "monarch" ? "vanguard" : args[0]
+	string ref = args[2] == "-" ? "" : args[2]
+	foreach ( TitanLoadoutDef l in GetDefaultTitanLoadouts() )
+	{
+		if ( l.titanClass != cls )
+			continue
+		switch ( args[1] )
+		{
+			case "1": l.passive1 = ref; break
+			case "2": l.passive2 = ref; break
+			case "3": l.passive3 = ref; break
+			case "4": l.passive4 = ref; break
+			case "5": l.passive5 = ref; break
+			case "6": l.passive6 = ref; break
+		}
+		printt( format( "HSDDIAG KINFO pas %s p1=%s p2=%s p3=%s p4=%s p5=%s p6=%s %.4f", cls, l.passive1, l.passive2, l.passive3,
+			l.passive4, l.passive5, l.passive6, Time() ) )
+		return true
+	}
+	printt( "HSDDIAG KINFO err no_loadout " + cls )
+	return true
+}
+
+bool function HsdKit_CC_Give( entity player, array<string> args )
+{
+	entity soul = player.GetTitanSoul()
+	if ( args.len() < 1 || !IsValid( soul ) )
+		return true
+	int e = HsdKit_PassiveEnum( args[0] )
+	if ( e < 0 )
+	{
+		printt( "HSDDIAG KINFO err unknown_passive " + args[0] )
+		return true
+	}
+	GivePassive( soul, e )
+	printt( format( "HSDDIAG KINFO give %s %.4f", args[0], Time() ) )
+	return true
+}
+
+// --- enemy titan target ---------------------------------------------------
+
+void function HsdKit_SetFoeMode( string mode )
+{
+	entity npc = file.foe
+	if ( !IsAlive( npc ) )
+		return
+	if ( mode == "hostile" )
+	{
+		foreach ( string cls in file.foeWeapons )
+			npc.GiveWeapon( cls )
+		if ( file.foeWeapons.len() > 0 )
+			npc.SetActiveWeaponByName( file.foeWeapons[0] )
+		file.foeWeapons.clear()
+		npc.DisableNPCFlag( NPC_IGNORE_ALL | NPC_DISABLE_SENSING )
+		if ( file.foeFrozen )
+			npc.Unfreeze()
+		file.foeFrozen = false
+	}
+	else
+	{
+		npc.EnableNPCFlag( NPC_IGNORE_ALL | NPC_DISABLE_SENSING )
+		npc.ClearEnemy()
+		foreach ( entity w in npc.GetMainWeapons() )
+		{
+			string cls = w.GetWeaponClassName()
+			if ( !file.foeWeapons.contains( cls ) )
+				file.foeWeapons.append( cls )
+			npc.TakeWeapon( cls )
+		}
+		if ( mode == "static" && !file.foeFrozen )
+			npc.Freeze()
+		else if ( mode != "static" && file.foeFrozen )
+			npc.Unfreeze()
+		file.foeFrozen = mode == "static"
+	}
+	printt( format( "HSDDIAG KFOE mode %s %.4f", mode, Time() ) )
+}
+
+bool function HsdKit_CC_Foe( entity player, array<string> args )
+{
+	if ( args.len() < 5 )
+	{
+		printt( "HSDDIAG KFOE err usage" )
+		return true
+	}
+	if ( IsValid( file.foe ) )
+		file.foe.Destroy()
+	file.foeWeapons.clear()
+	file.foeFrozen = false
+	string setFile = args[0]
+	vector origin = < float( args[1] ), float( args[2] ), float( args[3] ) >
+	vector angles = < 0.0, float( args[4] ), 0.0 >
+	int team = GetOtherTeam( player.GetTeam() )
+	entity npc = CreateNPCTitan( setFile, team, origin, angles )
+	SetSpawnOption_AISettings( npc, "npc_" + setFile )
+	DispatchSpawn( npc )
+	file.foe = npc
+	int hp = args.len() > 5 ? int( args[5] ) : 0
+	if ( hp > 0 )
+	{
+		npc.SetMaxHealth( hp )
+		npc.SetHealth( hp )
+	}
+	string mode = args.len() > 6 ? args[6] : "static"
+	printt( format( "HSDDIAG KFOE spawn %s team=%d %.1f %.1f %.1f yaw=%.1f hp=%d/%d mode=%s %.4f", setFile, team, origin.x, origin.y, origin.z,
+		angles.y, npc.GetHealth(), npc.GetMaxHealth(), mode, Time() ) )
+	thread HsdKit_FoeModeLater( npc, mode )
+	return true
+}
+
+void function HsdKit_FoeModeLater( entity npc, string mode )
+{
+	npc.EndSignal( "OnDestroy" )
+	wait 0.6
+	HsdKit_SetFoeMode( mode )
+}
+
+bool function HsdKit_CC_FoeMode( entity player, array<string> args )
+{
+	if ( args.len() > 0 )
+		HsdKit_SetFoeMode( args[0] )
+	return true
+}
+
+bool function HsdKit_CC_FoeHp( entity player, array<string> args )
+{
+	if ( args.len() < 1 || !IsAlive( file.foe ) )
+		return true
+	int v = int( args[0] )
+	if ( v > file.foe.GetMaxHealth() )
+		file.foe.SetMaxHealth( v )
+	file.foe.SetHealth( v )
+	printt( format( "HSDDIAG KFOE hp %d/%d %.4f", file.foe.GetHealth(), file.foe.GetMaxHealth(), Time() ) )
+	return true
+}
+
+bool function HsdKit_CC_FoeShield( entity player, array<string> args )
+{
+	if ( args.len() < 1 || !IsAlive( file.foe ) )
+		return true
+	entity soul = file.foe.GetTitanSoul()
+	if ( IsValid( soul ) )
+	{
+		int v = int( args[0] )
+		if ( v > soul.GetShieldHealthMax() )
+			soul.SetShieldHealthMax( v )
+		soul.SetShieldHealth( v )
+	}
+	printt( format( "HSDDIAG KFOE shield %s %.4f", args[0], Time() ) )
+	return true
+}
+
+bool function HsdKit_CC_FoeKill( entity player, array<string> args )
+{
+	if ( IsValid( file.foe ) )
+		file.foe.Destroy()
+	printt( format( "HSDDIAG KFOE kill %.4f", Time() ) )
+	return true
+}
+
+// --- player -----------------------------------------------------------------
+
+bool function HsdKit_CC_Energy( entity player, array<string> args )
+{
+	if ( args.len() < 1 )
+		return true
+	int v = int( args[0] )
+	int cur = player.GetSharedEnergyCount()
+	if ( v > cur )
+		player.AddSharedEnergy( v - cur )
+	else if ( v < cur )
+		player.TakeSharedEnergy( cur - v )
+	printt( format( "HSDDIAG KINFO energy %d -> %d %.4f", cur, player.GetSharedEnergyCount(), Time() ) )
+	return true
+}
+
+bool function HsdKit_CC_Hp( entity player, array<string> args )
+{
+	if ( args.len() < 1 || !IsAlive( player ) )
+		return true
+	int v = int( args[0] )
+	if ( v > player.GetMaxHealth() )
+		player.SetMaxHealth( v )
+	player.SetHealth( v )
+	printt( format( "HSDDIAG KINFO hp %d/%d %.4f", player.GetHealth(), player.GetMaxHealth(), Time() ) )
+	return true
+}
+
+bool function HsdKit_CC_Info( entity player, array<string> args )
+{
+	entity soul = player.GetTitanSoul()
+	printt( format( "HSDDIAG KINFO state %s hp=%d/%d shield=%d/%d energy=%d %.4f", player.GetPlayerSettings(), player.GetHealth(),
+		player.GetMaxHealth(), IsValid( soul ) ? soul.GetShieldHealth() : 0, IsValid( soul ) ? soul.GetShieldHealthMax() : 0,
+		player.GetSharedEnergyCount(), Time() ) )
+	string sm = ""
+	foreach ( string m in player.GetPlayerSettingsMods() )
+		sm += m + ","
+	printt( "HSDDIAG KINFO setmods " + ( sm == "" ? "-" : sm ) )
+	foreach ( entity w in player.GetMainWeapons() )
+	{
+		string m = ""
+		foreach ( string x in w.GetMods() )
+			m += x + ","
+		printt( format( "HSDDIAG KINFO main %s mods=%s clip=%d", w.GetWeaponClassName(), m == "" ? "-" : m, w.GetWeaponPrimaryClipCount() ) )
+	}
+	for ( int i = 0; i < 6; i++ )
+	{
+		entity w = player.GetOffhandWeapon( i )
+		if ( !IsValid( w ) )
+			continue
+		string m = ""
+		foreach ( string x in w.GetMods() )
+			m += x + ","
+		printt( format( "HSDDIAG KINFO offhand %d %s mods=%s clip=%d charge=%.3f", i, w.GetWeaponClassName(), m == "" ? "-" : m,
+			w.GetWeaponPrimaryClipCount(), w.GetWeaponChargeFraction() ) )
+	}
+	if ( IsValid( soul ) )
+	{
+		string p = ""
+		for ( int i = 1; i <= 9; i++ )
+		{
+			if ( SoulHasPassive( soul, HsdKit_PassiveEnum( "pas_vanguard_core" + i ) ) )
+				p += "core" + i + ","
+		}
+		printt( "HSDDIAG KINFO soulpas " + ( p == "" ? "-" : p ) )
+	}
+	return true
+}
+
+bool function HsdKit_CC_Refill( entity player, array<string> args )
+{
+	int only = args.len() > 0 ? int( args[0] ) : -1
+	for ( int i = 0; i <= 2; i++ )
+	{
+		if ( only >= 0 && i != only )
+			continue
+		entity w = player.GetOffhandWeapon( i )
+		if ( !IsValid( w ) )
+			continue
+		// charge-only offhands (sword block, vortex ...) have no clip: setting one is a server script
+		// error, which ends the match (run 20261108_033531_kit_a)
+		if ( w.GetWeaponPrimaryClipCountMax() > 0 )
+			w.SetWeaponPrimaryClipCount( w.GetWeaponPrimaryClipCountMax() )
+		if ( w.IsChargeWeapon() )
+			w.SetWeaponChargeFractionForced( 0 )
+	}
+	printt( format( "HSDDIAG KINFO refill %d %.4f", only, Time() ) )
+	return true
+}
+
+bool function HsdKit_CC_Sky( entity player, array<string> args )
+{
+	if ( args.len() < 5 )
+		return true
+	float ztop = ( args.len() > 5 && args[5] != "auto" ) ? float( args[5] ) : player.GetOrigin().z + 150.0
+	float need = args.len() > 6 ? float( args[6] ) : 0.0
+	thread HsdKit_Sky( player, float( args[0] ), float( args[1] ), float( args[2] ), float( args[3] ), float( args[4] ), ztop, need )
+	return true
+}
+
+// need = 0: the point with the most headroom; need > 0: the point closest to the player with at least
+// that much headroom (a map's far corner can be open sky outside the play area, run 20261108_142829_kit_ns)
+void function HsdKit_Sky( entity player, float x0, float y0, float x1, float y1, float step, float ztop, float need )
+{
+	player.EndSignal( "OnDestroy" )
+	vector mins = < -60.0, -60.0, 0.0 >
+	vector maxs = < 60.0, 60.0, 235.0 >
+	vector me = player.GetOrigin()
+	float bestFree = -1.0
+	float bestDist = 999999.0
+	vector best = < 0.0, 0.0, 0.0 >
+	for ( float x = x0; x <= x1; x += step )
+	{
+		for ( float y = y0; y <= y1; y += step )
+		{
+			TraceResults down = TraceLine( < x, y, ztop >, < x, y, ztop - 2000.0 >, player, TRACE_MASK_PLAYERSOLID, TRACE_COLLISION_GROUP_NONE )
+			if ( down.fraction >= 1.0 || down.startSolid )
+				continue
+			vector start = down.endPos + < 0.0, 0.0, 8.0 >
+			TraceResults up = TraceHull( start, start + < 0.0, 0.0, 1500.0 >, mins, maxs, player, TRACE_MASK_PLAYERSOLID, TRACE_COLLISION_GROUP_NONE )
+			if ( up.startSolid )
+				continue
+			float free = up.fraction * 1500.0
+			float dist = Distance( start, me )
+			if ( need > 0.0 )
+			{
+				if ( free >= need && dist < bestDist )
+				{
+					bestDist = dist
+					bestFree = free
+					best = start
+				}
+			}
+			else if ( free > bestFree )
+			{
+				bestFree = free
+				best = start
+			}
+		}
+		WaitFrame()
+	}
+	printt( format( "HSDDIAG KSKY best %.1f %.1f %.1f free=%.0f dist=%.0f %.4f", best.x, best.y, best.z, bestFree, Distance( best, me ), Time() ) )
+	if ( bestFree > 0 && IsAlive( player ) )
+	{
+		player.SetVelocity( < 0.0, 0.0, 0.0 > )
+		player.SetOrigin( best )
+	}
+}
+
+bool function HsdKit_CC_HurtFrom( entity player, array<string> args )
+{
+	if ( args.len() < 3 || !IsAlive( player ) || !IsAlive( file.foe ) )
+		return true
+	float yaw = player.EyeAngles().y + float( args[1] )
+	vector dir = AnglesToForward( < 0.0, yaw, 0.0 > )
+	vector pos = player.GetOrigin() + dir * float( args[2] )
+	file.foe.SetOrigin( pos )
+	file.foe.SetAngles( < 0.0, yaw + 180.0, 0.0 > )
+	player.TakeDamage( float( args[0] ), file.foe, file.foe, { origin = file.foe.GetWorldSpaceCenter(), scriptType = DF_BULLET, damageSourceId = eDamageSourceId.mp_titanweapon_xo16 } )
+	entity soul = player.GetTitanSoul()
+	printt( format( "HSDDIAG KINFO hurtfrom %s yaw=%s hp=%d shield=%d %.4f", args[0], args[1], player.GetHealth(), IsValid( soul ) ? soul.GetShieldHealth() : 0, Time() ) )
+	return true
+}
+
+bool function HsdKit_CC_TitanHere( entity player, array<string> args )
+{
+	if ( args.len() < 2 || !IsAlive( player ) )
+		return true
+	float yaw = player.EyeAngles().y
+	vector p = player.GetOrigin() + AnglesToForward( < 0.0, yaw, 0.0 > ) * float( args[1] )
+	TraceResults down = TraceLine( p + < 0.0, 0.0, 200.0 >, p + < 0.0, 0.0, -800.0 >, player, TRACE_MASK_PLAYERSOLID, TRACE_COLLISION_GROUP_NONE )
+	vector f = down.fraction < 1.0 ? down.endPos : p
+	string cmd = format( "hsd_titan %s %.0f %.0f %.0f %.0f", args[0], f.x, f.y, f.z + 2.0, yaw )
+	printt( "HSDDIAG KINFO titanhere " + cmd )
+	ClientCommand( player, cmd )
+	return true
+}
