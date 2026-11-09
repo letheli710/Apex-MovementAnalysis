@@ -1,6 +1,6 @@
 # 泰坦转身、走跑切换、停步混合：原生代码里的规则（ref-titan-native，2026-11-09）
 
-会话 `ref-titan-native`，补测清单 `../../REF-TESTS-1109.md` 的 §2.4，顺带 A2、A6。只用 Ghidra 读 TF2 的 `server.dll` / `client.dll`，没有开 TF2，没有改 Unity。这里只写规则、数值和函数地址；反编译原文在私有仓库 HSD-RawData 的 `TF2-Research/local/refnat/`（分支 `ref/titan-native-raw`）。
+会话 `ref-titan-native`，补测清单 `../../REF-TESTS-1109.md` 的 §2.4，顺带 A2、A6。只用 Ghidra 读 TF2 的 `server.dll` / `client.dll`，没有开 TF2，没有改 Unity。这里只写规则、数值和函数地址；反编译原文在私有仓库 HSD-RawData 的 `tf2/local/refnat/`（分支 `ref/titan-native-raw`，HSD-RawData PR #17）。
 
 ## 先说结论
 
@@ -219,4 +219,4 @@ else:
 | 文件 | 放在哪 |
 |---|---|
 | 本报告、`feetyaw_sim.py`（转身模拟）、`ImmScan.java`（按立即数找指令） | 研究仓库 `tf2/expansion/titan/anim/ref-native/` |
-| 反编译原文 `dec-server/`、`dec-client/`、`s*.txt`、`c*.txt`、`readers-*.tsv`、`imm-*.txt`、ConVar 对象表 `obj-*.tsv`、`dig.sh` | HSD-RawData `TF2-Research/local/refnat/`（D-76，不进公开仓库） |
+| 反编译原文 `dec-server/`、`dec-client/`、`s*.txt`、`c*.txt`、`readers-*.tsv`、`imm-*.txt`、ConVar 对象表 `obj-*.tsv`、`dig.sh` | HSD-RawData `tf2/local/refnat/`（PR #17；本地原件在 `TF2-Research/local/refnat/`；D-76，不进公开仓库） |
