@@ -21,7 +21,7 @@
 | A6 / F7 | 停步时 0.55 s 混出和 0.2 s 混入谁起作用 | 没核实 | 0.2 s；混合时长 = min(旧混出, 新混入) | ☑ |
 | F20 | 斜坡和台阶上的脚和骨盆 | `stepheight` 80，骨盆修正 2 × 步长 / s，脚掌 100 °/s 转向法线；表现没实测 | 9° 坡上下、11 u 台阶，第一 / 第三人称；脚贴地只在第三人称；台阶一个 tick 迈上去、身体平滑；上坡骨盆低约 11 u；脚掌角度和陡坡没测成 | ☑（两小项留空，见 §6） |
 
-规矩：只借规则和数值；只在本地私服测；`GAME-LOCK.txt` 由共享 runner 每次跑前拿、跑完放（和 `ref-titan-upper` 轮流）；原始日志进 HSD-RawData（分支 `ref/titan-gait-raw`）；不改 Unity。
+规矩：只借规则和数值；只在本地私服测；`GAME-LOCK.txt` 由共享 runner 每次跑前拿、跑完放（和 `ref-titan-upper` 轮流）；原始日志进 HSD-RawData（分支 `ref/titan-gait-raw`，letheli710/HSD-RawData#19）；不改 Unity。
 
 ## 0. 方法
 
