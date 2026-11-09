@@ -18,6 +18,8 @@
 
 **夜间研究（2026-10-29）：[overnight/OVERNIGHT-REPORT.md](overnight/OVERNIGHT-REPORT.md)**：TF2 里还值得研究的设计（窗户辅助、钩爪实测、被砍掉的 Boost 职业、Gauntlet 等）
 
+**PvE 敌人和 FD（2026-11-08）：[pve/](pve/README.md)**：敌人规格 [pve/AI-SPEC.md](pve/AI-SPEC.md)（图鉴、行为树、计划、感知、出场、"快速铁驭打偏"规则）、FD 能读到的规则 [pve/FD-RULES.md](pve/FD-RULES.md)；实测和原生代码 `pve/AI-LIVE.md`（`tf2-ai-live`）
+
 **给人读的汇总**
 - [TF2-VS-APEX.md](TF2-VS-APEX.md)：TF2 和 Apex 的规则对照，以及 Apex 改了什么。
 - [TF2-MOVEMENT-SUMMARY.md](TF2-MOVEMENT-SUMMARY.md)：TF2 每个动作怎么实现、用了哪些数值。
