@@ -1,0 +1,77 @@
+// HSD.TF2Diag add-on (2026-11-09, session ref-titan-gait), client side: titan body attachments every
+// client frame (the shared BD line is every 4th frame), world coordinates, while the local player is a titan.
+//   HSDDIAG GC <t> <ox> <oy> <oz> <cycle> <footL xyz> <footR xyz> <torso xyz> <chest xyz> <head xyz> <torso pitch yaw roll> <footL pitch yaw roll> <footR pitch yaw roll>
+//     torso = exp_torso_base (on def_c_spineA, the bone right above the pelvis: the pelvis proxy; the
+//     model has no pelvis attachment). "-" where an attachment or GetCycle is missing.
+global function HsdDiagGait_InitClient
+
+void function HsdDiagGait_InitClient()
+{
+	if ( !GetConVarBool( "hsd_autorun" ) )
+		return
+	thread HsdGaitCl_Log()
+}
+
+string function HsdGaitCl_P( entity player, string tag )
+{
+	int id = player.LookupAttachment( tag )
+	if ( id <= 0 )
+		return " - - -"
+	vector p = player.GetAttachmentOrigin( id )
+	return format( " %.2f %.2f %.2f", p.x, p.y, p.z )
+}
+
+void function HsdGaitCl_Log()
+{
+	entity player = GetLocalClientPlayer()
+	while ( player == null || !IsAlive( player ) )
+	{
+		WaitFrame()
+		player = GetLocalClientPlayer()
+	}
+	bool cycErr = false
+	while ( IsValid( player ) )
+	{
+		if ( IsAlive( player ) && player.IsTitan() )
+		{
+			string cyc = "-"
+			if ( !cycErr )
+			{
+				try
+				{
+					cyc = format( "%.4f", player.GetCycle() )
+				}
+				catch ( e1 )
+				{
+					cycErr = true
+					printt( "HSDDIAG GERR client GetCycle " + e1 )
+				}
+			}
+			vector o = player.GetOrigin()
+			string s = format( "HSDDIAG GC %.5f %.2f %.2f %.2f %s", Time(), o.x, o.y, o.z, cyc )
+			foreach ( string tag in [ "foot_L_sole", "foot_R_sole", "exp_torso_base", "CHESTFOCUS", "HEADFOCUS" ] )
+				s += HsdGaitCl_P( player, tag )
+			int it = player.LookupAttachment( "exp_torso_base" )
+			if ( it > 0 )
+			{
+				vector a = player.GetAttachmentAngles( it )
+				s += format( " %.2f %.2f %.2f", a.x, a.y, a.z )
+			}
+			else
+				s += " - - -"
+			foreach ( string ft in [ "foot_L_sole", "foot_R_sole" ] )
+			{
+				int iff = player.LookupAttachment( ft )
+				if ( iff > 0 )
+				{
+					vector fa = player.GetAttachmentAngles( iff )
+					s += format( " %.2f %.2f %.2f", fa.x, fa.y, fa.z )
+				}
+				else
+					s += " - - -"
+			}
+			printt( s )
+		}
+		WaitFrame()
+	}
+}
