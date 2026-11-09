@@ -1,0 +1,53 @@
+untyped
+// HSD.TF2Diag add-on, session tf2-weapons (2026-11-08): client weapon state every client frame.
+// Installed only by weapons/tools/runner_wp.py. Pairs with the HSDDIAG C line (same clock):
+//   HSDDIAG WC <time> <weapon> <clip> <stock> <reloading> <zoomfrac> <spread deg> <charge> <inads> <ready> <burst pending> sm <n> <best fraction>
+// spread = player.GetAttackSpreadAngle(); sm = smart-ammo targets (count, highest lock fraction)
+global function HsdWp_InitClient
+
+void function HsdWp_InitClient()
+{
+	if ( GetConVarBool( "hsd_autorun" ) )
+		thread HsdWp_ClientLog()
+}
+
+string function HsdWp_B( bool b )
+{
+	return b ? "1" : "0"
+}
+
+void function HsdWp_ClientLog()
+{
+	entity player = GetLocalClientPlayer()
+	while ( player == null || !IsAlive( player ) )
+	{
+		WaitFrame()
+		player = GetLocalClientPlayer()
+	}
+	printt( "HSDDIAG WC init" )
+	while ( IsValid( player ) )
+	{
+		entity w = player.GetActiveWeapon()
+		if ( IsValid( w ) )
+		{
+			int smn = 0
+			float smf = 0.0
+			if ( w.SmartAmmo_IsEnabled() )
+			{
+				var targets = w.SmartAmmo_GetTargets()
+				foreach ( t in targets )
+				{
+					smn++
+					float f = expect float( t.fraction )
+					if ( f > smf )
+						smf = f
+				}
+			}
+			printt( format( "HSDDIAG WC %.5f %s %d %d %s %.4f %.4f %.4f %s %s %d sm %d %.3f", Time(), w.GetWeaponClassName(),
+				w.GetWeaponPrimaryClipCount(), w.GetWeaponPrimaryAmmoCount(), HsdWp_B( w.IsReloading() ), player.GetZoomFrac(),
+				player.GetAttackSpreadAngle(), w.GetWeaponChargeFraction(), HsdWp_B( w.IsWeaponInAds() ), HsdWp_B( w.IsReadyToFire() ),
+				w.GetBurstFireShotsPending(), smn, smf ) )
+		}
+		WaitFrame()
+	}
+}
