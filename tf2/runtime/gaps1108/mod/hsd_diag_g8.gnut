@@ -1,0 +1,271 @@
+// HSD.TF2Diag GAPS-1108 (session tf2-pilot-gaps, 2026-11-08): window hints, walk-off edges,
+// player settings fields. Server-side commands only; the per-frame log stays in hsd_diag_cl.gnut.
+// Log lines:
+//   HSDDIAG G8HINT <i> <x> <y> <z> <pitch> <yaw> <roll> <minsx> <minsy> <minsz> <maxsx> <maxsy> <maxsz>
+//   HSDDIAG G8WINQ <sx sy sz> <vx vy vz> <t> <grav> -> none | <hint x y z> <hint yaw>
+//   HSDDIAG G8EDGE <x> <y> <floor z> <dx> <dy> <drop> <blocked 0/1> <block frac>
+//   HSDDIAG G8SET <key> <value>
+global function HsdDiagG8_Init
+
+struct
+{
+	array<entity> hints
+	array<vector> edgePos
+	array<vector> edgeDir
+	vector wallPos
+	vector wallNormal
+	bool wallFound = false
+} file
+
+void function HsdDiagG8_Init()
+{
+	AddClientCommandCallback( "g8_hints", G8_CC_Hints )
+	AddClientCommandCallback( "g8_winq", G8_CC_WinQ )
+	AddClientCommandCallback( "g8_winpos", G8_CC_WinPos )
+	AddClientCommandCallback( "g8_edges", G8_CC_Edges )
+	AddClientCommandCallback( "g8_goedge", G8_CC_GoEdge )
+	AddClientCommandCallback( "g8_set", G8_CC_Set )
+	AddClientCommandCallback( "g8_wallfind", G8_CC_WallFind )
+	AddClientCommandCallback( "g8_gowall", G8_CC_GoWall )
+	printt( "HSDDIAG G8 init" )
+}
+
+string function G8V( vector v )
+{
+	return format( "%.1f %.1f %.1f", v.x, v.y, v.z )
+}
+
+// g8_hints: list every func_window_hint entity of the map (origin, angles, bounds)
+bool function G8_CC_Hints( entity player, array<string> args )
+{
+	file.hints = GetEntArrayByClass_Expensive( "func_window_hint" )
+	int i = 0
+	foreach ( entity h in file.hints )
+	{
+		printt( "HSDDIAG G8HINT " + i + " " + G8V( h.GetOrigin() ) + " " + G8V( h.GetAngles() ) + " " + G8V( h.GetBoundingMins() ) + " " + G8V( h.GetBoundingMaxs() ) )
+		i++
+	}
+	printt( "HSDDIAG G8HINT count " + file.hints.len() + format( " %.4f", Time() ) )
+	return true
+}
+
+// g8_winq sx sy sz vx vy vz t grav: the engine's GetWindowHint with the movement code's argument
+// meaning (velocity, look-ahead time in s, gravity), hull 16 / 72, margin 0
+bool function G8_CC_WinQ( entity player, array<string> args )
+{
+	if ( args.len() < 8 )
+		return true
+	vector s = < float( args[0] ), float( args[1] ), float( args[2] ) >
+	vector v = < float( args[3] ), float( args[4] ), float( args[5] ) >
+	float t = float( args[6] )
+	float g = float( args[7] )
+	var hint = GetWindowHint( s, 16.0, 72.0, v, t, g, 0.0, player )
+	if ( hint == null )
+	{
+		printt( "HSDDIAG G8WINQ " + G8V( s ) + " " + G8V( v ) + format( " %.2f %.0f", t, g ) + " none" )
+		return true
+	}
+	if ( type( hint ) != "instance" )
+	{
+		printt( "HSDDIAG G8WINQ " + G8V( s ) + " " + G8V( v ) + format( " %.2f %.0f", t, g ) + " type " + type( hint ) )
+		return true
+	}
+	entity h = expect entity( hint )
+	printt( "HSDDIAG G8WINQ " + G8V( s ) + " " + G8V( v ) + format( " %.2f %.0f", t, g ) + " hit " + G8V( h.GetOrigin() ) + format( " %.1f", h.GetAngles().y ) )
+	return true
+}
+
+// g8_winpos <i> <dist> <yawoff> <side>: stand on the floor <dist> u in front of hint <i> (along
+// its horizontal facing, the side given by <side> = 1 or -1), <yawoff> degrees off the line to the
+// hint centre, looking at the centre (needs g8_hints first)
+bool function G8_CC_WinPos( entity player, array<string> args )
+{
+	if ( args.len() < 4 || file.hints.len() == 0 )
+		return true
+	int i = int( args[0] )
+	if ( i < 0 || i >= file.hints.len() )
+		return true
+	entity h = file.hints[i]
+	vector c = h.GetOrigin() + ( h.GetBoundingMins() + h.GetBoundingMaxs() ) * 0.5
+	vector f = AnglesToForward( < 0.0, h.GetAngles().y, 0.0 > ) * float( args[3] )
+	vector p = c + f * float( args[1] )
+	TraceResults down = TraceLine( p + < 0.0, 0.0, 40.0 >, p - < 0.0, 0.0, 600.0 >, player, TRACE_MASK_PLAYERSOLID, TRACE_COLLISION_GROUP_NONE )
+	vector stand = down.endPos + < 0.0, 0.0, 2.0 >
+	vector toC = c - stand
+	float yaw = VectorToAngles( < toC.x, toC.y, 0.0 > ).y + float( args[2] )
+	player.SetOrigin( stand )
+	player.SetVelocity( < 0.0, 0.0, 0.0 > )
+	player.SetAngles( < 0.0, yaw, 0.0 > )
+	printt( "HSDDIAG G8WINPOS " + i + " centre " + G8V( c ) + " stand " + G8V( stand ) + format( " yaw %.2f", yaw ) + format( " %.4f", Time() ) )
+	return true
+}
+
+// g8_edges x0 y0 x1 y1 step ztop mindrop maxdrop: floor heights on a grid (player-solid traces from ztop
+// down), then every flat cell whose neighbour is >= mindrop lower; a player hull pushed 1.5 cells
+// across the edge tells if an invisible clip blocks walking off. Unblocked edges are kept for g8_goedge.
+bool function G8_CC_Edges( entity player, array<string> args )
+{
+	if ( args.len() < 8 )
+		return true
+	thread G8_EdgeScan( player, float( args[0] ), float( args[1] ), float( args[2] ), float( args[3] ), float( args[4] ), float( args[5] ), float( args[6] ), float( args[7] ) )
+	return true
+}
+
+void function G8_EdgeScan( entity player, float x0, float y0, float x1, float y1, float step, float ztop, float mindrop, float maxdrop )
+{
+	int nx = int( ( x1 - x0 ) / step ) + 1
+	int ny = int( ( y1 - y0 ) / step ) + 1
+	array<float> zs
+	array<float> nz
+	for ( int iy = 0; iy < ny; iy++ )
+	{
+		for ( int ix = 0; ix < nx; ix++ )
+		{
+			vector a = < x0 + ix * step, y0 + iy * step, ztop >
+			TraceResults tr = TraceLine( a, a - < 0.0, 0.0, 3000.0 >, player, TRACE_MASK_PLAYERSOLID, TRACE_COLLISION_GROUP_NONE )
+			zs.append( tr.fraction < 1.0 ? tr.endPos.z : -99999.0 )
+			nz.append( tr.fraction < 1.0 ? tr.surfaceNormal.z : 0.0 )
+		}
+		if ( iy % 8 == 0 )
+			WaitFrame()
+	}
+	file.edgePos.clear()
+	file.edgeDir.clear()
+	int found = 0
+	int open = 0
+	array<int> dxs = [ 1, -1, 0, 0 ]
+	array<int> dys = [ 0, 0, 1, -1 ]
+	for ( int iy = 1; iy < ny - 1; iy++ )
+	{
+		for ( int ix = 1; ix < nx - 1; ix++ )
+		{
+			int k = iy * nx + ix
+			if ( nz[k] < 0.99 || zs[k] < -90000.0 || zs[k] > ztop - 80.0 )
+				continue
+			for ( int d = 0; d < 4; d++ )
+			{
+				int kn = ( iy + dys[d] ) * nx + ix + dxs[d]
+				float drop = zs[k] - zs[kn]
+				if ( drop < mindrop || drop > maxdrop || zs[kn] < -90000.0 )
+					continue
+				vector dir = < float( dxs[d] ), float( dys[d] ), 0.0 >
+				vector s = < x0 + ix * step, y0 + iy * step, zs[k] + 2.0 >
+				TraceResults hr = TraceHull( s, s + dir * ( step * 1.5 ), < -16.0, -16.0, 0.0 >, < 16.0, 16.0, 72.0 >, player, TRACE_MASK_PLAYERSOLID, TRACE_COLLISION_GROUP_NONE )
+				bool blocked = hr.fraction < 1.0
+				found++
+				if ( !blocked )
+				{
+					open++
+					file.edgePos.append( s )
+					file.edgeDir.append( dir )
+				}
+				if ( found <= 400 )
+					printt( format( "HSDDIAG G8EDGE %.0f %.0f %.1f %d %d %.1f %d %.3f", s.x, s.y, zs[k], dxs[d], dys[d], drop, blocked ? 1 : 0, hr.fraction ) )
+			}
+		}
+		if ( iy % 8 == 0 )
+			WaitFrame()
+	}
+	printt( format( "HSDDIAG G8EDGE done cells %d edges %d open %d %.4f", nx * ny, found, open, Time() ) )
+}
+
+// g8_goedge <i> <back> [yawoff]: stand <back> u behind open edge <i>, facing off the edge
+bool function G8_CC_GoEdge( entity player, array<string> args )
+{
+	if ( args.len() < 2 )
+		return true
+	int i = int( args[0] )
+	if ( i < 0 || i >= file.edgePos.len() )
+	{
+		printt( "HSDDIAG G8GO none " + file.edgePos.len() )
+		return true
+	}
+	vector dir = file.edgeDir[i]
+	vector p = file.edgePos[i] - dir * float( args[1] )
+	float yaw = VectorToAngles( dir ).y + ( args.len() > 2 ? float( args[2] ) : 0.0 )
+	player.SetOrigin( p )
+	player.SetVelocity( < 0.0, 0.0, 0.0 > )
+	player.SetAngles( < 0.0, yaw, 0.0 > )
+	printt( "HSDDIAG G8GO " + i + " " + G8V( p ) + format( " yaw %.1f %.4f", yaw, Time() ) )
+	return true
+}
+
+// g8_set <key> ...: the current player settings field (class mods applied)
+bool function G8_CC_Set( entity player, array<string> args )
+{
+	string mods = ""
+	foreach ( string m in player.GetPlayerSettingsMods() )
+		mods += " " + m
+	printt( "HSDDIAG G8SET settings " + player.GetPlayerSettings() + " mods" + mods )
+	foreach ( string key in args )
+		printt( "HSDDIAG G8SET " + key + " " + string( player.GetPlayerSettingsField( key ) ) )
+	return true
+}
+
+// one world trace (player solid); hit point and normal, fraction 1 = no hit
+TraceResults function G8_Ray( entity player, vector a, vector b )
+{
+	return TraceLine( a, b, player, TRACE_MASK_PLAYERSOLID, TRACE_COLLISION_GROUP_NONE )
+}
+
+// g8_wallfind x y z range: look for a flat vertical wall around (x y z): rays in 24 directions; a hit with
+// |normal z| < 0.03 counts when rays 120 u to both sides along it and 120 u up and down hit the same plane
+bool function G8_CC_WallFind( entity player, array<string> args )
+{
+	if ( args.len() < 4 )
+		return true
+	vector c = < float( args[0] ), float( args[1] ), float( args[2] ) >
+	float range = float( args[3] )
+	file.wallFound = false
+	for ( int yaw = 0; yaw < 360; yaw += 15 )
+	{
+		vector dir = AnglesToForward( < 0.0, float( yaw ), 0.0 > )
+		TraceResults tr = G8_Ray( player, c, c + dir * range )
+		if ( tr.fraction >= 1.0 || fabs( tr.surfaceNormal.z ) > 0.03 )
+			continue
+		vector n = < tr.surfaceNormal.x, tr.surfaceNormal.y, 0.0 >
+		n = Normalize( n )
+		vector along = < -n.y, n.x, 0.0 >
+		float planeD = DotProduct( tr.endPos, n )
+		bool ok = true
+		foreach ( vector off in [ along * 120.0, along * -120.0, < 0.0, 0.0, 120.0 >, < 0.0, 0.0, -100.0 >, along * 240.0 + < 0.0, 0.0, 60.0 > ] )
+		{
+			vector s = tr.endPos + n * 40.0 + off
+			TraceResults t2 = G8_Ray( player, s, s - n * 80.0 )
+			if ( t2.fraction >= 1.0 || DotProduct( t2.surfaceNormal, n ) < 0.995 || fabs( DotProduct( t2.endPos, n ) - planeD ) > 2.0 )
+			{
+				ok = false
+				break
+			}
+		}
+		printt( format( "HSDDIAG G8WALL cand yaw %d %s n %.3f %.3f ok %d", yaw, G8V( tr.endPos ), n.x, n.y, ok ? 1 : 0 ) )
+		if ( ok && !file.wallFound )
+		{
+			file.wallFound = true
+			file.wallPos = tr.endPos
+			file.wallNormal = n
+		}
+	}
+	printt( "HSDDIAG G8WALL found " + ( file.wallFound ? 1 : 0 ) + " " + G8V( file.wallPos ) + " " + G8V( file.wallNormal ) + format( " %.4f", Time() ) )
+	return true
+}
+
+// g8_gowall <along speed> <vz>: put the player 18 u off the found wall (keeping all other state), moving along it
+// at <along speed> and 40 u/s into it, view along the run
+bool function G8_CC_GoWall( entity player, array<string> args )
+{
+	if ( !file.wallFound )
+	{
+		printt( "HSDDIAG G8GOWALL none" )
+		return true
+	}
+	float sp = args.len() > 0 ? float( args[0] ) : 300.0
+	float vz = args.len() > 1 ? float( args[1] ) : 0.0
+	vector n = file.wallNormal
+	vector along = < -n.y, n.x, 0.0 >
+	player.SetOrigin( file.wallPos + n * 18.0 - < 0.0, 0.0, 30.0 > - along * 120.0 )
+	player.SetVelocity( along * sp - n * 40.0 + < 0.0, 0.0, vz > )
+	player.SetAngles( < 0.0, VectorToAngles( along ).y, 0.0 > )
+	printt( "HSDDIAG G8GOWALL " + G8V( player.GetOrigin() ) + format( " %.4f", Time() ) )
+	return true
+}
