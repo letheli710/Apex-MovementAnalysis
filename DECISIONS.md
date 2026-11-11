@@ -43,7 +43,7 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 - **10-30 你定的**（D-66 – D-73，详见时间线）：回放电机到此为止（只当尺子）；K-8 下滑索 punch 按 R5；三种二段跳的镜头都用 R5 原生二段跳 punch；TF2 二段跳整理成可复用的包（不绑成道具）；拟合原则；滑铲跳落地 kick 先查原因再按 R5；蹲着翻越的镜头曲线按实际蹲姿时长选；留档规则 + 共享实时日志。
 - **正在做**（10-30 夜里，补坑计划 `PLAN-FOUNDATION.md`，只开 PR 不合并）：存档进 git（TF2-Research → 研究仓库 `tf2/`，会话 fnd-archive）；记录补齐（本 PR，会话 fnd-records）；Apex 遗留修改 K-8 / 二段跳 punch / TF2 二段跳包 / 滑铲跳落地 kick / 蹲姿翻越镜头（HSD-Unity，会话 fnd-unity，PR #50 已开：K-8、二段跳 punch、TF2 包做完；滑铲跳落地 kick 查清不改；蹲姿翻越镜头等你选 A–D）；工作树清理（fnd-cleanup）。
 - **泰坦**：T0 做完（`TF2-Research/expansion/titan/T0-REPORT.md`）：7 台都能召唤驾驶；鼠标 / 键盘转向和铁驭完全一样，手柄转速 × 0.75；底盘走速 270 / 250 / 210。用户之后从 7 台里选 3 台（`TITAN-LIST.md` 的抉择列）。
-- **等你定的**：〔10-30 D-74 定了：B + E + F，见 D-75〕D-56 火箭跳（A EPG 式击退 / B Fuse 式跳跃加成）；泰坦清单；E1–E3（留到游戏接近完成）。
+- **等你定的**：〔10-30 D-74 定了：B + E + F，见 D-75〕D-56 火箭跳（A EPG 式击退 / B Fuse 式跳跃加成）〔10-31 定了：A，见 D-77〕；泰坦清单；E1–E3（留到游戏接近完成）。
 
 10-28 的状态（原文）：
 
@@ -479,6 +479,21 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 - 没选：放进本仓库（会泄露本机信息、游戏文件）；只留在本机 `_archive`（没有远端备份）。
 - 早期实测：主 checkout `research/phase2-local/data/` 下 10-20 到 10-24 的 158 次实测（M0–M10、N4 / N6 / N8、C3）的 `platform/` + `rows.csv`，2934 个文件 8.43 GB，一直只在本机原处、没进过 `_archive`。〔10-30 你定了：也存进私有仓库，但要标明。已放在单独的 `apex-early/` 下，清单 `MANIFEST-EARLY.tsv`，README 3.7 逐次列出阶段、用到它的报告、文件数、大小；7 次在公开仓库文档里找不到（M1_loop_s2–s6、M3_gfx_check、M4_pilot_octane），标"出处待查"。两个超过 GitHub 100 MB 的 `rows.csv` 以 `.gz` 存（不用 LFS）。全部压缩后约 1 GiB，没拆第二个仓库。从 GitHub 重新检出逐个对主 checkout 原文件核对：2934 / 2934 一致，不一致 0、缺失 0。主 checkout 原文件没动。〕
 
+### 2026-10-31：D-56 定了 → 火箭跳 A 研究、规格和 Unity（RJA，D-77）
+
+- 会话 rj-a。你定了 D-56 选 **A：EPG 式物理击退**（"更原生，上限更高，也更有技巧"），先研究 A、写规格，再进 Unity。规格：[research/epg/ROCKET-JUMP-A-SPEC.md](research/epg/ROCKET-JUMP-A-SPEC.md)。
+- 补研究（没开游戏，用 #64 / T-1 已有数据重新分析 + Ghidra 读 r5apex.exe）：
+  - **衰减**是线性的，距离 = 爆点沿"爆点 → 身体中心"走到碰到身体为止的长度（#64 写的"离中心约 70 u 内满额"不准）。R5 侧面 3 点差 ≤ 2 u，TF2 脚下 4 点（用诊断模组记下的伤害力向量）差 ≤ 0.3 %；按到中心、到最近点都对不上。
+  - **方向**只指向身体中心（脚 + 碰撞体高度 / 2：站 36、蹲 24），竖直没有加成（TF2 力向量解出中心高 35.9；R5 滑铲分量比解出 24.0）。
+  - **地面门槛**重新解读：看的是 \|Δv\| 总大小，站在地上 ≤ 310 整个不起作用、≥ 315 全额（31500 那次"一下跳到 266"只是 0.1 s 后的采样值，初速是 315）；空中没有门槛。
+  - **新发现：击退后一段时间没有减速**。R5 客户端字段 `m_damageImpulseNoDecelEndTime` = 当前时间 + \|Δv\| × `impulse_low_decel_duration_scalar`（默认 0.003）；地面减速、滑铲减速、空中阻力、墙面减速都乘 clamp(1 − 2 ×（结束 − 现在）, 0, 1)：前段为 0，最后 0.5 s 恢复。火箭跳 Δv 650 → 1.95 s。
+  - 没测：门槛精确值（服务端 exe 没分析）、SpeedLossLimit 50 的意义、超过 1000 时被推、蹬墙跑 / 钩爪 / 滑索 / 翻越中被炸的原生行为。
+- Unity（HSD-Unity `rj/knockback-a`，PR letheli710/HSD-Unity#52）：`KnockbackParams`（Reference / Fun 开）；战斗层的爆炸按 R5 规则推（推力 ÷ 100、沿连线衰减、上限 1000、地面门槛 312.5、无减速窗口）；新武器 EPG（jump_kit：65 伤害、52 / 180、65000、自伤 ×0.75，可关）；战斗场加火箭跳测试点（柱子标出 R5 的 55 / 270 / 486 u）。
+  - 对照 R5：站着朝脚下 282 u（R5 270），跳 + 开火 487（同一爆炸时刻；真正同一帧开火 563） u（R5 486），其余见 `R5-DIFF-ARCHIVE.md` RJA。
+  - 回归：EditMode 2270 / 2270（新增 RjaKnockbackTests 10 条；旧测试改 2 条：TF2X 推力那条固定开关关、武器枚举数 4 → 5）；回放电机 + FeelBatch 共 741 个文件，开关开和 `-preRJA` 都和 main 逐字节相同（rud_check 222 / 90 / 114）。
+  - Build `HSD-Build\RJA`。
+- **[D-77]** 见决定总表。
+
 ---
 
 ## 决定总表
@@ -559,6 +574,7 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 | D-73 | 10-30 | 留档规则 + 共享实时日志 | 记决定和数据（选中 + 没选中 + 各自数据），数据标版本，旧版不删，结束标"到此为止"；实时过程写共享日志 https://claude.ai/artifact/NCjBNDQZPUYoTwdfHdcNEa ，DECISIONS 仍是 git 档案。没选：只记 DECISIONS | 工作区根目录 `CLAUDE.md` | 本文件开头 |
 | D-74 | 10-30 | 蹲着翻越（R5 样本测试后） | 〔10-30 定了：B + E + F，见 D-75〕**等你定**。R5 610 次：蹲姿时长不是两种，是随按蹲时刻变的（h120 四种、长短在同一条命令上混着）；蹲着不能爬墙（116 / 116）；翻越开始俯仰从 0 淡入。选项 A 按 FND-3 分两种 / B 按原生每帧切换 / C 按实测分段近似 / D 不改；另 E 蹲着不能爬墙、F 俯仰淡入可单独定 | Unity 没改 | `research/phase2-local/D72-REPORT.md` |
 | D-75 | 10-30 | 蹲着翻越 / 蹲着爬墙 / 翻越开始俯仰（D-74 的决定） | B 时长按原生翻越状态（Frida：基础状态开始时选一次、蹲到底 +4、速率按基础状态和眼睛高度；177 / 195 段差 ≤ 1 帧）；E 按着蹲取消爬墙；F 翻越俯仰 0.15 s 淡入。没选：A 两种 / C 分段近似 / D 不改。蹲姿时长平均差 0.061 → 0.043 s；h160 / h200 蹲着 0 / 116 上去（= R5）；第一帧俯仰 ≈ 0（= R5）。h120 短的那种（状态 3）Unity 复现不了 | `ClimbParams.nativeTraversalStates` / `crouchEndsClimb`、`NativeCameraParams.traversalLerpIn`；切回 `-preD72`（单项 `-preD72B` / `E` / `F`） | `research/phase2-local/D72-REPORT.md` §8–§9；HSD-Unity #51（`d72/crouch-mantle`） |
+| D-77 | 10-31 | 火箭跳做哪种（D-56 的决定）+ A 的规格 | **选 A：EPG 式物理击退**（你："更原生，上限更高，也更有技巧"）。规格按 R5 native：推力 ÷ 100、指向身体中心、沿连线到身体表面线性衰减、上限 1000、**地面门槛做**（\|Δv\| ≤ 312.5 站着不动；偏离 #64"先不做"的建议，理由：用户要原生 + D-70，对火箭跳本身没影响，可关）、**护盾规则不做**（HSD 没有护盾）、击退后无减速窗口（\|Δv\| × 0.003 s，新发现）、EPG 自伤 ×0.75（可关）。**没选 B：Fuse Knuckle Jumper 式跳跃加成**：本地 S21 测不了（集束炸弹 impulse_force 0，Knuckle Jumper 是 S28 加的、Marked 中期削弱），只有网上资料；可控、好调，但只有固定的向上速度，没有物理感和方向。数据：R5 站着 270 / 跳 + 开火 486，Unity 282 / 487（同一爆炸时刻；真正同一帧开火 563） | `MovementConfig.knockback`（`KnockbackParams`）；游戏战斗页"R5 原生击退"（`hsd.tf2.x.rjnative`）、"EPG 自伤"；FeelBatch / CameraFeelBatch `-preRJA`；关掉 = TF2X 推力，逐字节不变 | `research/epg/ROCKET-JUMP-A-SPEC.md`；HSD-Unity letheli710/HSD-Unity#52（`rj/knockback-a`）；`R5-DIFF-ARCHIVE.md` RJA |
 | D-76 | 10-30 | 不能公开的原始数据放哪 | 进私有仓库 letheli710/HSD-RawData（R5 `platform/` / `rows.csv`、TF2 `raw.log` / `local/`、去用户名前的原文），按公开仓库路径放，附 sha256 清单；`_archive` 保留。没选：进公开仓库（本机路径、启动命令、账号名、游戏文件）/ 只留本机 | — | 私有仓库 README、`MANIFEST.tsv`；工作区 `CLAUDE.md` 留档规则 |
 
 **D-29 → D-31（C-2 为什么推翻）**：第一次决定时以为 Unity 的 102.5 ms 窗口已经盖住了 R5 的减量段，所以"简化 = 不改代码"。后来按 Unity 自己的翻越时钟重排（Unity 的翻越比 R5 长约 25 ms），发现减量段其实在窗口外面，原来的 Reference 在这段是"切到台面"，并不是"给完整 460"。你随后要求继续做 C-2 并合并。细节见 `research/feel/FEEL.md` §6.4 和 `Climb/README.md`。
@@ -589,7 +605,7 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 - **滑铲跳落地 kick**：Unity 比 R5 大约 1.5 倍（1.7–2.3° 对 1.1–1.7°，CAM2 之前就大），原因没查。（CAM2）〔10-30 定了：先查原因再按 R5 改，见 D-71〕〔10-30 FND-3 查清：这条说法不对，R5 原生弹簧也是 1.8–2.4°，Unity 已等于 R5，不改；见 FND-3〕
 - ~~钩爪比 R5 早脱钩~~：10-28 查清（N13：R5 的"挂到 1.5 s"是本地 dedi 重挂，只有客户端时 Unity 一致）并把脱钩规则全部按原生改了，见 D-50。
 - ~~**G-6 钩爪撞上时上抬**~~：原生客户端在世界钩点（不是道具）接近脱钩时把竖直速度抬到 300，本地轨迹看不到，世界上的墙没测过。要不要加（开关 `impactBoost`，现在都关）等你定。（GN）〔10-28 你定了：先关着，留作待定；等有能对照的实测（只有客户端的录像、或《泰坦陨落2》）再说。见 D-51〕〔10-29 实测后定了：R5 实际不跳，默认关，留可选开关，见 D-52〕
-- **HSD 要不要做火箭跳**：A. EPG 式物理击退（爆点推向身体中心，随距离衰减，和现有速度相加，上限 1000），或 B. Fuse Knuckle Jumper 式跳跃加成（在自己炸弹旁边按跳给固定的起跳速度）。研究建议先做 A，用 jump_kit 数值，护盾规则和地面门槛先不做。见 [research/epg/EPG-ROCKET-JUMP.md](research/epg/EPG-ROCKET-JUMP.md) §7。（EPG）
+- **HSD 要不要做火箭跳**：A. EPG 式物理击退（爆点推向身体中心，随距离衰减，和现有速度相加，上限 1000），或 B. Fuse Knuckle Jumper 式跳跃加成（在自己炸弹旁边按跳给固定的起跳速度）。研究建议先做 A，用 jump_kit 数值，护盾规则和地面门槛先不做。见 [research/epg/EPG-ROCKET-JUMP.md](research/epg/EPG-ROCKET-JUMP.md) §7。（EPG）〔10-31 你定了：A，B 没选留档；规格和 Unity 见 D-77（地面门槛改成做，护盾规则不做）〕
 - **回放电机的 `airUnduckDrop`**（空中松开下蹲时原点下降 16.5 u，下蹲碰撞体规则）：Reference 开着、回放电机关着。RPS 只换了滑铲开关，这一项算不算滑铲由你定，回放电机要不要也开？（RPS）〔10-28 已做完：回放电机开了，地面移动也一起换成原生 WalkMove，见 D-49〕
 - **《泰坦陨落2》研究**：第一步装 Northstar 并验证能自动跑测，第一个实验是 EPG 真实开火（D-48）。什么时候开始等你定。〔10-28 开始，10-29 T0–T6 / T-1 / T-7 做完，10-30 TF2 部分合并进 Main（#49 / #79，D-57 – D-65）；泰坦 T0 10-30 做完〕
 - **K-6 蹲姿：蹲着翻越的镜头时刻**（CAM2 后剩下的）：Unity h120 蹲 0.29 s 到峰对 R5 0.52–0.60 s。〔10-30 定了：按实际蹲姿时长选曲线，要跑 B1 回归，见 D-72〕〔10-30 FND-3：原因不是曲线选法，没改，换成下一条〕
