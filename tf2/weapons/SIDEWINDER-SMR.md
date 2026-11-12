@@ -106,6 +106,11 @@ n(x) = sin(x) + sin(0.762x) + sin(0.363x) + sin(0.084x)
 
 **还缺的**：漂移 6 个键的槽位对应只是推断（要么拿 `wp_e` 的弹道拟合，要么继续读反编译）；换弹节点只有 3 个切点；打人的伤害和爆头倍率见 `wp_f`。
 
+**11-12 原生（`ref-native-tail`，N3 / N4）：**
+- 6 个漂移键的槽位已确定：+0x1d00 `windiness`、+0x1d04 `intensity`、+0x1d08 / +0x1d0c `straight_time_min` / `max`、+0x1d10 / +0x1d14 `straight_radius_min` / `max`（小于 1 按 1）。依据是原生 `InitMissileForRandomDrift` 按参数顺序写这 6 格，被注释掉的旧脚本版给出了每个参数的名字。直飞半径从 `radius_min` 开始，到 `straight_time_max` 时涨到 `radius_max`。
+- 散布 −1° 之后的负值：`ApplyVectorSpread` 是脚本，负值只是让偏移翻个方向。所以腰射的实际散布是 |0.5 − 1| = 0.5°，开镜是 1°，**不是**按 0 算。
+详见 [REF-NATIVE-1112.md §3、§4](../ref-native-tail/REF-NATIVE-1112.md)。
+
 ## 附录：文件原值
 
 由 [tools/wpn_static_md.py](tools/wpn_static_md.py) 从 [data/wpn-values.tsv](data/wpn-values.tsv) 生成；略去了声音、特效、模型、晃动、UI 这类外观键（全表在 tsv 里）。
