@@ -154,3 +154,122 @@ def t0_mouseslow():
             steps += [C("hsd_status turn_slow %s 3.5 0" % sev), W(0.1)]
         steps += [C("hsd_tag " + tag), M(tag, 10, 0, 200, 5), W(2.5), C("hsd_tag gap_" + tag), W(1.5)]
     return steps + [C("hsd_tag -")]
+
+
+# --- pose / camera survey (2026-11-02, expansion/titan/pose/) ---
+
+LANE = "hsd_setup -800 -1400 7 0 0 0 0 0"
+SHOT = lambda n: C("jpeg t1_%s 90" % n)
+
+
+def _cam_block(cls):
+    """every movement state, each tagged, on the titan lane; camera, cockpit, FOV and body logged per frame."""
+    s = [C(LANE), W(1.0), C("hsd_tag idle_" + cls), W(2.0), SHOT("idle_" + cls), W(0.5)]
+    s += [C(LANE), W(0.8), C("hsd_tag walk_" + cls), C("+forward"), W(1.5), SHOT("walk_" + cls), W(1.0), C("-forward"), W(1.2)]
+    s += [C(LANE), W(0.8), C("hsd_tag sprint_" + cls), C("+forward"), C("+speed"), W(2.2), SHOT("sprint_" + cls), W(0.3), C("-speed"), C("-forward"), W(1.5)]
+    s += [C("hsd_setup 500 -1400 7 0 0 0 0 0"), W(0.8), C("hsd_tag back_" + cls), C("+back"), W(1.5), C("-back"), W(1.0)]
+    s += [C("hsd_setup -800 -1400 7 0 0 0 0 90"), W(0.8), C("hsd_tag strafe_" + cls), C("+moveright"), W(1.5), SHOT("strafe_" + cls), C("-moveright"), W(1.0)]
+    for name, key, setup in (("f", "+forward", LANE), ("r", "+moveright", "hsd_setup -800 -1400 7 0 0 0 0 90"), ("b", "+back", "hsd_setup 500 -1400 7 0 0 0 0 0")):
+        off = "-" + key[1:]
+        s += [C(setup), W(0.6), C("hsd_dodgepower 100"), W(0.2), C("hsd_tag dash%s_%s" % (name, cls)), C(key), W(0.3), C("+ability 3"), W(0.08), SHOT("dash%s_%s" % (name, cls)), W(0.1), C("-ability 3"), W(1.0), C(off), W(1.0)]
+    s += [C(LANE), W(0.6), C("hsd_tag crouch_" + cls), C("+duck"), W(1.5), SHOT("crouch_" + cls), W(0.3), C("+forward"), W(1.0), C("-forward"), C("-duck"), W(1.5)]
+    s += [C(LANE), W(0.6), C("hsd_tag ads_" + cls), C("+zoom"), W(1.0), SHOT("ads_" + cls), W(0.3), C("-zoom"), W(1.0)]
+    s += [C(LANE), W(0.6), C("hsd_tag fire_" + cls), C("+attack"), W(0.4), SHOT("fire_" + cls), W(1.1), C("-attack"), W(1.5)]
+    s += [C("hsd_tag adsfire_" + cls), C("+zoom"), W(0.6), C("+attack"), W(1.0), C("-attack"), C("-zoom"), W(1.5)]
+    s += [C(LANE), W(0.6), C("hsd_tag melee_" + cls), C("+melee"), W(0.2), SHOT("melee_" + cls), W(0.1), C("-melee"), W(1.5)]
+    # turn in place, body logged: steps of yaw
+    s += [C("hsd_tag turn30_" + cls), C("hsd_setup -800 -1400 7 0 0 0 0 30"), W(1.5), C("hsd_tag turn90_" + cls), C("hsd_setup -800 -1400 7 0 0 0 0 90"), W(1.5), C("hsd_tag turn180_" + cls), C("hsd_setup -800 -1400 7 0 0 0 0 180"), W(1.5)]
+    return s
+
+
+def _damage_block(cls):
+    """shield hit, hull hits to each damage stage, doomed, EMP, eject."""
+    s = [C(LANE), W(0.6), C("hsd_shield 2500"), W(0.2), C("hsd_tag hurtshield_" + cls), C("hsd_hurt 1000 0"), W(0.1), SHOT("hurtshield_" + cls), W(1.5), C("hsd_shield 0"), W(0.2)]
+    s += [C("hsd_tag hurtbig_" + cls), C("hsd_hurt 2000 0"), W(0.05), SHOT("hurtbig_" + cls), W(1.5)]
+    s += [C("hsd_tag hurtside_" + cls), C("hsd_hurt 1500 90"), W(1.5)]
+    s += [C("hsd_tag emp_" + cls), C("hsd_emp 2"), W(0.3), SHOT("emp_" + cls), W(3.0)]
+    s += [C("hsd_core"), W(0.3), C("hsd_tag core_" + cls), C("+ability 1"), W(0.15), C("-ability 1"), W(0.5), SHOT("core_" + cls), W(4.0)]
+    s += [C("hsd_tag doom_" + cls), C("hsd_hurt 20000 0"), W(0.2), SHOT("doom_" + cls), W(1.5), C("+forward"), W(1.5), C("-forward"), W(1.0)]
+    s += [C("hsd_tag eject_" + cls), C("hsd_eject"), W(0.5), SHOT("eject1_" + cls), W(2.0), SHOT("eject2_" + cls), W(1.0), SHOT("eject3_" + cls), W(5.0)]
+    return s
+
+
+def _outside_block(cls):
+    """pilot watching an auto-titan: body effects per damage stage, which the player's own view hides."""
+    s = [C("hsd_tag ext_spawn_" + cls), C("hsd_titan %s 24 -1450 1 -90" % cls), W(4.0), C("hsd_setup 24 -1850 1 0 0 0 -8 90"), W(1.0), SHOT("ext0_" + cls), W(0.5)]
+    s += [C("hsd_shield 2500"), W(0.5), C("hsd_tag ext_shield_" + cls), C("hsd_hurtpet 500"), W(0.15), SHOT("extshield_" + cls), W(1.0), C("hsd_shield 0"), W(0.5)]
+    for frac in (1, 2, 3):
+        s += [C("hsd_tag ext_stage%d_%s" % (frac, cls)), C("hsd_hurtpet 2500"), W(1.5), SHOT("extstage%d_%s" % (frac, cls)), W(0.5)]
+    s += [C("hsd_tag ext_doom_" + cls), C("hsd_hurtpet 3000"), W(1.5), SHOT("extdoom_" + cls), W(2.0), SHOT("extdoom2_" + cls), W(2.0)]
+    s += [C("hsd_tag ext_dead_" + cls), C("hsd_hurtpet 20000"), W(0.4), SHOT("extdead1_" + cls), W(0.8), SHOT("extdead2_" + cls), W(4.0)]
+    return s
+
+
+def t1_camsmoke():
+    """tooling check for the survey: one titan, screenshots, damage, EMP, eject"""
+    return _ride("ion") + [C("hsd_tag idle"), W(1.0), SHOT("smoke"), W(1.0), C("thirdperson"), W(1.0), SHOT("smoke3p"), W(1.0), C("firstperson"), C("hsd_tag hurt"), C("hsd_hurt 3000 0"), W(1.0), C("hsd_tag emp"), C("hsd_emp 2"), W(2.5), C("hsd_tag doom"), C("hsd_hurt 20000 0"), W(1.5), C("hsd_tag eject"), C("hsd_eject"), W(6.0), C("hsd_tag -")]
+
+
+def t1_cam():
+    """pose/camera survey, one titan per chassis plus an animated embark and disembark"""
+    steps = []
+    for cls in ("ronin", "ion", "legion"):
+        steps += [C("hsd_tag spawn_" + cls), C("hsd_titan %s 24 -1450 1 90" % cls), W(1.5), C("hsd_setup 24 -1650 1 0 0 0 0 90"), W(0.5),
+                  C("hsd_tag embarkanim_" + cls), C("hsd_embark 1"), W(1.0), SHOT("embark1_" + cls), W(1.0), SHOT("embark2_" + cls), W(1.0), SHOT("embark3_" + cls), W(4.0)]
+        steps += _cam_block(cls)
+        steps += [C("hsd_tag disembark_" + cls), C("hsd_disembark"), W(0.5), SHOT("disembark1_" + cls), W(0.7), SHOT("disembark2_" + cls), W(3.0)]
+        steps += _ride(cls) + _damage_block(cls) + [W(3.0)]
+        steps += _outside_block(cls)
+    return steps + [C("hsd_tag -")]
+
+
+def _ext_views(cls):
+    """auto-titan seen from a fixed offset; the pilot is re-placed before each picture because it follows"""
+    w = lambda r=30: C("hsd_watch 480 %d 60" % r)
+    s = [C("hsd_tag ext_spawn_" + cls), C("hsd_titan %s 24 -1450 7 90" % cls), W(5.0)]
+    for name, rel in (("front", 0), ("q34", 40), ("side", 90), ("back", 180)):
+        s += [w(rel), W(0.4), SHOT("ext2_%s_%s" % (name, cls)), W(0.3)]
+    s += [C("hsd_shield 2500"), W(0.3), w(), W(0.2), C("hsd_tag ext_shield_" + cls), C("hsd_hurtpet 500"), W(0.12), SHOT("ext2_shield_" + cls), W(1.0), C("hsd_shield 0"), W(0.3)]
+    hp = {"ronin": 2200, "ion": 2900, "legion": 3600}[cls]
+    for st in (1, 2, 3):
+        s += [C("hsd_tag ext_stage%d_%s" % (st, cls)), C("hsd_hurtpet %d" % hp), W(0.15), w(), W(0.25), SHOT("ext2_hit%d_%s" % (st, cls)), W(1.5), w(), W(0.3), SHOT("ext2_stage%d_%s" % (st, cls)), W(0.3)]
+    s += [C("hsd_tag ext_doom_" + cls), C("hsd_hurtpet 9000"), W(0.15), w(), W(0.3), SHOT("ext2_doomhit_" + cls), W(1.5), w(), W(0.3), SHOT("ext2_doom_" + cls), W(1.0), w(150), W(0.3), SHOT("ext2_doomback_" + cls), W(0.5)]
+    s += [w(), W(0.2), C("hsd_tag ext_dead_" + cls), C("hsd_hurtpet 20000"), W(0.25), SHOT("ext2_dead1_" + cls), W(0.5), SHOT("ext2_dead2_" + cls), W(1.5), SHOT("ext2_dead3_" + cls), W(3.0)]
+    return s
+
+
+def _look_block(cls):
+    """real key turns (body lag, foot steps), pitch limit at both ends"""
+    s = [C("hsd_setup -800 -1400 7 0 0 0 0 0"), W(1.2), C("cl_yawspeed 30"), C("hsd_tag ts30_" + cls), C("+right"), W(4.0), C("-right"), W(1.5)]
+    s += [C("cl_yawspeed 90"), C("hsd_tag ts90_" + cls), C("+left"), W(2.0), C("-left"), W(1.5)]
+    s += [C("cl_yawspeed 300"), C("hsd_tag ts300_" + cls), C("+right"), W(0.6), C("-right"), W(2.0), C("cl_yawspeed 210")]
+    s += [C("hsd_setup -800 -1400 7 0 0 0 0 0"), W(0.8), C("cl_pitchspeed 90"), C("hsd_tag pitchup_" + cls), C("+lookup"), W(2.0), SHOT("pitchup_" + cls), W(0.3), C("-lookup"), W(0.5)]
+    s += [C("hsd_tag pitchdn_" + cls), C("+lookdown"), W(3.5), SHOT("pitchdn_" + cls), W(0.3), C("-lookdown"), W(0.5), C("hsd_setup -800 -1400 7 0 0 0 0 0"), W(0.8)]
+    s += [C("hsd_tag dashl_" + cls), C("hsd_dodgepower 100"), C("hsd_setup 500 -1400 7 0 0 0 0 -90"), W(0.6), C("+moveleft"), W(0.3), C("+ability 3"), W(0.08), C("-ability 3"), W(1.0), C("-moveleft"), W(1.0)]
+    s += [C("hsd_tag walkturn_" + cls), C("hsd_setup -800 -1400 7 0 0 0 0 0"), W(0.6), C("+forward"), W(0.8), C("cl_yawspeed 60"), C("+right"), W(1.0), C("-right"), C("-forward"), W(1.0), C("cl_yawspeed 210")]
+    return s
+
+
+def t1_ext():
+    """body effects from outside, real key turns, view pitch limits"""
+    steps = [C("hsd_tag pilot_pitch"), C("cl_pitchspeed 90"), C("+lookup"), W(2.0), C("-lookup"), C("+lookdown"), W(3.5), C("-lookdown"), W(0.5)]
+    for cls in ("ronin", "ion", "legion"):
+        steps += _ride(cls) + _look_block(cls) + [C("hsd_tag out_" + cls), C("hsd_disembark"), W(4.0)]
+        steps += _ext_views(cls)
+    return steps + [C("hsd_tag -")]
+
+
+def t1_pitch():
+    """view pitch limit and upper-body follow: ask for pitch beyond the limit on pilot and titan; left dash"""
+    steps = []
+    def block(n):
+        out = []
+        for p in (-89, -70, -45, 0, 45, 70, 89):
+            out += [C("hsd_setup -800 -1400 7 0 0 0 %d 0" % p), W(0.5), C("hsd_tag pitch%d_%s" % (p, n)), W(0.8)]
+        return out
+    steps += block("pilot")
+    for cls in ("ronin", "ion", "legion"):
+        steps += _ride(cls) + block(cls)
+        steps += [C("hsd_dodgepower 100"), C("hsd_setup 500 -1400 7 0 0 0 0 90"), W(0.6), C("hsd_tag dashl_" + cls), C("+moveleft"), W(0.3), C("+ability 3"), W(0.1), C("-ability 3"), W(1.0), C("-moveleft"), W(0.6)]
+        steps += [C("hsd_tag out_" + cls), C("hsd_disembark"), W(4.0)]
+    return steps + [C("hsd_tag -")]
