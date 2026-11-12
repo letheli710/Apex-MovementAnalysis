@@ -33,7 +33,8 @@ STAGE = int(args[1]) if len(args) > 1 else 4
 FLAGS = set(args[2:])
 MOD = importlib.import_module({"L1": "l1_parts", "L2": "l2_parts"}[CODE])
 STAGE_NAME = {1: "silhouette", 2: "mid", 3: "detail", 4: "final"}[STAGE]
-OUT = os.path.join(HERE, CODE, "r%d_%s" % (STAGE, STAGE_NAME))
+_OUTF = [f[4:] for f in FLAGS if f.startswith("out=")]
+OUT = os.path.join(HERE, CODE, _OUTF[0] if _OUTF else "r%d_%s" % (STAGE, STAGE_NAME))   # R5: out=r5_final etc., never an old folder
 os.makedirs(OUT, exist_ok=True)
 ROOT = "Titan_" + CODE
 C = np.array([[0, 1, 0], [-1, 0, 0], [0, 0, 1]], float)
@@ -174,7 +175,41 @@ def ground_names(meshes):
     return [n for n in meshes if any(n == g + s for g in GROUND_PARTS for s in ("_L", "_R"))]
 
 
-def solve_pose(objs, meshes, hand):
+CLEAR = 0.15      # R5: weapon must stay this far above the ground
+WEAPON_PREFIX = ("Rifle", "Shotgun")
+WRIST_SOLVED = {}
+
+
+def weapon_names(meshes, sword=False):
+    return [n for n in meshes if n.startswith(WEAPON_PREFIX + (("Sword",) if sword else ()))]
+
+
+def solve_weapon(objs, meshes, p, off, name=None):
+    """R5 rule for the right wrist (new joint, v2 has none): keep 0 unless the held weapon comes within CLEAR of the ground or
+    touches the body; then the smallest upward pitch (0, -5 .. -60) that clears; if none does, bend the elbow 10..40 more."""
+    wpn = weapon_names(meshes)
+    if not wpn or "wr_pitch_R" in p:
+        return p
+
+    def ok(q):
+        set_pose(objs, q, off)
+        low = min(wverts(meshes[n])[:, 2].min() for n in wpn)
+        return low >= CLEAR and not collide(meshes, only=set(wpn))
+    e0 = p.get("e_R", 0.0)
+    for de in (0, 10, 20, 30, 40):
+        for w in range(0, int(R.WRIST_R_LIMIT[0]) - 1, -5):
+            q = dict(p, wr_pitch_R=float(w), e_R=e0 + de) if de else dict(p, wr_pitch_R=float(w))
+            if ok(q):
+                if name and (w or de):
+                    WRIST_SOLVED[name] = dict(wr_pitch_R=float(w), **({"e_R": e0 + de} if de else {}))
+                return q
+    if name:
+        WRIST_SOLVED[name] = "unsolved"
+    set_pose(objs, p, off)
+    return p
+
+
+def solve_pose(objs, meshes, hand, name=None):
     p = {k: v for k, v in hand.items() if not k.startswith("_")}
     set_pose(objs, p)
     for side in "LR":
@@ -186,6 +221,8 @@ def solve_pose(objs, meshes, hand):
     set_pose(objs, p)
     low = min(wverts(meshes[n])[:, 2].min() for n in ground_names(meshes))
     off = (0.0, 0.0, -float(low))
+    set_pose(objs, p, off)
+    p = solve_weapon(objs, meshes, p, off, name)
     set_pose(objs, p, off)
     return p, off
 
@@ -200,7 +237,7 @@ def owner_of(ob):
     return ob["owner_joint"]
 
 
-def collide(meshes, skip_names=()):
+def collide(meshes, skip_names=(), only=None):
     names = [n for n in meshes if n not in skip_names]
     W = {n: wverts(meshes[n]) for n in names}
     BB = {n: (W[n].min(0), W[n].max(0)) for n in names}
@@ -220,6 +257,8 @@ def collide(meshes, skip_names=()):
             if (adjacent(oa, ob_) or PARENT.get(oa) == PARENT.get(ob_)) and (meshes[a]["hub"] or meshes[b]["hub"]):
                 continue
             if frozenset((a, b)) in EXCL:
+                continue
+            if only is not None and a not in only and b not in only:
                 continue
             if np.any(BB[a][1] < BB[b][0]) or np.any(BB[b][1] < BB[a][0]):
                 continue
@@ -295,8 +334,8 @@ def by_prefix(meshes, *prefixes):
 # ------------------------------------------------------------------ checks
 def run_checks(objs, meshes):
     t0 = time.time()
-    Rp = {"code": CODE, "stage": STAGE, "stage_name": STAGE_NAME}
-    set_pose(objs, {})
+    Rp = {"code": CODE, "stage": STAGE, "stage_name": STAGE_NAME, "out": os.path.basename(OUT), "bind_pose": R.BIND}
+    set_pose(objs, R.BIND)
     allv = np.vstack([wverts(o) for o in meshes.values()])
     H = float(allv[:, 2].max())
     Rp["rest_top_m"] = round(H, 3)
@@ -348,7 +387,7 @@ def run_checks(objs, meshes):
         sub = {n: meshes[n] for n in tor + pel}
         bend[k] = [h for h in collide(sub)]
     Rp["waist_bend_clear"] = dict(ok=not any(bend.values()), cases={k: (not v) for k, v in bend.items()}, hits={k: v for k, v in bend.items() if v})
-    set_pose(objs, {})
+    set_pose(objs, R.BIND)
     # feet
     f = np.vstack([wverts(o) for o in by_prefix(meshes, "Foot_L", "Toe_L", "Heel_Spur_L")])
     fl = float(np.ptp(f[:, 1]))
@@ -359,27 +398,51 @@ def run_checks(objs, meshes):
     gs = max_girth([o for o in sn if o.name.endswith("_L")], R.ANKLE_Z + 0.2, R.KNEE_Z + 0.2)
     Rp["calf_ge_thigh"] = dict(ok=gs["area_m2"] >= gt["area_m2"], thigh=gt, shin=gs, how="largest horizontal section (width x depth) of all parts on that bone, 4 cm steps")
     Rp["top_le_collider_5.97"] = dict(ok=H <= 5.97, rest_top_m=round(H, 3))
-    # poses
-    poses = R.poses()
-    pose_hits, tops, solved = {}, {}, {}
-    for name, hand in poses.items():
-        p, off = solve_pose(objs, meshes, hand)
-        solved[name] = (p, off)
+    # poses (R5: the light set has the adjustments in place; the right wrist is solved per pose, see solve_weapon)
+    poses = R.poses(code=CODE)
+    pose_hits, tops, solved, lows, muz, knees = {}, {}, {}, {}, {}, {}
+    wnames = weapon_names(meshes, sword=True)
+
+    def record(name):
         pose_hits[name] = collide(meshes)
         tops[name] = round(float(max(wverts(o)[:, 2].max() for o in meshes.values())), 3)
+        lows[name] = round(float(min(wverts(meshes[n])[:, 2].min() for n in wnames)), 3) if wnames else None
+        muz[name] = round(float(objs["S_Muzzle"].matrix_world.translation.z), 3)
+        knees[name] = joint_gaps(meshes)
+    for name, hand in poses.items():
+        p, off = solve_pose(objs, meshes, hand, name)
+        solved[name] = (p, off)
+        record(name)
     if MOD.HAS_WINGS:
         for name in ("stand_aim", "aim_up_45", "aim_down_45", "yaw_85_level", "yaw_-85_level", "walk_A", "walk_B", "dash_float_L"):
-            hand = dict(poses[name], wing_L=R.WING_ANGLE, wing_R=R.WING_ANGLE)
+            hand = dict(solved[name][0], wing_L=R.WING_ANGLE, wing_R=R.WING_ANGLE)
             p, off = solve_pose(objs, meshes, hand)
             solved[name + "+wings"] = (p, off)
-            pose_hits[name + "+wings"] = collide(meshes)
-            tops[name + "+wings"] = round(float(max(wverts(o)[:, 2].max() for o in meshes.values())), 3)
-    set_pose(objs, {})
-    rest_hits = collide(meshes)
+            record(name + "+wings")
+    set_pose(objs, R.BIND)
+    record("BIND")
+    rest_hits = pose_hits.pop("BIND")
     req = [n for n in pose_hits if n.split("+")[0] in R.REQUIRED]
     Rp["poses_required"] = dict(ok=not any(pose_hits[n] for n in req), names=req, failed={n: pose_hits[n] for n in req if pose_hits[n]})
-    Rp["poses_all"] = dict(ok=not any(pose_hits.values()), poses=len(pose_hits), clean=sum(1 for v in pose_hits.values() if not v),
-                           failed={k: v for k, v in pose_hits.items() if v}, rest_pose_hits=rest_hits)
+    Rp["poses_all"] = dict(ok=not any(pose_hits.values()) and not rest_hits, poses=len(pose_hits), clean=sum(1 for v in pose_hits.values() if not v),
+                           v2_names_clean=sum(1 for n in R.V2_SPEC["hand_poses"] if not pose_hits[n]), v2_names=len(R.V2_SPEC["hand_poses"]),
+                           failed={k: v for k, v in pose_hits.items() if v}, bind_pose_hits=rest_hits, light_adjust=R.LIGHT_ADJUST)
+    Rp["weapon_wrist"] = dict(ok="unsolved" not in WRIST_SOLVED.values(), solved=dict(WRIST_SOLVED), limit=R.WRIST_R_LIMIT,
+                              rule="right wrist 0 unless the weapon is within %.2f m of the ground or touches the body; then smallest upward pitch, then elbow +10..40" % CLEAR)
+    Rp["weapon_above_ground"] = dict(ok=all(v is None or v >= CLEAR - 1e-3 for v in lows.values()), clear_m=CLEAR, lowest_weapon_z=lows, muzzle_z=muz,
+                                     min_weapon_z=min(v for v in lows.values() if v is not None) if wnames else None,
+                                     min_muzzle_z=min(muz.values()), parts=wnames, note="every pose incl. +wings and the BIND pose; Sword included for L-2")
+    Rp["joints_connected"] = dict(ok=all(v == 0.0 for k in knees.values() for v in k.values()),
+                                  gaps={k: {j: g for j, g in v.items() if g > 0} for k, v in knees.items() if any(x > 0 for x in v.values())},
+                                  poses=len(knees), joints=[a + "-" + b for a, b in JOINT_PAIRS],
+                                  how="parts on the two bones of every limb joint must touch, every pose + BIND (r5b; started from the knee)")
+    # v2 values without the light adjustment (info only): same right-wrist rule
+    raw = {}
+    for name, hand in R.poses(code=CODE, raw=True).items():
+        if name in R.LIGHT_ADJUST:
+            solve_pose(objs, meshes, hand)
+            raw[name] = collide(meshes)
+    Rp["v2_raw_info"] = dict(hits=raw, note="v2 arm values without LIGHT_ADJUST; info, not a pass/fail")
     Rp["pose_top_m"] = tops
     # skeleton vs [meas]
     p, off = solved["stand_aim"]
@@ -400,7 +463,7 @@ def run_checks(objs, meshes):
                                                     "foot_l": (round(fl, 2), R.DESIGN["foot_l"])},
                                   stand_pose="stand_aim with the light legs (hip %g, knee %g), feet levelled, lowest vertex on the ground" % (R.STAND_HIP, R.STAND_KNEE),
                                   note="stand_top without the weapon")
-    set_pose(objs, {})
+    set_pose(objs, R.BIND)
     # sockets / names / slots / origins
     want = MOD.REQUIRED_NAMES
     Rp["sockets"] = dict(ok=all(n in objs for n in want), missing=[n for n in want if n not in objs], count=len([n for n in NODES if n.startswith("S_")]),
@@ -429,9 +492,36 @@ def run_checks(objs, meshes):
                              hinge_height_m=round(float(hinge.z), 3), seat_height_m=round(float(objs["S_Seat"].matrix_world.translation.z), 3),
                              opening=op, need="width >= 0.60, height >= 0.94 (seated 1.8 m pilot)", collisions_with_door_open=kneel_hits,
                              pilot_points_inside_open_door=pilot_vs_door)
-    set_pose(objs, {})
+    set_pose(objs, R.BIND)
     Rp["check_seconds"] = round(time.time() - t0, 1)
     return Rp, solved
+
+
+JOINT_PAIRS = ([("J_Pelvis", "J_Waist"), ("J_Waist", "J_Torso")]
+               + [(a if a in ("J_Pelvis", "J_Torso") else a + s, b + s) for s in "LR"
+                  for a, b in (("J_Pelvis", "J_Hip_"), ("J_Hip_", "J_Knee_"), ("J_Knee_", "J_Ankle_"), ("J_Torso", "J_Shoulder_"),
+                               ("J_Shoulder_", "J_Elbow_"), ("J_Elbow_", "J_Wrist_"))])
+
+
+def joint_gaps(meshes):
+    """r5b: for every limb joint, 0 if a part on one side touches / enters a part on the other side, else the smallest distance.
+    Started from the knee (lead 11-12: L-1 thigh and shin looked apart); the same test found ankle, elbow, wrist, shoulder gaps."""
+    by = {}
+    for n, o in meshes.items():
+        by.setdefault(o["owner_joint"], []).append(o)
+    out = {}
+    for a, b in JOINT_PAIRS:
+        A, Bm = by.get(a, []), by.get(b, [])
+        if not A or not Bm:
+            continue
+        tA, tB = [tree_of(o) for o in A], [tree_of(o) for o in Bm]
+        pA = [p for o in A for p in wverts(o)]
+        pB = [p for o in Bm for p in wverts(o)]
+        if any(_inside(t, p) for p in pA[::2] for t in tB) or any(_inside(t, p) for p in pB[::2] for t in tA):
+            out[a + "-" + b] = 0.0
+        else:
+            out[a + "-" + b] = round(min((t.find_nearest(Vector(p))[0] - Vector(p)).length for t in tB for p in pA), 3)
+    return out
 
 
 def pilot_points(objs):
@@ -648,8 +738,36 @@ def render_all(objs, meshes, mats, solved):
     if extra:
         extra(objs, meshes, solved, dict(set_pose=set_pose, setup=setup, helper=helper, lights=lights, camera=camera, render=render,
                                          clear=clear_helpers, out=OUT, mode=mode, solve=lambda h: solve_pose(objs, meshes, h)))
+    grip_and_bind(objs, solved, mode)
     poses_sheet(objs, meshes, solved, mode)
-    set_pose(objs, {})
+    set_pose(objs, R.BIND)
+
+
+def grip_and_bind(objs, solved, mode):
+    """R5: close-ups of the right fist on the grip (stand_aim, from the 3/4 camera side and from the outer side) and the file's
+    bind pose (front 3/4 + side) so the weapon's position in the default pose can be seen."""
+    p, off = solved["stand_aim"]
+    set_pose(objs, p, off)
+    setup((1000, 1000), mode)
+    if mode == "color":
+        helper("ground"); lights()
+    w = np.array(objs["J_Wrist_R"].matrix_world.translation)
+    for tag, d in (("3q", (0.60, -0.70, 0.40)), ("side", (-1.0, -0.15, 0.10)), ("below", (0.45, -0.75, -0.48))):
+        dv = np.array(d) / np.linalg.norm(d)
+        tgt = w + np.array((0.0, -0.45, -0.25))
+        camera(tuple(tgt + dv * 3.4), tuple(tgt), lens=50)
+        render(os.path.join(OUT, "%s_grip_%s.png" % (mode, tag)))
+    clear_helpers()
+    set_pose(objs, R.BIND)
+    setup((1000, 1000), mode)
+    helper("human", Q34[2])
+    if mode == "color":
+        helper("ground"); lights()
+    camera(Q34[0], Q34[1], lens=55)
+    render(os.path.join(OUT, "%s_bind_3q.png" % mode))
+    camera((40, -0.9, ZC), (0, -0.9, ZC), ortho=SCALE)
+    render(os.path.join(OUT, "%s_bind_side.png" % mode))
+    clear_helpers()
 
 
 def poses_sheet(objs, meshes, solved, mode):
@@ -701,7 +819,7 @@ def poses_sheet(objs, meshes, solved, mode):
 
 # ------------------------------------------------------------------ export
 def export(objs):
-    set_pose(objs, {})
+    set_pose(objs, R.BIND)
     for ob in [o for o in bpy.data.objects if o.type not in ("EMPTY", "MESH") or o.name.startswith("H_")]:
         bpy.data.objects.remove(ob, do_unlink=True)
     blend = os.path.join(HERE, "Titan_%s.blend" % CODE)
@@ -710,7 +828,7 @@ def export(objs):
     bpy.ops.export_scene.fbx(filepath=fbx, use_selection=False, object_types={"EMPTY", "MESH"}, axis_forward="-Z", axis_up="Y",
                              apply_scale_options="FBX_SCALE_ALL", bake_space_transform=False, bake_anim=False, global_scale=1.0,
                              add_leaf_bones=False, mesh_smooth_type="FACE")
-    want = {n: np.array(to_b(POS[n])) for n in NODES}
+    want = {n: np.array(objs[n].matrix_world.translation) for n in NODES}   # R5: bind pose (right arm carried), not the zero pose
     bpy.ops.wm.read_factory_settings(use_empty=True)
     bpy.ops.import_scene.fbx(filepath=fbx, axis_forward="-Z", axis_up="Y")
     bpy.context.view_layer.update()
@@ -727,7 +845,7 @@ def export(objs):
     mats = sorted({s.material.name for o in meshes for s in o.material_slots if s.material})
     return dict(ok=not missing and we <= 0.01, nodes=len(want), worst=worst, worst_m=round(we, 5), missing=missing, meshes=len(meshes),
                 mesh_z=[round(min(zs), 3), round(max(zs), 3)], materials=mats, blend=os.path.basename(blend), fbx=os.path.basename(fbx),
-                setting="v2 setting: bake_space_transform=False, axis_forward=-Z, axis_up=Y, FBX_SCALE_ALL; Blender re-import only, Unity not run")
+                bind_pose=R.BIND, setting="v2 setting: bake_space_transform=False, axis_forward=-Z, axis_up=Y, FBX_SCALE_ALL; Blender re-import only, Unity not run")
 
 
 def _js(o):
@@ -747,9 +865,9 @@ def main():
     objs, meshes, mats = build()
     if "nocheck" in FLAGS:
         Rp = {}
-        solved = {n: solve_pose(objs, meshes, h) for n, h in R.poses().items()}
+        solved = {n: solve_pose(objs, meshes, h, n) for n, h in R.poses(code=CODE).items()}
         if MOD.HAS_WINGS:
-            solved["stand_aim+wings"] = solve_pose(objs, meshes, dict(R.poses()["stand_aim"], wing_L=R.WING_ANGLE, wing_R=R.WING_ANGLE))
+            solved["stand_aim+wings"] = solve_pose(objs, meshes, dict(solved["stand_aim"][0], wing_L=R.WING_ANGLE, wing_R=R.WING_ANGLE))
     else:
         Rp, solved = run_checks(objs, meshes)
     if STAGE >= 4:
@@ -761,7 +879,7 @@ def main():
     json.dump(Rp, open(os.path.join(OUT, "checks.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1, default=_js)
     if "norender" not in FLAGS:
         render_all(objs, meshes, mats, solved)
-    set_pose(objs, {})
+    set_pose(objs, R.BIND)
     if STAGE >= 4:
         set_materials("color", mats)
         Rp["fbx_roundtrip"] = export(objs)
@@ -774,4 +892,5 @@ def main():
             print("   %-26s %s" % (k, "OK" if v["ok"] else "FAIL"))
 
 
-main()
+if not os.environ.get("LIGHT_NO_MAIN"):
+    main()

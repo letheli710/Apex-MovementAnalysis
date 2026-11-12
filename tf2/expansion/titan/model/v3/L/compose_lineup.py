@@ -6,14 +6,16 @@ Reads (does not change): L1/L2 r4_final (ortho 12 m / 1000 px), ../M1/silhouette
 The orange 1.8 m block is removed; every titan is bottom-aligned on one ground line. Output: lineup/ in this folder.
 """
 import os
+import sys
 
 from PIL import Image, ImageDraw, ImageFont
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-OUT = os.path.join(HERE, "lineup")
+ROUND = sys.argv[1] if len(sys.argv) > 1 else "r5_final"   # R5: which light round to line up; output goes to lineup/<round>/
+OUT = os.path.join(HERE, "lineup", ROUND)
 os.makedirs(OUT, exist_ok=True)
 PX_PER_M = 1000 / 12.0
-SRC = [("L-1 北辰", os.path.join(HERE, "L1", "r4_final"), 12.0), ("L-2 浪人", os.path.join(HERE, "L2", "r4_final"), 12.0),
+SRC = [("L-1 北辰", os.path.join(HERE, "L1", ROUND), 12.0), ("L-2 浪人", os.path.join(HERE, "L2", ROUND), 12.0),
        ("M-1 棱镜", os.path.join(HERE, "..", "M1", "silhouette_r2"), 9.6), ("H-1 熔炉", os.path.join(HERE, "..", "H", "H1", "r4_final"), 9.6)]
 
 

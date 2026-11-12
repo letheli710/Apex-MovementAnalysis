@@ -149,28 +149,50 @@ def _v2_to_light(h):
     return out
 
 
-def poses(grip_R=40.0):
+def poses(grip_R=25.0, code=None, raw=False):
     """The 19 v2 pose names (legs of the standing ones moved to the light stance) + walk A/B.
-    grip_R: right fingers closed on the weapon grip in every pose."""
+    R5: the light adjustments (LIGHT_ADJUST) are applied in place, no more '~light' copies; raw=True gives the v2 values
+    without them (reported as info). code: add that titan's solved right-wrist table (WRIST_R), the new joint v2 does not have.
+    grip_R: right fingers closed on the weapon grip in every pose (R5: 25, they touch the stirrup crossbar; r4 40)."""
     P = {}
     for name, h in V2_SPEC["hand_poses"].items():
         P[name] = _v2_to_light(h)
+        if not raw and name in LIGHT_ADJUST:
+            P[name].update(LIGHT_ADJUST[name])
     P["walk_A"] = dict(P["stand_aim"], h_flex_L=38, k_L=40, h_flex_R=4, k_R=30, pel_pitch=4)
     P["walk_B"] = dict(P["stand_aim"], h_flex_L=6, k_L=58, h_flex_R=34, k_R=36, pel_pitch=4)
-    # light variants of v2 poses that fail on the narrower light chassis (the v2 originals stay in the set and are reported)
-    for name, extra in LIGHT_VARIANTS.items():
-        P[name + "~light"] = dict(P[name], **extra)
+    for name, extra in (WRIST_R.get(code, {}) if code else {}).items():
+        if name in P:
+            P[name].update(extra)
     for p in P.values():
         for i in (1, 2, 3):
             p.setdefault("f%d_R" % i, grip_R)
     return P
 
 
-# reason: light shoulders are 1.20 out (v2 1.30) and the right hand holds a rifle 0.44 below the forearm
-LIGHT_VARIANTS = {
-    "crouch": dict(s_flex_R=78, s_out_R=14),          # rifle 18 deg up and out so it clears the right knee
+# R5 (lead 11-12): the only change to a v2 arm value. dash_float_L: the light shoulders sit 0.10 narrower than v2 and the light
+# hips 0.075 narrower, so with the v2 left arm (out 12) the elbow and forearm go into the raised left thigh; out 22 clears it on both titans
+# (diag stage 1: L-1 18+, L-2 20+ (tasset); full detail adds the thigh side plate, both need 22; e_L alone does not help).
+LIGHT_ADJUST = {"dash_float_L": dict(s_out_L=22)}
+# r4 had copies instead (kept here for the record, not used): crouch / crouch_yaw_85 right arm up 18 + out 14 (the rifle hit the
+# knees; R5 moved the gun 0.12 closer to the forearm instead), dash_float_L left arm out 34 + elbow 60.
+R4_LIGHT_VARIANTS = {
+    "crouch": dict(s_flex_R=78, s_out_R=14),
     "crouch_yaw_85": dict(s_flex_R=78, s_out_R=14),
-    "dash_float_L": dict(s_out_L=34, e_L=60),          # left arm out so the elbow clears the raised left thigh
+    "dash_float_L": dict(s_out_L=34, e_L=60),
 }
+
+# R5: pose the file opens in (FBX / .blend bind pose). All-zero still means straight arms; only the right arm is bent so the
+# weapon is carried level (r4: arm hanging, muzzle at z -0.54 and the barrel through the right calf).
+BIND = {"s_flex_R": 10.0, "e_R": 75.0}
+
+# R5: right wrist pitch per pose (new joint, v2 has none), solved by build_light.solve_weapon: 0 unless the weapon would come
+# within 0.15 m of the ground or touch the body; then the smallest upward pitch (5 deg steps, down to -60) that clears it, and
+# only if that is not enough the elbow is bent 10-40 deg more. Filled from the R5 build's checks (weapon_wrist); a titan missing here is solved live.
+WRIST_R = {   # from L1/r5_final, L2/r5_final checks.json "weapon_wrist" (poses not listed: wrist 0)
+    "L1": {"aim_down_45": {"wr_pitch_R": -5.0}, "yaw_85_down": {"wr_pitch_R": -5.0}, "yaw_-85_down": {"wr_pitch_R": -5.0}, "sprint_stride": {"wr_pitch_R": -35.0}, "sprint_lean_L": {"wr_pitch_R": -5.0}, "landing_one_knee": {"wr_pitch_R": -55.0, "e_R": 40}, "landing_rise": {"wr_pitch_R": -25.0}, "kneel_hatch": {"wr_pitch_R": -40.0}, "melee_L": {"wr_pitch_R": -35.0}},
+    "L2": {"landing_one_knee": {"wr_pitch_R": -50.0, "e_R": 40}, "kneel_hatch": {"wr_pitch_R": -30.0}},
+}
+WRIST_R_LIMIT = (-60.0, 45.0)    # right wrist pitch range (left keeps the v2 +-45)
 STAND = "stand_aim"
 REQUIRED = ["stand_aim", "walk_A", "walk_B", "sprint_stride", "kneel_hatch", "yaw_85_level", "yaw_-85_level", "aim_up_45", "aim_down_45"]

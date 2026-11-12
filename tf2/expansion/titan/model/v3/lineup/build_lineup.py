@@ -16,15 +16,23 @@ from mathutils import Vector
 HERE = os.path.dirname(os.path.abspath(__file__))
 V3 = os.path.dirname(HERE)
 args = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
-OUT = args[0] if args else HERE
+# R5: each round goes to its own folder (the first lineup stays in lineup/ itself). Default: lineup/r5/.
+OUT = os.path.join(HERE, args[0]) if args else os.path.join(HERE, "r5")
+# Optional explicit files, code=path (e.g. L1=../L/L1/r5_final/Titan_L1.fbx), relative to v3/
+PICK = dict(a.split("=", 1) for a in args[1:] if "=" in a)
 ORDER = ["L1", "L-1", "L2", "L-2", "M1", "M-1", "H1", "H-1", "H2", "H-2"]
 SPACING = 7.6
+EXT = {}
 HUMAN_DX = 3.0      # human block this far to the right of each titan's centre
 
 
 def find():
-    files = sorted(set(glob.glob(os.path.join(V3, "*", "Titan_*.fbx")) + glob.glob(os.path.join(V3, "*", "*", "Titan_*.fbx"))))
-    files = [f for f in files if "silhouette" not in f.lower()]
+    # R5: only the current finished file of each line (v3/<line>/Titan_<code>.fbx). Round folders also hold copies
+    # (H/H1/r4_final/Titan_H1.fbx, M1/final/Titan_M1_r4.fbx ...), which must not be picked up.
+    files = sorted(f for f in glob.glob(os.path.join(V3, "*", "Titan_*.fbx"))
+                   if os.path.basename(f)[6:-4].replace("-", "").upper() in ("L1", "L2", "M1", "H1", "H2"))
+    for code, rel in PICK.items():
+        files = [f for f in files if os.path.basename(f)[6:-4].upper() != code.upper()] + [os.path.normpath(os.path.join(V3, rel))]
     def key(f):
         code = os.path.basename(f)[6:-4].upper().replace("_", "-")
         return next((i for i, o in enumerate(ORDER) if code.replace("-", "") == o.replace("-", "")), 99)
@@ -95,6 +103,12 @@ def render(path, res):
 def main():
     bpy.ops.wm.read_factory_settings(use_empty=True)
     files = find()
+    os.makedirs(OUT, exist_ok=True)
+    import json, time, hashlib
+    json.dump([dict(file=os.path.relpath(f, V3).replace("\\", "/"), bytes=os.path.getsize(f),
+                    modified=time.strftime("%Y-%m-%d %H:%M", time.localtime(os.path.getmtime(f))),
+                    sha1=hashlib.sha1(open(f, "rb").read()).hexdigest()[:12]) for f in files],
+              open(os.path.join(OUT, "lineup_files.json"), "w", encoding="utf-8"), indent=1)   # which file of each titan was used
     names = []
     for i, f in enumerate(files):
         before = set(bpy.data.objects)
@@ -105,6 +119,12 @@ def main():
             if o.parent is None:
                 o.location.x += x
         names.append(os.path.basename(f)[6:-4])
+        bpy.context.view_layer.update()
+        vs = [o.matrix_world @ v.co for o in new if o.type == "MESH" for v in o.data.vertices]
+        EXT[names[-1]] = dict(width_m=round(max(v.x for v in vs) - min(v.x for v in vs), 2), depth_m=round(max(v.y for v in vs) - min(v.y for v in vs), 2),
+                              top_m=round(max(v.z for v in vs), 3), lowest_m=round(min(v.z for v in vs), 3),
+                              meshes=sum(1 for o in new if o.type == "MESH"),
+                              tris=sum(len(p.vertices) - 2 for o in new if o.type == "MESH" for p in o.data.polygons))
         collider(x)
         human(x + HUMAN_DX)
         code = os.path.basename(f)[6:-4]
@@ -156,7 +176,8 @@ def main():
             im.resize((im.width // 4, im.height // 4), Image.LANCZOS).save(os.path.join(OUT, n + "_quarter.png"))
     except ImportError:
         pass   # Blender's Python has no PIL; the quarter images are made by: py -3 build_lineup_quarter.py
-    print("=== LINEUP", names)
+    json.dump(EXT, open(os.path.join(OUT, "lineup_extents.json"), "w", encoding="utf-8"), indent=1)
+    print("=== LINEUP", names, EXT)
 
 
 main()

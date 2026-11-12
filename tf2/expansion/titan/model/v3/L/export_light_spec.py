@@ -23,7 +23,10 @@ for code, mod in (("L1", "l1_parts"), ("L2", "l2_parts")):
                nodes=[dict(name=n, parent=p, pos=[round(float(c), 5) for c in pos]) for n, (p, pos) in nodes.items()],
                limits=[dict(label=a, key=b, lo=c, hi=d) for a, b, c, d in R.LIMITS + R.LIMITS_SIDED],
                wing_axis_L=[round(float(c), 6) for c in R.wing_axis("L")], wing_axis_R=[round(float(c), 6) for c in R.wing_axis("R")],
-               poses={k: {kk: float(vv) for kk, vv in v.items()} for k, v in R.poses().items()},
+               poses={k: {kk: float(vv) for kk, vv in v.items()} for k, v in R.poses(code=code).items()},
+               # R5: node "pos" are zero-pose positions (all angles 0, arms straight); the FBX / .blend open in bind_pose
+               bind_pose=R.BIND, right_wrist_pitch_limit=list(R.WRIST_R_LIMIT), light_adjust=R.LIGHT_ADJUST,
+               right_wrist_rule="wr_pitch_R / e_R in the poses come from build_light.solve_weapon (weapon >= 0.15 m above ground, no body contact)",
                parts=[dict(object="%s_%s" % (code, p["name"]), joint=p["joint"], slot=p["slot"]) for p in parts])
     json.dump(out, open(os.path.join(HERE, code, "rig_%s.json" % code), "w", encoding="utf-8"), indent=1, ensure_ascii=False)
     print(code, len(out["nodes"]), "nodes", len(out["parts"]), "parts")

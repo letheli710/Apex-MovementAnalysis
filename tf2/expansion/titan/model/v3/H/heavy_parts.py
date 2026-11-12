@@ -8,6 +8,7 @@ Each part = one object = one owner joint; a part is a list of shells (kind, mate
 Base and plate shells get a 3 cm bevel in Blender from round 2 on; details are not bevelled.
 """
 import math
+import os
 
 import numpy as np
 
@@ -15,8 +16,10 @@ import heavy_geom as G
 import heavy_rig as RIG
 from heavy_geom import box, cyl, cyl_ab, loft, merge, mirror, rect, se_front_x, se_sect, tube, xform
 
-SY, ZS, ZE, ZW = RIG.SH_Y, RIG.Z_SH, RIG.Z_ELBOW, RIG.Z_WRIST
-HY, ZH, ZK, ZA = RIG.HIP_Y, RIG.Z_HIP, RIG.Z_KNEE, RIG.Z_ANKLE
+# geometry below is authored on the A rig (rounds 1-4); build() maps it to the active rig with RIG.map_pt (R5, H-SK8)
+SY, ZS, ZE, ZW = RIG.SH_Y, RIG.Z_SH, RIG.A["elbow"], RIG.A["wrist"]
+HY, ZH, ZK, ZA = RIG.HIP_Y, RIG.A["hip"], RIG.A["knee"], RIG.A["ankle"]
+FINGERS_A = {"J_Finger_L_1": (0.17, SY + 0.15, ZW - 0.30), "J_Finger_L_2": (0.17, SY - 0.15, ZW - 0.30), "J_Finger_L_3": (-0.17, SY, ZW - 0.30)}
 
 
 class Parts:
@@ -48,7 +51,9 @@ def pelvis_waist(P, style):
     # back skirt + short rear corner skirts (behind the thigh swing, x <= -0.52). Tops <= 3.15: a 45 deg bend in any direction
     # (twist 90 + bend 45) brings the torso cone down to z 3.22.
     back = loft([(2.40, rect(-0.86, -0.62, -0.96, 0.96, c * 0.6)), (3.15, rect(-0.80, -0.58, -0.90, 0.90, c * 0.6))])
-    corner = loft([(2.45, rect(-0.86, -0.52, 0.92, 1.30, c * 0.5)), (3.10, rect(-0.80, -0.56, 0.90, 1.24, c * 0.5))])
+    # R5: the corner tops stay at absolute z 3.10 when the pelvis rides up with the longer B legs (the twist 90 + bend 45 sweep of
+    # the torso front edge comes down to 3.18 over them)
+    corner = loft([(2.45, rect(-0.86, -0.52, 0.92, 1.30, c * 0.5)), (3.10 - RIG.D_HIP, rect(-0.80, -0.56, 0.90, 1.24, c * 0.5))])
     cod = loft([(2.02, rect(0.44, 0.64, -0.36, 0.36, c * 0.5)), (2.62, rect(0.46, 0.70, -0.42, 0.42, c * 0.5)),
                 (2.96, rect(0.40, 0.56, -0.36, 0.36, c * 0.5))])
     if style == "round":
@@ -65,7 +70,7 @@ def pelvis_waist(P, style):
     pts = [(-0.87, y, z) for y in (-0.80, -0.40, 0.40, 0.80) for z in (2.52, 3.00)]
     det = [G.bolts(pts, (-1, 0, 0))]
     for s in (1, -1):
-        det.append(G.bolts([(-0.70, s * 1.31, z) for z in (2.60, 2.95)], (0, s, 0)))
+        det.append(G.bolts([(-0.70, s * 1.31, z) for z in (2.60, 2.95 - RIG.D_HIP)], (0, s, 0)))
     det.append(G.bolts([(0.71, y, 2.62) for y in (-0.28, 0.0, 0.28)], (1, 0, 0)))
     P.add("Pelvis", "J_Pelvis", "detail", "frame", merge(*det))
     # waist drum: rides J_Waist, the torso turns over it
@@ -165,7 +170,7 @@ def hand_left(P, style):
     P.add("Hand_L", "J_Wrist_L", "base", "frame", loft([(2.70, rect(-0.24, 0.26, yc - 0.26, yc + 0.26, 0.08)), (2.42, rect(-0.22, 0.25, yc - 0.25, yc + 0.25, 0.08)),
                                                         (2.30, rect(-0.15, 0.19, yc - 0.20, yc + 0.20, 0.06))]))
     P.add("Hand_L", "J_Wrist_L", "plate", "pri", loft([(2.68, rect(0.24, 0.30, yc - 0.22, yc + 0.22, 0.02)), (2.40, rect(0.23, 0.29, yc - 0.20, yc + 0.20, 0.02))]))
-    for i, (jn, (fx, fy, fz)) in enumerate([(n, RIG.SKELETON[n][1]) for n in ("J_Finger_L_1", "J_Finger_L_2", "J_Finger_L_3")]):
+    for i, (jn, (fx, fy, fz)) in enumerate([(n, FINGERS_A[n]) for n in ("J_Finger_L_1", "J_Finger_L_2", "J_Finger_L_3")]):
         inward = -1 if fx > 0 else 1    # curl toward the palm centre
         seg1 = loft([(fz + 0.02, rect(fx - 0.09, fx + 0.09, fy - 0.08, fy + 0.08, 0.03)), (fz - 0.24, rect(fx - 0.08, fx + 0.08, fy - 0.07, fy + 0.07, 0.03))])
         tipx = fx + inward * 0.07
@@ -439,7 +444,7 @@ def h2_parts():
     P.add("Hatch", "J_Hatch", "detail", "frame", G.bolts([(1.375, y, z) for y in (-0.42, 0.42) for z in (4.25, 4.62, 5.00)], (1, 0, 0)))
     # shoulders: boxy domes (p 5); left carries the vertical shield slab (secondary), top 5.95 = torso top + 0.30
     dl = dome_left(p_out=5.0, rad=(0.68, 0.64, 0.64), c=(0.0, SY + 0.02, ZS + 0.40), r_in=(0.48, 0.58, 0.56), seg=48, rings=14)
-    P.add("Shoulder_L", "J_Torso", "base", "pri", dl)
+    P.add("Shoulder_L", "J_Torso", "base", "pri" if os.environ.get("HSD_H2_LDOME") == "pri" else "sec", dl)   # R5 H-C3
     P.add("Shoulder_R", "J_Torso", "base", "pri", mirror(dl))
     shield = loft([(4.72, rect(-0.70, 0.70, SY + 0.66, SY + 0.98, 0.05)), (4.90, rect(-0.80, 0.80, SY + 0.54, SY + 1.00, 0.06)),
                    (5.80, rect(-0.80, 0.80, SY + 0.54, SY + 1.00, 0.06)), (5.95, rect(-0.66, 0.72, SY + 0.58, SY + 0.96, 0.05))])
@@ -509,5 +514,15 @@ EXCLUDED_H2 = [("Cannon", "Barrels"), ("Drum", "Torso_Upper"), ("Belt_Torso", "B
                ("Belt_Cannon", "UpperArm_R"), ("Drum", "Belt_Torso")]
 
 
+def remap(P):
+    """Move authored (A rig) geometry to the active rig: each vertex z through the owner joint's map (identity for variant A)."""
+    for name, p in P.parts.items():
+        j = p["joint"]
+        if RIG.group_of(j, name) == "fixed":
+            continue
+        p["shells"] = [(k, m, ([RIG.map_pt(j, v, name) for v in vs], fs)) for k, m, (vs, fs) in p["shells"]]
+    return P
+
+
 def build(which):
-    return h1_parts() if which == "H1" else h2_parts()
+    return remap(h1_parts() if which == "H1" else h2_parts())

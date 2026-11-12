@@ -7,7 +7,7 @@ import numpy as np
 import geo
 import light_common as C
 import light_rig as R
-from l1_parts import rifle_box, rifle_pt, rifle_tube, WR
+from l1_parts import hand_grip, rifle_box, rifle_pt, rifle_tube, WR
 
 CODE = "L2"
 LEAN = 18.0      # L-1 + 10 deg (user spec 4.4)
@@ -135,14 +135,15 @@ def back(P):
 
 
 def shotgun(P):
-    U = 0.44
-    P.add("Shotgun_Body", "W_Shotgun", "pri", geo.merge(rifle_box(-0.70, 0.62, 0.26, 0.68, -0.16, 0.16, 0.06), rifle_box(-0.78, -0.40, 0.34, 0.62, -0.12, 0.12, 0.05)), 1, panel=True)
-    P.add("Shotgun_Grip", "W_Shotgun", "frame", rifle_box(0.20, 0.38, 0.02, 0.30, -0.07, 0.07, 0.03), 1, hub=True)
-    P.add("Shotgun_Barrels", "W_Shotgun", "frame", geo.merge(rifle_tube(0.60, 1.55, 0.37, 0.0, 0.085, 14), rifle_tube(0.60, 1.55, 0.56, 0.0, 0.085, 14),
-                                                             rifle_tube(1.40, 1.56, 0.37, 0.0, 0.10, 14), rifle_tube(1.40, 1.56, 0.56, 0.0, 0.10, 14)), 1)
-    P.add("Shotgun_Drum", "W_Shotgun", "frame", geo.lathe(rifle_pt(0.05, 0.80, -0.14), rifle_pt(0.05, 0.80, 0.14), [(0, 0.16), (0.2, 0.19), (0.8, 0.19), (1, 0.16)], 18), 2)
-    P.add("Shotgun_Shroud", "W_Shotgun", "frame", geo.merge(*[rifle_box(0.70 + 0.16 * i, 0.76 + 0.16 * i, 0.30, 0.64, -0.12, 0.12, 0.02) for i in range(5)]), 3)
-    return rifle_pt(1.56, 0.465, 0.0)
+    """R5: whole gun 0.06 closer to the forearm (body top u 0.20), grip + knuckle guard shared with L-1 (hand_grip)."""
+    d = -0.06
+    P.add("Shotgun_Body", "W_Shotgun", "pri", geo.merge(rifle_box(-0.70, 0.62, 0.26 + d, 0.68 + d, -0.16, 0.16, 0.06), rifle_box(-0.78, -0.40, 0.34 + d, 0.62 + d, -0.12, 0.12, 0.05)), 1, panel=True)
+    hand_grip(P, "Shotgun", "W_Shotgun", 0.66, 0.26 + d)
+    P.add("Shotgun_Barrels", "W_Shotgun", "frame", geo.merge(rifle_tube(0.60, 1.55, 0.37 + d, 0.0, 0.085, 14), rifle_tube(0.60, 1.55, 0.56 + d, 0.0, 0.085, 14),
+                                                             rifle_tube(1.40, 1.56, 0.37 + d, 0.0, 0.10, 14), rifle_tube(1.40, 1.56, 0.56 + d, 0.0, 0.10, 14)), 1)
+    P.add("Shotgun_Drum", "W_Shotgun", "frame", geo.lathe(rifle_pt(0.05, 0.80 + d, -0.14), rifle_pt(0.05, 0.80 + d, 0.14), [(0, 0.16), (0.2, 0.19), (0.8, 0.19), (1, 0.16)], 18), 2)
+    P.add("Shotgun_Shroud", "W_Shotgun", "frame", geo.merge(*[rifle_box(0.70 + 0.16 * i, 0.76 + 0.16 * i, 0.30 + d, 0.64 + d, -0.12, 0.12, 0.02) for i in range(5)]), 3)
+    return rifle_pt(1.56, 0.465 + d, 0.0)
 
 
 def torso_details(P):

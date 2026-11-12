@@ -3,9 +3,11 @@
   blender.exe -b -P build_heavy.py -- H1 r1      round 1 silhouette: base blocks, black silhouettes + grey block renders -> H1/r1_silhouette/
   blender.exe -b -P build_heavy.py -- H1 r2      round 2 mid-poly: + plates, 3 cm bevels                                -> H1/r2_midpoly/
   blender.exe -b -P build_heavy.py -- H1 r3      round 3 detail: + bolts, grilles, hydraulics, hoses                     -> H1/r3_detail/
-  blender.exe -b -P build_heavy.py -- H1 final   round 4: materials, sockets, colour renders, poses, Titan_H1.blend / .fbx -> H1/r4_final/
+  blender.exe -b -P build_heavy.py -- H1 r5c export   final stage (round 5+): checks, colour renders, poses -> H1/r5c_final/; 'export'
+                                                   also writes Titan_H1.blend / .fbx. ('final' = archived round 4, refused; see _r4_source/)
+  blender.exe -b -P build_heavy.py -- H1 contacts | kneelfit <pose> | dbg <pose|json> <A> <B>   diagnostics
   (same with H2)
-  py -3 build_heavy.py compose                   (no Blender) lineup sheets + pose sheets from the renders
+  py -3 build_heavy.py compose [r5c_final]       (no Blender) lineup / pose / before-after sheets from that round's renders
 
 Geometry: heavy_parts.py (part table), heavy_rig.py (skeleton + sockets), heavy_geom.py (primitives). Analysis axes in those files
 (x forward, y left, z up); Blender X = y, Y = -x, Z up, titan faces -Y (SPEC 5). Poses: v2 spec.json hand_poses (same parameter
@@ -29,11 +31,17 @@ POSE_EXTRA = {
     "walk_passing": {"pel_pitch": 6, "h_flex_L": 4, "k_L": 8, "h_flex_R": 38, "k_R": 62, "s_flex_R": 60.0, "e_R": 30.0, "s_in_R": 8, "s_out_R": 6,
                      "s_flex_L": 15, "e_L": 70, "s_out_L": 12, "w_yaw": 4},
 }
-# heavy versions of the two one-knee poses: v2's ankle 55 folds the foot sole into the thigh back on the 0.56 m heavy shin
-# (v2 shin 0.75). Sweep in r1d: a_R -20 / 0 / 15 / 30 all clean; 30 kept (closest to v2). README section 2, H-P1.
-POSE_EXTRA["kneel_hatch_H"] = None
-POSE_EXTRA["landing_one_knee_H"] = None
-SHEET_POSES = ["stand_aim", "walk_contact", "walk_passing", "kneel_hatch_H", "yaw_85_level", "yaw_-85_level", "aim_up_45", "aim_down_45"]
+# R5 (H-P1 closed, H-P3): the heavy's own defaults for the two one-knee poses replace v2's under the same names, so the 19 v2 poses are the
+# heavy set. Two differences from v2, both from the heavy's short shin (shin + ankle 0.98 vs thigh 1.52; v2 1.45 vs 1.40):
+#  - right ankle 30 instead of 55: v2's 55 folds the right foot sole into the thigh back (r1d sweep -20 / 0 / 15 / 30 all clean,
+#    30 closest to v2);
+#  - front (left) leg: v2's thigh-level knee (hip 90-100, knee 105-110) leaves the front foot ~1.1 m in the air on the heavy
+#    (v2 itself ~0.5 / 1.0 m by a sagittal model); the heavy default plants it: hip 40 / knee 55 and hip 52 / knee 64, found by
+#    the 'kneelfit' search (left foot and right knee both within 4 cm of the ground, no collisions, H1 and H2).
+# v2's originals stay as compare poses (<name>_v2orig), tested and reported but not counted.
+HEAVY_POSE_OVERRIDE = {"kneel_hatch": {"a_R": 30.0, "h_flex_L": 40.0, "k_L": 55.0},
+                       "landing_one_knee": {"a_R": 30.0, "h_flex_L": 52.0, "k_L": 64.0}}
+SHEET_POSES = ["stand_aim", "walk_contact", "walk_passing", "kneel_hatch", "yaw_85_level", "yaw_-85_level", "aim_up_45", "aim_down_45"]
 COLORS = {
     "H1": {"pri": "#8A3B24", "sec": "#1E1E1E", "frame": "#2A2D31", "emit": "#FFA41C"},
     "H2": {"pri": "#4E5A3A", "sec": "#C9A227", "frame": "#2A2D31", "emit": "#4DFF6A"},
@@ -43,7 +51,9 @@ MATNAME = {"pri": "MAT_Primary", "sec": "MAT_Secondary", "frame": "MAT_Frame", "
 
 
 # ------------------------------------------------------------------ compose (plain Python + PIL)
-def compose():
+def compose(fin="r4_final"):
+    """Sheets from the final-round folder 'fin'. r4 sheets keep their old names; later rounds write compare/<fin>/ and
+    <code>/<fin>/, so nothing earlier is overwritten. From r5 on also a before/after sheet against r4."""
     from PIL import Image, ImageDraw, ImageFont
     try:
         font = ImageFont.truetype("C:/Windows/Fonts/msyhbd.ttc", 54)
@@ -51,7 +61,7 @@ def compose():
     except OSError:
         font = small = ImageFont.load_default()
     M1 = os.path.join(HERE, "..", "M1", "silhouette")
-    out = os.path.join(HERE, "compare")
+    out = os.path.join(HERE, "compare") if fin == "r4_final" else os.path.join(HERE, "compare", fin)
     os.makedirs(out, exist_ok=True)
 
     def crop_all(paths):
@@ -83,7 +93,7 @@ def compose():
     cells = []
     for view in ("front", "side", "back", "3q"):
         for code in ("H1", "H2"):
-            p = os.path.join(HERE, code, "r4_final", "sil_%s.png" % view)
+            p = os.path.join(HERE, code, fin, "sil_%s.png" % view)
             if os.path.exists(p):
                 cells.append(("%s %s" % ({"H1": "H-1", "H2": "H-2"}[code], {"front": "正", "side": "侧", "back": "背", "3q": "前3/4"}[view]), p))
     if cells:
@@ -94,7 +104,7 @@ def compose():
         if os.path.exists(os.path.join(M1, "sil_%s.png" % view)):
             cells.append(("M-1 " + view, os.path.join(M1, "sil_%s.png" % view)))
         for code in ("H1", "H2"):
-            p = os.path.join(HERE, code, "r4_final", "lineup_%s.png" % view)
+            p = os.path.join(HERE, code, fin, "lineup_%s.png" % view)
             if os.path.exists(p):
                 cells.append(("%s %s" % ({"H1": "H-1", "H2": "H-2"}[code], view), p))
     L = os.path.normpath(os.path.join(HERE, "..", "L"))
@@ -107,7 +117,7 @@ def compose():
         print("lineup_M", sheet(cells, "lineup_with_M1", 3))
     # pose sheets
     for code in ("H1", "H2"):
-        d = os.path.join(HERE, code, "r4_final", "poses")
+        d = os.path.join(HERE, code, fin, "poses")
         if os.path.isdir(d):
             cells = [(p, os.path.join(d, p + ".png")) for p in SHEET_POSES if os.path.exists(os.path.join(d, p + ".png"))]
             if cells:
@@ -121,12 +131,15 @@ def compose():
                     x, y = pad + (i % cols) * (w + pad), (i // cols) * (h + top)
                     S.paste(im, (x, y + top))
                     dd.text((x + 8, y + 10), label, fill=(40, 40, 40), font=small)
-                S.save(os.path.join(HERE, code, "r4_final", "poses_sheet.png"))
+                S.save(os.path.join(HERE, code, fin, "poses_sheet.png"))
                 print("poses", code, S.size)
     # round progression per titan (3/4 view)
     for code in ("H1", "H2"):
         cells = []
-        for r, f in (("r1_silhouette", "grey_3q.png"), ("r2_midpoly", "grey_3q.png"), ("r3_detail", "grey_3q.png"), ("r4_final", "color_3q.png")):
+        rounds = [("r1_silhouette", "grey_3q.png"), ("r2_midpoly", "grey_3q.png"), ("r3_detail", "grey_3q.png"), ("r4_final", "color_3q.png")]
+        if fin != "r4_final":
+            rounds.append((fin, "color_3q.png"))
+        for r, f in rounds:
             p = os.path.join(HERE, code, r, f)
             if os.path.exists(p):
                 cells.append((r, p))
@@ -138,11 +151,19 @@ def compose():
             for i, ((label, _), im) in enumerate(zip(cells, ims)):
                 S.paste(im, (i * w, 70))
                 dd.text((i * w + 12, 8), label, fill=(40, 40, 40), font=font)
-            S.save(os.path.join(HERE, code, "rounds_3q.png"))
+            S.save(os.path.join(HERE, code, "rounds_3q.png" if fin == "r4_final" else "rounds_3q_%s.png" % fin))
+    if fin != "r4_final":
+        for code in ("H1", "H2"):
+            cells = [("%s %s" % (r[:2], v), os.path.join(HERE, code, r, f)) for v, f in (("front", "color_front.png"), ("side", "color_side.png"),
+                                                                                        ("kneel", "color_kneel_hatch.png"))
+                     for r in ("r4_final", fin)]
+            cells = [c for c in cells if os.path.exists(c[1])]
+            if cells:
+                print("before_after", code, sheet(cells, "before_after_%s" % code, 2))
 
 
 if args and args[0] == "compose":
-    compose()
+    compose(args[1] if len(args) > 1 else "r4_final")
     sys.exit(0)
 
 import bmesh  # noqa: E402
@@ -157,16 +178,29 @@ import heavy_rig as RIG  # noqa: E402
 
 WHICH = args[0] if args else "H1"
 ROUND = args[1] if len(args) > 1 else "r1"
-STAGE = "final" if ROUND.startswith("final") else ROUND[:2]          # r1a / r1b ... are retries of round 1, each in its own folder
-OUT = os.path.join(HERE, WHICH, (ROUND + ROUND_DIR[STAGE][2:]) if STAGE in ("r1", "r2", "r3") else (ROUND_DIR["final"] + ROUND[5:]))
+STAGE = "final" if (ROUND.startswith("final") or ROUND[:2] in ("r5", "r6", "r7", "r8", "r9")) else ROUND[:2]   # r1a / r1b ... retries, own folders
+if ROUND[:2] in ("r5", "r6", "r7", "r8", "r9"):
+    OUT = os.path.join(HERE, WHICH, ROUND + "_final")
+else:
+    OUT = os.path.join(HERE, WHICH, (ROUND + ROUND_DIR[STAGE][2:]) if STAGE in ("r1", "r2", "r3") else (ROUND_DIR["final"] + ROUND[5:]))
+DO_EXPORT = ROUND == "final" or "export" in args[2:]
+if ROUND.startswith("final") and not args[:1] == ["compose"]:
+    # r4_final is the archived round 4 (A rig, v2 kneels); its exact sources are in _r4_source/. Do not overwrite it from here.
+    sys.exit("round 'final' = archived r4; use r5x [export] (or run _r4_source/build_heavy.py to rebuild r4)")
 CODE = WHICH
 ROOT = "Titan_" + WHICH
 SPEC = json.load(open(SPEC_JSON, encoding="utf-8"))
-POSES = dict(SPEC["hand_poses"])
+V2_POSES = dict(SPEC["hand_poses"])                     # the 19 v2 poses
+POSES = {}
+for _k, _v in V2_POSES.items():
+    POSES[_k] = dict(_v, **HEAVY_POSE_OVERRIDE.get(_k, {}))
+POSE_SET19 = list(V2_POSES)
 for _k, _v in POSE_EXTRA.items():
-    if _v is None:
-        _v = dict(POSES[_k[:-2]], a_R=30.0)
     POSES[_k] = _v
+COMPARE_POSES = {}
+for _k in HEAVY_POSE_OVERRIDE:
+    POSES[_k + "_v2orig"] = dict(V2_POSES[_k])
+    COMPARE_POSES[_k + "_v2orig"] = _k
 C = np.array([[0, 1, 0], [-1, 0, 0], [0, 0, 1]], float)
 NODES = RIG.nodes(WHICH)
 
@@ -475,7 +509,16 @@ def run_checks(objs, meshes, rest, P, stage):
         v = world_verts(meshes[n]); return float((v[:, 0].max() - v[:, 0].min()) * (v[:, 1].max() - v[:, 1].min()))
     R["calf_ge_thigh"] = dict(ok=girth("Shin_L") >= girth("Thigh_L"), thigh_m2=round(girth("Thigh_L"), 3), shin_m2=round(girth("Shin_L"), 3))
     R["top_le_collider_5.97"] = dict(ok=H <= 5.97, rest_top_m=round(H, 3))
-    R["leg_ratio"] = dict(hip_rest_m=RIG.Z_HIP, ratio=round(RIG.Z_HIP / H, 3), target="0.40 [meas]")
+    R["leg_ratio"] = dict(hip_rest_m=RIG.Z_HIP, ratio=round(RIG.Z_HIP / H, 3), target="0.40 [meas] (TF2 idle: hip 2.61 / top 6.55, knees bent)")
+    M = RIG.MEAS
+    have = dict(thigh=RIG.THIGH, shin=RIG.SHIN, ankle=RIG.Z_ANKLE, upper=RIG.UPPER, fore=RIG.FORE)
+    R["bones_vs_meas"] = dict(variant=RIG.RIG_VARIANT, k_basis=RIG.K_B,
+                              rows={b: dict(meas=M[b], meas_x_k=round(M[b] * RIG.K_B, 3), have=round(v, 3),
+                                            dev_raw_pct=round(100 * (v / M[b] - 1), 1), dev_basis_pct=round(100 * (v / (M[b] * RIG.K_B) - 1), 1))
+                                    for b, v in have.items()},
+                              basis="[meas] x 0.878: the uniform factor that brings the TF2 heavy's straight-leg top (6.55 idle + 0.23) to 5.95 "
+                                    "(user decision 2). Widths (hip 2.11, shoulder spacing) not scaled.")
+    R["bones_vs_meas"]["ok_5pct_basis"] = all(abs(r["dev_basis_pct"]) <= 5 for r in R["bones_vs_meas"]["rows"].values())
     tor = np.vstack([world_verts(meshes[n]) for n in ("Torso_Upper",)])
     R["torso_size"] = dict(width_m=round(float(tor[:, 0].max() - tor[:, 0].min()), 3), depth_m=round(float(tor[:, 1].max() - tor[:, 1].min()), 3),
                            height_m=round(float(tor[:, 2].max() - tor[:, 2].min()), 3))
@@ -488,16 +531,37 @@ def run_checks(objs, meshes, rest, P, stage):
     # poses
     set_pose(objs, rest, {})
     R["rest_collisions_info"] = collide(meshes)
-    poses, tops, solved = {}, {}, {}
+    poses, tops, solved, cont = {}, {}, {}, {}
     for name, hand in POSES.items():
         p, off = solve_pose(objs, meshes, rest, hand)
         solved[name] = (p, off)
+        cont[name] = contacts_of(meshes)
         poses[name] = collide(meshes)
         tops[name] = round(float(extents(meshes)[1][2]), 3)
     R["poses_tested"] = list(POSES)
-    R["pose_collisions"] = {k: v for k, v in poses.items() if v}
-    R["pose_clean"] = "%d / %d" % (sum(1 for v in poses.values() if not v), len(poses))
+    R["pose_collisions"] = {k: v for k, v in poses.items() if v and k not in COMPARE_POSES}
+    R["pose_clean"] = "%d / %d" % (sum(1 for k in POSE_SET19 if not poses[k]), len(POSE_SET19))
+    R["pose_set19"] = dict(ok=all(not poses[k] for k in POSE_SET19), clean=R["pose_clean"],
+                           overrides={k: v for k, v in HEAVY_POSE_OVERRIDE.items()},
+                           how="v2 spec.json hand_poses; kneel_hatch and landing_one_knee use the heavy default (right ankle 30 instead of 55)")
+    R["pose_extra_walk"] = {k: (poses[k] or "clean") for k in POSE_EXTRA}
+    R["pose_v2_original_compare"] = {k: dict(heavy_default=v, collisions=poses[k] or "clean", contacts_v2orig=cont[k], contacts_heavy=cont[v],
+                                             diff={x: dict(v2=V2_POSES[v].get(x), heavy=POSES[v].get(x)) for x in HEAVY_POSE_OVERRIDE[v]})
+                                     for k, v in COMPARE_POSES.items()}
+    R["pose_ground_contact_m"] = dict(rows=cont, how="lowest point of each foot (foot + toes) and shin after solving; 0 = on the ground. "
+                                      "One foot up is part of the pose in sprint / dash / landing_rise / walk_passing (also in v2)")
     R["pose_top_m"] = tops
+    p_sa, off_sa = solved["stand_aim"]
+    set_pose(objs, rest, p_sa, off_sa)
+    hz = float(objs["J_Hip_L"].matrix_world.translation.z)
+    pz = float(objs["J_Pelvis"].matrix_world.translation.z)
+    top_sa = float(extents(meshes)[1][2])
+    R["stand_aim_vs_idle_meas"] = dict(hip_m=round(hz, 3), pelvis_m=round(pz, 3), top_m=round(top_sa, 3), leg_ratio=round(hz / top_sa, 3),
+                                       meas_idle=dict(hip=M["hip_idle"], pelvis=M["pelvis_idle"], top=M["top_idle"], ratio=round(M["hip_idle"] / M["top_idle"], 3)),
+                                       meas_idle_x_k=dict(hip=round(M["hip_idle"] * RIG.K_B, 3), pelvis=round(M["pelvis_idle"] * RIG.K_B, 3)),
+                                       dev_basis_pct=dict(hip=round(100 * (hz / (M["hip_idle"] * RIG.K_B) - 1), 1),
+                                                          pelvis=round(100 * (pz / (M["pelvis_idle"] * RIG.K_B) - 1), 1),
+                                                          ratio=round(100 * ((hz / top_sa) / (M["hip_idle"] / M["top_idle"]) - 1), 1)))
     # pilot
     set_pose(objs, rest, {})
     # inside test by ray-crossing parity: run it on each closed base shell separately (from round 2 on the part objects hold
@@ -512,7 +576,7 @@ def run_checks(objs, meshes, rest, P, stage):
     R["pilot_fit"] = dict(ok=not outside, points=len(pts), outside=len(outside),
                           how="reclined 1.8 m pilot capsules (hip at S_Seat, trunk 40 deg back), hatch closed, rest pose; inside torso / cone / door base shells")
     # kneel + hatch 120
-    p, off = solved["kneel_hatch_H"]
+    p, off = solved["kneel_hatch"]
     set_pose(objs, rest, dict(p, hatch=120), off)
     hinge = objs["J_Hatch"].matrix_world.translation
     door = {"H1": HP.H1_DOOR, "H2": HP.H2_DOOR}[WHICH]
@@ -745,7 +809,7 @@ def main():
             camera(ORTHO[name][0], (0, 0, ZC), ortho=SCALE)
             render(os.path.join(OUT, "lineup_%s.png" % name))
         # kneel + hatch open, colour
-        kp, koff = solved["kneel_hatch_H"]
+        kp, koff = solved["kneel_hatch"]
         set_pose(objs, rest, dict(kp, hatch=120), koff)
         set_colors("color", True); setup("color"); lights(True)
         helper("human", (3.6, 1.2)); helper("ground")
@@ -762,7 +826,7 @@ def main():
         set_colors("color", True)
     else:
         render_set("grey", False, "grey")
-        kp, koff = solved["kneel_hatch_H"]
+        kp, koff = solved["kneel_hatch"]
         set_pose(objs, rest, dict(kp, hatch=120), koff)
         set_colors("grey", False); setup("grey")
         helper("human", (3.6, 1.2))
@@ -770,7 +834,7 @@ def main():
         render(os.path.join(OUT, "grey_kneel_hatch.png"))
         clear_helpers()
     set_pose(objs, rest, {})
-    if final:
+    if final and DO_EXPORT:
         R["fbx_roundtrip"] = export(objs, rest)
     json.dump(R, open(os.path.join(OUT, "checks.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1, default=float)
     summ = {k: (v.get("ok") if isinstance(v, dict) and "ok" in v else None) for k, v in R.items()}
@@ -826,9 +890,13 @@ def export(objs, rest):
 def debug(pose, a, b):
     """Print where parts a and b overlap in a pose: polygon centres in each part's own rest coordinates (analysis axes)."""
     objs, meshes, rest, P = build(STAGE)
+    if pose.startswith("{"):
+        POSES[pose] = json.loads(pose)
     p, off = solve_pose(objs, meshes, rest, POSES[pose]) if pose != "rest" else ({}, (0, 0, 0))
     if pose == "rest":
         set_pose(objs, rest, {})
+    lows = sorted((float(world_verts(o)[:, 2].min()), n) for n, o in meshes.items())[:4]
+    print("=== DBG lowest parts", [(round(z, 3), n) for z, n in lows])
     T = trees({a: meshes[a], b: meshes[b]})
     pairs = T[a].overlap(T[b])
     print("=== DBG", pose, a, b, "pairs", len(pairs))
@@ -845,7 +913,39 @@ def debug(pose, a, b):
         print("===  %s rest-coords min %s max %s" % (name, np.round(pts.min(0), 3), np.round(pts.max(0), 3)))
 
 
-if args and len(args) > 2 and args[1] == "dbg":
+def contacts_of(meshes):
+    g = lambda ns: round(min(float(world_verts(meshes[n])[:, 2].min()) for n in ns if n in meshes), 3)
+    return dict(foot_L=g(("Foot_L", "Toe_L")), foot_R=g(("Foot_R", "Toe_R")), shin_L=g(("Shin_L",)), shin_R=g(("Shin_R",)))
+
+
+def contacts():
+    objs, meshes, rest, P = build("r3")
+    for name, hand in POSES.items():
+        solve_pose(objs, meshes, rest, hand)
+        print("=== CONTACT", name, json.dumps(contacts_of(meshes)))
+
+
+def kneelfit(name):
+    """Heavy kneel: search the front (left) leg so its foot is planted while the right knee stays on the ground."""
+    objs, meshes, rest, P = build("r3")
+    base = dict(POSES[name])
+    for hf in range(20, 92, 4):
+        for dk in (-10, 0, 10, 20):
+            p = dict(base, h_flex_L=float(hf), k_L=float(hf + base.get("pel_pitch", 0) + dk))
+            p.pop("a_L", None)
+            solve_pose(objs, meshes, rest, p)
+            c = contacts_of(meshes)
+            if c["foot_L"] < 0.06 and c["shin_R"] < 0.06:
+                print("=== FIT", name, hf, dk, json.dumps(c), json.dumps(collide(meshes)))
+
+
+if args and len(args) > 1 and args[1] == "contacts":
+    STAGE = "r3"
+    contacts()
+elif args and len(args) > 2 and args[1] == "kneelfit":
+    STAGE = "r3"
+    kneelfit(args[2])
+elif args and len(args) > 2 and args[1] == "dbg":
     STAGE = "r3"
     debug(args[2], args[3], args[4])
 else:

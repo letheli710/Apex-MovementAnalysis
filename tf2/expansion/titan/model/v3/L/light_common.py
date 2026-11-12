@@ -121,6 +121,19 @@ def thigh(P, style):
         side = geo.loft([(3.05, geo.rect(-0.20, 0.22, 0.96, 1.04, 0.02)), (2.00, geo.rect(-0.12, 0.14, 0.95, 1.01, 0.02))])
     P.pair("Thigh_Plate", "J_Hip_L", "pri", plate, 1, panel=True)
     P.pair("Thigh_Side", "J_Hip_L", "pri", side, 2)
+    # r5b (lead 11-12): the thigh ended at 1.95 and the knee hub at 1.79, so thigh and knee never touched (gap 0.08-0.11 in every
+    # pose, _diag/diag_knee.py). Clevis: two round lobes centred on the knee axis (r 0.24) either side of the hub, with straps up
+    # into the thigh. A disc on the axis looks the same at every knee angle, so the joint stays closed without sweeping the shin.
+    lobe = lambda y0, y1: geo.tube((0.0, y0, KNEE_Z), (0.0, y1, KNEE_Z), 0.24, 20)
+    strap = lambda y0, y1: geo.loft([(2.08, geo.rect(-0.15, 0.13, y0, y1, 0.03)), (KNEE_Z, geo.rect(-0.17, 0.15, y0, y1, 0.03))])
+    # straps stay outside the shin width (y 0.64-0.94) below z 1.97 and bridge into the thigh core only above it (the shin core
+    # reaches up there at knee 115+ when the straps were full width: crouch, kneel, landing hits in the first try)
+    bridge = lambda y0, y1: geo.loft([(2.10, geo.rect(-0.15, 0.13, y0, y1, 0.03)), (1.97, geo.rect(-0.15, 0.13, y0, y1, 0.03))])
+    # outer lobe only 3 cm thick (to y 1.005) and r 0.23: at 1.035 / 0.24 it touched the right-hand weapon in crouch (weapon inner
+    # edge y 1.05)
+    lobe_o = lambda y0, y1: geo.tube((0.0, y0, KNEE_Z), (0.0, y1, KNEE_Z), 0.23, 20)
+    P.pair("Thigh_Clevis", "J_Hip_L", "pri", geo.merge(lobe(0.565, 0.625), strap(0.565, 0.625), bridge(0.565, 0.70),
+                                                       lobe_o(0.975, 1.005), strap(0.975, 1.005), bridge(0.90, 1.005)), 1)
     # exposed hydraulic on the back of the thigh (joints exposed, armour on the front only)
     P.pair("Thigh_Piston", "J_Hip_L", "frame", geo.merge(geo.piston((-0.24, 0.70, 3.02), (-0.20, 0.70, 1.98), 0.055, 0.032),
                                                           geo.piston((-0.24, 0.84, 3.02), (-0.20, 0.84, 1.98), 0.055, 0.032)), 3)
@@ -129,13 +142,15 @@ def thigh(P, style):
 def shin_foot(P, style):
     hub = geo.lathe((0.0, 0.62, KNEE_Z), (0.0, 0.98, KNEE_Z), [(0, 0.16), (0.15, 0.20), (0.85, 0.20), (1, 0.16)], 16)
     P.pair("Knee_Hub", "J_Knee_L", "frame", hub, 1, hub=True)
-    core = geo.loft([(1.42, geo.rect(-0.20, 0.16, 0.64, 0.94, 0.08)), (0.62, geo.rect(-0.16, 0.14, 0.66, 0.92, 0.06))])
+    core = geo.loft([(1.42, geo.rect(-0.20, 0.16, 0.64, 0.94, 0.08)), (0.62, geo.rect(-0.16, 0.14, 0.66, 0.92, 0.06)),
+                     (0.56, geo.rect(-0.13, 0.11, 0.68, 0.90, 0.04))])   # r5b: down to 0.56, into the ankle drum
     P.pair("Shin", "J_Knee_L", "pri", core, 1)
-    plate = geo.loft([(1.42, geo.rect(0.08, 0.30, 0.58, 1.00, 0.08)), (0.95, geo.rect(0.14, 0.38, 0.55, 1.03, 0.12)),
+    # r5b: top of the shin plate and the knee guard narrowed to y 0.64-0.96 so they turn between the thigh clevis lobes
+    plate = geo.loft([(1.42, geo.rect(0.08, 0.30, 0.64, 0.96, 0.08)), (1.18, geo.rect(0.11, 0.34, 0.58, 1.00, 0.10)), (0.95, geo.rect(0.14, 0.38, 0.55, 1.03, 0.12)),
                       (0.60, geo.rect(0.04, 0.26, 0.62, 0.96, 0.08))])
     P.pair("Shin_Plate", "J_Knee_L", "pri", plate, 1, panel=True)
-    guard = geo.loft([(1.86, geo.rect(0.10, 0.26, 0.66, 0.92, 0.06)), (1.62, geo.rect(0.16, 0.36, 0.62, 0.96, 0.08)),
-                      (1.42, geo.rect(0.12, 0.32, 0.60, 0.98, 0.08))])
+    guard = geo.loft([(1.86, geo.rect(0.10, 0.26, 0.66, 0.92, 0.06)), (1.62, geo.rect(0.16, 0.36, 0.645, 0.955, 0.08)),
+                      (1.42, geo.rect(0.12, 0.32, 0.645, 0.955, 0.08))])
     P.pair("Knee_Guard", "J_Knee_L", "sec" if style == "L2" else "pri", guard, 2, panel=True)
     # long heel bone (calf blade): the reverse-joint read. Rides the shin, ends at 0.80 so the heel spur clears it at ankle 60 deg.
     # on the OUTER side of the leg (y 1.04-1.16, thigh ends at 1.03): at knee 115-140 it sweeps past the thigh instead of into it
@@ -147,7 +162,8 @@ def shin_foot(P, style):
     P.pair("Ankle_Piston", "J_Knee_L", "frame", geo.merge(geo.piston((-0.12, 0.64, 1.20), (-0.10, 0.64, 0.66), 0.05, 0.03),
                                                            geo.piston((-0.16, 0.99, 1.16), (-0.46, 0.99, 0.92), 0.045, 0.028)), 3)
     # foot: ankle drum, forefoot (front pad), two toes, heel spur. Sole at z 0, ankle 0.38 above it.
-    P.pair("Ankle", "J_Ankle_L", "frame", geo.lathe((0.0, 0.64, ANKLE_Z), (0.0, 0.94, ANKLE_Z), [(0, 0.14), (0.2, 0.17), (0.8, 0.17), (1, 0.14)], 16), 1, hub=True)
+    # r5b: ankle drum radius 0.17 -> 0.23 (top 0.61) so it meets the shin bottom; gap was up to 0.056
+    P.pair("Ankle", "J_Ankle_L", "frame", geo.lathe((0.0, 0.64, ANKLE_Z), (0.0, 0.94, ANKLE_Z), [(0, 0.18), (0.2, 0.23), (0.8, 0.23), (1, 0.18)], 16), 1, hub=True)
     foot = geo.loft([(0.00, geo.rect(-0.22, 0.62, 0.48, 1.10, 0.10)), (0.18, geo.rect(-0.20, 0.56, 0.50, 1.08, 0.10)),
                      (0.30, geo.rect(-0.12, 0.30, 0.60, 0.98, 0.08))])
     P.pair("Foot", "J_Ankle_L", "pri", foot, 1, panel=True)
@@ -166,6 +182,10 @@ def upper_arm(P, side, plate=True, hub_r=0.27):
     y0, y1 = sg * (SH_Y - 0.23), sg * (SH_Y + 0.23)
     hub = geo.lathe((0.0, y0, SH_Z), (0.0, y1, SH_Z), [(0, 0.20), (0.18, hub_r), (0.82, hub_r), (1, 0.20)], 18)
     P.add("UpperArm_Hub_" + side, "J_Shoulder_" + side, "frame", hub, 1, hub=True)
+    # r5b: socket drum from inside the torso side out to the hub's inner end (y SH_Y - 0.23), on J_Torso. Front view showed a dark
+    # hole between torso and arm hub under the mantle (gap 0.10-0.23).
+    P.add("Shoulder_Socket_" + side, "J_Torso", "frame",
+          geo.lathe((0.0, sg * 0.62, SH_Z), (0.0, sg * (SH_Y - 0.225), SH_Z), [(0, 0.22), (0.7, 0.21), (1, 0.18)], 18), 1)
     yc = sg * SH_Y
     strut = geo.loft([(4.40, geo.rect(-0.18, 0.18, yc - 0.16, yc + 0.16, 0.07)), (3.72, geo.rect(-0.15, 0.15, yc - 0.13, yc + 0.13, 0.06))])
     P.add("UpperArm_" + side, "J_Shoulder_" + side, "frame", strut, 1)
@@ -183,9 +203,12 @@ def upper_arm(P, side, plate=True, hub_r=0.27):
 def forearm(P, side, armour_slot="pri"):
     sg = 1 if side == "L" else -1
     yc = sg * SH_Y
-    hub = geo.lathe((0.0, yc - 0.17, ELB_Z), (0.0, yc + 0.17, ELB_Z), [(0, 0.13), (0.2, 0.17), (0.8, 0.17), (1, 0.13)], 16)
+    # r5b: hub radius 0.17 -> 0.195 so it reaches the upper-arm strut end (3.72); gap was up to 0.032 (_diag/diag_joints.py). 0.21 hit the rifle stock
+    hub = geo.lathe((0.0, yc - 0.17, ELB_Z), (0.0, yc + 0.17, ELB_Z), [(0, 0.15), (0.2, 0.195), (0.8, 0.195), (1, 0.15)], 16)
     P.add("Elbow_Hub_" + side, "J_Elbow_" + side, "frame", hub, 1, hub=True)
-    core = geo.loft([(3.42, geo.rect(-0.16, 0.16, yc - 0.15, yc + 0.15, 0.07)), (2.62, geo.rect(-0.14, 0.14, yc - 0.13, yc + 0.13, 0.06))])
+    # r5b: core runs down to 2.54 (was 2.62) into the new wrist hub; the palm started 0.18 below the forearm before
+    core = geo.loft([(3.42, geo.rect(-0.16, 0.16, yc - 0.15, yc + 0.15, 0.07)), (2.62, geo.rect(-0.14, 0.14, yc - 0.13, yc + 0.13, 0.06)),
+                     (2.54, geo.rect(-0.11, 0.11, yc - 0.11, yc + 0.11, 0.04))])
     P.add("Forearm_" + side, "J_Elbow_" + side, "pri", core, 1)
     lo, hi = (yc - 0.10, yc + 0.22) if side == "L" else (yc - 0.22, yc + 0.10)
     arm = geo.loft([(3.40, geo.rect(-0.06, 0.22, lo, hi, 0.08)), (3.00, geo.rect(-0.04, 0.24, lo - 0.01 * sg, hi + 0.01 * sg, 0.09)),
@@ -199,6 +222,9 @@ def hand(P, side, finger_len=0.40):
     palm = geo.loft([(2.44, geo.rect(-0.16, 0.16, yc - 0.15, yc + 0.15, 0.06)), (2.30, geo.rect(-0.17, 0.17, yc - 0.16, yc + 0.16, 0.06)),
                      (2.12, geo.rect(-0.14, 0.15, yc - 0.14, yc + 0.14, 0.05))])
     P.add("Hand_" + side, "J_Wrist_" + side, "frame", palm, 1, hub=True)
+    # r5b: wrist drum on the pitch axis (y), joins forearm end (2.54) and palm top (2.44) at every wrist angle
+    P.add("Wrist_Hub_" + side, "J_Wrist_" + side, "frame",
+          geo.lathe((0.0, yc - 0.13, WR_Z), (0.0, yc + 0.13, WR_Z), [(0, 0.11), (0.2, 0.14), (0.8, 0.14), (1, 0.11)], 16), 1, hub=True)
     for i, (dx, dy) in enumerate(((0.14, 0.12), (0.14, -0.12), (-0.14, 0.0)), 1):
         rx, ry, rz = dx, yc + sg * dy, WR_Z - 0.22
         seg1 = geo.loft([(rz + 0.02, geo.rect(rx - 0.055, rx + 0.055, ry - 0.055, ry + 0.055, 0.02)),
