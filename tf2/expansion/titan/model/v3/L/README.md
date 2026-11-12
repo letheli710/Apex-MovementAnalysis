@@ -27,6 +27,16 @@ lead 看到 L-1 3/4 图里膝盖处大腿和小腿断开。查了所有姿势（
 
 连带改动：枪托上沿降到 0.24（让开肘毂）。外侧膝盘起初厚 6 cm、r 0.24，蹲姿时碰到右手武器，求解器给 `crouch` 加了肘 40°，改薄后 `crouch` 回到原样。结果：L-1 29 / 29、L-2 21 / 21 不穿，关节全部接上，右腕表（L-D17）不变，武器最低 0.205 / 0.152。面数 51 780 / 49 012，部件 119 / 105。图在 `L1/r5b`、`L2/r5b`；只修膝的中间版在 `r5b_i1`。R5 版成品文件被 r5b_i1 覆盖前没有另存（R5 的图和 checks 在 `r5_final`）。
 
+### 0.2 进 Unity：导入、走路、片段（11-12 夜，HSD-Unity draft PR #74，本节由 titan-v3-model 会话补）
+
+轻型线已收尾（`titan/light-walk` 0f6d834）。过程和数据记在 [WALK-RETARGET-PLAN.md](WALK-RETARGET-PLAN.md) 第 8 节，交付和待定的事见 #74 说明顶部的 Handover：
+- **2a 导入**：Unity 用零姿势、先在 Blender 里三角化的副本（`unity/`，`export_unity_light.py`）。L-2 的剑夹在 Unity 里丢面，重做成 r5c。
+- **2b → 2c 默认步态**：从深蹲版改成"tall u3"，一步 130 u（TF2 是 137 u，差 5 %）。脚滑 1.97 / 100 m，L-1 网格回放摆动脚 ≥ 0.061 m、最低点 −0.0001、穿模 0。深蹲版留作开关 `-dimsOpt table=deep`。
+- **片段**（`TitanClipsLight`）：站立、下机、上机、空降，网格回放最低点 ≥ −0.011、穿模 0。**死亡片段没做好**：膝弯到 140°，左大腿碰小腿支架，L-1 18 帧、L-2 19 帧。
+- 新脚本：
+  - `replay_walk.py`：用 Unity 的 `joints.tsv` 在网格上逐帧回放；
+  - `light_part_boxes.py`：生成 Unity 用的接地盒，结果在 `unity/light_parts_l1.cs.txt`。
+
 ## 1. 大白话
 
 两台共用一副轻型骨架，只换装甲和武器。

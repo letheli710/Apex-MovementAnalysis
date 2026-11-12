@@ -7,11 +7,12 @@ Mapping (HSD-Unity TitanSkeleton.Solve vs light_rig.local_rotations, both the v2
 the hip twist is signed per side in Unity (Rz(sg*twist)) and not in light_rig (Rz(h_twist)), so h_twist_R = -twist; left wrist yaw = wr_side_L. Unity does not
 drive the right wrist, the fingers of the right hand or the wings: they stay as the prefab holds them (wrist 0, fingers 25 = light_rig grip, wings folded).
 The left claw's grip (0 open … 1 closed) is -18 + 55 * grip deg on the three left fingers, as TitanBodyAnimator writes it.
-Ground: the film's floor is flat; a point's height over it = its height in the titan's frame + the rig's offset z (offZ). The root's yaw and place do not matter here.
+Ground: the film's floor is flat. The root is lifted by the rig's offset z (offZ) and pitched by rootPitch about the titan's side axis, as TitanBodyAnimator does; its yaw and place do not matter for heights.
 
 Writes <out>/replay.tsv (per checked frame) and <out>/replay.json (summary, the plan's §4 lines)."""
 import csv
 import json
+import math
 import os
 import sys
 
@@ -41,23 +42,32 @@ def params(r):
              f1_R=25.0, f2_R=25.0, f3_R=25.0)
     g = -18.0 + 55.0 * f("aLGrip")      # TitanBodyAnimator: front fingers Ry(grip), back Ry(-grip)
     p.update(f1_L=g, f2_L=g, f3_L=g)
-    off = (f("pelX"), f("pelY"), f("pelZ") + f("offZ"))
-    return p, off
+    off = (f("pelX"), f("pelY"), f("pelZ"))
+    return p, off, f("offZ"), f("rootPitch")
 
 
 def main():
     objs, meshes, mats = B.build()
     rows = list(csv.DictReader(open(TSV, encoding="utf-8"), delimiter="\t"))
     feet = {s: [n for n in meshes if any(n == k + "_" + s for k in FOOT)] for s in "LR"}
-    out = ["t\tmodeL\tmodeR\tlowL\tlowR\tcontactL\tcontactR\thits\tgaps"]
+    out = ["t\tmodeL\tmodeR\tlowL\tlowR\tpartL\tpartR\tbodyLow\tbodyPart\thits\tgaps"]
     worst = dict(below=0.0, below_t=None, hits=0, gap_frames=0, planted_lift=0.0, planted_lift_t=None, swing_min=9.0, swing_min_t=None)
     hit_names = {}
     for i, r in enumerate(rows):
         if i % EVERY:
             continue
-        p, off = params(r)
+        p, off, offz, pitch = params(r)
+        # the rig's root as Unity places it: up by the root offset, pitched about the titan's side axis (Blender X; the death clip tips the body over)
+        root = objs[B.ROOT]
+        root.rotation_mode = "XYZ"
+        root.rotation_euler = (math.radians(pitch), 0.0, 0.0)
+        root.location = (0.0, 0.0, offz)
         B.set_pose(objs, p, off)
-        low = {s: float(min(B.wverts(meshes[n])[:, 2].min() for n in feet[s])) for s in "LR"}
+        lows = {s: {n: float(B.wverts(meshes[n])[:, 2].min()) for n in feet[s]} for s in "LR"}
+        low = {s: min(lows[s].values()) for s in "LR"}
+        lowpart = {s: min(lows[s], key=lows[s].get) for s in "LR"}
+        body_low = min(float(B.wverts(o)[:, 2].min()) for o in meshes.values())
+        body_part = min(meshes, key=lambda n: float(B.wverts(meshes[n])[:, 2].min()))
         hits = B.collide(meshes)
         gaps = {k: v for k, v in B.joint_gaps(meshes).items() if v > 0}
         modes = (r["modeL"], r["modeR"])
@@ -74,7 +84,7 @@ def main():
                 hit_names[h] = hit_names.get(h, 0) + 1
         if gaps:
             worst["gap_frames"] += 1
-        out.append("%s\t%s\t%s\t%.4f\t%.4f\t\t\t%s\t%s" % (r["t"], modes[0], modes[1], low["L"], low["R"], ";".join(hits), json.dumps(gaps)))
+        out.append("	".join([r["t"], modes[0], modes[1], "%.4f" % low["L"], "%.4f" % low["R"], lowpart["L"], lowpart["R"], "%.4f" % body_low, body_part, ";".join(hits), json.dumps(gaps)]))
     open(os.path.join(OUT, "replay.tsv"), "w", encoding="utf-8").write("\n".join(out) + "\n")
     summary = dict(code=B.CODE, tsv=TSV, frames=len(rows), checked=len(out) - 1, every=EVERY,
                    lowest_foot_m=round(worst["below"], 4), lowest_foot_t=worst["below_t"],
