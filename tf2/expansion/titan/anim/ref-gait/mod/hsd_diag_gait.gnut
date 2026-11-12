@@ -1,0 +1,221 @@
+// HSD.TF2Diag add-on (2026-11-09, session ref-titan-gait): titan gait checks F6 / A2 / A6-F7 / F20.
+// Injected only into ref-gait runs by ../runner_gait.py; the shared mod folder does not have it.
+// Server side (script frames are 0.1 s):
+//   HSDDIAG GS <t> <titan> <activity enum> <cycle> <speed2d>      every server script frame, autorun only
+//   HSDDIAG GACT <name> <value>                                   ACT_* constants (hsd_gait_acts)
+//   HSDDIAG GH <y> <x0> <step> <z:nz1000 ...>                     floor heights on a grid row (hsd_gait_hmap)
+// Commands (client console -> server):
+//   hsd_gait_acts                   print the ACT_MP_* enum values the scripts know
+//   hsd_gait_hmap x0 y0 x1 y1 step ztop [brush]   trace down from ztop on a grid; z of the first hit and its normal z
+//                                   (brush: world brushes / displacements only, ignores clip ceilings and props;
+//                                    above <dz>: brush floor, then a player-solid trace from dz above it: props too)
+//   hsd_gait_floor x y ztop          one point: z and normal
+//   hsd_gait_path x y yaw len [step]   along the line: floor (player-solid from 400 above the brush floor) every step
+//                                    u and whether a titan hull (120 x 120 x 235) is free at floor + 8 / 40 / 80:
+//                                    HSDDIAG GP <x> <y> <yaw> <d> <floor z> <free8> <free40> <free80>
+//   hsd_gait_die                     kill the pilot (a fresh respawn clears the homestead dropship-intro movement lock,
+//                                    runs 20261109_112149_gait_f20 / 112529_gait_f20b)
+global function HsdDiagGait_Init
+
+void function HsdDiagGait_Init()
+{
+	AddClientCommandCallback( "hsd_gait_acts", HsdGait_CC_Acts )
+	AddClientCommandCallback( "hsd_gait_hmap", HsdGait_CC_Hmap )
+	AddClientCommandCallback( "hsd_gait_floor", HsdGait_CC_Floor )
+	AddClientCommandCallback( "hsd_gait_die", HsdGait_CC_Die )
+	AddClientCommandCallback( "hsd_gait_path", HsdGait_CC_Path )
+	if ( GetConVarBool( "hsd_autorun" ) )
+		AddCallback_OnPlayerRespawned( HsdGait_OnRespawn )
+}
+
+void function HsdGait_OnRespawn( entity player )
+{
+	thread HsdGait_Log( player )
+}
+
+void function HsdGait_Log( entity player )
+{
+	player.EndSignal( "OnDestroy" )
+	player.EndSignal( "OnDeath" )
+	bool actErr = false
+	bool cycErr = false
+	while ( true )
+	{
+		if ( player.IsTitan() )
+		{
+			int act = -1
+			float cyc = -1.0
+			if ( !actErr )
+			{
+				try
+				{
+					act = player.Anim_GetActivity()
+				}
+				catch ( e1 )
+				{
+					actErr = true
+					printt( "HSDDIAG GERR Anim_GetActivity " + e1 )
+				}
+			}
+			if ( !cycErr )
+			{
+				try
+				{
+					cyc = player.GetCycle()
+				}
+				catch ( e2 )
+				{
+					cycErr = true
+					printt( "HSDDIAG GERR GetCycle " + e2 )
+				}
+			}
+			vector v = player.GetVelocity()
+			printt( format( "HSDDIAG GS %.4f 1 %d %.4f %.2f", Time(), act, cyc, sqrt( v.x * v.x + v.y * v.y ) ) )
+		}
+		WaitFrame()
+	}
+}
+
+bool function HsdGait_CC_Acts( entity player, array<string> args )
+{
+	foreach ( string n in [ "ACT_MP_STAND_IDLE", "ACT_MP_WALK_FORWARD", "ACT_MP_RUN_FORWARD", "ACT_MP_SPRINT",
+		"ACT_MP_WALK_BACKWARD", "ACT_MP_RUN_BACKWARD", "ACT_MP_CROUCH_IDLE", "ACT_MP_CROUCHWALK_FORWARD",
+		"ACT_MP_JUMP_START", "ACT_MP_JUMP_FLOAT", "ACT_MP_JUMP_LAND", "ACT_MP_RUN", "ACT_MP_WALK", "ACT_MP_STAND_PRIMARY",
+		"ACT_IDLE", "ACT_WALK", "ACT_RUN", "ACT_SPRINT" ] )
+	{
+		string v = "?"
+		try
+		{
+			v = "" + getconsttable()[ n ]
+		}
+		catch ( e1 )
+		{
+			try
+			{
+				v = "" + getroottable()[ n ]
+			}
+			catch ( e2 )
+			{
+				v = "?"
+			}
+		}
+		printt( "HSDDIAG GACT " + n + " " + v )
+	}
+	return true
+}
+
+string function HsdGait_FloorAt( entity player, float x, float y, float ztop, bool brushOnly = false )
+{
+	// brushOnly: world brushes and displacements only (no player-clip ceiling, no props)
+	int mask = brushOnly ? TRACE_MASK_SOLID_BRUSHONLY : TRACE_MASK_PLAYERSOLID
+	TraceResults down = TraceLine( < x, y, ztop >, < x, y, ztop - 6000.0 >, player, mask, TRACE_COLLISION_GROUP_NONE )
+	if ( down.fraction >= 1.0 || down.startSolid )
+		return "-"
+	return format( "%.0f:%d", down.endPos.z, int( down.surfaceNormal.z * 1000.0 ) )
+}
+
+// above mode: brush floor first, then a player-solid trace from dz above it (props, no clip ceiling)
+string function HsdGait_FloorAbove( entity player, float x, float y, float ztop, float dz )
+{
+	TraceResults b = TraceLine( < x, y, ztop >, < x, y, ztop - 6000.0 >, player, TRACE_MASK_SOLID_BRUSHONLY, TRACE_COLLISION_GROUP_NONE )
+	if ( b.fraction >= 1.0 || b.startSolid )
+		return "-"
+	float z0 = b.endPos.z + dz
+	TraceResults down = TraceLine( < x, y, z0 >, < x, y, z0 - dz - 64.0 >, player, TRACE_MASK_PLAYERSOLID, TRACE_COLLISION_GROUP_NONE )
+	if ( down.fraction >= 1.0 || down.startSolid )
+		return "-"
+	return format( "%.0f:%d", down.endPos.z, int( down.surfaceNormal.z * 1000.0 ) )
+}
+
+bool function HsdGait_CC_Hmap( entity player, array<string> args )
+{
+	if ( args.len() < 6 )
+		return true
+	float x0 = float( args[0] )
+	float y0 = float( args[1] )
+	float x1 = float( args[2] )
+	float y1 = float( args[3] )
+	float step = float( args[4] )
+	float ztop = float( args[5] )
+	bool brushOnly = args.len() > 6 && args[6] == "brush"
+	bool above = args.len() > 7 && args[6] == "above"
+	float dz = above ? float( args[7] ) : 0.0
+	for ( float y = y0; y <= y1; y += step )
+	{
+		// rows in chunks of 40 points so a log line stays short
+		for ( float xs = x0; xs <= x1; xs += step * 40.0 )
+		{
+			string s = format( "HSDDIAG GH %.0f %.0f %.0f", y, xs, step )
+			for ( int k = 0; k < 40; k++ )
+			{
+				float x = xs + float( k ) * step
+				if ( x > x1 )
+					break
+				if ( above )
+					s += " " + HsdGait_FloorAbove( player, x, y, ztop, dz )
+				else
+					s += " " + HsdGait_FloorAt( player, x, y, ztop, brushOnly )
+			}
+			printt( s )
+		}
+	}
+	entity p = player
+	printt( format( "HSDDIAG GH done player %.0f %.0f %.0f", p.GetOrigin().x, p.GetOrigin().y, p.GetOrigin().z ) )
+	return true
+}
+
+bool function HsdGait_CC_Floor( entity player, array<string> args )
+{
+	if ( args.len() < 3 )
+		return true
+	printt( format( "HSDDIAG GF %s %s %s", args[0], args[1], HsdGait_FloorAt( player, float( args[0] ), float( args[1] ), float( args[2] ) ) ) )
+	return true
+}
+
+bool function HsdGait_CC_Die( entity player, array<string> args )
+{
+	if ( IsAlive( player ) && !player.IsTitan() )
+	{
+		printt( format( "HSDDIAG GDIE %.4f", Time() ) )
+		player.Die()
+	}
+	return true
+}
+
+bool function HsdGait_CC_Path( entity player, array<string> args )
+{
+	if ( args.len() < 4 )
+		return true
+	float x = float( args[0] )
+	float y = float( args[1] )
+	float yaw = float( args[2] )
+	float len = float( args[3] )
+	float step = args.len() > 4 ? float( args[4] ) : 32.0
+	vector dir = AnglesToForward( < 0.0, yaw, 0.0 > )
+	vector mins = < -60.0, -60.0, 0.0 >
+	vector maxs = < 60.0, 60.0, 235.0 >
+	for ( float d = 0.0; d <= len; d += step )
+	{
+		float px = x + dir.x * d
+		float py = y + dir.y * d
+		TraceResults b = TraceLine( < px, py, 5000.0 >, < px, py, -3000.0 >, player, TRACE_MASK_SOLID_BRUSHONLY, TRACE_COLLISION_GROUP_NONE )
+		if ( b.fraction >= 1.0 )
+		{
+			printt( format( "HSDDIAG GP %.0f %.0f %.0f %.0f - - - -", x, y, yaw, d ) )
+			continue
+		}
+		float z0 = b.endPos.z + 400.0
+		TraceResults f = TraceLine( < px, py, z0 >, < px, py, z0 - 500.0 >, player, TRACE_MASK_PLAYERSOLID, TRACE_COLLISION_GROUP_NONE )
+		float fz = f.startSolid ? b.endPos.z : f.endPos.z
+		string free = ""
+		foreach ( float lift in [ 8.0, 40.0, 80.0 ] )
+		{
+			vector p = < px, py, fz + lift >
+			TraceResults h = TraceHull( p, p, mins, maxs, player, TRACE_MASK_PLAYERSOLID, TRACE_COLLISION_GROUP_NONE )
+			free += h.startSolid ? " 0" : " 1"
+		}
+		printt( format( "HSDDIAG GP %.0f %.0f %.0f %.0f %.1f", x, y, yaw, d, fz ) + free )
+	}
+	printt( format( "HSDDIAG GP done %.0f %.0f %.0f", x, y, yaw ) )
+	return true
+}
