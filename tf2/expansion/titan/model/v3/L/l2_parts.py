@@ -53,9 +53,11 @@ def sword(P):
     rail = geo.sweep_rect([sw(0.80, 0.24, 0.10), sw(3.40, 0.24, 0.10)], 0.10, 0.08, up=SW_T)
     clamps = []
     for s in (1.10, 2.10, 3.10):
-        clamps.append(sw_box(s, s + 0.14, -0.22, 0.30, 0.06, 0.12))
-        clamps.append(sw_box(s, s + 0.14, -0.22, -0.18, -0.08, 0.12))
-        clamps.append(sw_box(s, s + 0.14, -0.22, 0.30, -0.08, -0.05))
+        # 2a (Unity import): the plates and the side bar used to share corners; after merging and bevelling Unity lost 15 % of this part's
+        # surface (Blender 1.42 m2, Unity 1.20). Now the bar overlaps the plates and no corners coincide.
+        clamps.append(sw_box(s, s + 0.14, -0.20, 0.30, 0.06, 0.12))
+        clamps.append(sw_box(s + 0.005, s + 0.135, -0.22, -0.17, -0.09, 0.13))
+        clamps.append(sw_box(s, s + 0.14, -0.20, 0.30, -0.08, -0.05))
     brackets = [geo.tube(sw(s, 0.24, 0.12), sw(s, 0.24, 0.12) + np.array((0.36, 0.0, 0.0)), 0.07, 10) for s in (1.0, 2.4)]
     P.add("Rack", "J_Torso", "pri", L(geo.merge(rail, *brackets)), 1, hub=True)
     P.add("Rack_Clamps", "J_Torso", "sec", L(geo.merge(*clamps)), 2)
