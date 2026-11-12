@@ -172,3 +172,9 @@ R5 的 `late` 键和 TF2 在多把枪上比例相同（[VARIANTS.md](VARIANTS.md
 - 换弹节点：每把枪只用 2–4 个切点夹住。
 - 对玩家的效果（Softball 粘人、Thunderbolt 电人、Archer 锁玩家、导弹接近警告）：本地只有一个玩家。
 - Apex 有对应的 4 把"值得一页"的枪（EVA-8、Mastiff + Mozambique、L-STAR）只有文件比较，没有实测。
+
+**11-12 原生（`ref-native-tail`，N3 / N4 / N5）：**
+- `ApplyVectorSpread` 不是原生，是脚本（`_weapon_utility.nut:430`）。每个轴是两个均匀分布之和（三角分布），截在单位圆里，最远偏离 = 散布角的一半。以最大偏离为 1：半径中位数 0.50，90 % 分位 0.83。SMR / Flak 的"散布 − 1"变成负数时只是翻方向，实际散布 = |角度 − 1|。
+- 导弹漂移 6 个键的槽位已确定：+0x1d00 风、+0x1d04 强度、+0x1d08 / +0x1d0c 直飞时间 min / max、+0x1d10 / +0x1d14 直飞半径 min / max（≥ 1）。半径从 min 涨到 max。
+- 视角弹簧：x'' = −k·x − c·x'，k 和 c 按开镜比例在 hipfire / ADS 之间插值。积分有两条路：固定步长 0.0166 s 的半隐式欧拉，和按帧长的解析解，由引擎一个开关选（没读出是哪条）。
+详见 [REF-NATIVE-1112.md §3–§5](../ref-native-tail/REF-NATIVE-1112.md)。

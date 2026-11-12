@@ -131,3 +131,5 @@
 - 整次换弹比 `reload_time` 短的确切原因（推断是动画长度，没拆动画验证）。
 - LCD 效果的材质细节（没解包材质）。
 - 俯仰晃动对应的设置键（原生）。
+
+**11-12 原生（`ref-native-tail`，N12）：** 俯仰晃动没有单独的设置键。client `0x1804e7cf0` 把 `cockpitSwayTurnAngleFactor` 和 `TurnOriginFactor` 各写进映射表的两组格子，对应转身和俯仰两个输入；之后由 `cockpit_spring_pitch*`（65 / 9）平滑。由此推断俯仰和转身共用这几个 Turn 键；每一格对应哪个输入，没有逐格核对。详见 [REF-NATIVE-1112.md §12](../../../ref-native-tail/REF-NATIVE-1112.md)。
