@@ -1,0 +1,238 @@
+untyped
+// HSD.RefUpper (2026-11-09, session ref-titan-upper), server side. See expansion/titan/anim/ref-upper/README.md.
+// Commands (client console -> server):
+//   hsd_ru_log 0|1                    RS line every server frame for the player (and RF for the foe)
+//   hsd_ru_prep <hp>                  player titan: max health and health = hp, shield 0
+//   hsd_ru_foe <setfile> dx dy yaw    enemy npc titan at player + (dx, dy) world, idle (no guns, ignores all)
+//   hsd_ru_hit <amount> <dirYaw> <src> [flags]  damage to the player's titan from dirYaw off the view; src 40mm | xo16;
+//                                     attacker = the foe when there is one; flags 0 | bullet | exp (scriptType)
+//   hsd_ru_foe ... [hostile]          hostile: keep the foe's guns and normal AI (it shoots the player)
+//   hsd_ru_walk <tx> <ty> <run>       foe walks (AssaultPoint) to player + (tx, ty); run 1 = prefer sprint
+//   hsd_ru_shake <amp> <freq> <dur> <radius> <dist>   CreateShake dist ahead of the player (positive control)
+// Log lines:
+//   HSDDIAG RS <t> <titan> <act> <cycle> <hp> <shield> <doomed> <x y z> <vx vy vz> <yaw> <HAND_L f r u>
+//   HSDDIAG RF <t> <x y z> <vx vy vz> <dist2d to player> <foe act> <foe cycle>
+//   HSDDIAG RU <event> ...
+global function HsdRefUpper_Init
+
+struct
+{
+	bool log = false
+	entity foe
+	bool actErr = false
+	bool foeActErr = false
+} file
+
+void function HsdRefUpper_Init()
+{
+	AddClientCommandCallback( "hsd_ru_log", HsdRu_CC_Log )
+	AddClientCommandCallback( "hsd_ru_prep", HsdRu_CC_Prep )
+	AddClientCommandCallback( "hsd_ru_foe", HsdRu_CC_Foe )
+	AddClientCommandCallback( "hsd_ru_hit", HsdRu_CC_Hit )
+	AddClientCommandCallback( "hsd_ru_walk", HsdRu_CC_Walk )
+	AddClientCommandCallback( "hsd_ru_shake", HsdRu_CC_Shake )
+	printt( "HSDDIAG RU init" )
+}
+
+bool function HsdRu_CC_Log( entity player, array<string> args )
+{
+	bool on = args.len() > 0 && args[0] == "1"
+	if ( on && !file.log )
+	{
+		file.log = true
+		thread HsdRu_LogThread( player )
+	}
+	else if ( !on )
+		file.log = false
+	printt( format( "HSDDIAG RU log %s %.4f", on ? "1" : "0", Time() ) )
+	return true
+}
+
+string function HsdRu_Act( entity e, bool isFoe )
+{
+	if ( isFoe ? file.foeActErr : file.actErr )
+		return "- -"
+	try
+	{
+		var a = e.Anim_GetActivity()
+		return "" + a + " " + format( "%.4f", e.GetCycle() )
+	}
+	catch ( ex )
+	{
+		printt( "HSDDIAG RU err act " + ex )
+		if ( isFoe )
+			file.foeActErr = true
+		else
+			file.actErr = true
+	}
+	return "- -"
+}
+
+void function HsdRu_LogThread( entity player )
+{
+	player.EndSignal( "OnDestroy" )
+	while ( file.log )
+	{
+		if ( IsAlive( player ) )
+		{
+			vector o = player.GetOrigin()
+			vector v = player.GetVelocity()
+			float yaw = player.EyeAngles().y
+			entity soul = player.GetTitanSoul()
+			int shield = IsValid( soul ) ? soul.GetShieldHealth() : 0
+			bool doomed = IsValid( soul ) && soul.IsDoomed()
+			string act = "- -"
+			string hand = "- - -"
+			if ( player.IsTitan() )
+			{
+				act = HsdRu_Act( player, false )
+				int id = player.LookupAttachment( "HAND_L" )
+				if ( id > 0 )
+				{
+					vector d = player.GetAttachmentOrigin( id ) - o
+					vector f = AnglesToForward( < 0.0, yaw, 0.0 > )
+					vector r = AnglesToRight( < 0.0, yaw, 0.0 > )
+					hand = format( "%.2f %.2f %.2f", d.x * f.x + d.y * f.y, d.x * r.x + d.y * r.y, d.z )
+				}
+			}
+			printt( format( "HSDDIAG RS %.4f %s %s %d %d %s %.2f %.2f %.2f %.2f %.2f %.2f %.2f %s", Time(), player.IsTitan() ? "1" : "0", act,
+				player.GetHealth(), shield, doomed ? "1" : "0", o.x, o.y, o.z, v.x, v.y, v.z, yaw, hand ) )
+			if ( IsAlive( file.foe ) )
+			{
+				vector fo = file.foe.GetOrigin()
+				vector fv = file.foe.GetVelocity()
+				printt( format( "HSDDIAG RF %.4f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %s", Time(), fo.x, fo.y, fo.z, fv.x, fv.y, fv.z,
+					Distance2D( fo, o ), HsdRu_Act( file.foe, true ) ) )
+			}
+		}
+		WaitFrame()
+	}
+}
+
+bool function HsdRu_CC_Prep( entity player, array<string> args )
+{
+	if ( !IsAlive( player ) || !player.IsTitan() )
+	{
+		printt( "HSDDIAG RU err prep_not_titan" )
+		return true
+	}
+	int hp = args.len() > 0 ? int( args[0] ) : 50000
+	player.SetMaxHealth( hp )
+	player.SetHealth( hp )
+	entity soul = player.GetTitanSoul()
+	if ( IsValid( soul ) )
+		soul.SetShieldHealth( 0 )
+	printt( format( "HSDDIAG RU prep hp=%d shield=%d %.4f", player.GetHealth(), IsValid( soul ) ? soul.GetShieldHealth() : -1, Time() ) )
+	return true
+}
+
+bool function HsdRu_CC_Foe( entity player, array<string> args )
+{
+	if ( args.len() < 4 )
+		return true
+	if ( IsValid( file.foe ) )
+		file.foe.Destroy()
+	vector p = player.GetOrigin() + < float( args[1] ), float( args[2] ), 0.0 >
+	TraceResults down = TraceLine( p + < 0.0, 0.0, 200.0 >, p + < 0.0, 0.0, -800.0 >, player, TRACE_MASK_PLAYERSOLID, TRACE_COLLISION_GROUP_NONE )
+	if ( down.fraction < 1.0 )
+		p = down.endPos + < 0.0, 0.0, 2.0 >
+	entity npc = CreateNPCTitan( args[0], GetOtherTeam( player.GetTeam() ), p, < 0.0, float( args[3] ), 0.0 > )
+	SetSpawnOption_AISettings( npc, "npc_" + args[0] )
+	DispatchSpawn( npc )
+	npc.SetMaxHealth( 100000 )
+	npc.SetHealth( 100000 )
+	file.foe = npc
+	bool hostile = args.len() > 4 && args[4] == "hostile"
+	if ( !hostile )
+		thread HsdRu_FoeIdle( npc )
+	printt( format( "HSDDIAG RU foe %s %.1f %.1f %.1f %.4f", args[0], p.x, p.y, p.z, Time() ) )
+	return true
+}
+
+void function HsdRu_FoeIdle( entity npc )
+{
+	npc.EndSignal( "OnDestroy" )
+	wait 0.6
+	if ( !IsAlive( npc ) )
+		return
+	npc.EnableNPCFlag( NPC_IGNORE_ALL | NPC_DISABLE_SENSING )
+	npc.ClearEnemy()
+	foreach ( entity w in npc.GetMainWeapons() )
+		npc.TakeWeapon( w.GetWeaponClassName() )
+	printt( format( "HSDDIAG RU foe_idle %.4f", Time() ) )
+}
+
+bool function HsdRu_CC_Hit( entity player, array<string> args )
+{
+	if ( args.len() < 3 || !IsAlive( player ) )
+		return true
+	float yaw = player.EyeAngles().y + float( args[1] )
+	vector dir = AnglesToForward( < 0.0, yaw, 0.0 > )
+	int src = args[2] == "40mm" ? eDamageSourceId.mp_titanweapon_sticky_40mm : eDamageSourceId.mp_titanweapon_xo16
+	// a 40mm-source hit runs Tone's Tracker40mm_DamagedTarget -> ApplyTrackerMark( attacker, ent ), which throws
+	// for worldspawn (run 20261109_110906_ru_smoke): only with a real NPC titan as the attacker
+	if ( args[2] == "40mm" && !IsAlive( file.foe ) )
+	{
+		printt( "HSDDIAG RU err hit_40mm_needs_foe" )
+		return true
+	}
+	entity attacker = IsAlive( file.foe ) ? file.foe : svGlobal.worldspawn
+	entity soul = player.GetTitanSoul()
+	int hp0 = player.GetHealth()
+	int sh0 = IsValid( soul ) ? soul.GetShieldHealth() : 0
+	int flags = 0
+	if ( args.len() > 3 && args[3] == "bullet" )
+		flags = DF_BULLET
+	else if ( args.len() > 3 && args[3] == "exp" )
+		flags = DF_EXPLOSION
+	player.TakeDamage( float( args[0] ), attacker, attacker, { origin = player.EyePosition() + dir * 600.0, force = dir * -1000.0, scriptType = flags, damageSourceId = src } )
+	printt( format( "HSDDIAG RU hit %s yaw=%s src=%s flags=%d hp %d->%d shield %d->%d doomed=%s %.4f", args[0], args[1], args[2], flags, hp0, player.GetHealth(), sh0,
+		IsValid( soul ) ? soul.GetShieldHealth() : 0, IsValid( soul ) && soul.IsDoomed() ? "1" : "0", Time() ) )
+	return true
+}
+
+bool function HsdRu_CC_Walk( entity player, array<string> args )
+{
+	if ( args.len() < 3 || !IsAlive( file.foe ) )
+	{
+		printt( "HSDDIAG RU err walk_no_foe" )
+		return true
+	}
+	entity npc = file.foe
+	vector goal = player.GetOrigin() + < float( args[0] ), float( args[1] ), 0.0 >
+	if ( args[2] == "1" )
+	{
+		npc.DisableNPCMoveFlag( NPCMF_WALK_ALWAYS | NPCMF_WALK_NONCOMBAT )
+		npc.EnableNPCMoveFlag( NPCMF_PREFER_SPRINT )
+	}
+	else
+	{
+		npc.DisableNPCMoveFlag( NPCMF_PREFER_SPRINT )
+		npc.EnableNPCMoveFlag( NPCMF_WALK_ALWAYS )
+	}
+	vector ornull clamped = NavMesh_ClampPointForAI( goal, npc )
+	if ( clamped != null )
+		goal = expect vector( clamped )
+	npc.AssaultSetGoalRadius( 64 )
+	npc.AssaultPoint( goal )
+	printt( format( "HSDDIAG RU walk %.1f %.1f %.1f clamped=%d %.4f", goal.x, goal.y, goal.z, clamped != null ? 1 : 0, Time() ) )
+	return true
+}
+
+bool function HsdRu_CC_Shake( entity player, array<string> args )
+{
+	if ( args.len() < 5 )
+		return true
+	vector p = player.GetOrigin() + AnglesToForward( < 0.0, player.EyeAngles().y, 0.0 > ) * float( args[4] )
+	entity shake = CreateShake( p, float( args[0] ), float( args[1] ), float( args[2] ), float( args[3] ) )
+	thread HsdRu_KillLater( shake, float( args[2] ) + 1.0 )
+	printt( format( "HSDDIAG RU shake %s %s %s %s dist=%s %.4f", args[0], args[1], args[2], args[3], args[4], Time() ) )
+	return true
+}
+
+void function HsdRu_KillLater( entity e, float delay )
+{
+	e.EndSignal( "OnDestroy" )
+	wait delay
+	e.Destroy()
+}

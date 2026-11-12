@@ -1,0 +1,23 @@
+{
+	"Name": "HSD.RefUpper",
+	"Description": "HSD research ref-titan-upper (11-09): reload / stagger / nearby-titan shake probes (local server only; installed only during ref-titan-upper runs)",
+	"Version": "0.1.0",
+	"LoadPriority": 3,
+	"RequiredOnClient": false,
+	"Scripts": [
+		{
+			"Path": "hsd_ref_upper.gnut",
+			"RunOn": "SERVER && MP",
+			"ServerCallback": {
+				"After": "HsdRefUpper_Init"
+			}
+		},
+		{
+			"Path": "hsd_ref_upper_cl.gnut",
+			"RunOn": "CLIENT && MP",
+			"ClientCallback": {
+				"After": "HsdRefUpper_InitClient"
+			}
+		}
+	]
+}
