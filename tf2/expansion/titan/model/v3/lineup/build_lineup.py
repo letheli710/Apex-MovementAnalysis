@@ -19,7 +19,9 @@ args = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
 # R5: each round goes to its own folder (the first lineup stays in lineup/ itself). Default: lineup/r5/.
 OUT = os.path.join(HERE, args[0]) if args else os.path.join(HERE, "r5")
 # Optional explicit files, code=path (e.g. L1=../L/L1/r5_final/Titan_L1.fbx), relative to v3/
-PICK = dict(a.split("=", 1) for a in args[1:] if "=" in a)
+PICK = dict(a.split("=", 1) for a in args[1:] if "=" in a and not a.startswith("pose="))
+# R6: pose=stand_aim poses every titan with its own line's rules (lineup_pose.py); default: as the FBX opens (r5 and before)
+POSE = next((a.split("=", 1)[1] for a in args[1:] if a.startswith("pose=")), "rest")
 ORDER = ["L1", "L-1", "L2", "L-2", "M1", "M-1", "H1", "H-1", "H2", "H-2"]
 SPACING = 7.6
 EXT = {}
@@ -110,6 +112,7 @@ def main():
                     sha1=hashlib.sha1(open(f, "rb").read()).hexdigest()[:12]) for f in files],
               open(os.path.join(OUT, "lineup_files.json"), "w", encoding="utf-8"), indent=1)   # which file of each titan was used
     names = []
+    titans, xs = {}, {}
     for i, f in enumerate(files):
         before = set(bpy.data.objects)
         bpy.ops.import_scene.fbx(filepath=f, axis_forward="-Z", axis_up="Y")
@@ -119,6 +122,7 @@ def main():
             if o.parent is None:
                 o.location.x += x
         names.append(os.path.basename(f)[6:-4])
+        titans[names[-1]], xs[names[-1]] = new, x
         bpy.context.view_layer.update()
         vs = [o.matrix_world @ v.co for o in new if o.type == "MESH" for v in o.data.vertices]
         EXT[names[-1]] = dict(width_m=round(max(v.x for v in vs) - min(v.x for v in vs), 2), depth_m=round(max(v.y for v in vs) - min(v.y for v in vs), 2),
@@ -146,6 +150,21 @@ def main():
         if not m.name.startswith("H_"):
             saved[m.name] = tuple(m.diffuse_color)
             m.diffuse_color = (0, 0, 0, 1)
+    if POSE != "rest":
+        sys.path.insert(0, HERE)
+        import lineup_pose as LP
+        info = {"pose": POSE, "as_imported_joint_deg": {c: {k: v for k, v in LP.rest_offsets(o).items() if v > 0.01} for c, o in titans.items()}}
+        M0 = LP.titan_masks(titans, xs, os.path.join(OUT, "masks"), "asimported", camera, render)
+        info["params"] = {}
+        for c, o in titans.items():
+            info["params"][c] = LP.apply(o, c, POSE)
+        M1m = LP.titan_masks(titans, xs, os.path.join(OUT, "masks"), POSE, camera, render)
+        json.dump(dict(info, pairs_as_imported=LP.pair_table(M0), pairs_posed=LP.pair_table(M1m)),
+                  open(os.path.join(OUT, "pair_overlap.json"), "w", encoding="utf-8"), indent=1)
+        for c, o in titans.items():      # extents again, posed
+            vs = [ob.matrix_world @ v.co for ob in o if ob.type == "MESH" for v in ob.data.vertices]
+            EXT[c].update(posed_width_m=round(max(v.x for v in vs) - min(v.x for v in vs), 2), posed_top_m=round(max(v.z for v in vs), 3),
+                          posed_lowest_m=round(min(v.z for v in vs), 3))
     camera((0, -60, 2.55), (0, 0, 2.55), width)
     res = (int(400 * len(files) + 100), int((400 * len(files) + 100) * 8.2 / width))   # 8.2 m tall window: ground line, label, 5.97 frame
     render(os.path.join(OUT, "lineup_sil_front.png"), res)
