@@ -1,0 +1,100 @@
+{
+ "rest_top_m": 5.92,
+ "rest_top_part": "Pod_L",
+ "shoulder_width_m": 3.9,
+ "hip_width_m": 2.32,
+ "shoulder_ge_hip_x1.5": {
+  "ok": true,
+  "ratio": 1.681,
+  "need": 3.48
+ },
+ "waist_le_height_x0.06": {
+  "ok": true,
+  "waist_visible_m": 0.26,
+  "limit_m": 0.355,
+  "how": "gap between pelvis top and torso-lower bottom at rest (the drum shows there)"
+ },
+ "foot_ge_height_x0.22": {
+  "ok": true,
+  "foot_len_m": 1.7,
+  "need_m": 1.302
+ },
+ "calf_ge_thigh": {
+  "ok": true,
+  "thigh_area_m2": 0.352,
+  "shin_area_m2": 0.544,
+  "how": "bounding section width x depth at rest"
+ },
+ "top_le_collider_5.97": {
+  "ok": true,
+  "rest_top_m": 5.92
+ },
+ "waist_bend_clear": {
+  "ok": true,
+  "cases": {
+   "bend_45": true,
+   "bend_-25": true,
+   "side_30": true,
+   "side_-30": true,
+   "yaw_90_bend_45": true
+  }
+ },
+ "pose_collisions_info": {},
+ "pose_clean": 19,
+ "pose_top_m": {
+  "stand_aim": 5.856,
+  "aim_up_45": 6.175,
+  "aim_down_45": 5.925,
+  "yaw_85_level": 5.856,
+  "yaw_-85_level": 5.856,
+  "yaw_85_up": 6.175,
+  "yaw_85_down": 5.925,
+  "yaw_-85_down": 5.925,
+  "crouch": 4.808,
+  "crouch_yaw_85": 4.895,
+  "sprint_stride": 5.484,
+  "sprint_lean_L": 5.796,
+  "dash_float_L": 6.173,
+  "dash_land": 5.94,
+  "landing_one_knee": 4.607,
+  "landing_rise": 5.929,
+  "kneel_hatch": 4.721,
+  "melee_L": 5.968,
+  "doomed": 5.918
+ },
+ "plate_vs_upper_arm": {},
+ "pilot_fit": {
+  "ok": true,
+  "points": 280,
+  "outside": 0,
+  "note": "reclined pilot capsules (hip at S_Seat, trunk 40 deg back) sampled at rest, closed hatch; points must be inside torso + hatch",
+  "example_outside_blender": null
+ },
+ "kneel_hatch": {
+  "hinge_height_m": 3.101,
+  "opening_w_m": 1.1,
+  "opening_h_m": 1.114,
+  "seated_pilot_needs": "1.8 m pilot: shoulders 0.50 wide, sitting height 0.94 m (0.52 x stature); standing block 0.5 x 0.3 x 1.8",
+  "opening_ok_for_seated": true,
+  "standing_block_fits": false,
+  "hatch_lowest_m": 2.938,
+  "torso_top_m": 4.501,
+  "seat_height_m": 3.081,
+  "pilot_vs_open_hatch": 0
+ },
+ "blocks": 24,
+ "block_kinds": 18,
+ "pose_rendered": "stand_aim (v2 hand pose, feet levelled, lowest foot vertex on the ground)",
+ "stand_aim_extent_blender": {
+  "min": [
+   -1.95,
+   -2.786,
+   0.0
+  ],
+  "max": [
+   1.95,
+   0.98,
+   5.856
+  ]
+ }
+}

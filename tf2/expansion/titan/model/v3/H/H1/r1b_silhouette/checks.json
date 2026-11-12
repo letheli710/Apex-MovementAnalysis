@@ -1,0 +1,294 @@
+{
+ "titan": "H1",
+ "round": "r1b",
+ "date": "2026-11-12",
+ "tris": {
+  "total": 11004,
+  "ok": null,
+  "budget": "40000-60000",
+  "max_part": "Shoulder_L",
+  "max_part_tris": 2688,
+  "part_ok": true,
+  "per_part": {
+   "Pelvis": 204,
+   "Waist": 108,
+   "Torso_Lower": 380,
+   "Torso_Upper": 2036,
+   "Shoulder_L": 2688,
+   "Shoulder_R": 2688,
+   "Hatch": 100,
+   "Optic": 108,
+   "UpperArm_L": 572,
+   "UpperArm_R": 572,
+   "Forearm_L": 168,
+   "Hand_L": 44,
+   "Finger_L_1": 56,
+   "Finger_L_2": 56,
+   "Finger_L_3": 56,
+   "Cannon": 152,
+   "Thigh_L": 228,
+   "Shin_L": 104,
+   "Foot_L": 88,
+   "Toe_L": 88,
+   "Thigh_R": 228,
+   "Shin_R": 104,
+   "Foot_R": 88,
+   "Toe_R": 88
+  }
+ },
+ "rest_top_m": 5.9,
+ "rest_top_part": "Torso_Upper",
+ "shoulder_width_m": 5.036,
+ "hip_width_m": 3.15,
+ "shoulder_ge_hip_x1.5": {
+  "ok": true,
+  "ratio": 1.599,
+  "need": 4.725
+ },
+ "shoulder_armor": {
+  "ok": true,
+  "thickness_over_hub_m": 0.48,
+  "dome_top_m": 5.8,
+  "cavity_top_m": 5.32,
+  "hub_top_m": 5.12,
+  "dome_outer_rim_m": 4.72,
+  "how": "vertical line through the shoulder pivot: dome outer top minus cavity top; hub (ball r 0.34) sits in the cavity, outer rim 0.06 below the pivot"
+ },
+ "waist_le_height_x0.06": {
+  "ok": true,
+  "waist_visible_m": 0.3,
+  "limit_m": 0.354
+ },
+ "foot_ge_height_x0.22": {
+  "ok": true,
+  "foot_len_m": 1.86,
+  "need_m": 1.298,
+  "foot_width_m": 1.2
+ },
+ "calf_ge_thigh": {
+  "ok": true,
+  "thigh_m2": 0.746,
+  "shin_m2": 1.235
+ },
+ "top_le_collider_5.97": {
+  "ok": true,
+  "rest_top_m": 5.9
+ },
+ "leg_ratio": {
+  "hip_rest_m": 2.38,
+  "ratio": 0.403,
+  "target": "0.40 [meas]"
+ },
+ "torso_size": {
+  "width_m": 2.3,
+  "depth_m": 2.95,
+  "height_m": 1.9
+ },
+ "waist_bend_clear": {
+  "ok": true,
+  "cases": {
+   "bend_45": [],
+   "bend_-25": [],
+   "side_30": [],
+   "side_-30": [],
+   "yaw_90_bend_45": []
+  }
+ },
+ "rest_collisions_info": [
+  "Hand_L x Thigh_L",
+  "Finger_L_2 x Thigh_L"
+ ],
+ "poses_tested": [
+  "stand_aim",
+  "aim_up_45",
+  "aim_down_45",
+  "yaw_85_level",
+  "yaw_-85_level",
+  "yaw_85_up",
+  "yaw_85_down",
+  "yaw_-85_down",
+  "crouch",
+  "crouch_yaw_85",
+  "sprint_stride",
+  "sprint_lean_L",
+  "dash_float_L",
+  "dash_land",
+  "landing_one_knee",
+  "landing_rise",
+  "kneel_hatch",
+  "melee_L",
+  "doomed",
+  "walk_contact",
+  "walk_passing"
+ ],
+ "pose_collisions": {
+  "landing_one_knee": [
+   "Thigh_R x Foot_R"
+  ],
+  "kneel_hatch": [
+   "Thigh_R x Foot_R"
+  ]
+ },
+ "pose_clean": "19 / 21",
+ "pose_top_m": {
+  "stand_aim": 5.84,
+  "aim_up_45": 5.812,
+  "aim_down_45": 6.255,
+  "yaw_85_level": 5.84,
+  "yaw_-85_level": 5.84,
+  "yaw_85_up": 5.812,
+  "yaw_85_down": 6.255,
+  "yaw_-85_down": 6.255,
+  "crouch": 4.98,
+  "crouch_yaw_85": 4.923,
+  "sprint_stride": 5.871,
+  "sprint_lean_L": 6.379,
+  "dash_float_L": 6.539,
+  "dash_land": 6.197,
+  "landing_one_knee": 5.923,
+  "landing_rise": 6.414,
+  "kneel_hatch": 5.62,
+  "melee_L": 6.093,
+  "doomed": 6.36,
+  "walk_contact": 5.938,
+  "walk_passing": 6.03
+ },
+ "pilot_fit": {
+  "ok": false,
+  "points": 280,
+  "outside": 2
+ },
+ "kneel_hatch": {
+  "ok": true,
+  "opening_w_m": 0.98,
+  "opening_h_m": 1.1,
+  "hinge_height_m": 3.84,
+  "seat_height_m": 4.0,
+  "pilot_points_in_open_hatch": 0,
+  "hatch_vs_other_parts": []
+ },
+ "material_area_pct": {
+  "shares": {
+   "frame": 29.100000381469727,
+   "pri": 53.29999923706055,
+   "sec": 17.700000762939453
+  },
+  "emissive_ok": true,
+  "total_m2": 121.30000305175781,
+  "target": "Primary ~60, Secondary ~15, Frame ~22, Emissive <= 3"
+ },
+ "materials": [
+  "MAT_Frame",
+  "MAT_Primary",
+  "MAT_Secondary"
+ ],
+ "materials_ok": false,
+ "names": {
+  "ok": true,
+  "missing": [],
+  "count": 54
+ },
+ "origins_on_joints": {
+  "ok": true,
+  "worst_m": 0.0
+ },
+ "parts": {
+  "Pelvis": {
+   "joint": "J_Pelvis",
+   "tris": 204
+  },
+  "Waist": {
+   "joint": "J_Waist",
+   "tris": 108
+  },
+  "Torso_Lower": {
+   "joint": "J_Torso",
+   "tris": 380
+  },
+  "Torso_Upper": {
+   "joint": "J_Torso",
+   "tris": 2036
+  },
+  "Shoulder_L": {
+   "joint": "J_Torso",
+   "tris": 2688
+  },
+  "Shoulder_R": {
+   "joint": "J_Torso",
+   "tris": 2688
+  },
+  "Hatch": {
+   "joint": "J_Hatch",
+   "tris": 100
+  },
+  "Optic": {
+   "joint": "J_Optic",
+   "tris": 108
+  },
+  "UpperArm_L": {
+   "joint": "J_Shoulder_L",
+   "tris": 572
+  },
+  "UpperArm_R": {
+   "joint": "J_Shoulder_R",
+   "tris": 572
+  },
+  "Forearm_L": {
+   "joint": "J_Elbow_L",
+   "tris": 168
+  },
+  "Hand_L": {
+   "joint": "J_Wrist_L",
+   "tris": 44
+  },
+  "Finger_L_1": {
+   "joint": "J_Finger_L_1",
+   "tris": 56
+  },
+  "Finger_L_2": {
+   "joint": "J_Finger_L_2",
+   "tris": 56
+  },
+  "Finger_L_3": {
+   "joint": "J_Finger_L_3",
+   "tris": 56
+  },
+  "Cannon": {
+   "joint": "W_Cannon",
+   "tris": 152
+  },
+  "Thigh_L": {
+   "joint": "J_Hip_L",
+   "tris": 228
+  },
+  "Shin_L": {
+   "joint": "J_Knee_L",
+   "tris": 104
+  },
+  "Foot_L": {
+   "joint": "J_Ankle_L",
+   "tris": 88
+  },
+  "Toe_L": {
+   "joint": "J_Ankle_L",
+   "tris": 88
+  },
+  "Thigh_R": {
+   "joint": "J_Hip_R",
+   "tris": 228
+  },
+  "Shin_R": {
+   "joint": "J_Knee_R",
+   "tris": 104
+  },
+  "Foot_R": {
+   "joint": "J_Ankle_R",
+   "tris": 88
+  },
+  "Toe_R": {
+   "joint": "J_Ankle_R",
+   "tris": 88
+  }
+ },
+ "pose_rendered": "stand_aim (v2 hand pose: hip 14, knee 28, cannon level), feet levelled, lowest foot vertex on the ground"
+}
