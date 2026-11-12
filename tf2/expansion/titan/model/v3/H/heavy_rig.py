@@ -190,6 +190,9 @@ H1_EXTRA = {
 H2_SHAPE = __import__("os").environ.get("HSD_H2_SHAPE", "D")
 # R6 (lead 11-12): H-1 gets the same joint pieces as H-2 (heavy_parts.heavy_joint_parts). HSD_H1_SHAPE=r5c rebuilds H-1 without them.
 H1_SHAPE = __import__("os").environ.get("HSD_H1_SHAPE", "r6")
+# R6b (lead 11-12): rear corner skirt of the pelvis trimmed (both heavies), the thigh's back edge hit it at the start of a swing in the
+# heavy walk (G1 21 / 114 frames, G2 7 / 114, mesh replay of joints.tsv). HSD_HEAVY_CORNER=r5c gives the r5c / r6 skirt.
+HEAVY_CORNER = __import__("os").environ.get("HSD_HEAVY_CORNER", "r6b")
 H2_CANNON_K = 1.45 if H2_SHAPE == "D" else 1.0       # scale of the cannon across its axis (length unchanged)
 H2_CANNON_IN = 0.44                                   # breech half-width at its widest (r5c); the inner face stays at axis + this
 H2_CANNON_SHIFT = H2_CANNON_IN * (H2_CANNON_K - 1)    # 0.198: cannon axis moves outward (-y)

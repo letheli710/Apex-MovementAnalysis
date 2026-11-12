@@ -50,10 +50,21 @@ def pelvis_waist(P, style):
         (3.25, rect(-0.52, 0.02, -0.36, 0.36, c - 0.04))]))
     # back skirt + short rear corner skirts (behind the thigh swing, x <= -0.52). Tops <= 3.15: a 45 deg bend in any direction
     # (twist 90 + bend 45) brings the torso cone down to z 3.22.
-    back = loft([(2.40, rect(-0.86, -0.62, -0.96, 0.96, c * 0.6)), (3.15, rect(-0.80, -0.58, -0.90, 0.90, c * 0.6))])
+    if RIG.HEAVY_CORNER == "r6b":
+        # R6b: the lower ends taper in (+-0.62 at the bottom, full +-0.94 from z 2.85): with the hip 45 deg behind, the thigh's inner
+        # back edge (y ~0.8) rises to z ~2.5 behind the hip and hit the full-width skirt (second replay after the corner trim)
+        back = loft([(2.40, rect(-0.86, -0.62, -0.62, 0.62, c * 0.6)), (2.85, rect(-0.83, -0.60, -0.94, 0.94, c * 0.6)),
+                     (3.15, rect(-0.80, -0.58, -0.90, 0.90, c * 0.6))])
+    else:
+        back = loft([(2.40, rect(-0.86, -0.62, -0.96, 0.96, c * 0.6)), (3.15, rect(-0.80, -0.58, -0.90, 0.90, c * 0.6))])
     # R5: the corner tops stay at absolute z 3.10 when the pelvis rides up with the longer B legs (the twist 90 + bend 45 sweep of
     # the torso front edge comes down to 3.18 over them)
-    corner = loft([(2.45, rect(-0.86, -0.52, 0.92, 1.30, c * 0.5)), (3.10 - RIG.D_HIP, rect(-0.80, -0.56, 0.90, 1.24, c * 0.5))])
+    if RIG.HEAVY_CORNER == "r6b":
+        # R6b: front face 0.12 further back (x -0.64) and the bottom 0.15 higher (2.60): the thigh's back edge (wide section, x -0.40
+        # at z 2.15) rises to x -0.45..-0.50, z 2.50 with the hip 45 deg behind at the start of a walk swing and hit the old front face
+        corner = loft([(2.60, rect(-0.86, -0.64, 0.92, 1.30, c * 0.5)), (3.10 - RIG.D_HIP, rect(-0.80, -0.66, 0.90, 1.24, c * 0.5))])
+    else:
+        corner = loft([(2.45, rect(-0.86, -0.52, 0.92, 1.30, c * 0.5)), (3.10 - RIG.D_HIP, rect(-0.80, -0.56, 0.90, 1.24, c * 0.5))])
     cod = loft([(2.02, rect(0.44, 0.64, -0.36, 0.36, c * 0.5)), (2.62, rect(0.46, 0.70, -0.42, 0.42, c * 0.5)),
                 (2.96, rect(0.40, 0.56, -0.36, 0.36, c * 0.5))])
     if style == "round":
@@ -68,9 +79,11 @@ def pelvis_waist(P, style):
         box((0.66, 0, 2.30), (0.04, 0.30, 0.025))))
     # round 3: rivets on skirts, hip axle caps
     pts = [(-0.87, y, z) for y in (-0.80, -0.40, 0.40, 0.80) for z in (2.52, 3.00)]
+    if RIG.HEAVY_CORNER == "r6b":       # lower outer rivets would hang off the tapered ends
+        pts = [(-0.87, y, 3.00) for y in (-0.80, -0.40, 0.40, 0.80)] + [(-0.87, y, 2.52) for y in (-0.45, 0.45)]
     det = [G.bolts(pts, (-1, 0, 0))]
     for s in (1, -1):
-        det.append(G.bolts([(-0.70, s * 1.31, z) for z in (2.60, 2.95 - RIG.D_HIP)], (0, s, 0)))
+        det.append(G.bolts([(-0.76 if RIG.HEAVY_CORNER == "r6b" else -0.70, s * 1.31, z) for z in ((2.72 if RIG.HEAVY_CORNER == "r6b" else 2.60), 2.95 - RIG.D_HIP)], (0, s, 0)))
     det.append(G.bolts([(0.71, y, 2.62) for y in (-0.28, 0.0, 0.28)], (1, 0, 0)))
     P.add("Pelvis", "J_Pelvis", "detail", "frame", merge(*det))
     # waist drum: rides J_Waist, the torso turns over it
