@@ -7,7 +7,11 @@ joint empties from Unity's TitanWalkFilm joints.tsv every N frames, and checks t
 Pose rules = build_heavy.local_rotations / set_pose (v2 hand-pose meaning; Unity's TitanSkeleton follows design.py the same way); the only
 mapping is the hip twist: Unity's is + outward on both legs, here h_twist_R = -twist. Analysis axes x forward, y left, z up; Blender X = y, Y = -x.
 Checks: lowest point of each foot (+ toes) and shin over the ground (Unity's root z): planted -0.02 .. +0.01, swinging >= 0.05; BVH overlap
-of every part pair except same-joint pairs and the r5c touching list."""
+of every part pair except same-joint pairs and the r5c touching list.
+
+Terrain (C1, 2026-11-13): HSD_REPLAY_TERRAIN=<terrain.tsv> (TitanWalkFilm -route terrain writes it next to joints.tsv) measures every
+vertex against the course's ground under it (the profile z(x), the higher side at a vertical step) instead of Unity's root height, so
+"under the floor" also means into a ramp, a tread or through a riser; planted_high then says how far a planted foot floats."""
 import csv
 import json
 import math
@@ -24,6 +28,30 @@ TSV, OUT = args[0], args[1]
 EVERY = int(args[2]) if len(args) > 2 else 5
 CODE = args[3] if len(args) > 3 else "H1"
 C = np.array([[0, 1, 0], [-1, 0, 0], [0, 0, 1]], float)
+
+TERRAIN = os.environ.get("HSD_REPLAY_TERRAIN")
+TX = TZ = None
+if TERRAIN:
+    pts = []
+    for line in open(TERRAIN, encoding="utf-8"):
+        f = line.split()
+        if not f or f[0].startswith("#") or f[0] in ("lane", "mark"):
+            continue
+        pts.append((float(f[0]), float(f[1])))
+    # a vertical step: its lower point moves 0.1 mm off to the low side, so np.interp gives the higher side at the step
+    xs, zs = [], []
+    for i, (x, z) in enumerate(pts):
+        if i + 1 < len(pts) and pts[i + 1][0] == x and pts[i + 1][1] > z:
+            x -= 1e-4
+        elif i > 0 and pts[i - 1][0] == x and pts[i - 1][1] > z:
+            x += 1e-4
+        xs.append(x); zs.append(z)
+    TX, TZ = np.array(xs), np.array(zs)
+
+
+def ground_under(v):
+    """Ground height under each world vertex (analysis x = -Blender Y); 0 off the course."""
+    return np.interp(-v[:, 1], TX, TZ, left=0.0, right=0.0)
 
 # heavy_parts.py r5c EXCLUDED_COMMON (+ H2's), touching on purpose
 EXCL = {frozenset(p) for p in [
@@ -142,11 +170,17 @@ for i, r in enumerate(rows):
     root.location = to_b((f("rootX") + f("offX"), f("rootY") + f("offY"), gz + f("offZ")))
     root.rotation_euler = (math.radians(f("rootPitch")), 0, math.radians(f("rootYaw")))      # Unity: yaw, then pitch about the titan's side axis (Blender X)
     bpy.context.view_layer.update()
-    low = lambda names: min(float(world_verts(meshes[n])[:, 2].min()) for n in names if n in meshes) - gz
+    if TERRAIN:
+        def rel(o):
+            v = world_verts(o)
+            return float((v[:, 2] - ground_under(v)).min())
+        low = lambda names: min(rel(meshes[n]) for n in names if n in meshes)
+    else:
+        low = lambda names: min(float(world_verts(meshes[n])[:, 2].min()) for n in names if n in meshes) - gz
     lowL, lowR = low(("Foot_L", "Toe_L")), low(("Foot_R", "Toe_R"))
     shL, shR = low(("Shin_L",)), low(("Shin_R",))
     hits = collide()
-    body_low, body_part = min((float(world_verts(o)[:, 2].min()) - gz, n) for n, o in meshes.items())
+    body_low, body_part = min(((rel(o) if TERRAIN else float(world_verts(o)[:, 2].min()) - gz), n) for n, o in meshes.items())
     if body_low < worst.get("body_low", 9.0):
         worst["body_low"], worst["body_low_part"], worst["body_low_t"] = body_low, body_part, r["t"]
     mL, mR = r["modeL"], r["modeR"]
@@ -155,6 +189,7 @@ for i, r in enumerate(rows):
             worst["planted_low"] = min(worst["planted_low"], lo)
             worst["planted_high"] = max(worst["planted_high"], lo)
             worst["planted_frames_under_2cm"] += lo < -0.02
+            worst["planted_frames_over_3cm"] = worst.get("planted_frames_over_3cm", 0) + (lo > 0.03)
         elif m == "Swing":
             worst["swing_min"] = min(worst["swing_min"], lo)
             worst["swing_frames_under_5cm"] += lo < 0.05
