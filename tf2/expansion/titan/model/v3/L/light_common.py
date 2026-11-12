@@ -172,7 +172,12 @@ def shin_foot(P, style):
     toe_b = geo.loft([(0.00, geo.rect(0.56, 0.92, 0.81, 1.08, 0.06)), (0.10, geo.rect(0.56, 0.90, 0.82, 1.07, 0.06)),
                       (0.20, geo.rect(0.56, 0.70, 0.84, 1.05, 0.04))])
     P.pair("Toe", "J_Ankle_L", "sec" if style == "L1" else "pri", geo.merge(toe_a, toe_b), 1)
-    spur = geo.extrude([(-0.10, 0.02), (-0.48, 0.10), (-0.50, 0.18), (-0.12, 0.34)], "xz", 0.70, 0.88)
+    # r6a (terrain, 11-13): underside raised 12 cm. At 0.02-0.10 over the sole line it went into ramps and treads whenever the sole pitched
+    # toe-up (mesh replay on the C1 course: lowest part in 32 of 43 planted frames under -2 cm, 5 of 6 swing frames under 5 cm); now it touches
+    # only past ~40 deg of heel roll instead of ~21. Old profile: (-0.10, 0.02), (-0.48, 0.10), (-0.50, 0.18), (-0.12, 0.34).
+    # ... and shortened from 0.50 to 0.40 behind the ankle: raised alone, its tip swung further back when the sole tips toe-up and reached 4.5 cm
+    # into the riser behind a foot planted at the bottom of a step (40x250 down, -0.885 m).
+    spur = geo.extrude([(-0.10, 0.14), (-0.36, 0.22), (-0.40, 0.30), (-0.12, 0.38)], "xz", 0.70, 0.88)
     P.pair("Heel_Spur", "J_Ankle_L", "pri", spur, 1)
 
 
