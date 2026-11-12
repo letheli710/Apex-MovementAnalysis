@@ -1,0 +1,119 @@
+untyped
+// HSD.RefUpper (2026-11-09, ref-titan-upper), client side, every client frame (only with hsd_autorun 1).
+//   HSDDIAG RC <t> <titan> <cam-eye pitch yaw roll> <cam-eye pos f r u> [<cycle> <reloading> <clip>
+//              <HAND_L f r u> <HAND_R f r u> <CHESTFOCUS f r u>]      attachments - origin, in view-yaw axes (titan only)
+//   HSDDIAG RN <t> <dist2d> <titan x y z> <foot_L_sole z> <foot_R_sole z> <cycle>   nearest npc_titan (when not a titan)
+global function HsdRefUpper_InitClient
+
+void function HsdRefUpper_InitClient()
+{
+	if ( !GetConVarBool( "hsd_autorun" ) )
+		return
+	thread HsdRuCl_Log()
+}
+
+float function HsdRuCl_Wrap( float a )
+{
+	while ( a > 180.0 )
+		a -= 360.0
+	while ( a < -180.0 )
+		a += 360.0
+	return a
+}
+
+string function HsdRuCl_Att( entity e, string tag, vector o, vector f, vector r )
+{
+	int id = e.LookupAttachment( tag )
+	if ( id <= 0 )
+		return " - - -"
+	vector d = e.GetAttachmentOrigin( id ) - o
+	return format( " %.2f %.2f %.2f", d.x * f.x + d.y * f.y, d.x * r.x + d.y * r.y, d.z )
+}
+
+void function HsdRuCl_Log()
+{
+	entity player = GetLocalClientPlayer()
+	while ( player == null || !IsAlive( player ) )
+	{
+		WaitFrame()
+		player = GetLocalClientPlayer()
+	}
+	bool errA = false
+	bool errB = false
+	bool errN = false
+	while ( IsValid( player ) )
+	{
+		if ( !errA && IsAlive( player ) )
+		{
+			try
+			{
+				vector ca = player.CameraAngles()
+				vector ea = player.EyeAngles()
+				vector dp = player.CameraPosition() - player.EyePosition()
+				vector f = AnglesToForward( < 0.0, ea.y, 0.0 > )
+				vector r = AnglesToRight( < 0.0, ea.y, 0.0 > )
+				string s = format( "HSDDIAG RC %.5f %s %.3f %.3f %.3f %.3f %.3f %.3f", Time(), player.IsTitan() ? "1" : "0",
+					HsdRuCl_Wrap( ca.x - ea.x ), HsdRuCl_Wrap( ca.y - ea.y ), HsdRuCl_Wrap( ca.z - ea.z ),
+					dp.x * f.x + dp.y * f.y, dp.x * r.x + dp.y * r.y, dp.z )
+				if ( player.IsTitan() && !errB )
+				{
+					try
+					{
+						entity w = player.GetActiveWeapon()
+						s += format( " %.4f %s %d", player.GetCycle(), IsValid( w ) && w.IsReloading() ? "1" : "0", IsValid( w ) ? w.GetWeaponPrimaryClipCount() : -1 )
+						vector o = player.GetOrigin()
+						s += HsdRuCl_Att( player, "HAND_L", o, f, r ) + HsdRuCl_Att( player, "HAND_R", o, f, r ) + HsdRuCl_Att( player, "CHESTFOCUS", o, f, r )
+					}
+					catch ( e2 )
+					{
+						printt( "HSDDIAG RU err cl_body " + e2 )
+						errB = true
+					}
+				}
+				printt( s )
+			}
+			catch ( e1 )
+			{
+				printt( "HSDDIAG RU err cl_cam " + e1 )
+				errA = true
+			}
+		}
+		if ( !errN && IsAlive( player ) && !player.IsTitan() )
+		{
+			try
+			{
+				entity best = null
+				float bd = 1.0e9
+				foreach ( entity t in GetNPCArrayByClass( "npc_titan" ) )
+				{
+					if ( !IsValid( t ) )
+						continue
+					float d = Distance2D( t.GetOrigin(), player.GetOrigin() )
+					if ( d < bd )
+					{
+						bd = d
+						best = t
+					}
+				}
+				if ( IsValid( best ) )
+				{
+					vector to = best.GetOrigin()
+					string s3 = format( "HSDDIAG RN %.5f %.1f %.1f %.1f %.1f", Time(), bd, to.x, to.y, to.z )
+					foreach ( string tag in [ "foot_L_sole", "foot_R_sole" ] )
+					{
+						int id = best.LookupAttachment( tag )
+						s3 += id > 0 ? format( " %.2f", best.GetAttachmentOrigin( id ).z - to.z ) : " -"
+					}
+					s3 += format( " %.4f", best.GetCycle() )
+					printt( s3 )
+				}
+			}
+			catch ( e3 )
+			{
+				printt( "HSDDIAG RU err cl_npc " + e3 )
+				errN = true
+			}
+		}
+		WaitFrame()
+	}
+}
