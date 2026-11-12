@@ -1,0 +1,449 @@
+{
+ "code": "L2",
+ "stage": 4,
+ "stage_name": "final",
+ "out": "r6a",
+ "bind_pose": {
+  "s_flex_R": 10.0,
+  "e_R": 75.0
+ },
+ "rest_top_m": 5.874,
+ "rest_top_part": "Sword_Hilt",
+ "parts": 105,
+ "tris": {
+  "ok": true,
+  "total": 49060,
+  "target": [
+   40000,
+   60000
+  ],
+  "largest_part": "Sword_Hilt",
+  "largest_part_tris": 2644,
+  "part_limit": 6000,
+  "note": "only judged at stage 4"
+ },
+ "shoulder_ge_hip_x1.5": {
+  "ok": true,
+  "shoulder_w": 3.543,
+  "hip_w": 2.079,
+  "need": 3.119,
+  "ratio": 1.704,
+  "shoulder_parts": [
+   "Pauldron_L",
+   "Pauldron_Lames_L",
+   "Shoulder_Cap_R",
+   "UpperArm_Hub_R"
+  ],
+  "how": "outer x extent of the shoulder parts; hip = thighs+pelvis+collar within -0.30/+0.20 of the hip joint"
+ },
+ "shoulder_armour": {
+  "ok": true,
+  "left": {
+   "thickness_m": 0.639,
+   "underside_m": 4.982,
+   "top_m": 5.621,
+   "hub_top_m": 4.89,
+   "covers_hub": true,
+   "ok": true
+  },
+  "right_info": {
+   "thickness_m": 0.356,
+   "underside_m": 4.982,
+   "top_m": 5.338,
+   "hub_top_m": 4.89,
+   "covers_hub": false,
+   "ok": false,
+   "note": "right shoulder near bare by design (user spec 4.4); the 0.45 rule is applied to the left pauldron only"
+  },
+  "rule": "SPEC 3.1 rule 7: >= 0.45 thick and over the arm top (left pauldron)"
+ },
+ "waist_le_height_x0.06": {
+  "ok": true,
+  "waist_visible_m": 0.11,
+  "limit_m": 0.352,
+  "how": "gap between collar/pelvis top and torso bottom at rest"
+ },
+ "waist_bend_clear": {
+  "ok": true,
+  "cases": {
+   "bend_45": true,
+   "bend_-25": true,
+   "side_30": true,
+   "side_-30": true,
+   "yaw_90_bend_45": true,
+   "yaw_-90_bend_45": true
+  },
+  "hits": {}
+ },
+ "foot_ge_height_x0.22": {
+  "ok": true,
+  "foot_len_m": 1.448,
+  "need_m": 1.292,
+  "foot_w_m": 0.594
+ },
+ "calf_ge_thigh": {
+  "ok": true,
+  "thigh": {
+   "area_m2": 0.245,
+   "width_m": 0.427,
+   "depth_m": 0.573,
+   "at_z": 2.6
+  },
+  "shin": {
+   "area_m2": 0.614,
+   "width_m": 0.598,
+   "depth_m": 1.027,
+   "at_z": 0.94
+  },
+  "how": "largest horizontal section (width x depth) of all parts on that bone, 4 cm steps"
+ },
+ "top_le_collider_5.97": {
+  "ok": true,
+  "rest_top_m": 5.874
+ },
+ "poses_required": {
+  "ok": true,
+  "names": [
+   "stand_aim",
+   "aim_up_45",
+   "aim_down_45",
+   "yaw_85_level",
+   "yaw_-85_level",
+   "sprint_stride",
+   "kneel_hatch",
+   "walk_A",
+   "walk_B"
+  ],
+  "failed": {}
+ },
+ "poses_all": {
+  "ok": true,
+  "poses": 21,
+  "clean": 21,
+  "v2_names_clean": 19,
+  "v2_names": 19,
+  "failed": {},
+  "bind_pose_hits": [],
+  "light_adjust": {
+   "dash_float_L": {
+    "s_out_L": 22
+   }
+  }
+ },
+ "weapon_wrist": {
+  "ok": true,
+  "solved": {},
+  "limit": [
+   -60.0,
+   45.0
+  ],
+  "rule": "right wrist 0 unless the weapon is within 0.15 m of the ground or touches the body; then smallest upward pitch, then elbow +10..40"
+ },
+ "weapon_above_ground": {
+  "ok": true,
+  "clear_m": 0.15,
+  "lowest_weapon_z": {
+   "stand_aim": 2.922,
+   "aim_up_45": 2.835,
+   "aim_down_45": 0.991,
+   "yaw_85_level": 2.922,
+   "yaw_-85_level": 2.922,
+   "yaw_85_up": 2.835,
+   "yaw_85_down": 0.991,
+   "yaw_-85_down": 0.991,
+   "crouch": 0.849,
+   "crouch_yaw_85": 1.131,
+   "sprint_stride": 0.357,
+   "sprint_lean_L": 1.172,
+   "dash_float_L": 2.971,
+   "dash_land": 1.959,
+   "landing_one_knee": 0.198,
+   "landing_rise": 0.736,
+   "kneel_hatch": 0.152,
+   "melee_L": 0.726,
+   "doomed": 1.7,
+   "walk_A": 2.847,
+   "walk_B": 2.786,
+   "BIND": 2.531
+  },
+  "muzzle_z": {
+   "stand_aim": 3.454,
+   "aim_up_45": 6.211,
+   "aim_down_45": 1.116,
+   "yaw_85_level": 3.454,
+   "yaw_-85_level": 3.454,
+   "yaw_85_up": 6.211,
+   "yaw_85_down": 1.116,
+   "yaw_-85_down": 1.116,
+   "crouch": 1.024,
+   "crouch_yaw_85": 1.548,
+   "sprint_stride": 0.44,
+   "sprint_lean_L": 1.264,
+   "dash_float_L": 3.512,
+   "dash_land": 2.124,
+   "landing_one_knee": 0.387,
+   "landing_rise": 0.825,
+   "kneel_hatch": 0.319,
+   "melee_L": 0.779,
+   "doomed": 1.764,
+   "walk_A": 3.272,
+   "walk_B": 3.212,
+   "BIND": 2.923
+  },
+  "min_weapon_z": 0.152,
+  "min_muzzle_z": 0.319,
+  "parts": [
+   "Sword_Hilt",
+   "Sword_Blade",
+   "Sword_Fuller",
+   "Sword_Edge",
+   "Shotgun_Body",
+   "Shotgun_Grip",
+   "Shotgun_Barrels",
+   "Shotgun_Drum",
+   "Shotgun_Shroud"
+  ],
+  "note": "every pose incl. +wings and the BIND pose; Sword included for L-2"
+ },
+ "joints_connected": {
+  "ok": true,
+  "gaps": {},
+  "poses": 22,
+  "joints": [
+   "J_Pelvis-J_Waist",
+   "J_Waist-J_Torso",
+   "J_Pelvis-J_Hip_L",
+   "J_Hip_L-J_Knee_L",
+   "J_Knee_L-J_Ankle_L",
+   "J_Torso-J_Shoulder_L",
+   "J_Shoulder_L-J_Elbow_L",
+   "J_Elbow_L-J_Wrist_L",
+   "J_Pelvis-J_Hip_R",
+   "J_Hip_R-J_Knee_R",
+   "J_Knee_R-J_Ankle_R",
+   "J_Torso-J_Shoulder_R",
+   "J_Shoulder_R-J_Elbow_R",
+   "J_Elbow_R-J_Wrist_R"
+  ],
+  "how": "parts on the two bones of every limb joint must touch, every pose + BIND (r5b; started from the knee)"
+ },
+ "v2_raw_info": {
+  "hits": {
+   "dash_float_L": [
+    "Thigh_Hub_L x Elbow_Hub_L",
+    "Thigh_L x Elbow_Hub_L",
+    "Thigh_L x Forearm_L",
+    "Thigh_Plate_L x Elbow_Hub_L",
+    "Thigh_Plate_L x Forearm_L",
+    "Thigh_Plate_L x Forearm_Plate_L",
+    "Thigh_Side_L x Elbow_Hub_L",
+    "Thigh_Side_L x Forearm_L",
+    "Thigh_Side_L x Forearm_Plate_L",
+    "Elbow_Hub_L x Skirt_Side_L",
+    "Elbow_Hub_L x Skirt_Side_Edge_L",
+    "Forearm_L x Tasset_L",
+    "Forearm_L x Tasset_Edge_L",
+    "Forearm_Plate_L x Tasset_L",
+    "Forearm_Plate_L x Tasset_Edge_L"
+   ]
+  },
+  "note": "v2 arm values without LIGHT_ADJUST; info, not a pass/fail"
+ },
+ "pose_top_m": {
+  "stand_aim": 5.643,
+  "aim_up_45": 6.335,
+  "aim_down_45": 5.707,
+  "yaw_85_level": 5.643,
+  "yaw_-85_level": 5.643,
+  "yaw_85_up": 6.335,
+  "yaw_85_down": 5.707,
+  "yaw_-85_down": 5.707,
+  "crouch": 4.402,
+  "crouch_yaw_85": 4.449,
+  "sprint_stride": 5.388,
+  "sprint_lean_L": 5.728,
+  "dash_float_L": 6.149,
+  "dash_land": 5.834,
+  "landing_one_knee": 4.293,
+  "landing_rise": 5.571,
+  "kneel_hatch": 4.404,
+  "melee_L": 5.731,
+  "doomed": 6.025,
+  "walk_A": 5.749,
+  "walk_B": 5.688,
+  "BIND": 5.874
+ },
+ "meas_within_5pct": {
+  "ok": true,
+  "rows": {
+   "stand_top": {
+    "ours": 5.643,
+    "meas": 5.73,
+    "diff_pct": -1.5
+   },
+   "hip_z": {
+    "ours": 3.049,
+    "meas": 3.05,
+    "diff_pct": -0.0
+   },
+   "leg_ratio": {
+    "ours": 0.54,
+    "meas": 0.53,
+    "diff_pct": 2.0
+   },
+   "pelvis_z": {
+    "ours": 3.449,
+    "meas": 3.45,
+    "diff_pct": -0.0
+   },
+   "thigh": {
+    "ours": 1.69,
+    "meas": 1.69,
+    "diff_pct": 0.0
+   },
+   "shin": {
+    "ours": 1.21,
+    "meas": 1.21,
+    "diff_pct": 0.0
+   },
+   "ankle_z": {
+    "ours": 0.38,
+    "meas": 0.38,
+    "diff_pct": 0.0
+   },
+   "hip_spacing": {
+    "ours": 1.57,
+    "meas": 1.57,
+    "diff_pct": 0.0
+   },
+   "shoulder_spacing (reference only)": {
+    "ours": 2.4,
+    "meas": 2.1,
+    "diff_pct": 14.3
+   },
+   "upper_arm": {
+    "ours": 1.08,
+    "meas": 1.08,
+    "diff_pct": 0.0
+   },
+   "forearm": {
+    "ours": 1.08,
+    "meas": 1.08,
+    "diff_pct": 0.0
+   }
+  },
+  "design_reference": {
+   "shoulder_w": [
+    3.54,
+    3.3
+   ],
+   "hip_w": [
+    2.08,
+    1.9
+   ],
+   "foot_l": [
+    1.45,
+    1.35
+   ]
+  },
+  "stand_pose": "stand_aim with the light legs (hip 23, knee 46), feet levelled, lowest vertex on the ground",
+  "note": "stand_top without the weapon"
+ },
+ "sockets": {
+  "ok": true,
+  "missing": [],
+  "count": 28,
+  "joints": 25
+ },
+ "material_slots": {
+  "ok": true,
+  "used": [
+   "MAT_Emissive",
+   "MAT_Frame",
+   "MAT_Primary",
+   "MAT_Secondary"
+  ],
+  "area_pct": {
+   "MAT_Primary": 49.8,
+   "MAT_Secondary": 16.4,
+   "MAT_Frame": 33.4,
+   "MAT_Emissive": 0.4
+  },
+  "target_pct": {
+   "MAT_Primary": 60,
+   "MAT_Secondary": 15,
+   "MAT_Frame": 22,
+   "MAT_Emissive": "<=3"
+  }
+ },
+ "origins_on_joints": {
+  "ok": true,
+  "bad": [],
+  "how": "every part is parented to its joint with zero local offset, so its origin is the joint"
+ },
+ "pilot_fit": {
+  "ok": true,
+  "points": 280,
+  "outside": 0,
+  "outside_analysis": [],
+  "note": "reclined 1.8 m pilot capsules, hip at S_Seat, trunk 40 deg back; closed hatch, rest"
+ },
+ "kneel_hatch": {
+  "ok": true,
+  "hinge_height_m": 2.603,
+  "seat_height_m": 3.039,
+  "opening": {
+   "width_m": 1.163,
+   "widths_m": [
+    0.82,
+    1.163,
+    1.168,
+    0.965
+   ],
+   "height_m": 1.063,
+   "how": "cut face behind the nose: width = min of the inner sections, height = length along the cut from bottom to top section"
+  },
+  "need": "width >= 0.60, height >= 0.94 (seated 1.8 m pilot)",
+  "collisions_with_door_open": [],
+  "pilot_points_inside_open_door": 0
+ },
+ "check_seconds": 9.4,
+ "stage4_sockets_note": "sockets exist from stage 1 on; stage 4 adds colours and the export",
+ "stand_aim_extent_blender": {
+  "min": [
+   -1.442,
+   -3.58,
+   0.0
+  ],
+  "max": [
+   2.113,
+   1.424,
+   5.643
+  ]
+ },
+ "fbx_roundtrip": {
+  "ok": true,
+  "nodes": 54,
+  "worst": "S_Dmg_Shoulder_R",
+  "worst_m": 0.0,
+  "missing": [],
+  "meshes": 105,
+  "mesh_z": [
+   -0.0,
+   5.874
+  ],
+  "materials": [
+   "MAT_Emissive",
+   "MAT_Frame",
+   "MAT_Primary",
+   "MAT_Secondary"
+  ],
+  "blend": "Titan_L2.blend",
+  "fbx": "Titan_L2.fbx",
+  "bind_pose": {
+   "s_flex_R": 10.0,
+   "e_R": 75.0
+  },
+  "setting": "v2 setting: bake_space_transform=False, axis_forward=-Z, axis_up=Y, FBX_SCALE_ALL; Blender re-import only, Unity not run"
+ }
+}
