@@ -849,7 +849,7 @@ t = clamp01((zf − ads_fov_zoomfrac_start) / (ads_fov_zoomfrac_end − ads_fov_
 | 10 | 长距离弹道，归零 | 样本太少 | IP2 §5 |
 | 11 | 表尾循环、Wingman 第 3、4 发 | RV §7 | |
 | 12 | 音频 | 完全没有 | 没人排 |
-| 13 | 准星 UI、命中反馈 | 完全没有 | 没人排 |
+| 13 | 准星 UI、命中反馈 | 〔11-07 盘点了：R5 四层（武器、命中、移动、技能）的规则和数字见 [ui/UI-INVENTORY.md](ui/UI-INVENTORY.md)，HSD 方案和 D-130 – D-135 见 [ui/UI-PLAN.md](ui/UI-PLAN.md)。样子都在编译的 RUI 里，要截图，清单在 INVENTORY §7〕 | 截图：r5 会话（霰弹命中点由 `shotgun-reticle` 测） |
 
 ### 10.3 只来自混合构建的现象，不该学
 

@@ -479,6 +479,20 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 - 没选：放进本仓库（会泄露本机信息、游戏文件）；只留在本机 `_archive`（没有远端备份）。
 - 早期实测：主 checkout `research/phase2-local/data/` 下 10-20 到 10-24 的 158 次实测（M0–M10、N4 / N6 / N8、C3）的 `platform/` + `rows.csv`，2934 个文件 8.43 GB，一直只在本机原处、没进过 `_archive`。〔10-30 你定了：也存进私有仓库，但要标明。已放在单独的 `apex-early/` 下，清单 `MANIFEST-EARLY.tsv`，README 3.7 逐次列出阶段、用到它的报告、文件数、大小；7 次在公开仓库文档里找不到（M1_loop_s2–s6、M3_gfx_check、M4_pilot_octane），标"出处待查"。两个超过 GitHub 100 MB 的 `rows.csv` 以 `.gz` 存（不用 LFS）。全部压缩后约 1 GiB，没拆第二个仓库。从 GitHub 重新检出逐个对主 checkout 原文件核对：2934 / 2934 一致，不一致 0、缺失 0。主 checkout 原文件没动。〕
 
+### 2026-11-07：界面盘点和统一方案（UI，D-130 – D-135 等你定）
+
+- 会话 ui-inventory。只研究，Unity 没改。R5 界面四层盘点 `research/ui/UI-INVENTORY.md`，方案 `research/ui/UI-PLAN.md`。
+- 数据：31 把枪 9 类腰射准星（14 个 RUI），扩散 = `weapon_spread` + 每枪 `base_spread`；开镜和枪身 RUI 112 个；命中 X 一个 RUI 反复重启、8 种类型；伤害数字默认累加（0.25 s 合并、1.0 s）；霰弹"红色图标" = `projectile_hit_dot`，每颗弹丸一个世界点；受伤默认 3D 箭头 1.5 s；**R5 移动时没有界面**；Valk 预览 **12 个圈，4 排 × 3 列**（原生网格函数），HSD 排成 5 + 5 + 2。
+- 样子全在编译的 RUI 里，这次没截图（R5 锁被 `shotgun-reticle` 持有）；清单 INVENTORY §7。
+- D-127 – D-129 留给同时在跑的会话，这里从 D-130 起。
+
+### 2026-11-12：界面方案定了（D-130 – D-135）
+
+- 你在 PR #102 上定的：D-130 A UI Toolkit、D-131 A `HudModel` + 两个画层、D-132 A 世界标记用 3D 网格、D-133 按 R5 玩家默认、D-135 按 U1 – U9，都按建议（"Accept all (Recommended)"）。
+- **D-134 没按建议**：选 B，速度条、姿态文字、滑索 / 跳板 / 悬挂提示默认继续开（"Keep on by default"），标 HSD 设计，留开关关掉。没选的 A（默认关、练习模式开）理由和数据留在 `research/ui/UI-PLAN.md` §3。
+- 什么时候开始做：等战斗那一摞（HSD-Unity #52 – #69）合进 main 以后再开始 U1（"After combat PRs merge (Recommended)"）。
+- Unity 没改。
+
 ---
 
 ## 决定总表
@@ -559,6 +573,12 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 | D-73 | 10-30 | 留档规则 + 共享实时日志 | 记决定和数据（选中 + 没选中 + 各自数据），数据标版本，旧版不删，结束标"到此为止"；实时过程写共享日志 https://claude.ai/artifact/NCjBNDQZPUYoTwdfHdcNEa ，DECISIONS 仍是 git 档案。没选：只记 DECISIONS | 工作区根目录 `CLAUDE.md` | 本文件开头 |
 | D-74 | 10-30 | 蹲着翻越（R5 样本测试后） | 〔10-30 定了：B + E + F，见 D-75〕**等你定**。R5 610 次：蹲姿时长不是两种，是随按蹲时刻变的（h120 四种、长短在同一条命令上混着）；蹲着不能爬墙（116 / 116）；翻越开始俯仰从 0 淡入。选项 A 按 FND-3 分两种 / B 按原生每帧切换 / C 按实测分段近似 / D 不改；另 E 蹲着不能爬墙、F 俯仰淡入可单独定 | Unity 没改 | `research/phase2-local/D72-REPORT.md` |
 | D-75 | 10-30 | 蹲着翻越 / 蹲着爬墙 / 翻越开始俯仰（D-74 的决定） | B 时长按原生翻越状态（Frida：基础状态开始时选一次、蹲到底 +4、速率按基础状态和眼睛高度；177 / 195 段差 ≤ 1 帧）；E 按着蹲取消爬墙；F 翻越俯仰 0.15 s 淡入。没选：A 两种 / C 分段近似 / D 不改。蹲姿时长平均差 0.061 → 0.043 s；h160 / h200 蹲着 0 / 116 上去（= R5）；第一帧俯仰 ≈ 0（= R5）。h120 短的那种（状态 3）Unity 复现不了 | `ClimbParams.nativeTraversalStates` / `crouchEndsClimb`、`NativeCameraParams.traversalLerpIn`；切回 `-preD72`（单项 `-preD72B` / `E` / `F`） | `research/phase2-local/D72-REPORT.md` §8–§9；HSD-Unity #51（`d72/crouch-mantle`） |
+| D-130 | 11-07 | 屏幕界面的技术 | 〔11-12 定了：A UI Toolkit〕原文：**等你定**。建议 A UI Toolkit（模块已在、不加包、Painter2D 画矢量准星）。B uGUI（要加 com.unity.ugui）/ C 继续 IMGUI / D 自绘网格 + shader | Unity 没改 | `research/ui/UI-PLAN.md` §3 |
+| D-131 | 11-07 | 界面逻辑和画怎么分 | 〔11-12 定了：A `HudModel` + 两个画层；没选 B〕原文：**等你定**。建议 A 纯 C# `HudModel` + 屏幕层 + 世界层（同 `HsdHud` 做法，可测试）。B 每个系统自己画（现在） | — | UI-PLAN §1、§3 |
+| D-132 | 11-07 | 世界标记 | 〔11-12 定了：A 3D 网格 / 贴花在世界相机里（霰弹点在屏幕层）；没选 B〕原文：**等你定**。建议 A 3D 网格 / 贴花，按 R5 粒子的位置、半径、颜色（R5 也是粒子和模型）。B 投影到屏幕画 | — | UI-PLAN §3 |
+| D-133 | 11-07 | 默认样式 | 〔11-12 定了：按建议，R5 玩家默认 2 / 1 / 2，其他值留开关〕原文：**等你定**。建议按 R5 玩家默认：命中 X + 护盾图标（2）、累加数字（1）、3D 受伤箭头（2）；准星变红、敌人血条不做。其他值都留开关 | — | UI-PLAN §3；INVENTORY §1 |
+| D-134 | 11-07 | HSD 加的移动提示（速度条、滑索、跳板 2J、悬挂） | 〔11-12 定了：**B 默认开**，标 HSD 设计，开关 `hudMovementHints` 可关；没选 A 默认关练习模式开（原来的建议）、C 删〕原文：**等你定**。建议 A 默认关、练习模式开（R5 移动时没有界面）。B 保持默认开 / C 删（不符合留档规则） | — | UI-PLAN §3；INVENTORY M-00 |
+| D-135 | 11-07 | 做的顺序 | 〔11-12 定了：按 U1 – U9；U1 等战斗那一摞 HSD-Unity #52 – #69 合进 main 以后开始；没选：马上开始〕原文：**等你定**。建议 U1 框架 → U2 准星 → U3 命中 X 和数字 → U4 霰弹点 → U5 状态栏 → U6 受伤 → U7 技能预览（含 Valk 4 × 3 修正）→ U8 开镜瞄具 → U9 移动提示 | — | UI-PLAN §3 |
 | D-76 | 10-30 | 不能公开的原始数据放哪 | 进私有仓库 letheli710/HSD-RawData（R5 `platform/` / `rows.csv`、TF2 `raw.log` / `local/`、去用户名前的原文），按公开仓库路径放，附 sha256 清单；`_archive` 保留。没选：进公开仓库（本机路径、启动命令、账号名、游戏文件）/ 只留本机 | — | 私有仓库 README、`MANIFEST.tsv`；工作区 `CLAUDE.md` 留档规则 |
 
 **D-29 → D-31（C-2 为什么推翻）**：第一次决定时以为 Unity 的 102.5 ms 窗口已经盖住了 R5 的减量段，所以"简化 = 不改代码"。后来按 Unity 自己的翻越时钟重排（Unity 的翻越比 R5 长约 25 ms），发现减量段其实在窗口外面，原来的 Reference 在这段是"切到台面"，并不是"给完整 460"。你随后要求继续做 C-2 并合并。细节见 `research/feel/FEEL.md` §6.4 和 `Climb/README.md`。
