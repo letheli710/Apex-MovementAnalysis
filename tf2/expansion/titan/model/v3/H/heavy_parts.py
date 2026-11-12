@@ -359,6 +359,8 @@ def h1_parts():
                                                         cyl_ab((0.10, yr - 0.28, 3.55), (0.10, yr - 0.28, 2.95), 0.04, 8),
                                                         cyl("y", (-0.04, 3.22), 0.10, yr - 0.43, yr - 0.40, 16)))
     leg_left(P, "round")
+    if RIG.H1_SHAPE == "r6":
+        heavy_joint_parts(P)
     return P
 
 
@@ -525,15 +527,16 @@ def h2_parts():
                                                                for t in np.linspace(0, 2 * math.pi, 6, endpoint=False) for z in (1.1, 2.0)])))
     leg_left(P, "box")
     if RIG.H2_SHAPE == "D":
-        h2_joint_parts(P)
+        heavy_joint_parts(P)
     return P
 
 
-def h2_joint_parts(P):
-    """R6 (lead 11-12): the joint contact test (SPEC 0.4 #40, checks/joint_test.py) found gaps on H-2 r5c / first r6:
-    pelvis-hip 0.128, torso-shoulder 0.093, elbow-wrist 0.043, waist-torso 0.03 m. Pieces centred on each joint axis, so they
-    touch at any angle (same as M-1 R6, L-D20). H-2 only: H-1 has the same gaps (reported, not fixed here; the heavy line can
-    call this for H-1 too). Each piece is excluded from the clash test only against the part it sits in (EXCLUDED_H2)."""
+def heavy_joint_parts(P):
+    """R6 (lead 11-12): the joint contact test (SPEC 0.4 #40, checks/joint_test.py) found the same gaps on both heavies, from the
+    shared pelvis / arm / hand geometry: H-2 r5c pelvis-hip 0.128, torso-shoulder 0.093, elbow-wrist 0.043, waist-torso 0.03 m;
+    H-1 r5c 0.119 / 0.10 / 0.026 / 0.03. Pieces centred on each joint axis, so they touch at any angle (same as M-1 R6, L-D20).
+    H-2 since V4 (HSD_H2_SHAPE=D), H-1 since V5 (HSD_H1_SHAPE=r6). Each piece is excluded from the clash test only against the
+    part it sits in (EXCLUDED_JOINT)."""
     for side, s in (("L", 1), ("R", -1)):
         # hip axle on the pelvis, on the thigh drum's axis (y, z ZH); the thigh drum starts at HY - 0.335 = 0.72
         P.add("Hip_Axle_" + side, "J_Pelvis", "base", "frame", cyl("y", (0, ZH), 0.22, s * 0.50, s * 0.80, 28) if s == 1 else mirror(cyl("y", (0, ZH), 0.22, 0.50, 0.80, 28)))
@@ -549,18 +552,19 @@ def h2_joint_parts(P):
 
 
 # pairs that touch on purpose (joint hubs, plates sitting on a surface, the belt joints). Everything else is collision tested.
+# R6 joint pieces (heavy_joint_parts, both heavies), each only against the part it sits in. In the common list so build_heavy.py
+# needs no change; pairs of parts a titan does not have are never tested.
+EXCLUDED_JOINT = [("Hip_Axle_L", "Thigh_L"), ("Hip_Axle_R", "Thigh_R"), ("Shoulder_Socket_L", "UpperArm_L"), ("Shoulder_Socket_R", "UpperArm_R"),
+                  ("Wrist_Drum_L", "Hand_L"), ("Wrist_Drum_L", "Finger_L_1"), ("Wrist_Drum_L", "Finger_L_2"), ("Wrist_Drum_L", "Finger_L_3")]
 EXCLUDED_COMMON = [
     ("Pelvis", "Waist"), ("Waist", "Torso_Lower"), ("Waist", "Torso_Upper"), ("Hatch", "Torso_Upper"), ("Hatch", "Torso_Lower"), ("Optic", "Torso_Upper"),
     ("UpperArm_L", "Forearm_L"), ("Forearm_L", "Hand_L"), ("UpperArm_R", "Cannon"),
     ("Hand_L", "Finger_L_1"), ("Hand_L", "Finger_L_2"), ("Hand_L", "Finger_L_3"),
     ("Thigh_L", "Shin_L"), ("Thigh_R", "Shin_R"), ("Shin_L", "Foot_L"), ("Shin_R", "Foot_R"), ("Shin_L", "Toe_L"), ("Shin_R", "Toe_R"),
 ]
+EXCLUDED_COMMON += EXCLUDED_JOINT
 EXCLUDED_H2 = [("Cannon", "Barrels"), ("Drum", "Torso_Upper"), ("Belt_Torso", "Belt_Arm"), ("Belt_Arm", "Belt_Cannon"), ("Belt_Arm", "Cannon"),
-               ("Belt_Cannon", "UpperArm_R"), ("Drum", "Belt_Torso"),
-               # R6 joint pieces (h2_joint_parts), each only against the part it sits in
-               ("Hip_Axle_L", "Thigh_L"), ("Hip_Axle_R", "Thigh_R"), ("Shoulder_Socket_L", "UpperArm_L"), ("Shoulder_Socket_R", "UpperArm_R"),
-               ("Wrist_Drum_L", "Hand_L"), ("Wrist_Drum_L", "Finger_L_1"), ("Wrist_Drum_L", "Finger_L_2"), ("Wrist_Drum_L", "Finger_L_3"),
-               ]
+               ("Belt_Cannon", "UpperArm_R"), ("Drum", "Belt_Torso")]
 
 
 def remap(P):
