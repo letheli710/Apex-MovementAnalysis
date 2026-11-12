@@ -1,6 +1,6 @@
 # 待办清单
 
-建立于 2026-10-27，**更新到 2026-10-30**。按研究项目分类，做完一项就打勾，并写上结果在哪个 PR。
+建立于 2026-10-27，**更新到 2026-10-31**（10-31：补坑计划第 1–4 步、D-66 – D-76 打勾，见各项后的〔10-31〕）。按研究项目分类，做完一项就打勾，并写上结果在哪个 PR。
 全阶段总览见 [RESEARCH-OVERVIEW.md](RESEARCH-OVERVIEW.md)；项目日志和决定见 [DECISIONS.md](../DECISIONS.md)；暂缓的设计问题见 [DEFERRED-DESIGN-TODO.md](../DEFERRED-DESIGN-TODO.md)；实时进度看共享日志 https://claude.ai/artifact/NCjBNDQZPUYoTwdfHdcNEa 。
 
 > 这份是 10-30 起放进研究仓库的正式版（`workspace/TODO.md`，FND-2）。工作区根目录的 `TODO.md` 顶上只留一行指向这里，旧内容原样留在下面。文中的 `TF2-Research/…` 路径指工作区里的文件夹；fnd-archive 把它放进本仓库后在 `tf2/…`。
@@ -12,21 +12,21 @@
 你睡觉期间只开 PR、不合并；回归任何一项变差就停下、写日志、等你。
 
 - [x] 第 0 步：共享实时日志建好，规则写进工作区根目录 `CLAUDE.md`；HSD-Unity#49 + research #79 合并（10-30 04:56）。
-- [ ] 1.1 / 1.2 / 1.3 存档进 git：TF2-Research → 本仓库 `tf2/`，根目录文档 → `workspace/`，22 个未跟踪的实验数据文件夹进 git；单个 > 50 MB 的文件进带索引的存档目录（会话 fnd-archive）。
-- [ ] 1.4 共享日志定期导出成 JSON 进 git（每次日志 PR 附 `log-export.json`）。
-- [ ] 2.1 / 2.2 今天的决定 D-66 – D-73 写进 DECISIONS、"现在的状态"和本清单、总览更新到 10-30（会话 fnd-records，research PR "FND-2"，等你合并）。
-- [ ] 2.3 补 6 处缺档（D-11、D-13、D-19、D-22、D-24、D-28）：都补到了（D-11 本地没测过，R5 数据"原始数据没留下"），写在 DECISIONS 末尾"补档（10-30）"（同上 PR）。
-- [ ] 2.4 早期 M 版本的数字：地面移动、滑铲、lurch、M5.5 镜头、M6-A4 斜坡补了数字（同上）。
-- [x] 3.1 K-8 下滑索 punch 按 R5（D-67）。〔做完：HSD-Unity#50，下绳指标 3 / 20 → 17 / 20〕
+- [x] 1.1 / 1.2 / 1.3 存档进 git：TF2-Research → 本仓库 `tf2/`，根目录文档 → `workspace/`，22 个未跟踪的实验数据文件夹进 git；单个 > 50 MB 的文件进带索引的存档目录（会话 fnd-archive）。〔10-31：做完，research #81（10-30 合并）。本仓库公开，含本机信息的原始数据和游戏解包文件没进本仓库，10-30 改进私有仓库 HSD-RawData（D-76，research #83）〕
+- [x] 1.4 共享日志定期导出成 JSON 进 git（每次日志 PR 附 `log-export.json`）。〔10-31：第一份 `log/log-export-2026-10-30.json`（129 条，research #81）；第二份 `log/log-export-2026-10-31.json`（183 条，本次记录对齐 PR）。这是长期规则，以后每个日志 PR 照做〕
+- [x] 2.1 / 2.2 今天的决定 D-66 – D-73 写进 DECISIONS、"现在的状态"和本清单、总览更新到 10-30（会话 fnd-records，research PR "FND-2"，等你合并）。〔10-31：已合并，research #80（10-30）；状态和总览 10-31 再对齐一次〕
+- [x] 2.3 补 6 处缺档（D-11、D-13、D-19、D-22、D-24、D-28）：都补到了（D-11 本地没测过，R5 数据"原始数据没留下"），写在 DECISIONS 末尾"补档（10-30）"（同上 PR）。〔10-31：已合并，research #80〕
+- [x] 2.4 早期 M 版本的数字：地面移动、滑铲、lurch、M5.5 镜头、M6-A4 斜坡补了数字（同上）。〔10-31：已合并，research #80〕
+- [x] 3.1 K-8 下滑索 punch 按 R5（D-67）。〔做完：HSD-Unity#50，下绳指标 3 / 20 → 17 / 20〕〔10-31：#50 已合并（10-30）〕
 - [x] 3.2 二段跳镜头：三种都用 R5 原生 punch，1.2° 留开关（D-68）。〔做完：HSD-Unity#50；只对了原生公式〕
 - [x] 3.3 TF2 二段跳整理成可复用的包，不绑成道具（D-69）。〔做完：HSD-Unity#50，`Abilities/DoubleJumpTf2/`〕
 - [x] 3.4 滑铲跳落地 kick 先查原因再按 R5（D-71）。〔查清：Unity 已等于 R5（1.8–2.4°），不改；HSD-Unity#50〕
-- [ ] 3.5 蹲着翻越的镜头曲线按实际蹲姿时长，跑 B1 / B1-H 回归（D-72）。〔查清、没改：要动运动或 S27 曲线，**等你选 A–D**（DECISIONS"还没结论的事"）〕
-- [ ] 3.6 小差别只记录（滑铲下沉 0.19 s 对 0.167 s 等，D-70）。
-- [ ] 4.1 修 runner 锁的竞争（两个会话同时等锁可能同时拿到；泰坦实测用完 runner 再改）。
-- [ ] 4.2 工作区清理：已合并的工作树、主 checkout 落后、HSD-Unity 主 checkout 停在旧分支、`origin/cloud/check-1`（删分支前先打 `archive/` tag，先问你；会话 fnd-cleanup）。
-- [ ] 4.3 侧栏 btw 分叉会话归档（不删除）。
-- [ ] 第 5 步等你定：D-56 火箭跳、泰坦清单抉择列、TF2X 试玩后的修改项、E1–E3（留到游戏接近完成）。
+- [x] 3.5 蹲着翻越的镜头曲线按实际蹲姿时长，跑 B1 / B1-H 回归（D-72）。〔查清、没改：要动运动或 S27 曲线，**等你选 A–D**（DECISIONS"还没结论的事"）〕〔10-31：做完。D-74 R5 样本测试 610 次（research #82），你选 B + E + F，D-75 按原生实现（HSD-Unity#51 + research #82，10-31 合并；build `HSD-Build\D72`）；单一长版本留开关 `MovementConfig.SetD75(false)`。B1 / B1-H 的 S27 测试全过。h120 蹲约 1 / 4 的短翻越 Unity 复现不了，记在 R5-DIFF-ARCHIVE "D-75"〕
+- [x] 3.6 小差别只记录（滑铲下沉 0.19 s 对 0.167 s 等，D-70）。〔10-31：记在 DECISIONS FND-3 节"D-70 小差别"，HSD-Unity#50 / research #80〕
+- [x] 4.1 修 runner 锁的竞争（两个会话同时等锁可能同时拿到；泰坦实测用完 runner 再改）。〔10-31：做完（fnd-archive）：`take_lock` 改成独占创建 + 读回确认，`runner.acquire` 重试；5 轮 × 8 进程同时抢每轮恰好 1 个拿到。在 `tf2/runtime/`，research #81〕
+- [x] 4.2 工作区清理：已合并的工作树、主 checkout 落后、HSD-Unity 主 checkout 停在旧分支、`origin/cloud/check-1`（删分支前先打 `archive/` tag，先问你；会话 fnd-cleanup）。〔10-31：做完，工作区根目录 `CLEANUP-RECORD.md`：20 个已合并工作树和 21 个本地分支删掉，115 个 `archive/` tag 推上远端。远端分支你 10-30 定了不删，只记录〕
+- [ ] 4.3 侧栏 btw 分叉会话归档（不删除）。〔10-31：没做。清单在 `CLEANUP-RECORD.md` 第 6 节；你 10-30 定了"旧会话暂时不归档"（暂时没有必要），所以不打勾，以后要归档再用这份清单〕
+- [ ] 第 5 步等你定：D-56 火箭跳、泰坦清单抉择列、TF2X 试玩后的修改项、E1–E3（留到游戏接近完成）。〔10-31：还在等你。D-56 火箭跳 A / B、泰坦 7 选 3（`tf2/expansion/TITAN-LIST.md`）、E1–E3 都没定〕
 
 ---
 
@@ -67,7 +67,8 @@
 - [ ] **T-8 泰坦**：冲刺、Ronin 相位冲刺、Northstar 悬停飞行、弹射逃生（eject）、转向手感等。〔同日先停止，后**恢复**：用户决定 HSD 做 3–4 台泰坦。清单 `TF2-Research/expansion/TITAN-LIST.md`；设置值已读，在 `overnight/N3-N5-ABILITIES-TITAN-LEVELS.md`〕
   - 2026-10-30：用户试玩 TF2X 通过，PR HSD-Unity#49 / research #79 已合并；下一阶段 = 泰坦。
   - [x] **T0 做完（2026-10-30）**：`TF2-Research/expansion/titan/T0-REPORT.md`。7 台都能召唤驾驶；鼠标 / 键盘转向和铁驭完全一样（2000 计数都是 144.78°），只有手柄转速 × 0.75；底盘走 270 / 250 / 210、冲刺跑 400 / 380 / 310、dash 800 / 700 / 600，多人 dash 次数 2 / 1 / 1。每台详细数据在 `titan/titans/`。DECISIONS 10-30 节点。T0（召唤驾驶、转向实测、三种底盘移动）交给下属会话 tf2-t0-titan，产出 `TF2-Research/expansion/titan/T0-REPORT.md`。同日用户改：7 台泰坦全部实测，每台详细数据（转向、移动、武器、技能、核心），都交给 tf2-t0-titan；用户之后从中选 3 台。
-- [ ] **T-12 铁驭技能和道具扩展**：隐身、扫描、A 型墙、分身、五种投掷物、抛物线显示、悬停、增幅、蜘蛛雷、哨戒炮、地图透视、智能手枪、相位回溯。清单 `TF2-Research/expansion/PILOT-LIST.md`（用户定稿 2026-10-29；第 0 节是分工）。W1–W3 都做完（2026-10-29 中午，未提交）：测试靶子 `expansion/w1/TARGETS.md`、技能和投掷物 `expansion/w2/W2-REPORT.md`、增益和特殊武器 `expansion/w3/W3-REPORT.md`。遗留：runner 两个会话同时等锁时可能同时拿到锁（W1 发现，11:34 一次，数据没受影响），下次并行实测前要修。Apex 有原型的 8 项由下属会话 W4（`tf2-w4-apex`）在本地 R5 做，按 `TF2-Research/expansion/APEX-HANDOFF.md`；成果放 `TF2-Research/expansion/apex/`，标注"来源 Apex、归属 TF2"（用户 2026-10-29）。W4 做完（2026-10-29）：`TF2-Research/expansion/apex/APEX-REPORT.md`，8 项 + 可选 Rampart；Fuse 在本地构建里有；Apex 的抛物线显示是所有投掷物默认开。未在 R5 验证：真实按键投掷的仰角偏移和继承速度（借用 W2 的 TF2 分析）。简单项在 `DESIGN-LIST.md`。**可玩版本 TF2X 做完（2026-10-29，W5 `tf2-w5-build`）**：HSD-Unity `tf2/wallrun-rules` 7249b59..2179459（五个阶段，在 PR #49，未合并），研究仓库 D-59..D-65（PR #79）；build `HSD-Build\TF2X`，试玩说明在里面。什么都不装时移动输出逐字节不变。等你试玩。〔10-30 你试玩通过，已合并：HSD-Unity#49 + research #79〕
+  - 10-31：泰坦美术风格和建模资料包（共享日志 `2026-10-31-tf2-leader-titan-art-brief`，工作区 `TF2-Research/expansion/titan/art/TITAN-ART-BRIEF.md`）。7 选 3 还没定。
+- [ ] **T-12 铁驭技能和道具扩展**：隐身、扫描、A 型墙、分身、五种投掷物、抛物线显示、悬停、增幅、蜘蛛雷、哨戒炮、地图透视、智能手枪、相位回溯。清单 `TF2-Research/expansion/PILOT-LIST.md`（用户定稿 2026-10-29；第 0 节是分工）。W1–W3 都做完（2026-10-29 中午，未提交）：测试靶子 `expansion/w1/TARGETS.md`、技能和投掷物 `expansion/w2/W2-REPORT.md`、增益和特殊武器 `expansion/w3/W3-REPORT.md`。遗留：runner 两个会话同时等锁时可能同时拿到锁（W1 发现，11:34 一次，数据没受影响），下次并行实测前要修。〔10-31：已修，补坑计划 4.1，research #81〕Apex 有原型的 8 项由下属会话 W4（`tf2-w4-apex`）在本地 R5 做，按 `TF2-Research/expansion/APEX-HANDOFF.md`；成果放 `TF2-Research/expansion/apex/`，标注"来源 Apex、归属 TF2"（用户 2026-10-29）。W4 做完（2026-10-29）：`TF2-Research/expansion/apex/APEX-REPORT.md`，8 项 + 可选 Rampart；Fuse 在本地构建里有；Apex 的抛物线显示是所有投掷物默认开。未在 R5 验证：真实按键投掷的仰角偏移和继承速度（借用 W2 的 TF2 分析）。简单项在 `DESIGN-LIST.md`。**可玩版本 TF2X 做完（2026-10-29，W5 `tf2-w5-build`）**：HSD-Unity `tf2/wallrun-rules` 7249b59..2179459（五个阶段，在 PR #49，未合并），研究仓库 D-59..D-65（PR #79）；build `HSD-Build\TF2X`，试玩说明在里面。什么都不装时移动输出逐字节不变。等你试玩。〔10-30 你试玩通过，已合并：HSD-Unity#49 + research #79〕
 - [ ] ~~**T-9 战役的特殊机制**~~：时间穿越关卡、跑酷关卡（关卡设计灵感）。〔停止 2026-10-29：不符合研究标准。脚本已读，同上文件〕
 
 ---
@@ -128,10 +129,17 @@
 ## 2026-10-30 你定的（第三批，DECISIONS D-66 – D-73）
 
 - [x] **回放电机到此为止**（D-66）：只当尺子，剩下的斜坡、+30 推墙、空中额外加速、超速跳减、冲刺加速边界、lurch 上限都不换。
-- [ ] **K-8 下滑索 punch** 按 R5 加（D-67）→ 补坑计划 3.1。
-- [ ] **二段跳镜头** 三种都用 R5 原生 punch（D-68）→ 3.2。
-- [ ] **TF2 二段跳复用包**，不绑成道具（D-69）→ 3.3。
+- [x] **K-8 下滑索 punch** 按 R5 加（D-67）→ 补坑计划 3.1。〔10-31：做完，HSD-Unity#50〕
+- [x] **二段跳镜头** 三种都用 R5 原生 punch（D-68）→ 3.2。〔10-31：做完，HSD-Unity#50（只对了原生公式，R5 没有二段跳镜头录像）〕
+- [x] **TF2 二段跳复用包**，不绑成道具（D-69）→ 3.3。〔10-31：做完，HSD-Unity#50，`Abilities/DoubleJumpTf2/`〕
 - [x] **拟合原则**（D-70）：尽量贴合 R5，差零点几个百分比不追但要写下来。
-- [ ] **滑铲跳落地 kick** 先查原因再按 R5（D-71）→ 3.4。
-- [ ] **蹲着翻越镜头时刻** 按实际蹲姿时长（D-72）→ 3.5。
+- [x] **滑铲跳落地 kick** 先查原因再按 R5（D-71）→ 3.4。〔10-31：查清，Unity 已等于 R5（1.8–2.4°），不改；HSD-Unity#50〕
+- [x] **蹲着翻越镜头时刻** 按实际蹲姿时长（D-72）→ 3.5。〔10-31：原因不是曲线选法；D-74 样本测试后定 B + E + F，D-75 做完，HSD-Unity#51 + research #82〕
 - [x] **留档规则 + 共享实时日志**（D-73）：规则在工作区根目录 `CLAUDE.md` 和 DECISIONS 开头。
+
+## 2026-10-30 你定的（第四批，DECISIONS D-74 – D-76）
+
+- [x] **蹲着翻越 R5 样本测试**（D-74）：610 次正式试次，结论和 FND-3 不一样（长短不按蹲的时长分）。〔做完：research #82〕
+- [x] **蹲着翻越按 R5 原生**（D-75）：时长 B（原生翻越状态）+ E（按着蹲取消爬墙）+ F（翻越开始俯仰淡入）；旧版留开关。〔做完：HSD-Unity#51 + research #82，10-31 合并，build `HSD-Build\D72`〕
+- [x] **私有原始数据仓库 HSD-RawData**（D-76）：7217 个文件进私有仓库；10-20 – 10-24 的 158 个早期 R5 run 也进了它的 `apex-early/`。〔做完：research #83，10-31 合并〕
+- [ ] 小尾巴（只记录，不追）：7 个早期 run（M1_loop_s2 – s6、M3_gfx_check、M4_pilot_octane）标"出处待查"；h120 蹲约 1 / 4 的短翻越：长短取决于起点是否跨过离台面点 20 u，R5 的起点差来自帧时间抖动、R5 自己也控制不了，Unity 起点总落在状态 4，复现不了（R5-DIFF-ARCHIVE "D-75"）。
