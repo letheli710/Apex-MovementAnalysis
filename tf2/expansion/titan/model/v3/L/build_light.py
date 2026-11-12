@@ -828,6 +828,11 @@ def export(objs):
     bpy.ops.export_scene.fbx(filepath=fbx, use_selection=False, object_types={"EMPTY", "MESH"}, axis_forward="-Z", axis_up="Y",
                              apply_scale_options="FBX_SCALE_ALL", bake_space_transform=False, bake_anim=False, global_scale=1.0,
                              add_leaf_bones=False, mesh_smooth_type="FACE")
+    # 11-13 (lead: old versions are never deleted): every round keeps its own product next to its pictures, so the next build
+    # overwriting Titan_<code>.blend / .fbx in L/ loses nothing (r5b / r5c were overwritten by r6a and had to be rebuilt / restored)
+    import shutil
+    for src in (blend, fbx):
+        shutil.copy2(src, os.path.join(OUT, os.path.basename(src)))
     want = {n: np.array(objs[n].matrix_world.translation) for n in NODES}   # R5: bind pose (right arm carried), not the zero pose
     bpy.ops.wm.read_factory_settings(use_empty=True)
     bpy.ops.import_scene.fbx(filepath=fbx, axis_forward="-Z", axis_up="Y")

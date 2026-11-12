@@ -56,7 +56,11 @@ lead 看到 L-1 3/4 图里膝盖处大腿和小腿断开。查了所有姿势（
 - **成品**：L-1 / L-2 r6a，19 个姿势、走路、翼展开全部不穿模，关节全接上，武器离地，FBX 往返误差 0，面数不变（51 780 / 49 060）。图在 `L1/r6a`、`L2/r6a`。
 - **Unity 副本**（D-163 的三项都重跑）：零姿势、Blender 三角化、导入测试逐件比面积 ≤ 0.5 %。L-1 51 780 → Unity 51 100，L-2 49 060 → 48 814，都只丢零面积三角。`TitanLightImportTests` 两组全过；EditMode 2979 / 2979。
 
-**留档**：r5b / r5c 的成品 `Titan_L1/L2.blend/.fbx` 在 r6a 重建时被覆盖，没有另存。它们的图、checks 和 Unity 副本（研究仓库 #116 的 ee5a07e）还在；代码回退后能重建出来。
+**留档**：r6a 重建时覆盖了 `L/` 下的 `Titan_L1/L2.blend/.fbx`（当时是 L-1 r5b、L-2 r5c）。11-13 已补回，各放回自己那一轮的目录：
+- **L-2 r5c**：研究仓库 #116 的 5583075（V7）里有，原样取回到 `L2/r5c/Titan_L2.blend/.fbx`。
+- **L-1 r5b**：从没进过 git（git 里 L-1 成品最后一版是 c9ef59c 的 R5 `r5_final`）。用 #116 ee5a07e 里当时的脚本（`geo` `light_rig` `light_common` `l1_parts` `l2_parts` `build_light`）重建，放到 `L1/r5b/Titan_L1.blend/.fbx`。重建结果和原来 `L1/r5b/checks.json` 的 12 组检查逐项相同（面数、部件数、顶高、比例、19 姿势、关节、驾驶员、跪姿舱门、武器离地、材质）。
+- **其他轮次**：r4 的成品在 `L1/r4_final`、`L2/r4_final`；R5 的成品在 git c9ef59c。
+- **以后**：`build_light.py` 在第 4 步把成品同时存进当轮的目录（`L1/r6a` 起），`L/` 根下的只是最新一份。
 
 ## 1. 大白话
 
