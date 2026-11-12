@@ -15,7 +15,7 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
-import build_m1_r6  # noqa: E402,F401  (patches build_m1_r5's model; main only runs with "r6" in argv)
+import build_m1_r7  # noqa: E402,F401  (R7: R6's joint pieces + the R7 hip axle; build_m1_r7 imports build_m1_r6 and patches build_m1_r5's model)
 import build_m1_r5 as F  # noqa: E402
 
 D = F.D
