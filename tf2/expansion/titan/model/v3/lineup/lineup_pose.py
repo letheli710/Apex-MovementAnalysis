@@ -42,7 +42,21 @@ def rotations(code, pose):
     sys.path.insert(0, os.path.join(V3, "M1"))
     import build_m1_silhouette as S
     p = {k: v for k, v in S.D.SPEC["hand_poses"][pose].items() if not k.startswith("_")}
+    if code.startswith("H"):
+        p.update(HEAVY_POSE_OVERRIDE.get(pose, {}))
     return p, S.local_rotations
+
+
+# the heavy line's own kneels (H/build_heavy.py HEAVY_POSE_OVERRIDE, H-P3); copied because build_heavy runs on import
+HEAVY_POSE_OVERRIDE = {"kneel_hatch": {"a_R": 30.0, "h_flex_L": 40.0, "k_L": 55.0},
+                       "landing_one_knee": {"a_R": 30.0, "h_flex_L": 52.0, "k_L": 64.0}}
+
+
+def pose_names(code):
+    """The 19 v2 pose names (every line keeps them; L and H use their own values for some)."""
+    sys.path.insert(0, os.path.join(V3, "M1"))
+    import build_m1_silhouette as S
+    return list(S.D.SPEC["hand_poses"])
 
 
 def rest_offsets(objs):

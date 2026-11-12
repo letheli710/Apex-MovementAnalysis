@@ -446,11 +446,31 @@ def h2_parts():
     dl = dome_left(p_out=5.0, rad=(0.68, 0.64, 0.64), c=(0.0, SY + 0.02, ZS + 0.40), r_in=(0.48, 0.58, 0.56), seg=48, rings=14)
     P.add("Shoulder_L", "J_Torso", "base", "pri" if os.environ.get("HSD_H2_LDOME") == "pri" else "sec", dl)   # R5 H-C3
     P.add("Shoulder_R", "J_Torso", "base", "pri", mirror(dl))
-    shield = loft([(4.72, rect(-0.70, 0.70, SY + 0.66, SY + 0.98, 0.05)), (4.90, rect(-0.80, 0.80, SY + 0.54, SY + 1.00, 0.06)),
-                   (5.80, rect(-0.80, 0.80, SY + 0.54, SY + 1.00, 0.06)), (5.95, rect(-0.66, 0.72, SY + 0.58, SY + 0.96, 0.05))])
-    P.add("Shoulder_L", "J_Torso", "base", "sec", shield)
-    P.add("Shoulder_L", "J_Torso", "plate", "frame", merge(box((0.0, SY + 1.005, 5.25), (0.70, 0.012, 0.04)), box((-0.81, SY + 0.77, 5.25), (0.012, 0.18, 0.60))))
-    P.add("Shoulder_L", "J_Torso", "detail", "frame", G.bolts([(x, SY + 1.01, z) for x in (-0.6, -0.2, 0.2, 0.6) for z in (5.00, 5.70)], (0, 1, 0), r=0.04, h=0.03))
+    if RIG.H2_SHAPE == "D":
+        # R6 (D-157 option D): the shield slab 0.45 m further out and 0.53 thick (r5c 0.46), down to z 4.30 (r5c 4.72), joined to the
+        # dome by a solid mount block (SPEC 3.1 rule 7: shoulder width from armour volume, not a bracket). Outer face y SY + 1.45.
+        o = RIG.H2_SHIELD_DY
+        shield = loft([(4.30, rect(-0.66, 0.66, SY + o + 0.52, SY + o + 0.96, 0.05)), (4.50, rect(-0.80, 0.80, SY + o + 0.47, SY + o + 1.00, 0.06)),
+                       (5.80, rect(-0.80, 0.80, SY + o + 0.47, SY + o + 1.00, 0.06)), (5.95, rect(-0.66, 0.72, SY + o + 0.51, SY + o + 0.96, 0.05))])
+        P.add("Shoulder_L", "J_Torso", "base", "sec", shield)
+        # full height of the slab (first try was z 4.95-5.80: from the front it read as a bracket with a gap under it)
+        # underside slants outward (inner face SY + 0.85 at the bottom -> SY + 0.62 at z 4.85): the full-height block hit the abducted
+        # upper arm in landing_one_knee / landing_rise at y 2.38, z 4.40-4.48
+        mount = loft([(4.40, rect(-0.56, 0.56, SY + 0.85, SY + o + 0.50, 0.08)), (4.55, rect(-0.68, 0.68, SY + 0.80, SY + o + 0.50, 0.10)),
+                      (4.85, rect(-0.70, 0.70, SY + 0.62, SY + o + 0.50, 0.10)),
+                      (5.70, rect(-0.70, 0.70, SY + 0.60, SY + o + 0.50, 0.10)), (5.80, rect(-0.60, 0.60, SY + 0.60, SY + o + 0.50, 0.08))])
+        P.add("Shoulder_L", "J_Torso", "base", "sec", mount)
+        P.add("Shoulder_L", "J_Torso", "plate", "frame", merge(box((0.0, SY + o + 1.005, 5.25), (0.70, 0.012, 0.04)), box((-0.81, SY + o + 0.74, 5.12), (0.012, 0.22, 0.75)),
+                                                              box((0.0, SY + o + 0.50, 5.10), (0.62, 0.025, 0.55))))      # seam where mount meets slab
+        P.add("Shoulder_L", "J_Torso", "detail", "frame", merge(
+            G.bolts([(x, SY + o + 1.01, z) for x in (-0.6, 0.6) for z in (4.60, 5.70)], (0, 1, 0), r=0.04, h=0.03),          # slab corners only (M-1 R5 bolt rule)
+            G.bolts([(x, SY + 0.80, 5.81) for x in (-0.45, 0.45)], (0, 0, 1), r=0.035, h=0.03)))                               # mount top, where it meets the slab
+    else:
+        shield = loft([(4.72, rect(-0.70, 0.70, SY + 0.66, SY + 0.98, 0.05)), (4.90, rect(-0.80, 0.80, SY + 0.54, SY + 1.00, 0.06)),
+                       (5.80, rect(-0.80, 0.80, SY + 0.54, SY + 1.00, 0.06)), (5.95, rect(-0.66, 0.72, SY + 0.58, SY + 0.96, 0.05))])
+        P.add("Shoulder_L", "J_Torso", "base", "sec", shield)
+        P.add("Shoulder_L", "J_Torso", "plate", "frame", merge(box((0.0, SY + 1.005, 5.25), (0.70, 0.012, 0.04)), box((-0.81, SY + 0.77, 5.25), (0.012, 0.18, 0.60))))
+        P.add("Shoulder_L", "J_Torso", "detail", "frame", G.bolts([(x, SY + 1.01, z) for x in (-0.6, -0.2, 0.2, 0.6) for z in (5.00, 5.70)], (0, 1, 0), r=0.04, h=0.03))
     for side, s in (("L", 1), ("R", -1)):
         cy = s * (SY + 0.02)
         P.add("Shoulder_" + side, "J_Torso", "plate", "frame", box((0.0, cy, ZS + 1.00), (0.50, 0.46, 0.04)))
@@ -483,24 +503,49 @@ def h2_parts():
     hand_left(P, "box")
     # cannon: breech = forearm (W_Cannon), six-barrel bundle on J_Barrel, 3.40 m elbow -> muzzle
     yr = -SY
-    P.add("Cannon", "W_Cannon", "base", "frame", cyl("y", (0, ZE), 0.30, yr - 0.32, yr + 0.32, 28))
-    P.add("Cannon", "W_Cannon", "base", "pri", loft([(3.60, rect(-0.40, 0.40, yr - 0.40, yr + 0.40, 0.07)), (3.30, rect(-0.44, 0.44, yr - 0.44, yr + 0.44, 0.08)),
-                                                     (2.66, rect(-0.42, 0.42, yr - 0.42, yr + 0.42, 0.08)), (2.56, rect(-0.36, 0.36, yr - 0.36, yr + 0.36, 0.06))]))
-    P.add("Cannon", "W_Cannon", "plate", "frame", merge(cyl("z", (0, yr), 0.40, 2.40, 2.58, 40), box((0, yr - 0.45, 3.05), (0.12, 0.03, 0.14))))
-    P.add("Cannon", "W_Cannon", "plate", "emit", box((0.0, yr - 0.448, 3.38), (0.20, 0.008, 0.028)))
-    P.add("Cannon", "W_Cannon", "plate", "emit", box((0.0, yr - 0.448, 3.30), (0.13, 0.008, 0.028)))
-    P.add("Cannon", "W_Cannon", "detail", "frame", merge(G.bolts([(0.445, yr + y, z) for y in (-0.3, 0.0, 0.3) for z in (2.80, 3.40)], (1, 0, 0)),
-                                                        G.slats(-0.445, yr - 0.30, yr + 0.30, 2.75, 3.45, 6, depth=0.03, axis="x")))
+    k = RIG.H2_CANNON_K
+    y_in = yr + RIG.H2_CANNON_IN       # R6: the breech's inner face stays here, the cannon grows outward (axis moves to yr - H2_CANNON_SHIFT)
+    fat = (lambda m: ([(x * k, y_in + (y - y_in) * k, z) for x, y, z in m[0]], m[1])) if k != 1.0 else (lambda m: m)
+    # elbow hub stays coaxial with the elbow (not scaled); R6 only lengthens it outward to the wider breech
+    P.add("Cannon", "W_Cannon", "base", "frame", cyl("y", (0, ZE), 0.30, yr + 0.32 - 0.64 * k, yr + 0.32, 28))
+    P.add("Cannon", "W_Cannon", "base", "pri", fat(loft([(3.60, rect(-0.40, 0.40, yr - 0.40, yr + 0.40, 0.07)), (3.30, rect(-0.44, 0.44, yr - 0.44, yr + 0.44, 0.08)),
+                                                         (2.66, rect(-0.42, 0.42, yr - 0.42, yr + 0.42, 0.08)), (2.56, rect(-0.36, 0.36, yr - 0.36, yr + 0.36, 0.06))])))
+    P.add("Cannon", "W_Cannon", "plate", "frame", fat(merge(cyl("z", (0, yr), 0.40, 2.40, 2.58, 40), box((0, yr - 0.45, 3.05), (0.12, 0.03, 0.14)))))
+    P.add("Cannon", "W_Cannon", "plate", "emit", fat(box((0.0, yr - 0.448, 3.38), (0.20, 0.008, 0.028))))
+    P.add("Cannon", "W_Cannon", "plate", "emit", fat(box((0.0, yr - 0.448, 3.30), (0.13, 0.008, 0.028))))
+    P.add("Cannon", "W_Cannon", "detail", "frame", fat(merge(G.bolts([(0.445, yr + y, z) for y in (-0.3, 0.0, 0.3) for z in (2.80, 3.40)], (1, 0, 0)),
+                                                            G.slats(-0.445, yr - 0.30, yr + 0.30, 2.75, 3.45, 6, depth=0.03, axis="x"))))
     bundle = [cyl("z", (0.0, yr), 0.09, 0.50, 2.45, 16)]
     for t in np.linspace(0, 2 * math.pi, 6, endpoint=False):
         bx, by = 0.27 * math.cos(t), yr + 0.27 * math.sin(t)
         bundle.append(G.revolve([(2.45, 0.10), (0.34, 0.10), (0.30, 0.115)], "z", (bx, by), 16))
-    P.add("Barrels", "J_Barrel", "base", "frame", merge(*bundle))
-    P.add("Barrels", "J_Barrel", "plate", "frame", merge(cyl("z", (0, yr), 0.40, 1.48, 1.62, 40), cyl("z", (0, yr), 0.40, 0.55, 0.68, 40)))
-    P.add("Barrels", "J_Barrel", "detail", "frame", merge(*[cyl("z", (0.27 * math.cos(t), yr + 0.27 * math.sin(t)), 0.125, z, z + 0.05, 12)
-                                                           for t in np.linspace(0, 2 * math.pi, 6, endpoint=False) for z in (1.1, 2.0)]))
+    P.add("Barrels", "J_Barrel", "base", "frame", fat(merge(*bundle)))
+    P.add("Barrels", "J_Barrel", "plate", "frame", fat(merge(cyl("z", (0, yr), 0.40, 1.48, 1.62, 40), cyl("z", (0, yr), 0.40, 0.55, 0.68, 40))))
+    P.add("Barrels", "J_Barrel", "detail", "frame", fat(merge(*[cyl("z", (0.27 * math.cos(t), yr + 0.27 * math.sin(t)), 0.125, z, z + 0.05, 12)
+                                                               for t in np.linspace(0, 2 * math.pi, 6, endpoint=False) for z in (1.1, 2.0)])))
     leg_left(P, "box")
+    if RIG.H2_SHAPE == "D":
+        h2_joint_parts(P)
     return P
+
+
+def h2_joint_parts(P):
+    """R6 (lead 11-12): the joint contact test (SPEC 0.4 #40, checks/joint_test.py) found gaps on H-2 r5c / first r6:
+    pelvis-hip 0.128, torso-shoulder 0.093, elbow-wrist 0.043, waist-torso 0.03 m. Pieces centred on each joint axis, so they
+    touch at any angle (same as M-1 R6, L-D20). H-2 only: H-1 has the same gaps (reported, not fixed here; the heavy line can
+    call this for H-1 too). Each piece is excluded from the clash test only against the part it sits in (EXCLUDED_H2)."""
+    for side, s in (("L", 1), ("R", -1)):
+        # hip axle on the pelvis, on the thigh drum's axis (y, z ZH); the thigh drum starts at HY - 0.335 = 0.72
+        P.add("Hip_Axle_" + side, "J_Pelvis", "base", "frame", cyl("y", (0, ZH), 0.22, s * 0.50, s * 0.80, 28) if s == 1 else mirror(cyl("y", (0, ZH), 0.22, 0.50, 0.80, 28)))
+        # shoulder socket on the torso, on the arm drum's axis (y, z ZS); the arm drum's inner end is at SY - 0.40 = 1.36
+        sock = cyl("y", (0, ZS), 0.30, 1.10, 1.46, 32)
+        P.add("Shoulder_Socket_" + side, "J_Torso", "base", "frame", sock if s == 1 else mirror(sock))
+    # wrist drum on the forearm, on the wrist pitch axis (y, z ZW); forearm ends at 2.76, palm starts at 2.70
+    P.add("Wrist_Drum_L", "J_Elbow_L", "base", "frame", cyl("y", (0, ZW), 0.17, SY - 0.24, SY + 0.24, 24))
+    # waist cap: the waist drum (r 0.54, top 3.52) ends 0.03 under the torso lower (3.55). A cap on the drum itself (J_Waist, part
+    # Waist, so the existing Waist - Torso exclusions apply) up into the torso's bottom. First try was a neck on the torso: it hit
+    # the pelvis whenever the torso bent (11 poses).
+    P.add("Waist", "J_Waist", "base", "sec", G.revolve([(3.50, 0.48), (3.62, 0.48), (3.64, 0.44)], "z", (0.0, 0.0), 40))
 
 
 # pairs that touch on purpose (joint hubs, plates sitting on a surface, the belt joints). Everything else is collision tested.
@@ -511,7 +556,11 @@ EXCLUDED_COMMON = [
     ("Thigh_L", "Shin_L"), ("Thigh_R", "Shin_R"), ("Shin_L", "Foot_L"), ("Shin_R", "Foot_R"), ("Shin_L", "Toe_L"), ("Shin_R", "Toe_R"),
 ]
 EXCLUDED_H2 = [("Cannon", "Barrels"), ("Drum", "Torso_Upper"), ("Belt_Torso", "Belt_Arm"), ("Belt_Arm", "Belt_Cannon"), ("Belt_Arm", "Cannon"),
-               ("Belt_Cannon", "UpperArm_R"), ("Drum", "Belt_Torso")]
+               ("Belt_Cannon", "UpperArm_R"), ("Drum", "Belt_Torso"),
+               # R6 joint pieces (h2_joint_parts), each only against the part it sits in
+               ("Hip_Axle_L", "Thigh_L"), ("Hip_Axle_R", "Thigh_R"), ("Shoulder_Socket_L", "UpperArm_L"), ("Shoulder_Socket_R", "UpperArm_R"),
+               ("Wrist_Drum_L", "Hand_L"), ("Wrist_Drum_L", "Finger_L_1"), ("Wrist_Drum_L", "Finger_L_2"), ("Wrist_Drum_L", "Finger_L_3"),
+               ]
 
 
 def remap(P):

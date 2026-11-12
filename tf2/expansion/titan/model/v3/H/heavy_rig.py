@@ -184,19 +184,27 @@ H1_EXTRA = {
 }
 
 # H-2 Legion
+# R6 (lead 11-12, D-157 option D): cannon x1.45 thicker, left shield 0.45 m further out. HSD_H2_SHAPE=r5c rebuilds the r5c shape.
+# The cannon grows outward only: its inner face (0.44 inside the axis) stays where it was, otherwise the wider breech hits the
+# torso side whenever the cannon points forward (first r6 run: 16 of 19 poses). So the cannon axis moves out by 0.44 * (k - 1).
+H2_SHAPE = __import__("os").environ.get("HSD_H2_SHAPE", "D")
+H2_CANNON_K = 1.45 if H2_SHAPE == "D" else 1.0       # scale of the cannon across its axis (length unchanged)
+H2_CANNON_IN = 0.44                                   # breech half-width at its widest (r5c); the inner face stays at axis + this
+H2_CANNON_SHIFT = H2_CANNON_IN * (H2_CANNON_K - 1)    # 0.198: cannon axis moves outward (-y)
+H2_SHIELD_DY = 0.45 if H2_SHAPE == "D" else 0.0      # shield moved outward (+y, titan left)
 H2 = dict(
     hatch=(1.33, 0.0, 4.15), optic=(1.00, 0.0, 5.38), launcher=(-0.40, 1.30, 5.40),
     chest=(1.15, 0.0, 4.62), thrust=(-1.18, 0.55, 4.45), embark=(1.75, 0.0, 4.10),
     vent_L=(-1.17, 0.55, 5.05), vent_R=(-1.17, 0.15, 5.05), vent_dir_L=_d(-1, 0, 0), vent_dir_R=_d(-1, 0, 0),
-    optic_face=(1.10, 0.0, 5.38), muzzle=(0.0, -SH_Y, 0.30),
+    optic_face=(1.10, 0.0, 5.38), muzzle=(0.0, -SH_Y - H2_CANNON_SHIFT, 0.30),
     dmg_f=(1.32, 0.55, 4.80), dmg_b=(-1.17, 0.40, 4.40),
 )
 H2_EXTRA = {
-    "J_Barrel": ("W_Cannon", (0.0, -SH_Y, 2.55), None),          # spins about the cannon axis (SOCKET_Barrel)
+    "J_Barrel": ("W_Cannon", (0.0, -SH_Y - H2_CANNON_SHIFT, 2.55), None),          # spins about the cannon axis (SOCKET_Barrel)
     "J_Drum": ("J_Torso", (-1.48, -0.62, 4.80), None),            # spins about x (SOCKET_Drum)
     "S_Drum": ("J_Drum", (-1.48, -0.62, 4.80), _d(-1, 0, 0)),
-    "S_GunShield": ("W_Cannon", (0.0, -SH_Y, 0.90), _d(0, 0, -1)),   # 0.6 m behind the muzzle, facing out of the barrels
-    "S_Eject": ("W_Cannon", (0.0, -SH_Y - 0.46, 3.05), _d(0, -1, -1)),
+    "S_GunShield": ("W_Cannon", (0.0, -SH_Y - H2_CANNON_SHIFT, 0.90), _d(0, 0, -1)),   # 0.6 m behind the muzzle, facing out of the barrels
+    "S_Eject": ("W_Cannon", (0.0, -SH_Y + H2_CANNON_IN - (H2_CANNON_IN + 0.46) * H2_CANNON_K, 3.05), _d(0, -1, -1)),   # breech outer face (R6: follows the wider breech)
 }
 
 
