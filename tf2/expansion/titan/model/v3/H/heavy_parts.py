@@ -92,37 +92,59 @@ def pelvis_waist(P, style):
                                                        for a in np.linspace(0, 2 * math.pi, 12, endpoint=False)]))
 
 
+# R6c (lead 11-13, walk retarget): the swinging heel met the thigh's back when the knee folds past ~105 (sprint, short G2 steps).
+# The thigh's rear-lower corner is cut back further, its rams shortened, the outer skirt ends higher; the foot keeps its heel block
+# and sole, only the top block's rear is trimmed; the shin's front-lower edge and the toe tops come down so the ankle bends to -45
+# (Unity's heavy ankle limit). HSD_HEAVY_LEG=r6b rebuilds the r6b legs.
+LEG_SHAPE = os.environ.get("HSD_HEAVY_LEG", "r6c")
+
+
 def leg_left(P, style):
     """Left leg; the right one is the mirror image. Thigh hub is a y drum (flex-invariant), body chamfered at the top so the
     hip flex sweep stays under the side skirt (z 2.86)."""
     c = 0.14 if style == "round" else 0.07
+    r6c = LEG_SHAPE == "r6c"
     th = []
     th.append(("base", "frame", cyl("y", (0, ZH), 0.32, HY - 0.335, HY + 0.345, 28)))
-    th.append(("base", "pri", loft([(2.33, rect(-0.28, 0.28, HY - 0.32, HY + 0.32, c)), (2.15, rect(-0.40, 0.40, HY - 0.38, HY + 0.38, c)),
-                                    (1.85, rect(-0.40, 0.42, HY - 0.39, HY + 0.39, c)), (1.55, rect(-0.18, 0.40, HY - 0.36, HY + 0.36, c * 0.8)),
-                                    (1.22, rect(0.02, 0.34, HY - 0.30, HY + 0.30, c * 0.6))])))
+    if r6c:
+        th.append(("base", "pri", loft([(2.33, rect(-0.28, 0.28, HY - 0.32, HY + 0.32, c)), (2.15, rect(-0.36, 0.40, HY - 0.38, HY + 0.38, c)),
+                                        (1.95, rect(-0.33, 0.42, HY - 0.39, HY + 0.39, c)), (1.72, rect(-0.20, 0.41, HY - 0.37, HY + 0.37, c * 0.9)),
+                                        (1.50, rect(-0.04, 0.40, HY - 0.35, HY + 0.35, c * 0.8)), (1.22, rect(0.10, 0.34, HY - 0.30, HY + 0.30, c * 0.6))])))
+    else:
+        th.append(("base", "pri", loft([(2.33, rect(-0.28, 0.28, HY - 0.32, HY + 0.32, c)), (2.15, rect(-0.40, 0.40, HY - 0.38, HY + 0.38, c)),
+                                        (1.85, rect(-0.40, 0.42, HY - 0.39, HY + 0.39, c)), (1.55, rect(-0.18, 0.40, HY - 0.36, HY + 0.36, c * 0.8)),
+                                        (1.22, rect(0.02, 0.34, HY - 0.30, HY + 0.30, c * 0.6))])))
     # outer thigh skirt: flares out at the top like a hip skirt, rides the thigh so the hip swing never hits it
     if style == "round":
         guard = loft([(2.66, rect(-0.30, 0.30, HY + 0.34, HY + 0.47, 0.06)), (2.40, rect(-0.42, 0.42, HY + 0.37, HY + 0.51, 0.07)),
-                      (1.55, rect(-0.34, 0.38, HY + 0.36, HY + 0.49, 0.06))])
+                      (1.75, rect(-0.22, 0.38, HY + 0.36, HY + 0.49, 0.06)) if r6c else (1.55, rect(-0.34, 0.38, HY + 0.36, HY + 0.49, 0.06))])
     else:
         guard = loft([(2.66, rect(-0.34, 0.34, HY + 0.34, HY + 0.47, 0.03)), (2.40, rect(-0.44, 0.44, HY + 0.37, HY + 0.51, 0.03)),
-                      (1.60, rect(-0.40, 0.40, HY + 0.36, HY + 0.49, 0.03))])
+                      (1.78, rect(-0.24, 0.40, HY + 0.36, HY + 0.49, 0.03)) if r6c else (1.60, rect(-0.40, 0.40, HY + 0.36, HY + 0.49, 0.03))])
     th.append(("base", "pri", guard))
     # front thigh plate (starts 0.55 below the hip so the flex sweep stays under the hip girdle)
     th.append(("plate", "pri", loft([(1.83, rect(0.38, 0.47, HY - 0.30, HY + 0.30, 0.04)), (1.40, rect(0.34, 0.45, HY - 0.28, HY + 0.28, 0.04))])))
     th.append(("plate", "frame", box((0.46, HY, 1.62), (0.02, 0.24, 0.02))))
     # hydraulic on the thigh back (both ends on the thigh)
-    th.append(("detail", "frame", merge(cyl_ab((-0.43, HY - 0.18, 2.12), (-0.43, HY - 0.18, 1.90), 0.075, 12),
-                                        cyl_ab((-0.43, HY + 0.18, 2.12), (-0.43, HY + 0.18, 1.90), 0.075, 12),
-                                        cyl_ab((-0.43, HY, 1.95), (-0.21, HY, 1.50), 0.05, 10))))
+    if r6c:
+        th.append(("detail", "frame", merge(cyl_ab((-0.43, HY - 0.18, 2.12), (-0.42, HY - 0.18, 2.00), 0.075, 12),
+                                            cyl_ab((-0.43, HY + 0.18, 2.12), (-0.42, HY + 0.18, 2.00), 0.075, 12),
+                                            cyl_ab((-0.40, HY, 2.02), (-0.20, HY, 1.74), 0.05, 10))))
+    else:
+        th.append(("detail", "frame", merge(cyl_ab((-0.43, HY - 0.18, 2.12), (-0.43, HY - 0.18, 1.90), 0.075, 12),
+                                            cyl_ab((-0.43, HY + 0.18, 2.12), (-0.43, HY + 0.18, 1.90), 0.075, 12),
+                                            cyl_ab((-0.43, HY, 1.95), (-0.21, HY, 1.50), 0.05, 10))))
     th.append(("detail", "frame", G.bolts([(0.0, HY + 0.50, z) for z in (1.80, 2.05, 2.30)] + [(0.28, HY + 0.50, z) for z in (1.9, 2.25)], (0, 1, 0))))
     th.append(("detail", "frame", G.bolts([(x, HY + 0.345, ZH) for x in (0.0,)], (0, 1, 0), r=0.12, h=0.04, seg=16)))
     for k, m, mesh in th:
         P.add("Thigh_L", "J_Hip_L", k, m, mesh)
     sh = []
-    sh.append(("base", "pri", loft([(1.30, rect(-0.40, 0.46, HY - 0.43, HY + 0.44, c)), (1.02, rect(-0.50, 0.56, HY - 0.47, HY + 0.48, c + 0.02)),
-                                    (0.62, rect(-0.46, 0.52, HY - 0.45, HY + 0.46, c + 0.02)), (0.42, rect(-0.38, 0.44, HY - 0.39, HY + 0.40, c))])))
+    if r6c:     # front-lower edge drawn in (0.52 -> 0.42 at 0.62, 0.44 -> 0.30 at the bottom): the toes rise to -45 without meeting it
+        sh.append(("base", "pri", loft([(1.30, rect(-0.40, 0.46, HY - 0.43, HY + 0.44, c)), (1.02, rect(-0.50, 0.56, HY - 0.47, HY + 0.48, c + 0.02)),
+                                        (0.62, rect(-0.46, 0.42, HY - 0.45, HY + 0.46, c + 0.02)), (0.42, rect(-0.38, 0.30, HY - 0.39, HY + 0.40, c))])))
+    else:
+        sh.append(("base", "pri", loft([(1.30, rect(-0.40, 0.46, HY - 0.43, HY + 0.44, c)), (1.02, rect(-0.50, 0.56, HY - 0.47, HY + 0.48, c + 0.02)),
+                                        (0.62, rect(-0.46, 0.52, HY - 0.45, HY + 0.46, c + 0.02)), (0.42, rect(-0.38, 0.44, HY - 0.39, HY + 0.40, c))])))
     # thick knee guard
     if style == "round":
         kg = loft([(1.56, rect(0.40, 0.62, HY - 0.30, HY + 0.30, 0.10)), (1.22, rect(0.52, 0.80, HY - 0.36, HY + 0.36, 0.12)),
@@ -141,10 +163,20 @@ def leg_left(P, style):
         P.add("Shin_L", "J_Knee_L", k, m, mesh)
     ft = []
     fc = 0.12 if style == "round" else 0.06
-    ft.append(("base", "pri", loft([(0.00, rect(-0.66, 0.84, HY - 0.60, HY + 0.60, fc)), (0.22, rect(-0.62, 0.82, HY - 0.59, HY + 0.59, fc)),
-                                      (0.38, rect(-0.44, 0.58, HY - 0.46, HY + 0.46, fc)), (0.48, rect(-0.28, 0.38, HY - 0.36, HY + 0.36, fc * 0.8))])))
-    ft.append(("base", "frame", loft([(0.00, rect(-0.78, -0.58, HY - 0.30, HY + 0.30, 0.05)), (0.20, rect(-0.70, -0.58, HY - 0.26, HY + 0.26, 0.05))])))
-    ft.append(("plate", "frame", loft([(0.23, rect(-0.40, 0.70, HY - 0.52, HY + 0.52, 0.06)), (0.36, rect(-0.30, 0.56, HY - 0.44, HY + 0.44, 0.06))])))
+    if r6c:     # the top block's rear drawn in (heel block and sole unchanged: the footprint stays as heavy)
+        ft.append(("base", "pri", loft([(0.00, rect(-0.66, 0.84, HY - 0.60, HY + 0.60, fc)), (0.22, rect(-0.56, 0.82, HY - 0.59, HY + 0.59, fc)),
+                                          (0.38, rect(-0.32, 0.58, HY - 0.46, HY + 0.46, fc)), (0.48, rect(-0.16, 0.38, HY - 0.36, HY + 0.36, fc * 0.8))])))
+    else:
+        ft.append(("base", "pri", loft([(0.00, rect(-0.66, 0.84, HY - 0.60, HY + 0.60, fc)), (0.22, rect(-0.62, 0.82, HY - 0.59, HY + 0.59, fc)),
+                                          (0.38, rect(-0.44, 0.58, HY - 0.46, HY + 0.46, fc)), (0.48, rect(-0.28, 0.38, HY - 0.36, HY + 0.36, fc * 0.8))])))
+    if r6c:     # heel block shortened (still past the sole: the back still reads as a heavy heel), its top drawn in
+        ft.append(("base", "frame", loft([(0.00, rect(-0.72, -0.56, HY - 0.30, HY + 0.30, 0.05)), (0.14, rect(-0.66, -0.56, HY - 0.26, HY + 0.26, 0.05))])))
+    else:
+        ft.append(("base", "frame", loft([(0.00, rect(-0.78, -0.58, HY - 0.30, HY + 0.30, 0.05)), (0.20, rect(-0.70, -0.58, HY - 0.26, HY + 0.26, 0.05))])))
+    if r6c:
+        ft.append(("plate", "frame", loft([(0.23, rect(-0.34, 0.70, HY - 0.52, HY + 0.52, 0.06)), (0.36, rect(-0.20, 0.56, HY - 0.44, HY + 0.44, 0.06))])))
+    else:
+        ft.append(("plate", "frame", loft([(0.23, rect(-0.40, 0.70, HY - 0.52, HY + 0.52, 0.06)), (0.36, rect(-0.30, 0.56, HY - 0.44, HY + 0.44, 0.06))])))
     ft.append(("plate", "frame", loft([(-0.005, rect(-0.67, 0.85, HY - 0.61, HY + 0.61, fc)), (0.07, rect(-0.67, 0.85, HY - 0.61, HY + 0.61, fc))])))
     ft.append(("detail", "frame", merge(*[box((x, HY, 0.025), (0.035, 0.58, 0.03)) for x in np.linspace(-0.55, 0.75, 9)])))   # tread
     ft.append(("detail", "frame", G.bolts([(x, HY + s * 0.53, 0.30) for x in (-0.2, 0.2, 0.5) for s in (-1, 1)], lambda p: (0, 1 if p[1] > HY else -1, 0))))
@@ -153,8 +185,9 @@ def leg_left(P, style):
     # toes: two pieces on J_Ankle (no toe bone, SPEC 0 #7)
     toes = []
     for y0, y1 in ((HY - 0.58, HY - 0.03), (HY + 0.03, HY + 0.58)):
+        top = 0.24 if r6c else 0.30      # r6c: lower toe tops (ankle room to -45)
         toes.append(loft([(0.00, rect(0.80, 1.08, y0, y1, 0.06)), (0.18, rect(0.80, 1.04, y0 + 0.02, y1 - 0.02, 0.06)),
-                          (0.30, rect(0.80, 0.92, y0 + 0.04, y1 - 0.04, 0.04))]))
+                          (top, rect(0.80, 0.92, y0 + 0.04, y1 - 0.04, 0.04))]))
     P.add("Toe_L", "J_Ankle_L", "base", "pri", merge(*toes))
     P.add("Toe_L", "J_Ankle_L", "detail", "frame", merge(*[box((1.09, (a + b) / 2, 0.06), (0.03, (b - a) / 2 - 0.04, 0.05))
                                                          for a, b in ((HY - 0.58, HY - 0.03), (HY + 0.03, HY + 0.58))]))

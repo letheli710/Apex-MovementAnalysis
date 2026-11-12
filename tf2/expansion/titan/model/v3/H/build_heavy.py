@@ -939,7 +939,69 @@ def kneelfit(name):
                 print("=== FIT", name, hf, dk, json.dumps(c), json.dumps(collide(meshes)))
 
 
-if args and len(args) > 1 and args[1] == "contacts":
+def replay(tsv, out_dir, every=5):
+    """Walk retarget H3 (WALK-RETARGET-PLAN.md section 5): re-pose the real model from Unity's TitanWalkFilm joints.tsv every
+    'every' frames and check it: the lowest point of each foot (+ toes) against the ground (planted: -2 .. +1 cm; swinging:
+    >= 5 cm), shins, and every part pair (BVH, same exclusions as the 19-pose check). Unity's TitanBodyPose angles map 1:1 onto
+    the v2 hand-pose parameters this script uses (TitanSkeleton.cs follows design.py), except the hip twist: Unity's is + outward
+    on both legs, here + turns about z, so h_twist = side sign x twist."""
+    os.makedirs(out_dir, exist_ok=True)
+    objs, meshes, rest, P = build("r3")
+    rows = [l.rstrip("\n").split("\t") for l in open(tsv, encoding="utf-8")]
+    head, rows = rows[0], rows[1:]
+    col = {h: i for i, h in enumerate(head)}
+    f = lambda r, k: float(r[col[k]])
+    out = ["t\tmodeL\tmodeR\tlowL\tlowR\tshinL\tshinR\tcollisions"]
+    worst = dict(planted_low=0.0, planted_high=0.0, swing_min=9.0, frames=0, frames_with_collision=0, pairs={})
+    for i, r in enumerate(rows):
+        if i % every:
+            continue
+        p = {"pel_yaw": f(r, "pelYaw"), "pel_pitch": f(r, "pelPitch"), "pel_roll": f(r, "pelRoll"),
+             "w_yaw": f(r, "waistYaw"), "w_bend": f(r, "waistBend"), "w_side": f(r, "waistSide"),
+             "h_flex_L": f(r, "lFlex"), "h_out_L": f(r, "lOut"), "h_twist_L": f(r, "lTwist"), "k_L": f(r, "lKnee"), "a_L": f(r, "lAnkle"), "a_roll_L": f(r, "lAnkleRoll"),
+             "h_flex_R": f(r, "rFlex"), "h_out_R": f(r, "rOut"), "h_twist_R": -f(r, "rTwist"), "k_R": f(r, "rKnee"), "a_R": f(r, "rAnkle"), "a_roll_R": f(r, "rAnkleRoll"),
+             "s_flex_L": f(r, "aLFlex"), "s_out_L": f(r, "aLOut"), "s_in_L": f(r, "aLIn"), "e_L": f(r, "aLElbow"), "wr_pitch": f(r, "aLWristPitch"), "wr_side": f(r, "aLWristYaw"),
+             "s_flex_R": f(r, "aRFlex"), "s_out_R": f(r, "aROut"), "s_in_R": f(r, "aRIn"), "e_R": f(r, "aRElbow"),
+             "hatch": f(r, "hatch"), "op_yaw": f(r, "opticYaw"), "op_pitch": f(r, "opticPitch")}
+        set_pose(objs, rest, p, (f(r, "pelX"), f(r, "pelY"), f(r, "pelZ")))
+        root = objs[ROOT]
+        gz = f(r, "rootZ")
+        root.location = to_b((f(r, "rootX") + f(r, "offX"), f(r, "rootY") + f(r, "offY"), gz + f(r, "offZ")))
+        root.rotation_euler = (0, 0, math.radians(f(r, "rootYaw")))
+        bpy.context.view_layer.update()
+        low = lambda names: min(float(world_verts(meshes[n])[:, 2].min()) for n in names if n in meshes) - gz
+        lowL, lowR = low(("Foot_L", "Toe_L")), low(("Foot_R", "Toe_R"))
+        shL, shR = low(("Shin_L",)), low(("Shin_R",))
+        hits = collide(meshes)
+        mL, mR = r[col["modeL"]], r[col["modeR"]]
+        for m, lo in ((mL, lowL), (mR, lowR)):
+            if m == "Planted":
+                worst["planted_low"] = min(worst["planted_low"], lo)
+                worst["planted_high"] = max(worst["planted_high"], lo)
+            elif m == "Swing":
+                worst["swing_min"] = min(worst["swing_min"], lo)
+        worst["frames"] += 1
+        if hits:
+            worst["frames_with_collision"] += 1
+            for h in hits:
+                worst["pairs"][h] = worst["pairs"].get(h, 0) + 1
+        out.append("%s\t%s\t%s\t%.4f\t%.4f\t%.4f\t%.4f\t%s" % (r[col["t"]], mL, mR, lowL, lowR, shL, shR, ";".join(hits)))
+    open(os.path.join(out_dir, "replay.tsv"), "w", encoding="utf-8").write("\n".join(out) + "\n")
+    json.dump(worst, open(os.path.join(out_dir, "replay_summary.json"), "w", encoding="utf-8"), indent=1)
+    print("=== REPLAY", json.dumps(worst))
+
+
+if args and len(args) > 2 and args[1] == "saveblend":
+    # build the finished model and save it at rest to a .blend (no renders, no FBX): for quick mesh checks of a shape change
+    STAGE = "final"
+    objs, meshes, rest, P = build("final")
+    set_pose(objs, rest, {})
+    bpy.ops.wm.save_as_mainfile(filepath=args[2])
+    print("=== SAVED", args[2], len(meshes), "meshes")
+elif args and len(args) > 2 and args[1] == "replay":
+    STAGE = "r3"
+    replay(args[2], args[3], int(args[4]) if len(args) > 4 else 5)
+elif args and len(args) > 1 and args[1] == "contacts":
     STAGE = "r3"
     contacts()
 elif args and len(args) > 2 and args[1] == "kneelfit":
