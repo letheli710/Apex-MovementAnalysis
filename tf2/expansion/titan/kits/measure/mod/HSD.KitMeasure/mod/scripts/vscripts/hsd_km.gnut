@@ -1,0 +1,447 @@
+untyped
+// HSD.KitMeasure (2026-11-13, session tf2-kits-measure), server side. See expansion/titan/kits/measure/README.md.
+// Installed only during kitm_runner.py runs, removed before the lock is released. Server script frame = 10 Hz.
+// Commands (client console -> server):
+//   hsd_km_log 0|1                 per server frame: TS (player), TF (my foes), PS / PSNEW (projectiles), PF (owned prop_physics = thermite)
+//   hsd_km_foe <setfile> f r yawOff [static|idle|hostile] [hp]   enemy npc titan at player + f * viewForward + r * viewRight (floor);
+//                                  appended to my foe list; shield 0; logs its ehandle (matches the client SA lines)
+//   hsd_km_foe_clear               destroy all my foes
+//   hsd_km_walk <idx> <dx> <dy>    foe idx walks to its spawn + (dx, dy)
+//   hsd_km_fire <idx> <kind> <n> <gap> [dz]   foe idx fires n projectiles <gap> s apart at the player's eye (+ dz):
+//                                  kind = 40mm | meteor | sniper | salvo | tracker | leadwall (the weapon class is given to the foe)
+//   hsd_km_die                     kill the pilot (on foot only)
+//   hsd_km_tp x y z yaw            teleport the player
+//   hsd_km_head [x y z]            titan-hull headroom above the floor under the point (default the player)
+// Log lines:
+//   HSDDIAG TS <t> <titan> <x y z> <vx vy vz> <pitch yaw> <hp> <shield>
+//   HSDDIAG TF <t> <idx> <x y z> <vx vy vz> <hp> <shield> <tethered> <move_slow>
+//   HSDDIAG PSNEW <t> <h> <class> <weapon> <owner class> <dmgsrc> <mods,>
+//   HSDDIAG PS <t> <h> <x y z> <vx vy vz>
+//   HSDDIAG PF <t> <h> <x y z> <vx vy vz>
+//   HSDDIAG TD <t> <victim> <dmg> <source id> <inflictor class> <inflictor h> <damage type> <x y z>   final damage
+//   HSDDIAG KM <event> ...
+global function HsdKm_Init
+
+string function HsdKm_S( var x )
+{
+	if ( x == null )
+		return "-"
+	return string( x )
+}
+
+struct
+{
+	bool log = false
+	array<entity> foes
+	array<vector> foeSpawn
+	table<int, bool> seen
+} file
+
+void function HsdKm_Init()
+{
+	AddClientCommandCallback( "hsd_km_log", HsdKm_CC_Log )
+	AddClientCommandCallback( "hsd_km_foe", HsdKm_CC_Foe )
+	AddClientCommandCallback( "hsd_km_foe_clear", HsdKm_CC_FoeClear )
+	AddClientCommandCallback( "hsd_km_walk", HsdKm_CC_Walk )
+	AddClientCommandCallback( "hsd_km_fire", HsdKm_CC_Fire )
+	AddClientCommandCallback( "hsd_km_die", HsdKm_CC_Die )
+	AddClientCommandCallback( "hsd_km_tp", HsdKm_CC_Tp )
+	AddClientCommandCallback( "hsd_km_head", HsdKm_CC_Head )
+	AddClientCommandCallback( "hsd_km_smoke_give", HsdKm_CC_SmokeGive )
+	AddClientCommandCallback( "hsd_km_nukepas", HsdKm_CC_NukePas )
+	AddDamageFinalCallback( "npc_titan", HsdKm_OnFinal )
+	AddDamageFinalCallback( "npc_soldier", HsdKm_OnFinal )
+	AddDamageFinalCallback( "player", HsdKm_OnFinal )
+	printt( "HSDDIAG KM init" )
+}
+
+string function HsdKm_Victim( entity ent )
+{
+	if ( ent.IsPlayer() )
+		return ent.IsTitan() ? "self" : "pilot"
+	foreach ( int i, entity f in file.foes )
+	{
+		if ( f == ent )
+			return "foe" + i
+	}
+	return ent.GetClassName() + ":" + ent.GetEncodedEHandle()
+}
+
+void function HsdKm_OnFinal( entity ent, var damageInfo )
+{
+	if ( !file.log )
+		return
+	entity inf = DamageInfo_GetInflictor( damageInfo )
+	vector p = DamageInfo_GetDamagePosition( damageInfo )
+	printt( format( "HSDDIAG TD %.4f %s %.2f %s %s %s %s %.1f %.1f %.1f", Time(), HsdKm_S( HsdKm_Victim( ent ) ), DamageInfo_GetDamage( damageInfo ),
+		HsdKm_S( DamageInfo_GetDamageSourceIdentifier( damageInfo ) ), IsValid( inf ) ? HsdKm_S( inf.GetClassName() ) : "-", IsValid( inf ) ? HsdKm_S( inf.GetEncodedEHandle() ) : "-1",
+		HsdKm_S( DamageInfo_GetCustomDamageType( damageInfo ) ), p.x, p.y, p.z ) )
+}
+
+bool function HsdKm_CC_Log( entity player, array<string> args )
+{
+	bool on = args.len() > 0 && args[0] == "1"
+	if ( on && !file.log )
+	{
+		file.log = true
+		thread HsdKm_LogThread( player )
+	}
+	else if ( !on )
+		file.log = false
+	printt( format( "HSDDIAG KM log %s %.4f", on ? "1" : "0", Time() ) )
+	return true
+}
+
+float function HsdKm_Status( entity ent, int effect )
+{
+	entity e = ent
+	if ( ent.IsTitan() )
+	{
+		entity soul = ent.GetTitanSoul()
+		if ( IsValid( soul ) )
+			e = soul
+	}
+	return StatusEffect_Get( e, effect )
+}
+
+void function HsdKm_LogProjectiles( vector o )
+{
+	foreach ( entity pr in GetProjectileArrayEx( "any", TEAM_ANY, TEAM_ANY, o, 20000.0 ) )
+	{
+		if ( !IsValid( pr ) )
+			continue
+		int h = pr.GetEncodedEHandle()
+		vector po = pr.GetOrigin()
+		vector pv = pr.GetVelocity()
+		if ( !( h in file.seen ) )
+		{
+			file.seen[ h ] <- true
+			// no ProjectileGetWeaponClassName / DamageSourceID / Mods here: with them the PSNEW line never printed and a
+			// foe's script-fired bolt crashed server.dll inside format() (runs 20261113_020328, 020823 km_ion); the client PJNEW has the weapon
+			entity ow = pr.GetOwner()
+			printt( format( "HSDDIAG PSNEW %.4f %d %s - %s - -", Time(), h, HsdKm_S( pr.GetClassName() ), IsValid( ow ) ? HsdKm_S( ow.GetClassName() ) : "-" ) )
+		}
+		printt( format( "HSDDIAG PS %.4f %d %.2f %.2f %.2f %.2f %.2f %.2f", Time(), h, po.x, po.y, po.z, pv.x, pv.y, pv.z ) )
+	}
+	foreach ( entity pp in GetEntArrayByClass_Expensive( "prop_physics" ) )
+	{
+		if ( !IsValid( pp ) || !IsValid( pp.GetOwner() ) )
+			continue
+		vector po = pp.GetOrigin()
+		vector pv = pp.GetVelocity()
+		printt( format( "HSDDIAG PF %.4f %s %.2f %.2f %.2f %.2f %.2f %.2f", Time(), HsdKm_S( pp.GetEncodedEHandle() ), po.x, po.y, po.z, pv.x, pv.y, pv.z ) )
+	}
+}
+
+void function HsdKm_LogThread( entity player )
+{
+	player.EndSignal( "OnDestroy" )
+	while ( file.log )
+	{
+		if ( IsAlive( player ) )
+		{
+			vector o = player.GetOrigin()
+			vector v = player.GetVelocity()
+			vector a = player.EyeAngles()
+			entity soul = player.GetTitanSoul()
+			printt( format( "HSDDIAG TS %.4f %s %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %d %d", Time(), player.IsTitan() ? "1" : "0",
+				o.x, o.y, o.z, v.x, v.y, v.z, a.x, a.y, player.GetHealth(), IsValid( soul ) ? soul.GetShieldHealth() : 0 ) )
+			foreach ( int i, entity f in file.foes )
+			{
+				if ( !IsAlive( f ) )
+					continue
+				vector fo = f.GetOrigin()
+				vector fv = f.GetVelocity()
+				entity fs = f.GetTitanSoul()
+				printt( format( "HSDDIAG TF %.4f %d %.2f %.2f %.2f %.2f %.2f %.2f %d %d %.3f %.3f", Time(), i, fo.x, fo.y, fo.z, fv.x, fv.y, fv.z,
+					f.GetHealth(), IsValid( fs ) ? fs.GetShieldHealth() : 0, HsdKm_Status( f, eStatusEffect.tethered ), HsdKm_Status( f, eStatusEffect.move_slow ) ) )
+			}
+			HsdKm_LogProjectiles( o )
+		}
+		WaitFrame()
+	}
+}
+
+vector function HsdKm_Floor( entity player, vector p )
+{
+	TraceResults down = TraceLine( p + < 0.0, 0.0, 200.0 >, p + < 0.0, 0.0, -1200.0 >, player, TRACE_MASK_PLAYERSOLID, TRACE_COLLISION_GROUP_NONE )
+	if ( down.fraction < 1.0 && !down.startSolid )
+		return down.endPos + < 0.0, 0.0, 2.0 >
+	return p
+}
+
+bool function HsdKm_CC_Foe( entity player, array<string> args )
+{
+	if ( args.len() < 4 || !IsAlive( player ) )
+		return true
+	float yaw = player.EyeAngles().y
+	vector f = AnglesToForward( < 0.0, yaw, 0.0 > )
+	vector r = AnglesToRight( < 0.0, yaw, 0.0 > )
+	vector p = HsdKm_Floor( player, player.GetOrigin() + f * float( args[1] ) + r * float( args[2] ) )
+	entity npc = CreateNPCTitan( args[0], GetOtherTeam( player.GetTeam() ), p, < 0.0, yaw + float( args[3] ), 0.0 > )
+	SetSpawnOption_AISettings( npc, "npc_" + args[0] )
+	DispatchSpawn( npc )
+	int hp = args.len() > 5 ? int( args[5] ) : 100000
+	npc.SetMaxHealth( hp )
+	npc.SetHealth( hp )
+	string mode = args.len() > 4 ? args[4] : "idle"
+	file.foes.append( npc )
+	file.foeSpawn.append( p )
+	thread HsdKm_FoeMode( npc, mode )
+	printt( format( "HSDDIAG KM foe %d %s %s h=%s %.1f %.1f %.1f %.4f", file.foes.len() - 1, args[0], mode, HsdKm_S( npc.GetEncodedEHandle() ), p.x, p.y, p.z, Time() ) )
+	return true
+}
+
+void function HsdKm_FoeMode( entity npc, string mode )
+{
+	npc.EndSignal( "OnDestroy" )
+	wait 0.6
+	if ( !IsAlive( npc ) )
+		return
+	entity soul = npc.GetTitanSoul()
+	if ( IsValid( soul ) )
+		soul.SetShieldHealth( 0 )
+	if ( mode == "hostile" )
+		return
+	npc.EnableNPCFlag( NPC_IGNORE_ALL | NPC_DISABLE_SENSING )
+	npc.ClearEnemy()
+	foreach ( entity w in npc.GetMainWeapons() )
+		npc.TakeWeapon( w.GetWeaponClassName() )
+	if ( mode == "static" )
+		npc.Freeze()
+	printt( format( "HSDDIAG KM foe_mode %s %.4f", mode, Time() ) )
+}
+
+bool function HsdKm_CC_FoeClear( entity player, array<string> args )
+{
+	foreach ( entity f in file.foes )
+	{
+		if ( IsValid( f ) )
+			f.Destroy()
+	}
+	file.foes.clear()
+	file.foeSpawn.clear()
+	printt( format( "HSDDIAG KM foe_clear %.4f", Time() ) )
+	return true
+}
+
+bool function HsdKm_CC_Walk( entity player, array<string> args )
+{
+	if ( args.len() < 3 )
+		return true
+	int i = int( args[0] )
+	if ( i >= file.foes.len() || !IsAlive( file.foes[i] ) )
+		return true
+	entity npc = file.foes[i]
+	vector goal = file.foeSpawn[i] + < float( args[1] ), float( args[2] ), 0.0 >
+	try
+	{
+		npc.AssaultSetGoalRadius( 64 )
+		npc.AssaultPoint( goal )
+	}
+	catch ( ex )
+	{
+		printt( "HSDDIAG KMERR walk " + ex )
+	}
+	printt( format( "HSDDIAG KM walk %d %.1f %.1f %.1f %.4f", i, goal.x, goal.y, goal.z, Time() ) )
+	return true
+}
+
+string function HsdKm_KindClass( string kind )
+{
+	switch ( kind )
+	{
+		case "40mm": return "mp_titanweapon_sticky_40mm"
+		case "meteor": return "mp_titanweapon_meteor"
+		case "sniper": return "mp_titanweapon_sniper"
+		case "salvo": return "mp_titanweapon_salvo_rockets"
+		case "tracker": return "mp_titanweapon_tracker_rockets"
+		case "leadwall": return "mp_titanweapon_leadwall"
+	}
+	return ""
+}
+
+bool function HsdKm_CC_Fire( entity player, array<string> args )
+{
+	if ( args.len() < 4 )
+		return true
+	int i = int( args[0] )
+	if ( i >= file.foes.len() || !IsAlive( file.foes[i] ) )
+	{
+		printt( "HSDDIAG KMERR fire_no_foe" )
+		return true
+	}
+	float dz = args.len() > 4 ? float( args[4] ) : 0.0
+	thread HsdKm_Fire( player, file.foes[i], args[1], int( args[2] ), float( args[3] ), dz )
+	return true
+}
+
+entity function HsdKm_FoeWeapon( entity npc, string cls )
+{
+	foreach ( entity w in npc.GetMainWeapons() )
+	{
+		if ( w.GetWeaponClassName() == cls )
+			return w
+	}
+	for ( int s = 0; s < 4; s++ )
+	{
+		entity w = npc.GetOffhandWeapon( s )
+		if ( IsValid( w ) && w.GetWeaponClassName() == cls )
+			return w
+	}
+	bool offhand = cls == "mp_titanweapon_salvo_rockets" || cls == "mp_titanweapon_tracker_rockets"
+	if ( offhand )
+	{
+		if ( IsValid( npc.GetOffhandWeapon( 0 ) ) )
+			npc.TakeOffhandWeapon( 0 )
+		npc.GiveOffhandWeapon( cls, 0 )
+		return npc.GetOffhandWeapon( 0 )
+	}
+	foreach ( entity old in npc.GetMainWeapons() )  // "No room in inventory" otherwise (run 20261113_021103_km_ion)
+		npc.TakeWeapon( old.GetWeaponClassName() )
+	npc.GiveWeapon( cls )
+	foreach ( entity w in npc.GetMainWeapons() )
+	{
+		if ( w.GetWeaponClassName() == cls )
+			return w
+	}
+	return null
+}
+
+void function HsdKm_Fire( entity player, entity npc, string kind, int n, float gap, float dz )
+{
+	npc.EndSignal( "OnDestroy" )
+	player.EndSignal( "OnDestroy" )
+	string cls = HsdKm_KindClass( kind )
+	entity w = null
+	try
+	{
+		w = HsdKm_FoeWeapon( npc, cls )
+	}
+	catch ( ex )
+	{
+		printt( "HSDDIAG KMERR fire_weapon " + kind + " " + ex )
+		return
+	}
+	if ( !IsValid( w ) )
+	{
+		printt( "HSDDIAG KMERR fire_no_weapon " + kind )
+		return
+	}
+	for ( int k = 0; k < n; k++ )
+	{
+		vector target = player.EyePosition() + < 0.0, 0.0, dz >
+		vector start = npc.EyePosition()
+		vector dir = Normalize( target - start )
+		start = start + dir * 160.0
+		entity proj = null
+		try
+		{
+			switch ( kind )
+			{
+				case "40mm":
+					proj = w.FireWeaponBolt( start, dir, 8000.0, damageTypes.gibBullet | DF_IMPACT | DF_EXPLOSION | DF_RAGDOLL | DF_KNOCK_BACK, DF_EXPLOSION | DF_RAGDOLL | DF_KNOCK_BACK, false, 0 )
+					if ( IsValid( proj ) )
+						proj.kv.gravity = 0.05
+					break
+				case "meteor":
+					proj = w.FireWeaponBolt( start, dir, 1.0, damageTypes.gibBullet | DF_IMPACT | DF_EXPLOSION, damageTypes.gibBullet | DF_IMPACT | DF_EXPLOSION, false, 0 )
+					break
+				case "sniper":
+					proj = w.FireWeaponBolt( start, dir, 10000.0, DF_GIB | DF_BULLET | DF_ELECTRICAL, DF_EXPLOSION | DF_RAGDOLL, false, 0 )
+					if ( IsValid( proj ) )
+					{
+						proj.kv.gravity = 0.001
+						proj.s.bulletsToFire <- 1
+						proj.s.extraDamagePerBullet <- 0
+						proj.s.extraDamagePerBullet_Titan <- 0
+					}
+					break
+				case "leadwall":
+					proj = w.FireWeaponBolt( start, dir, 4400.0, damageTypes.largeCaliber | DF_SHOTGUN, damageTypes.largeCaliber | DF_SHOTGUN, false, 0 )
+					if ( IsValid( proj ) )
+					{
+						proj.kv.gravity = 0.4
+						proj.SetProjectileLifetime( 2.0 )
+					}
+					break
+				case "salvo":
+				case "tracker":
+					proj = w.FireWeaponMissile( start, dir, 2200.0, damageTypes.projectileImpact, damageTypes.explosive, false, false )
+					break
+			}
+		}
+		catch ( ex2 )
+		{
+			printt( "HSDDIAG KMERR fire " + kind + " " + ex2 )
+			return
+		}
+		printt( format( "HSDDIAG KM fire %s %d h=%s start %.1f %.1f %.1f dir %.4f %.4f %.4f %.4f", kind, k, IsValid( proj ) ? HsdKm_S( proj.GetEncodedEHandle() ) : "-1",
+			start.x, start.y, start.z, dir.x, dir.y, dir.z, Time() ) )
+		if ( gap > 0 )
+			wait gap
+	}
+}
+
+bool function HsdKm_CC_Die( entity player, array<string> args )
+{
+	if ( IsAlive( player ) && !player.IsTitan() )
+	{
+		printt( format( "HSDDIAG KM die %.4f", Time() ) )
+		player.Die()
+	}
+	return true
+}
+
+bool function HsdKm_CC_Tp( entity player, array<string> args )
+{
+	if ( args.len() < 4 || !IsAlive( player ) )
+		return true
+	player.SetOrigin( < float( args[0] ), float( args[1] ), float( args[2] ) > )
+	player.SetAngles( < 0.0, float( args[3] ), 0.0 > )
+	printt( format( "HSDDIAG KM tp %s %s %s %s %.4f", args[0], args[1], args[2], args[3], Time() ) )
+	return true
+}
+
+bool function HsdKm_CC_Head( entity player, array<string> args )
+{
+	vector p = args.len() >= 3 ? < float( args[0] ), float( args[1] ), float( args[2] ) > : player.GetOrigin()
+	TraceResults down = TraceLine( p + < 0.0, 0.0, 100.0 >, p + < 0.0, 0.0, -1500.0 >, player, TRACE_MASK_PLAYERSOLID, TRACE_COLLISION_GROUP_NONE )
+	vector start = ( down.fraction < 1.0 && !down.startSolid ) ? down.endPos + < 0.0, 0.0, 8.0 > : p
+	TraceResults up = TraceHull( start, start + < 0.0, 0.0, 6000.0 >, < -60.0, -60.0, 0.0 >, < 60.0, 60.0, 235.0 >, player, TRACE_MASK_PLAYERSOLID, TRACE_COLLISION_GROUP_NONE )
+	printt( format( "HSDDIAG KM head %.1f %.1f %.1f floor %.1f hull_free %.1f solid %d %.4f", p.x, p.y, p.z, start.z, up.fraction * 6000.0, up.startSolid ? 1 : 0, Time() ) )
+	return true
+}
+
+// electric smoke into OFFHAND_INVENTORY (used with +ability 6), clip filled
+bool function HsdKm_CC_SmokeGive( entity player, array<string> args )
+{
+	string cls = args.len() > 0 ? args[0] : "mp_titanability_electric_smoke"
+	try
+	{
+		entity w = player.GetOffhandWeapon( OFFHAND_INVENTORY )
+		if ( !IsValid( w ) || w.GetWeaponClassName() != cls )
+		{
+			if ( IsValid( w ) )
+				player.TakeOffhandWeapon( OFFHAND_INVENTORY )
+			player.GiveOffhandWeapon( cls, OFFHAND_INVENTORY )
+			w = player.GetOffhandWeapon( OFFHAND_INVENTORY )
+		}
+		if ( IsValid( w ) && w.GetWeaponPrimaryClipCountMax() > 0 )
+			w.SetWeaponPrimaryClipCount( w.GetWeaponPrimaryClipCountMax() )
+		printt( format( "HSDDIAG KM smoke_give %s clip=%d %.4f", HsdKm_S( IsValid( w ) ? w.GetWeaponClassName() : "-" ), IsValid( w ) ? w.GetWeaponPrimaryClipCount() : -1, Time() ) )
+	}
+	catch ( ex )
+	{
+		printt( "HSDDIAG KMERR smoke_give" )
+	}
+	return true
+}
+
+// Nuclear Ejection: GetNuclearPayload reads PlayerHasPassive on the player, which the hsd_titan spawn path does not set
+bool function HsdKm_CC_NukePas( entity player, array<string> args )
+{
+	GivePassive( player, ePassives.PAS_BUILD_UP_NUCLEAR_CORE )
+	printt( format( "HSDDIAG KM nukepas %s %.4f", PlayerHasPassive( player, ePassives.PAS_BUILD_UP_NUCLEAR_CORE ) ? "1" : "0", Time() ) )
+	return true
+}

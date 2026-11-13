@@ -1,0 +1,143 @@
+untyped
+// HSD.KitMeasure (2026-11-13, session tf2-kits-measure), client side: every client frame (~144 Hz), only with hsd_autorun 1.
+// Log lines:
+//   HSDDIAG PC <t> <titan> <x y z> <vx vy vz> <pitch yaw> <eye x y z>          the local player
+//   HSDDIAG PJNEW <t> <h> <class> <weapon> <x y z>                             first frame a projectile is seen (20000 u)
+//   HSDDIAG PJ <t> <h> <x y z>                                                 every frame for every projectile
+//   HSDDIAG PJEND <t> <h>                                                      first frame it is gone
+//   HSDDIAG SA <t> <slot> <weapon> <n> [<target h> <fraction> <activeShot>]...  smart-ammo targets of the active weapon
+// Every engine call that might not exist on the client is inside try / catch (a client script error drops the client).
+global function HsdKm_InitClient
+
+string function HsdKmCl_S( var x )
+{
+	if ( x == null )
+		return "-"
+	return string( x )
+}
+
+struct
+{
+	table<int, bool> live
+	table<entity, int> ids
+	int nextId = 1
+	bool projErr = false
+	bool saErr = false
+} file
+
+void function HsdKm_InitClient()
+{
+	if ( !GetConVarBool( "hsd_autorun" ) )
+		return
+	thread HsdKm_ClientLog()
+}
+
+void function HsdKm_Proj( vector o )
+{
+	if ( file.projErr )
+		return
+	array<entity> ps
+	try
+	{
+		ps = GetProjectileArrayEx( "rpg_missile", TEAM_ANY, TEAM_ANY, o, 20000.0 )  // "any" fails on the client at the first crossbow_bolt (run 20261113_020002_km_proj)
+	}
+	catch ( ex )
+	{
+		file.projErr = true
+		printt( "HSDDIAG KMERR cl_projarray " + ex )
+		return
+	}
+	table<int, bool> now
+	try
+	{
+		foreach ( entity p in ps )
+		{
+			if ( !IsValid( p ) )
+				continue
+			if ( !( p in file.ids ) )
+			{
+				file.ids[ p ] <- file.nextId
+				file.nextId++
+			}
+			int h = file.ids[ p ]
+			now[ h ] <- true
+			vector po = p.GetOrigin()
+			if ( !( h in file.live ) )
+			{
+				// no ProjectileGetWeaponClassName: it returns a corrupt string for some projectiles and format() then crashes (client.dll, run 20261113_021312_km_scorch)
+				string wn = "-"
+				printt( format( "HSDDIAG PJNEW %.5f %d %s %s %.2f %.2f %.2f", Time(), h, HsdKmCl_S( p.GetClassName() ), HsdKmCl_S( wn ), po.x, po.y, po.z ) )
+			}
+			printt( format( "HSDDIAG PJ %.5f %d %.2f %.2f %.2f", Time(), h, po.x, po.y, po.z ) )
+		}
+	}
+	catch ( ex3 )
+	{
+		file.projErr = true
+		printt( "HSDDIAG KMERR cl_proj " + ex3 )
+		return
+	}
+	foreach ( int h, bool b in file.live )
+	{
+		if ( !( h in now ) )
+			printt( format( "HSDDIAG PJEND %.5f %d", Time(), h ) )
+	}
+	file.live = now
+}
+
+void function HsdKm_SmartAmmo( entity player )
+{
+	if ( file.saErr )
+		return
+	try
+	{
+		for ( int slot = -1; slot <= 2; slot++ )
+		{
+			entity w = slot < 0 ? player.GetActiveWeapon() : player.GetOffhandWeapon( slot )
+			if ( !IsValid( w ) || !w.SmartAmmo_IsEnabled() )
+				continue
+			var targets = w.SmartAmmo_GetTargets()
+			string s = ""
+			int n = 0
+			foreach ( t in targets )
+			{
+				entity e = expect entity( t.ent )
+				s += format( " %s %.3f %d", IsValid( e ) ? HsdKmCl_S( e.GetClassName() ).slice( 0, 1 ) + HsdKmCl_S( e.GetOrigin().x.tointeger() ) : "-", t.fraction, t.activeShot ? 1 : 0 )
+				n++
+			}
+			if ( n > 0 )
+				printt( format( "HSDDIAG SA %.5f %d %s %d%s", Time(), slot, HsdKmCl_S( w.GetWeaponClassName() ), n, s ) )
+		}
+	}
+	catch ( ex )
+	{
+		file.saErr = true
+		printt( "HSDDIAG KMERR cl_smartammo " + ex )
+	}
+}
+
+void function HsdKm_ClientLog()
+{
+	entity player = GetLocalClientPlayer()
+	while ( player == null )
+	{
+		WaitFrame()
+		player = GetLocalClientPlayer()
+	}
+	printt( "HSDDIAG KM client init" )
+	while ( IsValid( player ) )
+	{
+		if ( IsAlive( player ) )
+		{
+			vector o = player.GetOrigin()
+			vector v = player.GetVelocity()
+			vector a = player.EyeAngles()
+			vector e = player.EyePosition()
+			printt( format( "HSDDIAG PC %.5f %s %.2f %.2f %.2f %.2f %.2f %.2f %.3f %.3f %.2f %.2f %.2f", Time(), player.IsTitan() ? "1" : "0",
+				o.x, o.y, o.z, v.x, v.y, v.z, a.x, a.y, e.x, e.y, e.z ) )
+			HsdKm_Proj( o )
+			HsdKm_SmartAmmo( player )
+		}
+		WaitFrame()
+	}
+}
