@@ -1,0 +1,1586 @@
+{
+ "source": "v3/L/light_rig.py + l2_parts.py",
+ "root": "Titan_L2",
+ "fbx_sha256": "c67a7cd9be41bc893cfc97aa3918f32b92ece23b96bd0d8ea0159f5cef4f4618",
+ "lean_deg": 18.0,
+ "lean_pivot": [
+  0.0,
+  0.0,
+  4.35
+ ],
+ "weapon": {
+  "root": "W_Shotgun",
+  "sword_root": "S_Sword_Back",
+  "sword_len": 3.6
+ },
+ "nodes": [
+  {
+   "name": "J_Pelvis",
+   "parent": "Titan_L2",
+   "pos": [
+    0.0,
+    0.0,
+    3.68
+   ]
+  },
+  {
+   "name": "J_Waist",
+   "parent": "J_Pelvis",
+   "pos": [
+    0.0,
+    0.0,
+    3.98
+   ]
+  },
+  {
+   "name": "J_Torso",
+   "parent": "J_Waist",
+   "pos": [
+    0.0,
+    0.0,
+    3.98
+   ]
+  },
+  {
+   "name": "J_Shoulder_L",
+   "parent": "J_Torso",
+   "pos": [
+    0.0,
+    1.2,
+    4.62
+   ]
+  },
+  {
+   "name": "J_Elbow_L",
+   "parent": "J_Shoulder_L",
+   "pos": [
+    0.0,
+    1.2,
+    3.54
+   ]
+  },
+  {
+   "name": "J_Wrist_L",
+   "parent": "J_Elbow_L",
+   "pos": [
+    0.0,
+    1.2,
+    2.46
+   ]
+  },
+  {
+   "name": "J_Finger_L_1",
+   "parent": "J_Wrist_L",
+   "pos": [
+    0.14,
+    1.32,
+    2.24
+   ]
+  },
+  {
+   "name": "J_Finger_L_2",
+   "parent": "J_Wrist_L",
+   "pos": [
+    0.14,
+    1.08,
+    2.24
+   ]
+  },
+  {
+   "name": "J_Finger_L_3",
+   "parent": "J_Wrist_L",
+   "pos": [
+    -0.14,
+    1.2,
+    2.24
+   ]
+  },
+  {
+   "name": "J_Hip_L",
+   "parent": "J_Pelvis",
+   "pos": [
+    0.0,
+    0.785,
+    3.28
+   ]
+  },
+  {
+   "name": "J_Knee_L",
+   "parent": "J_Hip_L",
+   "pos": [
+    0.0,
+    0.785,
+    1.59
+   ]
+  },
+  {
+   "name": "J_Ankle_L",
+   "parent": "J_Knee_L",
+   "pos": [
+    0.0,
+    0.785,
+    0.38
+   ]
+  },
+  {
+   "name": "J_Wing_L",
+   "parent": "J_Torso",
+   "pos": [
+    -0.8,
+    0.95,
+    4.58
+   ]
+  },
+  {
+   "name": "J_Shoulder_R",
+   "parent": "J_Torso",
+   "pos": [
+    0.0,
+    -1.2,
+    4.62
+   ]
+  },
+  {
+   "name": "J_Elbow_R",
+   "parent": "J_Shoulder_R",
+   "pos": [
+    0.0,
+    -1.2,
+    3.54
+   ]
+  },
+  {
+   "name": "J_Wrist_R",
+   "parent": "J_Elbow_R",
+   "pos": [
+    0.0,
+    -1.2,
+    2.46
+   ]
+  },
+  {
+   "name": "J_Finger_R_1",
+   "parent": "J_Wrist_R",
+   "pos": [
+    0.14,
+    -1.32,
+    2.24
+   ]
+  },
+  {
+   "name": "J_Finger_R_2",
+   "parent": "J_Wrist_R",
+   "pos": [
+    0.14,
+    -1.08,
+    2.24
+   ]
+  },
+  {
+   "name": "J_Finger_R_3",
+   "parent": "J_Wrist_R",
+   "pos": [
+    -0.14,
+    -1.2,
+    2.24
+   ]
+  },
+  {
+   "name": "J_Hip_R",
+   "parent": "J_Pelvis",
+   "pos": [
+    0.0,
+    -0.785,
+    3.28
+   ]
+  },
+  {
+   "name": "J_Knee_R",
+   "parent": "J_Hip_R",
+   "pos": [
+    0.0,
+    -0.785,
+    1.59
+   ]
+  },
+  {
+   "name": "J_Ankle_R",
+   "parent": "J_Knee_R",
+   "pos": [
+    0.0,
+    -0.785,
+    0.38
+   ]
+  },
+  {
+   "name": "J_Wing_R",
+   "parent": "J_Torso",
+   "pos": [
+    -0.8,
+    -0.95,
+    4.58
+   ]
+  },
+  {
+   "name": "J_Hatch",
+   "parent": "J_Torso",
+   "pos": [
+    1.01406,
+    0.0,
+    4.07308
+   ]
+  },
+  {
+   "name": "J_Optic",
+   "parent": "J_Torso",
+   "pos": [
+    0.63046,
+    0.0,
+    5.44897
+   ]
+  },
+  {
+   "name": "W_Shotgun",
+   "parent": "J_Wrist_R",
+   "pos": [
+    0.0,
+    -1.2,
+    2.46
+   ]
+  },
+  {
+   "name": "S_Eye",
+   "parent": "J_Torso",
+   "pos": [
+    0.62,
+    0.0,
+    4.7
+   ]
+  },
+  {
+   "name": "S_Seat",
+   "parent": "J_Torso",
+   "pos": [
+    0.15691,
+    0.0,
+    4.50931
+   ]
+  },
+  {
+   "name": "S_Chest",
+   "parent": "J_Torso",
+   "pos": [
+    0.94626,
+    0.0,
+    4.67342
+   ]
+  },
+  {
+   "name": "S_Embark",
+   "parent": "J_Torso",
+   "pos": [
+    2.2,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "S_Rodeo",
+   "parent": "J_Torso",
+   "pos": [
+    -0.13063,
+    0.0,
+    5.7278
+   ]
+  },
+  {
+   "name": "S_Dmg_Torso_F",
+   "parent": "J_Torso",
+   "pos": [
+    1.00332,
+    0.34,
+    4.65488
+   ]
+  },
+  {
+   "name": "S_Dmg_Torso_B",
+   "parent": "J_Torso",
+   "pos": [
+    -0.59446,
+    0.0,
+    5.17403
+   ]
+  },
+  {
+   "name": "S_Hand_L",
+   "parent": "J_Wrist_L",
+   "pos": [
+    0.0,
+    1.2,
+    2.16
+   ]
+  },
+  {
+   "name": "S_Dmg_Shoulder_L",
+   "parent": "J_Shoulder_L",
+   "pos": [
+    0.0,
+    1.45,
+    4.62
+   ]
+  },
+  {
+   "name": "S_Dmg_Elbow_L",
+   "parent": "J_Elbow_L",
+   "pos": [
+    0.0,
+    1.2,
+    3.54
+   ]
+  },
+  {
+   "name": "S_Dmg_Thigh_L",
+   "parent": "J_Hip_L",
+   "pos": [
+    0.3,
+    0.785,
+    2.45
+   ]
+  },
+  {
+   "name": "S_Dmg_Knee_L",
+   "parent": "J_Knee_L",
+   "pos": [
+    0.3,
+    0.785,
+    1.59
+   ]
+  },
+  {
+   "name": "S_Foot_L",
+   "parent": "J_Ankle_L",
+   "pos": [
+    0.24,
+    0.785,
+    0.0
+   ]
+  },
+  {
+   "name": "S_Hand_R",
+   "parent": "J_Wrist_R",
+   "pos": [
+    0.0,
+    -1.2,
+    2.16
+   ]
+  },
+  {
+   "name": "S_Dmg_Shoulder_R",
+   "parent": "J_Shoulder_R",
+   "pos": [
+    0.0,
+    -1.45,
+    4.62
+   ]
+  },
+  {
+   "name": "S_Dmg_Elbow_R",
+   "parent": "J_Elbow_R",
+   "pos": [
+    0.0,
+    -1.2,
+    3.54
+   ]
+  },
+  {
+   "name": "S_Dmg_Thigh_R",
+   "parent": "J_Hip_R",
+   "pos": [
+    0.3,
+    -0.785,
+    2.45
+   ]
+  },
+  {
+   "name": "S_Dmg_Knee_R",
+   "parent": "J_Knee_R",
+   "pos": [
+    0.3,
+    -0.785,
+    1.59
+   ]
+  },
+  {
+   "name": "S_Foot_R",
+   "parent": "J_Ankle_R",
+   "pos": [
+    0.24,
+    -0.785,
+    0.0
+   ]
+  },
+  {
+   "name": "S_Sword_Back",
+   "parent": "J_Torso",
+   "pos": [
+    -0.66646,
+    -0.70252,
+    5.59962
+   ]
+  },
+  {
+   "name": "S_Sword_R",
+   "parent": "J_Wrist_R",
+   "pos": [
+    0.0,
+    -1.2,
+    2.16
+   ]
+  },
+  {
+   "name": "S_Muzzle",
+   "parent": "W_Shotgun",
+   "pos": [
+    -0.405,
+    -1.2,
+    0.9
+   ]
+  },
+  {
+   "name": "S_Holster",
+   "parent": "J_Pelvis",
+   "pos": [
+    -0.62,
+    -0.8,
+    3.3
+   ]
+  },
+  {
+   "name": "S_Phase",
+   "parent": "J_Torso",
+   "pos": [
+    0.07485,
+    0.0,
+    4.90398
+   ]
+  },
+  {
+   "name": "S_Optic",
+   "parent": "J_Optic",
+   "pos": [
+    0.70654,
+    0.0,
+    5.42424
+   ]
+  },
+  {
+   "name": "S_Thrust",
+   "parent": "J_Torso",
+   "pos": [
+    -0.83336,
+    0.0,
+    4.5682
+   ]
+  },
+  {
+   "name": "S_Vent_L",
+   "parent": "J_Torso",
+   "pos": [
+    -0.68,
+    1.3,
+    5.3
+   ]
+  },
+  {
+   "name": "S_Vent_R",
+   "parent": "J_Torso",
+   "pos": [
+    -0.64,
+    -1.0,
+    5.22
+   ]
+  }
+ ],
+ "limits": [
+  {
+   "label": "pelvis.yaw",
+   "key": "pel_yaw",
+   "lo": -30,
+   "hi": 30
+  },
+  {
+   "label": "pelvis.pitch",
+   "key": "pel_pitch",
+   "lo": -25,
+   "hi": 35
+  },
+  {
+   "label": "pelvis.roll",
+   "key": "pel_roll",
+   "lo": -35,
+   "hi": 35
+  },
+  {
+   "label": "waist.yaw",
+   "key": "w_yaw",
+   "lo": -90,
+   "hi": 90
+  },
+  {
+   "label": "waist.bend",
+   "key": "w_bend",
+   "lo": -25,
+   "hi": 45
+  },
+  {
+   "label": "waist.side",
+   "key": "w_side",
+   "lo": -30,
+   "hi": 30
+  },
+  {
+   "label": "hatch",
+   "key": "hatch",
+   "lo": 0,
+   "hi": 120
+  },
+  {
+   "label": "optic.yaw",
+   "key": "op_yaw",
+   "lo": -40,
+   "hi": 40
+  },
+  {
+   "label": "optic.pitch",
+   "key": "op_pitch",
+   "lo": -25,
+   "hi": 25
+  },
+  {
+   "label": "hip.flex",
+   "key": "h_flex",
+   "lo": -65,
+   "hi": 110
+  },
+  {
+   "label": "hip.out",
+   "key": "h_out",
+   "lo": -20,
+   "hi": 60
+  },
+  {
+   "label": "hip.twist",
+   "key": "h_twist",
+   "lo": -35,
+   "hi": 60
+  },
+  {
+   "label": "knee",
+   "key": "k",
+   "lo": 0,
+   "hi": 140
+  },
+  {
+   "label": "ankle.pitch",
+   "key": "a",
+   "lo": -35,
+   "hi": 60
+  },
+  {
+   "label": "ankle.roll",
+   "key": "a_roll",
+   "lo": -20,
+   "hi": 20
+  },
+  {
+   "label": "shoulder.flex",
+   "key": "s_flex",
+   "lo": -60,
+   "hi": 120
+  },
+  {
+   "label": "shoulder.out",
+   "key": "s_out",
+   "lo": -30,
+   "hi": 90
+  },
+  {
+   "label": "shoulder.twist",
+   "key": "s_in",
+   "lo": -45,
+   "hi": 45
+  },
+  {
+   "label": "elbow",
+   "key": "e",
+   "lo": 0,
+   "hi": 140
+  },
+  {
+   "label": "wrist.pitch",
+   "key": "wr_pitch",
+   "lo": -45,
+   "hi": 45
+  },
+  {
+   "label": "wrist.side",
+   "key": "wr_side",
+   "lo": -60,
+   "hi": 60
+  },
+  {
+   "label": "finger_1",
+   "key": "f1",
+   "lo": -25,
+   "hi": 50
+  },
+  {
+   "label": "finger_2",
+   "key": "f2",
+   "lo": -25,
+   "hi": 50
+  },
+  {
+   "label": "finger_3",
+   "key": "f3",
+   "lo": -25,
+   "hi": 50
+  },
+  {
+   "label": "wing",
+   "key": "wing",
+   "lo": 0,
+   "hi": 86.4
+  }
+ ],
+ "wing_axis_L": [
+  0.829195,
+  -0.440985,
+  0.343464
+ ],
+ "wing_axis_R": [
+  -0.829195,
+  -0.440985,
+  -0.343464
+ ],
+ "poses": {
+  "stand_aim": {
+   "h_flex_L": 23.0,
+   "k_L": 46.0,
+   "h_flex_R": 23.0,
+   "k_R": 46.0,
+   "s_flex_R": 60.0,
+   "e_R": 30.0,
+   "s_in_R": 8.0,
+   "s_out_R": 6.0,
+   "s_flex_L": 15.0,
+   "e_L": 80.0,
+   "s_out_L": 12.0,
+   "f1_R": 25.0,
+   "f2_R": 25.0,
+   "f3_R": 25.0
+  },
+  "aim_up_45": {
+   "h_flex_L": 23.0,
+   "k_L": 46.0,
+   "h_flex_R": 23.0,
+   "k_R": 46.0,
+   "w_bend": -20.0,
+   "s_flex_R": 85.0,
+   "e_R": 30.0,
+   "s_in_R": 8.0,
+   "s_out_R": 6.0,
+   "s_flex_L": 15.0,
+   "e_L": 80.0,
+   "s_out_L": 12.0,
+   "f1_R": 25.0,
+   "f2_R": 25.0,
+   "f3_R": 25.0
+  },
+  "aim_down_45": {
+   "h_flex_L": 23.0,
+   "k_L": 46.0,
+   "h_flex_R": 23.0,
+   "k_R": 46.0,
+   "w_bend": 30.0,
+   "s_flex_R": 45.0,
+   "e_R": 30.0,
+   "s_in_R": 8.0,
+   "s_out_R": 6.0,
+   "s_flex_L": 15.0,
+   "e_L": 80.0,
+   "s_out_L": 12.0,
+   "f1_R": 25.0,
+   "f2_R": 25.0,
+   "f3_R": 25.0
+  },
+  "yaw_85_level": {
+   "h_flex_L": 23.0,
+   "k_L": 46.0,
+   "h_flex_R": 23.0,
+   "k_R": 46.0,
+   "w_yaw": 85.0,
+   "s_flex_R": 60.0,
+   "e_R": 30.0,
+   "s_in_R": 8.0,
+   "s_out_R": 6.0,
+   "s_flex_L": 15.0,
+   "e_L": 80.0,
+   "s_out_L": 12.0,
+   "f1_R": 25.0,
+   "f2_R": 25.0,
+   "f3_R": 25.0
+  },
+  "yaw_-85_level": {
+   "h_flex_L": 23.0,
+   "k_L": 46.0,
+   "h_flex_R": 23.0,
+   "k_R": 46.0,
+   "w_yaw": -85.0,
+   "s_flex_R": 60.0,
+   "e_R": 30.0,
+   "s_in_R": 8.0,
+   "s_out_R": 6.0,
+   "s_flex_L": 15.0,
+   "e_L": 80.0,
+   "s_out_L": 12.0,
+   "f1_R": 25.0,
+   "f2_R": 25.0,
+   "f3_R": 25.0
+  },
+  "yaw_85_up": {
+   "h_flex_L": 23.0,
+   "k_L": 46.0,
+   "h_flex_R": 23.0,
+   "k_R": 46.0,
+   "w_yaw": 85.0,
+   "w_bend": -20.0,
+   "s_flex_R": 85.0,
+   "e_R": 30.0,
+   "s_in_R": 8.0,
+   "s_out_R": 6.0,
+   "s_flex_L": 15.0,
+   "e_L": 80.0,
+   "s_out_L": 12.0,
+   "f1_R": 25.0,
+   "f2_R": 25.0,
+   "f3_R": 25.0
+  },
+  "yaw_85_down": {
+   "h_flex_L": 23.0,
+   "k_L": 46.0,
+   "h_flex_R": 23.0,
+   "k_R": 46.0,
+   "w_yaw": 85.0,
+   "w_bend": 30.0,
+   "s_flex_R": 45.0,
+   "e_R": 30.0,
+   "s_in_R": 8.0,
+   "s_out_R": 6.0,
+   "s_flex_L": 15.0,
+   "e_L": 80.0,
+   "s_out_L": 12.0,
+   "f1_R": 25.0,
+   "f2_R": 25.0,
+   "f3_R": 25.0
+  },
+  "yaw_-85_down": {
+   "h_flex_L": 23.0,
+   "k_L": 46.0,
+   "h_flex_R": 23.0,
+   "k_R": 46.0,
+   "w_yaw": -85.0,
+   "w_bend": 30.0,
+   "s_flex_R": 45.0,
+   "e_R": 30.0,
+   "s_in_R": 8.0,
+   "s_out_R": 6.0,
+   "s_flex_L": 15.0,
+   "e_L": 80.0,
+   "s_out_L": 12.0,
+   "f1_R": 25.0,
+   "f2_R": 25.0,
+   "f3_R": 25.0
+  },
+  "crouch": {
+   "pel_pitch": 14.0,
+   "w_bend": 4.0,
+   "h_flex_L": 92.0,
+   "k_L": 115.0,
+   "h_flex_R": 92.0,
+   "k_R": 115.0,
+   "s_flex_R": 60.0,
+   "e_R": 30.0,
+   "s_in_R": 8.0,
+   "s_out_R": 6.0,
+   "s_flex_L": 15.0,
+   "e_L": 80.0,
+   "s_out_L": 12.0,
+   "f1_R": 25.0,
+   "f2_R": 25.0,
+   "f3_R": 25.0
+  },
+  "crouch_yaw_85": {
+   "pel_pitch": 14.0,
+   "w_bend": 4.0,
+   "w_yaw": 85.0,
+   "h_flex_L": 92.0,
+   "k_L": 115.0,
+   "h_flex_R": 92.0,
+   "k_R": 115.0,
+   "s_flex_R": 60.0,
+   "e_R": 30.0,
+   "s_in_R": 8.0,
+   "s_out_R": 6.0,
+   "s_flex_L": 15.0,
+   "e_L": 80.0,
+   "s_out_L": 12.0,
+   "f1_R": 25.0,
+   "f2_R": 25.0,
+   "f3_R": 25.0
+  },
+  "sprint_stride": {
+   "pel_pitch": 33.0,
+   "w_bend": 8.0,
+   "h_flex_L": 65.0,
+   "k_L": 52.0,
+   "h_flex_R": -24.0,
+   "k_R": 30.0,
+   "s_flex_R": 40.0,
+   "e_R": 30.0,
+   "s_in_R": 8.0,
+   "s_out_R": 6.0,
+   "s_flex_L": 15.0,
+   "e_L": 80.0,
+   "s_out_L": 12.0,
+   "f1_R": 25.0,
+   "f2_R": 25.0,
+   "f3_R": 25.0
+  },
+  "sprint_lean_L": {
+   "pel_pitch": 28.0,
+   "pel_roll": -34.0,
+   "w_bend": 8.0,
+   "w_side": 10.0,
+   "h_flex_L": 65.0,
+   "k_L": 52.0,
+   "h_flex_R": -24.0,
+   "k_R": 30.0,
+   "s_flex_R": 40.0,
+   "e_R": 30.0,
+   "s_in_R": 8.0,
+   "s_out_R": 6.0,
+   "s_flex_L": 15.0,
+   "e_L": 80.0,
+   "s_out_L": 12.0,
+   "f1_R": 25.0,
+   "f2_R": 25.0,
+   "f3_R": 25.0
+  },
+  "dash_float_L": {
+   "pel_pitch": 10.0,
+   "pel_roll": -10.0,
+   "w_bend": 4.0,
+   "w_side": -26.0,
+   "h_flex_L": 31.0,
+   "h_out_L": 8.0,
+   "k_L": 26.0,
+   "h_flex_R": 20.0,
+   "h_out_R": 45.0,
+   "k_R": 10.0,
+   "s_flex_R": 60.0,
+   "e_R": 30.0,
+   "s_in_R": 8.0,
+   "s_out_R": 6.0,
+   "s_flex_L": 15.0,
+   "e_L": 80.0,
+   "s_out_L": 22.0,
+   "f1_R": 25.0,
+   "f2_R": 25.0,
+   "f3_R": 25.0
+  },
+  "dash_land": {
+   "pel_pitch": -16.0,
+   "w_bend": 40.0,
+   "h_flex_L": 37.0,
+   "k_L": 77.0,
+   "h_flex_R": -8.0,
+   "k_R": 30.0,
+   "s_flex_R": 60.0,
+   "e_R": 30.0,
+   "s_in_R": 8.0,
+   "s_out_R": 6.0,
+   "s_flex_L": 15.0,
+   "e_L": 80.0,
+   "s_out_L": 12.0,
+   "f1_R": 25.0,
+   "f2_R": 25.0,
+   "f3_R": 25.0
+  },
+  "landing_one_knee": {
+   "pel_pitch": 12.0,
+   "w_bend": 25.0,
+   "h_flex_L": 100.0,
+   "k_L": 110.0,
+   "h_flex_R": -25.0,
+   "k_R": 85.0,
+   "a_R": 55.0,
+   "s_flex_L": 35.0,
+   "e_L": 15.0,
+   "s_out_L": 25.0,
+   "s_flex_R": 25.0,
+   "e_R": 40.0,
+   "s_out_R": 25.0,
+   "wr_pitch_R": -50.0,
+   "f1_R": 25.0,
+   "f2_R": 25.0,
+   "f3_R": 25.0
+  },
+  "landing_rise": {
+   "pel_pitch": 20.0,
+   "w_bend": 15.0,
+   "h_flex_L": 80.0,
+   "k_L": 100.0,
+   "h_flex_R": 25.0,
+   "k_R": 70.0,
+   "s_flex_L": 20.0,
+   "e_L": 50.0,
+   "s_out_L": 30.0,
+   "s_flex_R": 25.0,
+   "e_R": 40.0,
+   "s_out_R": 20.0,
+   "f1_R": 25.0,
+   "f2_R": 25.0,
+   "f3_R": 25.0
+  },
+  "kneel_hatch": {
+   "pel_pitch": 5.0,
+   "w_bend": -5.0,
+   "h_flex_L": 90.0,
+   "k_L": 105.0,
+   "h_flex_R": -25.0,
+   "k_R": 85.0,
+   "a_R": 55.0,
+   "s_flex_L": 15.0,
+   "e_L": 30.0,
+   "s_out_L": 12.0,
+   "s_flex_R": 12.0,
+   "e_R": 25.0,
+   "s_out_R": 12.0,
+   "wr_pitch_R": -30.0,
+   "f1_R": 25.0,
+   "f2_R": 25.0,
+   "f3_R": 25.0
+  },
+  "melee_L": {
+   "h_flex_L": 23.0,
+   "k_L": 46.0,
+   "h_flex_R": 23.0,
+   "k_R": 46.0,
+   "w_yaw": -45.0,
+   "w_bend": 12.0,
+   "s_flex_L": 85.0,
+   "e_L": 25.0,
+   "s_flex_R": -5.0,
+   "s_out_R": 12.0,
+   "e_R": 35.0,
+   "f1_R": 25.0,
+   "f2_R": 25.0,
+   "f3_R": 25.0
+  },
+  "doomed": {
+   "pel_roll": -6.0,
+   "w_bend": 25.0,
+   "w_side": -14.0,
+   "w_yaw": 15.0,
+   "h_flex_L": 25.0,
+   "k_L": 40.0,
+   "h_flex_R": -5.0,
+   "k_R": 15.0,
+   "s_flex_R": 25.0,
+   "e_R": 15.0,
+   "s_out_R": 18.0,
+   "s_flex_L": -5.0,
+   "e_L": 20.0,
+   "s_out_L": 20.0,
+   "f1_R": 25.0,
+   "f2_R": 25.0,
+   "f3_R": 25.0
+  },
+  "walk_A": {
+   "h_flex_L": 38.0,
+   "k_L": 40.0,
+   "h_flex_R": 4.0,
+   "k_R": 30.0,
+   "s_flex_R": 60.0,
+   "e_R": 30.0,
+   "s_in_R": 8.0,
+   "s_out_R": 6.0,
+   "s_flex_L": 15.0,
+   "e_L": 80.0,
+   "s_out_L": 12.0,
+   "pel_pitch": 4.0,
+   "f1_R": 25.0,
+   "f2_R": 25.0,
+   "f3_R": 25.0
+  },
+  "walk_B": {
+   "h_flex_L": 6.0,
+   "k_L": 58.0,
+   "h_flex_R": 34.0,
+   "k_R": 36.0,
+   "s_flex_R": 60.0,
+   "e_R": 30.0,
+   "s_in_R": 8.0,
+   "s_out_R": 6.0,
+   "s_flex_L": 15.0,
+   "e_L": 80.0,
+   "s_out_L": 12.0,
+   "pel_pitch": 4.0,
+   "f1_R": 25.0,
+   "f2_R": 25.0,
+   "f3_R": 25.0
+  }
+ },
+ "bind_pose": {
+  "s_flex_R": 10.0,
+  "e_R": 75.0
+ },
+ "right_wrist_pitch_limit": [
+  -60.0,
+  45.0
+ ],
+ "light_adjust": {
+  "dash_float_L": {
+   "s_out_L": 22
+  }
+ },
+ "right_wrist_rule": "wr_pitch_R / e_R in the poses come from build_light.solve_weapon (weapon >= 0.15 m above ground, no body contact)",
+ "parts": [
+  {
+   "object": "L2_Torso_Upper",
+   "joint": "J_Torso",
+   "slot": "pri"
+  },
+  {
+   "object": "L2_Hatch",
+   "joint": "J_Hatch",
+   "slot": "pri"
+  },
+  {
+   "object": "L2_Torso_Lower",
+   "joint": "J_Torso",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_Pelvis",
+   "joint": "J_Pelvis",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_Collar",
+   "joint": "J_Pelvis",
+   "slot": "pri"
+  },
+  {
+   "object": "L2_Waist",
+   "joint": "J_Waist",
+   "slot": "pri"
+  },
+  {
+   "object": "L2_Thigh_Hub_L",
+   "joint": "J_Hip_L",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_Thigh_Hub_R",
+   "joint": "J_Hip_R",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_Thigh_L",
+   "joint": "J_Hip_L",
+   "slot": "pri"
+  },
+  {
+   "object": "L2_Thigh_R",
+   "joint": "J_Hip_R",
+   "slot": "pri"
+  },
+  {
+   "object": "L2_Thigh_Plate_L",
+   "joint": "J_Hip_L",
+   "slot": "pri"
+  },
+  {
+   "object": "L2_Thigh_Plate_R",
+   "joint": "J_Hip_R",
+   "slot": "pri"
+  },
+  {
+   "object": "L2_Thigh_Side_L",
+   "joint": "J_Hip_L",
+   "slot": "pri"
+  },
+  {
+   "object": "L2_Thigh_Side_R",
+   "joint": "J_Hip_R",
+   "slot": "pri"
+  },
+  {
+   "object": "L2_Thigh_Clevis_L",
+   "joint": "J_Hip_L",
+   "slot": "pri"
+  },
+  {
+   "object": "L2_Thigh_Clevis_R",
+   "joint": "J_Hip_R",
+   "slot": "pri"
+  },
+  {
+   "object": "L2_Thigh_Piston_L",
+   "joint": "J_Hip_L",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_Thigh_Piston_R",
+   "joint": "J_Hip_R",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_Knee_Hub_L",
+   "joint": "J_Knee_L",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_Knee_Hub_R",
+   "joint": "J_Knee_R",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_Shin_L",
+   "joint": "J_Knee_L",
+   "slot": "pri"
+  },
+  {
+   "object": "L2_Shin_R",
+   "joint": "J_Knee_R",
+   "slot": "pri"
+  },
+  {
+   "object": "L2_Shin_Plate_L",
+   "joint": "J_Knee_L",
+   "slot": "pri"
+  },
+  {
+   "object": "L2_Shin_Plate_R",
+   "joint": "J_Knee_R",
+   "slot": "pri"
+  },
+  {
+   "object": "L2_Knee_Guard_L",
+   "joint": "J_Knee_L",
+   "slot": "sec"
+  },
+  {
+   "object": "L2_Knee_Guard_R",
+   "joint": "J_Knee_R",
+   "slot": "sec"
+  },
+  {
+   "object": "L2_Calf_Blade_L",
+   "joint": "J_Knee_L",
+   "slot": "pri"
+  },
+  {
+   "object": "L2_Calf_Blade_R",
+   "joint": "J_Knee_R",
+   "slot": "pri"
+  },
+  {
+   "object": "L2_Calf_Mount_L",
+   "joint": "J_Knee_L",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_Calf_Mount_R",
+   "joint": "J_Knee_R",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_Ankle_Piston_L",
+   "joint": "J_Knee_L",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_Ankle_Piston_R",
+   "joint": "J_Knee_R",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_Ankle_L",
+   "joint": "J_Ankle_L",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_Ankle_R",
+   "joint": "J_Ankle_R",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_Foot_L",
+   "joint": "J_Ankle_L",
+   "slot": "pri"
+  },
+  {
+   "object": "L2_Foot_R",
+   "joint": "J_Ankle_R",
+   "slot": "pri"
+  },
+  {
+   "object": "L2_Toe_L",
+   "joint": "J_Ankle_L",
+   "slot": "pri"
+  },
+  {
+   "object": "L2_Toe_R",
+   "joint": "J_Ankle_R",
+   "slot": "pri"
+  },
+  {
+   "object": "L2_Heel_Spur_L",
+   "joint": "J_Ankle_L",
+   "slot": "pri"
+  },
+  {
+   "object": "L2_Heel_Spur_R",
+   "joint": "J_Ankle_R",
+   "slot": "pri"
+  },
+  {
+   "object": "L2_UpperArm_Hub_L",
+   "joint": "J_Shoulder_L",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_Shoulder_Socket_L",
+   "joint": "J_Torso",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_UpperArm_L",
+   "joint": "J_Shoulder_L",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_UpperArm_Plate_L",
+   "joint": "J_Shoulder_L",
+   "slot": "pri"
+  },
+  {
+   "object": "L2_UpperArm_Side_L",
+   "joint": "J_Shoulder_L",
+   "slot": "pri"
+  },
+  {
+   "object": "L2_UpperArm_Piston_L",
+   "joint": "J_Shoulder_L",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_UpperArm_Hub_R",
+   "joint": "J_Shoulder_R",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_Shoulder_Socket_R",
+   "joint": "J_Torso",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_UpperArm_R",
+   "joint": "J_Shoulder_R",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_UpperArm_Piston_R",
+   "joint": "J_Shoulder_R",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_Elbow_Hub_L",
+   "joint": "J_Elbow_L",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_Forearm_L",
+   "joint": "J_Elbow_L",
+   "slot": "pri"
+  },
+  {
+   "object": "L2_Forearm_Plate_L",
+   "joint": "J_Elbow_L",
+   "slot": "pri"
+  },
+  {
+   "object": "L2_Hand_L",
+   "joint": "J_Wrist_L",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_Wrist_Hub_L",
+   "joint": "J_Wrist_L",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_Finger_L_1",
+   "joint": "J_Finger_L_1",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_Finger_L_2",
+   "joint": "J_Finger_L_2",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_Finger_L_3",
+   "joint": "J_Finger_L_3",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_Elbow_Hub_R",
+   "joint": "J_Elbow_R",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_Forearm_R",
+   "joint": "J_Elbow_R",
+   "slot": "pri"
+  },
+  {
+   "object": "L2_Forearm_Plate_R",
+   "joint": "J_Elbow_R",
+   "slot": "pri"
+  },
+  {
+   "object": "L2_Hand_R",
+   "joint": "J_Wrist_R",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_Wrist_Hub_R",
+   "joint": "J_Wrist_R",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_Finger_R_1",
+   "joint": "J_Finger_R_1",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_Finger_R_2",
+   "joint": "J_Finger_R_2",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_Finger_R_3",
+   "joint": "J_Finger_R_3",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_Pauldron_L",
+   "joint": "J_Torso",
+   "slot": "sec"
+  },
+  {
+   "object": "L2_Pauldron_Lames_L",
+   "joint": "J_Torso",
+   "slot": "sec"
+  },
+  {
+   "object": "L2_Pauldron_Trim_L",
+   "joint": "J_Torso",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_Pauldron_Bolts_L",
+   "joint": "J_Torso",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_Shoulder_Cap_R",
+   "joint": "J_Torso",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_Skirt_Back",
+   "joint": "J_Pelvis",
+   "slot": "pri"
+  },
+  {
+   "object": "L2_Skirt_Side_L",
+   "joint": "J_Hip_L",
+   "slot": "pri"
+  },
+  {
+   "object": "L2_Skirt_Side_R",
+   "joint": "J_Hip_R",
+   "slot": "pri"
+  },
+  {
+   "object": "L2_Skirt_Hangers",
+   "joint": "J_Pelvis",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_Skirt_Edge",
+   "joint": "J_Pelvis",
+   "slot": "sec"
+  },
+  {
+   "object": "L2_Skirt_Side_Edge_L",
+   "joint": "J_Hip_L",
+   "slot": "sec"
+  },
+  {
+   "object": "L2_Skirt_Side_Edge_R",
+   "joint": "J_Hip_R",
+   "slot": "sec"
+  },
+  {
+   "object": "L2_Tasset_L",
+   "joint": "J_Hip_L",
+   "slot": "pri"
+  },
+  {
+   "object": "L2_Tasset_R",
+   "joint": "J_Hip_R",
+   "slot": "pri"
+  },
+  {
+   "object": "L2_Tasset_Edge_L",
+   "joint": "J_Hip_L",
+   "slot": "sec"
+  },
+  {
+   "object": "L2_Tasset_Edge_R",
+   "joint": "J_Hip_R",
+   "slot": "sec"
+  },
+  {
+   "object": "L2_Optic_Housing",
+   "joint": "J_Optic",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_Optic_Slit",
+   "joint": "J_Optic",
+   "slot": "emit"
+  },
+  {
+   "object": "L2_Sword_Hilt",
+   "joint": "S_Sword_Back",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_Sword_Blade",
+   "joint": "S_Sword_Back",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_Sword_Fuller",
+   "joint": "S_Sword_Back",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_Sword_Edge",
+   "joint": "S_Sword_Back",
+   "slot": "emit"
+  },
+  {
+   "object": "L2_Rack",
+   "joint": "J_Torso",
+   "slot": "pri"
+  },
+  {
+   "object": "L2_Rack_Clamps",
+   "joint": "J_Torso",
+   "slot": "sec"
+  },
+  {
+   "object": "L2_Shotgun_Body",
+   "joint": "W_Shotgun",
+   "slot": "pri"
+  },
+  {
+   "object": "L2_Shotgun_Grip",
+   "joint": "W_Shotgun",
+   "slot": "sec"
+  },
+  {
+   "object": "L2_Shotgun_Barrels",
+   "joint": "W_Shotgun",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_Shotgun_Drum",
+   "joint": "W_Shotgun",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_Shotgun_Shroud",
+   "joint": "W_Shotgun",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_Spine",
+   "joint": "J_Torso",
+   "slot": "pri"
+  },
+  {
+   "object": "L2_Phase_Gen",
+   "joint": "J_Torso",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_Phase_Glow",
+   "joint": "J_Torso",
+   "slot": "emit"
+  },
+  {
+   "object": "L2_Vent_R",
+   "joint": "J_Torso",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_Hatch_Hinge",
+   "joint": "J_Hatch",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_Hatch_Stripe",
+   "joint": "J_Hatch",
+   "slot": "sec"
+  },
+  {
+   "object": "L2_Side_Intakes",
+   "joint": "J_Torso",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_Torso_Bolts",
+   "joint": "J_Torso",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_Torso_Band",
+   "joint": "J_Torso",
+   "slot": "frame"
+  },
+  {
+   "object": "L2_Forearm_Guard_L",
+   "joint": "J_Elbow_L",
+   "slot": "sec"
+  }
+ ]
+}

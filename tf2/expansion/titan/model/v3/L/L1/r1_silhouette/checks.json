@@ -1,0 +1,333 @@
+{
+ "code": "L1",
+ "stage": 1,
+ "stage_name": "silhouette",
+ "rest_top_m": 5.812,
+ "rest_top_part": "Torso_Upper",
+ "parts": 66,
+ "tris": {
+  "ok": false,
+  "total": 5356,
+  "target": [
+   40000,
+   60000
+  ],
+  "largest_part": "Torso_Upper",
+  "largest_part_tris": 476,
+  "part_limit": 6000,
+  "note": "only judged at stage 4"
+ },
+ "shoulder_ge_hip_x1.5": {
+  "ok": true,
+  "shoulder_w": 3.56,
+  "hip_w": 2.0,
+  "need": 3.0,
+  "ratio": 1.78,
+  "shoulder_parts": [
+   "Mantle_L",
+   "Mantle_R"
+  ],
+  "how": "outer x extent of the shoulder parts; hip = thighs+pelvis+collar within -0.30/+0.20 of the hip joint"
+ },
+ "shoulder_armour": {
+  "ok": true,
+  "left": {
+   "thickness_m": 0.567,
+   "underside_m": 4.97,
+   "top_m": 5.537,
+   "hub_top_m": 4.89,
+   "covers_hub": true,
+   "ok": true
+  },
+  "right": {
+   "thickness_m": 0.567,
+   "underside_m": 4.97,
+   "top_m": 5.537,
+   "hub_top_m": 4.89,
+   "covers_hub": true,
+   "ok": true
+  },
+  "rule": "SPEC 3.1 rule 7: >= 0.45 thick and over the arm top"
+ },
+ "waist_le_height_x0.06": {
+  "ok": true,
+  "waist_visible_m": 0.125,
+  "limit_m": 0.349,
+  "how": "gap between collar/pelvis top and torso bottom at rest"
+ },
+ "waist_bend_clear": {
+  "ok": true,
+  "cases": {
+   "bend_45": true,
+   "bend_-25": true,
+   "side_30": true,
+   "side_-30": true,
+   "yaw_90_bend_45": true,
+   "yaw_-90_bend_45": true
+  },
+  "hits": {}
+ },
+ "foot_ge_height_x0.22": {
+  "ok": true,
+  "foot_len_m": 1.46,
+  "need_m": 1.279,
+  "foot_w_m": 0.62
+ },
+ "calf_ge_thigh": {
+  "ok": true,
+  "thigh": {
+   "area_m2": 0.211,
+   "width_m": 0.4,
+   "depth_m": 0.528,
+   "at_z": 2.48
+  },
+  "shin": {
+   "area_m2": 0.614,
+   "width_m": 0.598,
+   "depth_m": 1.027,
+   "at_z": 0.94
+  },
+  "how": "largest horizontal section (width x depth) of all parts on that bone, 4 cm steps"
+ },
+ "top_le_collider_5.97": {
+  "ok": true,
+  "rest_top_m": 5.812
+ },
+ "poses_required": {
+  "ok": true,
+  "names": [
+   "stand_aim",
+   "aim_up_45",
+   "aim_down_45",
+   "yaw_85_level",
+   "yaw_-85_level",
+   "sprint_stride",
+   "kneel_hatch",
+   "walk_A",
+   "walk_B",
+   "stand_aim+wings",
+   "aim_up_45+wings",
+   "aim_down_45+wings",
+   "yaw_85_level+wings",
+   "yaw_-85_level+wings",
+   "walk_A+wings",
+   "walk_B+wings"
+  ],
+  "failed": {}
+ },
+ "poses_all": {
+  "ok": false,
+  "poses": 29,
+  "clean": 25,
+  "failed": {
+   "crouch": [
+    "Calf_Blade_R x Rifle_Receiver"
+   ],
+   "crouch_yaw_85": [
+    "Thigh_L x Rifle_Stock",
+    "Thigh_Plate_L x Rifle_Receiver",
+    "Thigh_Plate_L x Rifle_Stock"
+   ],
+   "dash_float_L": [
+    "Thigh_Hub_L x UpperArm_L",
+    "Thigh_Hub_L x Elbow_Hub_L",
+    "Thigh_L x Elbow_Hub_L",
+    "Thigh_L x Forearm_L",
+    "Thigh_Plate_L x Elbow_Hub_L",
+    "Thigh_Plate_L x Forearm_L",
+    "Thigh_Plate_L x Forearm_Plate_L"
+   ],
+   "dash_float_L+wings": [
+    "Thigh_Hub_L x UpperArm_L",
+    "Thigh_Hub_L x Elbow_Hub_L",
+    "Thigh_L x Elbow_Hub_L",
+    "Thigh_L x Forearm_L",
+    "Thigh_Plate_L x Elbow_Hub_L",
+    "Thigh_Plate_L x Forearm_L",
+    "Thigh_Plate_L x Forearm_Plate_L"
+   ]
+  },
+  "rest_pose_hits": [
+   "Calf_Blade_R x Rifle_Shroud",
+   "Calf_Mount_R x Rifle_Shroud"
+  ]
+ },
+ "pose_top_m": {
+  "stand_aim": 5.581,
+  "aim_up_45": 7.274,
+  "aim_down_45": 6.364,
+  "yaw_85_level": 5.581,
+  "yaw_-85_level": 5.581,
+  "yaw_85_up": 7.274,
+  "yaw_85_down": 6.364,
+  "yaw_-85_down": 6.364,
+  "crouch": 4.725,
+  "crouch_yaw_85": 4.585,
+  "sprint_stride": 6.331,
+  "sprint_lean_L": 6.727,
+  "dash_float_L": 6.721,
+  "dash_land": 6.326,
+  "landing_one_knee": 4.984,
+  "landing_rise": 6.368,
+  "kneel_hatch": 4.193,
+  "melee_L": 5.879,
+  "doomed": 6.758,
+  "walk_A": 5.671,
+  "walk_B": 5.617,
+  "stand_aim+wings": 5.581,
+  "aim_up_45+wings": 7.274,
+  "aim_down_45+wings": 5.53,
+  "yaw_85_level+wings": 5.581,
+  "yaw_-85_level+wings": 5.581,
+  "walk_A+wings": 5.671,
+  "walk_B+wings": 5.617,
+  "dash_float_L+wings": 6.452
+ },
+ "meas_within_5pct": {
+  "ok": true,
+  "rows": {
+   "stand_top": {
+    "ours": 5.581,
+    "meas": 5.73,
+    "diff_pct": -2.6
+   },
+   "hip_z": {
+    "ours": 3.049,
+    "meas": 3.05,
+    "diff_pct": -0.0
+   },
+   "leg_ratio": {
+    "ours": 0.546,
+    "meas": 0.53,
+    "diff_pct": 3.1
+   },
+   "pelvis_z": {
+    "ours": 3.449,
+    "meas": 3.45,
+    "diff_pct": -0.0
+   },
+   "thigh": {
+    "ours": 1.69,
+    "meas": 1.69,
+    "diff_pct": 0.0
+   },
+   "shin": {
+    "ours": 1.21,
+    "meas": 1.21,
+    "diff_pct": 0.0
+   },
+   "ankle_z": {
+    "ours": 0.38,
+    "meas": 0.38,
+    "diff_pct": 0.0
+   },
+   "hip_spacing": {
+    "ours": 1.57,
+    "meas": 1.57,
+    "diff_pct": 0.0
+   },
+   "shoulder_spacing (reference only)": {
+    "ours": 2.4,
+    "meas": 2.1,
+    "diff_pct": 14.3
+   },
+   "upper_arm": {
+    "ours": 1.08,
+    "meas": 1.08,
+    "diff_pct": 0.0
+   },
+   "forearm": {
+    "ours": 1.08,
+    "meas": 1.08,
+    "diff_pct": 0.0
+   }
+  },
+  "design_reference": {
+   "shoulder_w": [
+    3.56,
+    3.3
+   ],
+   "hip_w": [
+    2.0,
+    1.9
+   ],
+   "foot_l": [
+    1.46,
+    1.35
+   ]
+  },
+  "stand_pose": "stand_aim with the light legs (hip 23, knee 46), feet levelled, lowest vertex on the ground",
+  "note": "stand_top without the weapon"
+ },
+ "sockets": {
+  "ok": true,
+  "missing": [],
+  "count": 35,
+  "joints": 25
+ },
+ "material_slots": {
+  "ok": true,
+  "used": [
+   "MAT_Emissive",
+   "MAT_Frame",
+   "MAT_Primary",
+   "MAT_Secondary"
+  ],
+  "area_pct": {
+   "MAT_Primary": 52.6,
+   "MAT_Secondary": 5.7,
+   "MAT_Frame": 41.6,
+   "MAT_Emissive": 0.2
+  },
+  "target_pct": {
+   "MAT_Primary": 60,
+   "MAT_Secondary": 15,
+   "MAT_Frame": 22,
+   "MAT_Emissive": "<=3"
+  }
+ },
+ "origins_on_joints": {
+  "ok": true,
+  "bad": [],
+  "how": "every part is parented to its joint with zero local offset, so its origin is the joint"
+ },
+ "pilot_fit": {
+  "ok": true,
+  "points": 280,
+  "outside": 0,
+  "outside_analysis": [],
+  "note": "reclined 1.8 m pilot capsules, hip at S_Seat, trunk 40 deg back; closed hatch, rest"
+ },
+ "kneel_hatch": {
+  "ok": true,
+  "hinge_height_m": 2.631,
+  "seat_height_m": 2.912,
+  "opening": {
+   "width_m": 1.163,
+   "widths_m": [
+    0.82,
+    1.163,
+    1.168,
+    0.965
+   ],
+   "height_m": 1.063,
+   "how": "cut face behind the nose: width = min of the inner sections, height = length along the cut from bottom to top section"
+  },
+  "need": "width >= 0.60, height >= 0.94 (seated 1.8 m pilot)",
+  "collisions_with_door_open": [],
+  "pilot_points_inside_open_door": 0
+ },
+ "check_seconds": 0.7,
+ "stand_aim_extent_blender": {
+  "min": [
+   -1.78,
+   -5.018,
+   0.0
+  ],
+  "max": [
+   1.78,
+   2.404,
+   5.581
+  ]
+ }
+}
