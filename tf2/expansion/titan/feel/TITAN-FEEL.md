@@ -26,6 +26,8 @@
 
 **Unity 基准：** HSD-Unity `titan/integration` 551b50e（HSD-Unity #78，不合 main）。它已经包含 `titan/full` cc4cbaa、`titan/full-fix1` 6d2e8d0、`titan/cam` 9b802bc 等全部分支（`git merge-base --is-ancestor` 查过）。下面的路径都相对 `Assets/HSD/Game/Runtime/Titan/`。
 
+**范围（11-13 lead 通知）：** 这份清单只管第一人称手感：移动、镜头、驾驶舱、声音。7 台套件、BT 和各底盘配哪些武器技能，归另开的"泰坦武器和技能"工作线。"开火后坐"只写镜头和手感的部分。表里涉及武器和技能的几行只留指向。
+
 ---
 
 ## 1. 操作响应
@@ -39,7 +41,7 @@
 | 身体比速度慢半拍 | 停步后约 0.2 s 换到待机姿势；起步时 0.2 s 混入走、0.55 s 换到跑；播放速度有 0.15 死区。第一人称看不到 | [meas] REF-GAIT §1、§3 | ◐ 身体走 B-沉 / 地形占位 v1，和第一人称无关 | — | 第一人称不受影响，不追 |
 | 转向（鼠标） | 和铁驭完全一样：2000 计数都转 144.78°，**没有上限、没有平滑**，松手当帧停。ADS 用 `mouse_sensitivity_zoomed` × tan(zoom_fov / 2) ÷ tan(37.5°) | [meas] T0 §2.1、§2.5 | ✅ 用游戏本身的鼠标，没有加泰坦系数 | 三种底盘一样 | 试玩版要加的"转向上限"在 TF2 里**没有**，默认关（第 6 节 `turnRateCap`） |
 | 转向（手柄） | 泰坦单独一张视角表 `looksensitivity_titan.txt`：最大转速 × 0.75；第 2、3 档起转时间 0.8 s（铁驭 0.33 / 0.3 s） | [file] T0 §2.2 | ❌ Titan 代码里没找到手柄的泰坦表 | 三种底盘一样 | 要做；见开关 `padTurnScale`、`padRampTime` |
-| 临时转向减慢 | 只有技能和受控状态：`turn_slow` 缩放**输入**，约 × (1 − 2 × 强度)，不限角速度。Ion 激光核心 0.25 → 鼠标转速减半；被 EMP 0.35 | [meas] T0 §2.3、§2.5 | ❌（技能没做） | — | 做技能时用"缩放输入"，不用角速度上限 |
+| 临时转向减慢 | 只有技能和受控状态：`turn_slow` 缩放**输入**，约 × (1 − 2 × 强度)，不限角速度。Ion 激光核心 0.25 → 鼠标转速减半；被 EMP 0.35 | [meas] T0 §2.3、§2.5 | ❌（技能没做） | — | 规则留给"泰坦武器和技能"工作线；这里只记一条：要减慢就缩放输入 |
 | dash 推力曲线 | 按下当帧到 `dodgeSpeed`（800 / 700 / 600），保持 0.2 s，然后按 `sprintDeceleration`（600 / 700 / 600）降回走速。dash 后 0.3 s 实测 620 / 486 / 416 u/s，和算的一致。**没有起步爬升**，是一下推出去 | [meas] T0 §3.1；规律 713-RECORD §9.3 | ✅ `TitanMotor`（`TitanDashPhase.Hold/Decay`） | 齐 | — |
 | dash 距离 | 一次约 633 / 445 / 383 u，用时约 1.08 / 0.84 / 0.85 s（按上面的规律从走速算） | [算] | 同上 | 齐 | — |
 | dash 次数 / 冷却 | 能量 100：每次耗 50 / 100 / 100，回能 10 / 16.66 / 9.9 每秒，用完后延迟 0.2 / 0.2 / 0.3 s 才开始回。所以轻型 2 次、每次 5 s 回一格，中型 1 次、6.0 s，重型 1 次、10.1 s。两次 dash 至少隔 0.35 / 0.3 / 0.2 s（`dodgeInterval`） | [meas] T0 §3.1；[file] 每台泰坦的设置文件覆盖底盘值 | ✅ `TitanChassis`（`dodgePower*`） | 齐 | dash 能量在 HUD 上怎么显示是我们的设计 |
@@ -68,7 +70,7 @@ TF2 的第一人称镜头**不挂在身体上**。身体动画在第一人称里
 | 开火后坐 | 每把枪自己的弹簧，R5 同样的规律（`hardScale` 加角度、`softScale` × 20 加角速度，画面 = (1 − weaponFraction) × punch）。XO-16 镜头几乎不动（连射 3.3 s 俯仰最多 0.2°），Ronin 散弹一枪 −6.2…−8.2° 于 0.05 s，Legion ±0.5° | [meas] GAPS §4 | ✅ 有两套：`TitanRecoil.Designed`（我们的炮）和 `Xo16`；`recoilScale` 等 | 按武器，不按底盘 | — |
 | 换弹镜头 | TF2 换弹时 1P 武器动画带着镜头角度摆（Monarch 俯仰 −1.2…+4.4°），位移 0 | [meas] GAPS §4 | ◐ 我们的炮换弹动作是自己的设计（决定 4），`cameraCues` 开关 | — | 只借幅度 |
 | 转向时的滞后 | **视角没有滞后**（鼠标 1:1）。滞后的是**舱框**：转身时舱框向反方向落后，满速时 −33…−37 px（约屏宽 2.7 %），停下后时间常数约 0.37 s 回位；俯仰也一样（44 °/s 时 0.2 s 落后 8 px，还在增大）。三种底盘逐像素相同 | [meas] GAPS §5、T-f §1.2–1.3；[file] `cockpitSwayGain` 3、`cockpitSwayTurnAngleFactor` −4 | ✅ `swayTau` 0.37、`swayFullRate`、`swayUnits`、`swayDegrees` | 齐 | 俯仰的稳定值没拍到 |
-| 近战、核心、弹射 | 近战约 0.8 s 动画镜头（左右 +22 / −14°）；核心启动小抖；弹射强制低头约 80° | [meas] POSE §4.5 | ◐ 近战、弹射有；核心没做 | — | 和手感清单关系小，不展开 |
+| 近战、核心、弹射 | 近战约 0.8 s 动画镜头（左右 +22 / −14°）；核心启动小抖；弹射强制低头约 80° | [meas] POSE §4.5 | ◐ 近战、弹射有；核心没做 | — | 归"泰坦武器和技能"工作线 |
 | FOV | 固定 75，所有状态都不变（冲刺、dash、受击） | [meas] POSE §4.1 | ✅ `TitanCamera.SourceFov` 75 | 齐 | — |
 | 屏幕震动传给枪 | 只传 10 %（`shake_viewmodelFactor_titan` 0.10） | [file] ANIM-FEEL F13 | ❌ 舱框和炮在自己的相机上，不受震动 | — | 小项 |
 
@@ -108,9 +110,9 @@ TF2 的第一人称镜头**不挂在身体上**。身体动画在第一人称里
 | 护盾 | 护盾打空 `titan_energyshield_down`、恢复 `titan_energyshield_up` | `weapons/_weapon_utility.nut:3408` 等 [file] | ◐ 有护盾受击音，没有打空 / 恢复 | 要做 |
 | 受击 | 子弹打到护盾、打到船体各有一类；暴击给攻击者 `titan_damage_crit` | [file] | ◐ shield / hull 两个 | 够用 |
 | 威胁提示 | 被锁定 `Titan_Cockpit_TitanLocking_Warning`；火箭接近 `titan_cockpit_missile_close_warning` | `weapons/cl_smart_ammo.gnut:13`、`mp_weapon_rocket_launcher.nut:47` [file] | ❌ | 有敌方火箭以后再做 |
-| 武器 | 武器文件里的开火 1P / 3P、换弹分段（`Wpn_XO16_3P_Reload_Pt1…9` 跟换弹动画事件）、空仓 `titan_dryfire` | [file] | ◐ 炮、火箭、换弹咔哒 | 换弹按我们自己的三个时刻分段 |
+| 武器 | 武器文件里的开火 1P / 3P、换弹分段（`Wpn_XO16_3P_Reload_Pt1…9` 跟换弹动画事件）、空仓 `titan_dryfire` | [file] | ◐ 炮、火箭、换弹咔哒 | 归"泰坦武器和技能"工作线（换弹按我们自己的三个时刻分段） |
 | 弹射 | 一串：按键提示、警报、推进、上升、顶点、下落 | `client/cl_titan_cockpit.nut:996–1179` [file] | ◐ 按键、发射 | 小项 |
-| 核心、技能 | 每个核心有启动、循环、结束音 | [file] | ❌（技能没做） | 做技能时一起 |
+| 核心、技能 | 每个核心有启动、循环、结束音 | [file] | ❌（技能没做） | 归"泰坦武器和技能"工作线 |
 | 语音（泰坦 OS） | 对话系统（`conversation/`）按事件播语音 | [file] 只确认了系统存在 | ❌ | 要不要语音是我们的设计 |
 
 **触发方式归纳：**
@@ -161,7 +163,7 @@ TF2 的第一人称镜头**不挂在身体上**。身体动画在第一人称里
 | 脚步声类型 | 按底盘 | `atlas` | `ogre` | [file] | |
 | 上机时长 | 缺 | 3.33–3.45 s | 缺 | [meas] 中型 | |
 | 登场动画长 | 6.433 s | 6.667 s | 6.667 s | [file] | |
-| ADS 走速（武器决定） | Ronin 135 | Ion 188、Monarch 100 | Legion 116 | [meas] T0 §3.3 | 按武器 |
+| ADS 走速（武器决定） | Ronin 135 | Ion 188、Monarch 100 | Legion 116 | [meas] T0 §3.3 | 按武器；归武器和技能工作线 |
 | 身体：走路周期 | 1.0 s | 1.133 s | 1.133 s | [file] 动画 | 第一人称看不到 |
 | 身体：上身跟随滞后（300 °/s） | 20.7° | 27° | 40° | [meas] GAPS §8 | 第三人称才看得到 |
 
