@@ -13,7 +13,7 @@
 - **四套共用一个本机色，靠形状分**：分光 = 三角光片和刻面（还带一圈彩虹色散边，只有它有）；猎标 = 刻痕和菱形导引；进阶 = 六口成圈、右肩刻度；远行 = 几乎全是实弹，没有能量特效，舱体有一道斜条。
 - **让玩家读懂规则的几个设计**：花开齐射的六管排成一圈，火箭从哪个口出去就往哪个方向张开；进阶右肩三道刻度，敌人远远就能数出升了几次；屏障掉血是光条一根根熄灭；能量池是炮管上的三格。
 - **要改 M-1 模型的有 9 项**（第 9 节），都是"把炮管、肩舱、护盾垫拆成可换件"、加几个小挂件 / 挂点、改发光色，不动骨架。按模型流程，要先出概念 → 三视图 → 细节图，用户确认后才进 Blender。
-- **BT 远征装没有规格页**：五件里四件能借 Monarch / Tone 的页和共用电雾，爆发核心只有武器 `.txt` 的几个数，规格要另补（第 12 节）。
+- **BT 远征装没有规格页**：五件里四件能借 Monarch / Tone 的页和共用电雾；11-13 按单人文件补了导弹和爆发核心的数值（第 12 节，标 [file]），外观不变。
 
 图（`img/`，格式和轻 / 重稿一样：每套一张，三视图上标挂点 + 每个技能一个示意，尺寸按规格页）：
 
@@ -335,7 +335,7 @@
 
 ![远行](img/kit-M1-wayfarer.png)
 
-**规则从哪来：** BT 远征装的组成在战役脚本里：主武器 `mp_titanweapon_xo16_shorty`（只有 11 行，继承 XO-16）、进攻 `mp_titanweapon_shoulder_rockets`（多目标导弹）、防御 `mp_titanability_particle_wall`、战术 `mp_titanability_smoke`、核心 `mp_titancore_amp_core`（爆发核心）（TF2-Research `local/vpk/client_sp_training/scripts/vscripts/sp/_sp_loadouts.nut`:302、1260–1272；`client_frontend/scripts/vscripts/sh_consts.gnut`:2600）。**没有 kits 规格页**，见第 12 节。
+**规则从哪来：** BT 远征装的组成在战役脚本里：主武器 `mp_titanweapon_xo16_shorty`（只有 11 行，继承 XO-16）、进攻 `mp_titanweapon_shoulder_rockets`（多目标导弹）、防御 `mp_titanability_particle_wall`、战术 `mp_titanability_smoke`、核心 `mp_titancore_amp_core`（爆发核心）（TF2-Research `local/vpk/client_sp_training/scripts/vscripts/sp/_sp_loadouts.nut`:302、1260–1272；`client_frontend/scripts/vscripts/sh_consts.gnut`:2600）。**没有 kits 规格页**；11-13 补测的单人版数值（导弹 1000 u/s、追踪 250、无锁 1 枚；核心命中扫描 100 发 × 150）见第 12 节，标 [file]。
 
 | 件 | 我们的名字 | 规则出处 | 外观 |
 |---|---|---|---|
@@ -469,7 +469,7 @@ kits-core 的 `IKitFx` 按"发射点（挂点名）、拖尾、爆炸、开火�
 | 项 | 谁 | 说明 |
 |---|---|---|
 | M-1 本机色改品红 | 用户确认 | 改 `MAT_Emissive` 和 SPEC 4.1；L-1 / L-2 / H-1 / H-2 的本机色不动 |
-| BT 远征装的规格页 | lead 派（kits-measure 或 kits-core） | 现在只有 `_sp_loadouts.nut` 的组成和 `amp_core.txt` 的几个数；爆发核心的状态机、`xo16_shorty` 继承后的实际数值、BT 版多目标导弹 / 粒子墙 / 电烟和 MP 版的差别都没核对 |
+| BT 远征装的规格（11-13 补上） | kits-measure 已补（研究仓库 PR #121 的 `PROJECTILES.md` 和 kits 页） | 多人里没有 BT，一律按单人文件。**[file] 点名导弹（WAY-O1）单人版：** 飞行 1000 u/s、追踪 250、不锁定时只出 1 枚。**[file] 爆发核心（WAY-C1）：** 命中扫描子弹（没有弹道飞行时间），共 100 发 × 每发 150。外观不变：光绳本来就画成枪口到命中点的直线，正好和命中扫描一致；导弹尾迹照 5.4。还没核对：`xo16_shorty` 继承后的实际数值、BT 版粒子墙 / 电烟和多人版的差别 |
 | 新动作（第 7 节 ①–⑦） | kits-core / 动画 | 要在 M-1 限位内；左臂横挡要查和捕光壳的位置关系 |
 | 捕光壳的球心 | kits-core | 规格说球心和锥轴是原生未知；我们画在左臂前方，判定以 kits-core 定的为准 |
 | 模型改动 M-1 至 M-9 | 用户确认 | 先出概念 → 三视图 → 细节图 |
