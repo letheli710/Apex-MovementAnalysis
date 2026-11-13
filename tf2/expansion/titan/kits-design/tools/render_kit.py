@@ -22,8 +22,18 @@ COL = {
 
 new_objs = []
 
+_MAT = {}
+def _mat(kind):
+    if kind not in _MAT:
+        m = bpy.data.materials.new('KDM_' + kind)
+        m.diffuse_color = (0.02, 0.02, 0.025, 1) if kind == 'dark' else ((0.10, 0.11, 0.13, 1) if kind == 'mount' else (1.0, 0.0, 1.0, 1))
+        _MAT[kind] = m
+    return _MAT[kind]
+
 def _finish(o, col):
     o.color = COL[col]
+    o.data.materials.clear()
+    o.data.materials.append(_mat('dark' if col == 'dark' else ('mount' if col == 'mount' else 'new')))
     new_objs.append(o)
     return o
 
@@ -116,14 +126,10 @@ def _stepgun(coils):
         for i, z in enumerate((2.00, 2.25, 2.50)):
             torus(f'ASC_up1_coil{i}', (-1.30, 0, z), 0.27, 0.035, 'Z', 'arc')
 
-def _smoke_racks(rods):
-    for s, (x0, x1) in enumerate(((0.38, 0.74), (-0.62, -0.26))):
-        box(f'SMK_rack{s}', (x0, 1.08, 5.57), (x1, 1.40, 5.66), 'mount')
-        for j in range(2):
-            cx = x0 + 0.09 + j * 0.18
-            cyl(f'SMK_can{s}{j}', (cx, 1.24, 5.76), 0.075, 0.20, 'Z', 'arc' if rods else 'mount')
-        if rods:
-            cyl(f'ASC_up2_rod{s}', ((x0 + x1) / 2, 1.38, 5.80), 0.02, 0.34, 'Z', 'arc')
+def _vent_rods():
+    for nm in ('S_Vent_L', 'S_Vent_R'):
+        p = bpy.data.objects[nm].matrix_world.translation
+        cyl('ASC_up2_rod_' + nm, (p.x, p.y + 0.05, p.z + 0.17), 0.025, 0.34, 'Z', 'arc')
 
 def ascent():
     shared_seats()
@@ -137,7 +143,7 @@ def ascent():
     cyl('ASC_D1_lens', (1.72, -0.15, 3.35), 0.11, 0.22, 'Y', 'restore')
     torus('ASC_up2_dish', (1.72, -0.27, 3.35), 0.20, 0.03, 'Y', 'restore')
     torus('ASC_up1_band', (1.30, 0, 3.62), 0.34, 0.03, 'Z', 'restore')
-    _smoke_racks(rods=True)
+    _vent_rods()
     for i, z in enumerate((5.00, 5.13, 5.26)):
         box(f'ASC_C1_chev{i}', (-1.97, -0.28, z), (-1.93, 0.28, z + 0.07), 'body')
 
@@ -156,7 +162,6 @@ def wayfarer():
     box('TLY_D1_proj', (1.64, -0.16, 2.90), (1.76, 0.16, 3.85), 'barrier')
     for i in range(4):
         box(f'TLY_D1_slat{i}', (1.76, -0.14, 2.98 + i * 0.22), (1.79, 0.14, 3.12 + i * 0.22), 'mount')
-    _smoke_racks(rods=False)
 
 def base():
     pass
@@ -172,13 +177,13 @@ for o in bpy.data.objects:
 sc = bpy.context.scene
 sc.render.engine = 'BLENDER_WORKBENCH'
 sh = sc.display.shading
-sh.light = 'STUDIO'; sh.color_type = 'OBJECT'
+sh.light = 'STUDIO'; sh.color_type = 'MATERIAL'
 sh.show_object_outline = True; sh.object_outline_color = (0.05, 0.05, 0.05)
 sh.show_cavity = True; sh.cavity_type = 'WORLD'
 sc.render.resolution_x = 700; sc.render.resolution_y = 900
 sc.render.film_transparent = False
 sc.world.color = (1, 1, 1) if sc.world else None
-sh.background_type = 'VIEWPORT'; sh.background_color = (1, 1, 1)
+sh.background_type = 'VIEWPORT'; sh.background_color = (0.91, 0.905, 0.87)
 
 ORTHO = 7.0  # height 7.0 m fits 0..6.5 ; width 7*700/900
 CZ = 3.05
