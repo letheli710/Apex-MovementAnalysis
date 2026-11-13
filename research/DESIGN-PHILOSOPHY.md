@@ -120,6 +120,7 @@ HSD 是研究项目，最后要做自己的枪和镜头。这份文档把过去�
 | 29 把枪里 16 把开镜 fraction 为 0，瞄具和子弹一体 | [数据] | FIELDS §2 |
 | 每发 punch 回落后回到 0，不累积进瞄准；`viewkick_perm_*` 字段基本全是 0（只有 Mozambique 的 random 不是） | [实测] / [数据] | RV §2.2、FIELDS 脚本 |
 | 〔11-13 加〕鼠标和 punch 反向时，输入先一比一减 punch，减到 0 才进瞄准角，不越过 0；同向的输入全部进瞄准角。子弹和画面照样跟着鼠标走，只是账记在 punch 上 | [实测] | [E-MOUSE](combat/gun-measure/E-MOUSE.md) §1 |
+| 〔11-13 加〕**子弹 = 瞄准 + punch1 + punch2 + 开镜 drift**：落地后马上开枪，移动 punch 整组进子弹（400 u 落地 0.1 s 后低 16–17°），差 ≤ 0.28°；Wingman 第 3、4 发偏高就是开镜 drift。也就是说开镜（fraction 0）时子弹永远打在屏幕中心 | [实测]（客户端和服务端 `attackDir` 一致） | [F-GAPS](combat/gun-measure/F-GAPS.md) §1、§5 |
 
 **反例**：
 - **开镜 fraction 大的枪，准星和子弹不一致**：Kraber 0.75、Charge Rifle 0.6、EVA-8 0.35、Bocek 0.35、Wingman 0.3 [数据，FIELDS §2]。Wingman 开镜子弹比准星高 30 % punch [实测，RV]。fraction ≥ 0.2 的 7 把全是没有图案的单发枪，它们下一枪之前 punch 已经回落了不少，所以这个差距影响小。这个解释是 [推断]。
@@ -319,10 +320,10 @@ kick：x += hard × K（角度），v += soft × 20 × K（角速度）
 
 | 弹簧 | 参数 | 进画面 | 进子弹 |
 |---|---|---|---|
-| 第一组（移动 punch） | k 65、c 9（ζ 0.558），峰值 0.146 s，0.47 s 过零，回弹 12 % | 1 × | 未测，推断不进 |
-| 第二组 `m_vecPunchWeapon`（武器 kick） | 字段 / `springs.txt`，按热度和 `zf` 插值 | (1 − fraction) × | 1 × |
+| 第一组（移动 punch） | k 65、c 9（ζ 0.558），峰值 0.146 s，0.47 s 过零，回弹 12 % | 1 × | ~~未测，推断不进~~ 〔11-13 [实测] [F-GAPS](combat/gun-measure/F-GAPS.md) §1〕**1 ×**，进子弹 |
+| 第二组 `m_vecPunchWeapon`（武器 kick） | 字段 / `springs.txt`，按热度和 `zf` 插值；〔11-13 [实测] [F-GAPS](combat/gun-measure/F-GAPS.md) §1.3〕空手时是 k 65、c 9 | (1 − fraction) × | 1 × |
 
-移动事件写第一组，同时给第二组写 0.2 × [实测，CAM2 §2.2]。这组常数在拿枪时听谁的，没有验证（§10.2）。
+移动事件写第一组，同时给第二组写 0.2 × [实测，CAM2 §2.2]。~~这组常数在拿枪时听谁的，没有验证（§10.2）。~~ 〔11-13 [实测] [F-GAPS](combat/gun-measure/F-GAPS.md) §1.3〕第二组**拿枪时用这把枪当时的武器弹簧**（R-301 腰射 k 40 d 20、开镜 115 / 20，P2020 80 / 20，和 Frida 读到的武器弹簧一致），**空手时是 65 / 9**；第一组永远 65 / 9。所以拿枪时移动事件在第二组的峰值比空手小（R-301 腰射是第一组的 0.13 倍，空手 0.20）。
 
 两种冲量的差别 [实测，RV §4；分布 算，FIELDS §2]：
 
@@ -345,9 +346,12 @@ R-301 开镜公式 1.125，实测 1.17–1.28；Spitfire 开镜公式 1.589，�
 眼睛角度 eang   = 只来自鼠标（这就是"瞄准"）
 画面角度        = eang + 翻越动画 + punch1 + (1 − fraction) × punch2 + drift / sway；横滚另算
 子弹方向        = eang + 完整 punch2（这一发 kick 之前）+ 扩散
+〔11-13 更正，[实测] F-GAPS §1、§5〕子弹方向 = eang + punch1 + 完整 punch2 + 开镜 drift + 扩散
 ```
 
 全部 [实测 + 反编译]：CAM2 §5、RV §1。腰射子弹那一项是 [推断]（RV §7）。没有任何路径把画面写回 `eang`。
+
+〔11-13 更正，[实测] [F-GAPS](combat/gun-measure/F-GAPS.md) §1、§5〕原来的子弹那一行漏了两项：**punch1（移动 punch）和开镜 drift 也进子弹**。落地 0.1 s 后开枪，子弹 = punch1 + punch2，差 ≤ 0.28°；Wingman 开镜扣掉 punch2 剩下的就是 drift。三种角还是分开存，`eang` 仍然只来自鼠标；只是“子弹角”= 画面角里除了 fraction 以外的全部。
 
 〔11-13 补，[实测] [E-MOUSE](combat/gun-measure/E-MOUSE.md) §1〕"只来自鼠标"要加一句：**鼠标输入先抵消反向的 punch2，剩下的才进 `eang`**（`0x140a33ff0`）。抵消只减到 0，不越过；和 punch 同向的输入全部进 `eang`。所以 `eang` 仍然只来自鼠标，但不是鼠标的全部。子弹 = eang + punch2，鼠标对子弹的作用仍是一比一。
 
@@ -428,6 +432,8 @@ r ∈ [−0.5, 0.5]；第二组 × 0.2；峰值 = 0.0771 × 俯仰冲量，约 0
 | 二段跳 | (4.5 + r)·20 | r·20 | 2r·20 | 6.2–7.7° [算] | CAM2 §2.1，**没有录像** |
 | 落地 | s(2 + 0.75r)·20 | 0 | s·r·20 | 0.89–44° | CR §3.2 |
 | 下滑索 | (10 + 3r)·20 | 10r·20 | 10r·20 | 14–18° | DIFF FND |
+| 〔11-13〕被子弹打中 | 0 | 0 | 0 | 0 | [实测，hyb] [F-GAPS](combat/gun-measure/F-GAPS.md) §3：bot 玩家真开枪，27 发，两组 punch、画面、FOV 全 0 |
+| 〔11-13〕自己开枪（震屏） | — | — | — | 0 | [实测] [F-GAPS](combat/gun-measure/F-GAPS.md) §2：只有第二组 kick，没有别的偏移 |
 
 **落地强度 s**：v < 424 u/s：s = v / 424；424–1122 u/s：1 → 12 线性；再快封顶 12。翻越结束不算落地 [实测，CAM2 §3]。
 
@@ -475,6 +481,8 @@ r ∈ [−0.5, 0.5]；第二组 × 0.2；峰值 = 0.0771 × 俯仰冲量，约 0
 
 速度 FOV、技能 FOV、速度线、身体惯性、位置 kick（lift / dip）、侧移横滚、自己的屏幕震动（震屏在 R5 由脚本和动画事件触发，是世界事件，CI CAM-21）。M5.5 里有这些，都是 [设计]（CR §1）。
 
+〔11-13 [实测] [F-GAPS](combat/gun-measure/F-GAPS.md) §2、§3〕开枪（7 把枪，腰射 / 开镜）和真实中弹（bot 玩家开枪）都**没有**震屏和抖动，确认属于这一节。**但有一样以前没写**：拉栓、泵动、换弹的**动作动画带着镜头动**（Peacekeeper 腰射泵动俯仰 5.2°、横滚 1.8°，Kraber 拉栓 4.9°，Longbow 腰射 0.4°，开镜多数压到 0–0.4°）。它在开枪后零点几秒才开始，是平滑曲线，不是噪声；做的话属于“翻越动画”那类动画挂点（§6.1），不是震屏。
+
 ### 6.6 和 `fps-camera-design` 技能的关系
 
 那个技能（`HSD-Unity/.claude/skills/fps-camera-design/`）来自 M5.5，流程和验证可以继续用，**但这些和 R5 冲突**，这份文档为准：
@@ -496,6 +504,7 @@ r ∈ [−0.5, 0.5]；第二组 × 0.2；峰值 = 0.0771 × 俯仰冲量，约 0
 
 ```
 按键 → 过 1 / fire_rate → 子弹方向 = eang + punch2 + 扩散
+〔11-13 更正，F-GAPS §1〕子弹方向 = eang + punch1 + punch2 + 开镜 drift + 扩散
 → 飞行（弹道）→ 伤害
 → value += valuePerShot，取 floor(value / valuePerShot) 这一行
 → K = 行 × base + 随机；x += hard·K·缩放；v += soft·20·K·缩放
@@ -547,6 +556,7 @@ r ∈ [−0.5, 0.5]；第二组 × 0.2；峰值 = 0.0771 × 俯仰冲量，约 0
 - 同一把枪只朝一边漂的很多（R-301 向右，Flatline 向左），也有左右摆的（Alternator、Prowler 全自动）。
 - 换模式就换图案（G7 → `g2_double_tap`）[数据，W-SR §3.2]。
 - **同一张表能做出不同的枪**：`flatline_2` 和 `lmg_2` 前两列完全相同，弹簧也相同（腰射 80/20，开镜 95/15）。差别在随机列（Flatline 0.27，Spitfire 0.19）、soft / hard（4.4 对 9.7）、射速（10 对 9）和循环点（0 对 23）[数据，FIELDS §2]。**做新枪不必每次写新表。**
+- 〔11-13 [实测] [F-GAPS](combat/gun-measure/F-GAPS.md) §5.1〕**表走到最后一行就停住，不循环**：R-301、Flatline、R-99 都是（行号停在 27 / 29 / 29，之后每发都用最后一行）。
 
 **单发枪**：`base` 是负数直接给俯仰（P2020 −0.95、Wingman −4.4、Peacekeeper −5.5），有 `random` [数据 + 实测，RV §4]。
 
@@ -573,6 +583,9 @@ kick 每发 + spread_kick_on_fire，不超过 spread_max_kick
 | 射速爬升 | `fire_rate` → `fire_rate_max` | Devotion 0.204 → 0.065 s，约 15 发 | IP2 #10 |
 | 热量 | 每发 +0.04167，改 `burst_fire_delay` | Nemesis 0.30 → 0.19 s | IP2 #7，SDK |
 | 过热 | 进度满锁定 | L-STAR S21 3.69 s，本地 3.25 s | IP2 #9，D-85 |
+| 〔11-13〕拉栓 / 泵动 | `rechamber_time` 等 | Kraber 每发 2.235 s、Sentinel 1.597 s、30-30 0.479 s、Peacekeeper 1.21 s（连点） | [F-GAPS](combat/gun-measure/F-GAPS.md) §6 |
+| 〔11-13〕蓄力 | `charge_time`，**线性进度** | Charge Rifle 0.84 s 满、按下 0.856 s 出一发、一次按住一发；Havoc 0.39 s 满、第一发 0.425 s，之后不爬升；Bocek 约 0.4 s；L-STAR 2.2 s | [F-GAPS](combat/gun-measure/F-GAPS.md) §6 |
+| 〔11-13〕Marksman's Tempo | 进入后 `rechamber` 1.25 | Sentinel 1.597 → 1.434 s [hyb] | [F-GAPS](combat/gun-measure/F-GAPS.md) §8.3 |
 
 名义 DPS 全自动挤在 170–220，配平靠弹匣和换弹 [数据，W1 §3]。
 
@@ -582,7 +595,7 @@ kick 每发 + spread_kick_on_fire，不超过 spread_max_kick
 
 - **几乎全是有速度、有下坠的子弹** [数据，W-BA §0]。`drop = 0.5 g (d / v)²`，g = 750 × `projectile_gravity_scale`（1–1.4，L-STAR 0.5）。大体对，样本少 [实测，IP2 #1]。
 - 弹速分层：手枪和 SMG 18000–20000，步枪 24000–31000，狙击约 30000 u/s [数据，W1 §3]。
-- 归零公式有，默认开火路径上有没有归零没定 [数据 + 实测，W-BA §3.1、IP2 §2.1]。
+- ~~归零公式有，默认开火路径上有没有归零没定 [数据 + 实测，W-BA §3.1、IP2 §2.1]。~~ 〔11-13 [实测，hyb] [F-GAPS](combat/gun-measure/F-GAPS.md) §7〕**S3 dedi 上没有归零**：50 m（= `bolt_zero_distance`）处下坠仍是公式的 0.8–0.9。50–300 m 下坠 = 公式 × 0.74–1.03（多数 0.80–0.87），Longbow 300 m 60.5–61.7 u（公式 70.6）。S21 服务端会不会归零测不到。
 - **伤害几乎不随距离衰减**，距离的惩罚来自下坠、扩散和 `headshot_distance`（SMG 1500 u、步枪 11828 u、狙击 29528 u）[数据，W-DM §3.1]。Charge Rifle 反而越远越高 [实测，IP2 #4]。
 - 头 = 基础 + 0.8 ×（基础 × `damage_headshot_scale` − 基础）（白头盔）。`critical_hit_damage_scale` 不起作用 [实测，IP2 #4、§1 #7]。爆头 1.25–1.8，腿 0.75–0.9，霰弹 1 / 1 [数据]。
 
@@ -604,6 +617,9 @@ kick 每发 + spread_kick_on_fire，不超过 spread_max_kick
 | 开镜时移动 | `ads_move_speed_scale` 0.35–1.0 | [数据] FIELDS §1 |
 | 被减速 | `move_slow` s ≥ 约 0.06 不能冲刺；走速 × (1 − s) | [实测] W2 §1 |
 | 消耗品读条 | `move_slow` 0.4，走 195 → 101.7 u/s | [实测] IP2 §1 #4 |
+| 〔11-13〕落地 | 移动 punch 整组进子弹：400 u 落地 0.1 s 后低 16–17°，900 u 低 24–28°；头 0.05 s 扩散仍是空中值 | [实测] [F-GAPS](combat/gun-measure/F-GAPS.md) §1 |
+| 〔11-13〕钩爪拉动 | **不能开火**，开镜被取消；拉完 0.44–0.48 s 才出第一发 | [实测] [F-GAPS](combat/gun-measure/F-GAPS.md) §8.1 |
+| 〔11-13〕爬墙 / 翻越 | 爬墙段不能开火、开镜 0.14 s 内取消；翻墙顶段进入 0.15–0.19 s 后能开火；按着开镜翻完 0.28 s 回到开镜 | [实测] [F-GAPS](combat/gun-measure/F-GAPS.md) §8.2 |
 
 **没跑到的缩放**：`viewkick_air_scale_ads`、`duck_scale`、`move_scale`，这次都是站着测的 [RV §4]。
 
@@ -813,12 +829,12 @@ t = clamp01((zf − ads_fov_zoomfrac_start) / (ads_fov_zoomfrac_end − ads_fov_
 | 想法 | 判定 | 原因 | 如果还是想做 |
 |---|---|---|---|
 | 冲刺速度越快 FOV 越大 | 明确偏离 | R5 没有速度 FOV（P2）| 留开关，M5.5 的做法 |
-| 开枪时画面震一下（shake） | 明确偏离 | R5 开枪 = 弹簧 + 枪模震动，画面不是噪声 | 先测全枪械（§11），R5 可能有小量 |
+| 开枪时画面震一下（shake） | 明确偏离 | R5 开枪 = 弹簧 + 枪模震动，画面不是噪声；〔11-13 [实测] [F-GAPS](combat/gun-measure/F-GAPS.md) §2〕7 把枪确认没有，只有拉栓 / 泵动动画带镜头 | ~~先测全枪械（§11），R5 可能有小量~~ 要做就写成偏离；想要“每发有分量”先用拉栓 / 泵动镜头动画 |
 | 给 `zf` 加 ease-in | 不符合 | 结构错（T1）。曲线该加在读者上 | 改读者 |
 | 一个常数当所有枪的回落 | 不符合 | 腰射、开镜差 3 倍（§3） | 用弹簧 |
 | 每把枪写一个类 | 不符合 | T4（LOG `wp3-weapons-per-gun-class` 也没选） | |
 | 后坐写进瞄准角，压枪要压回来 | 明确偏离 | P1，T3；~~**鼠标抵消规则还没测**~~ 〔11-13 [实测] [E-MOUSE](combat/gun-measure/E-MOUSE.md)〕R5 的规则是：后坐在 punch 里，反向的鼠标先抵消 punch，抵消掉的不再回弹；后坐写进瞄准角就没有这条，停火后画面不会自己回来 | ~~等 §10.2 第 1 条~~ 要做的话，同时写明停火后怎么回；照 R5 就做抵消（T3） |
-| 被打时镜头抖 | 未知 | R5 有受伤 punch（CI BND-03），没量 | 等 §11 |
+| 被打时镜头抖 | ~~未知~~ 〔11-13〕明确偏离 | ~~R5 有受伤 punch（CI BND-03），没量~~ 〔11-13 [实测，hyb] [F-GAPS](combat/gun-measure/F-GAPS.md) §3〕bot 玩家真开枪 27 发，第一人称全 0；服务端的 flinch 只给第三人称动画 [推断] | ~~等 §11~~ 要做就写成偏离（PvE 可以考虑） |
 
 ## 10. 不知道的事
 
@@ -832,7 +848,7 @@ t = clamp01((zf − ads_fov_zoomfrac_start) / (ads_fov_zoomfrac_end − ads_fov_
 | `viewmodel_offset` 默认窗口 0.5 | 3 把枪拟合 | ADS §5 |
 | 枪窗口按类（手枪宽、步枪窄） | 只有 3 把枪 | ADS §2.3 |
 | 换算 FOV 用比例 | 没在 R5 验证 | ADS §4.2 |
-| 移动 punch 不进子弹 | 没测（见下） | T2 |
+| ~~移动 punch 不进子弹~~ | ~~没测（见下）~~ 〔11-13 [实测] [F-GAPS](combat/gun-measure/F-GAPS.md) §1〕推翻：整组进子弹 | T2 |
 | `primary_fire_does_not_block_sprint`、`raise_time` 的语义 | 字段名 | FIELDS |
 | 开镜 fraction 大的枪"下一枪前才重要" | 解读 | P1 |
 
@@ -844,15 +860,15 @@ t = clamp01((zf − ads_fov_zoomfrac_start) / (ads_fov_zoomfrac_end − ads_fov_
 | 2 | **移动中开枪**：蹲、走、空中、滑铲的 kick 缩放 | P6、§7.8 全靠字段 | r5 会话 |
 | 3 | **配件和模块**（RV 只取默认值） | §7.9 | r5 会话 |
 | 4 | **换弹、切枪、切刀的曲线** | 是否也是 `zf` 式进度？动画怎么读？ | r5 会话 |
-| 5 | **移动 punch 和子弹**：落地马上开枪，子弹偏不偏；第二组弹簧常数拿枪时听谁的 | CR 用 k 65 c 9（空手测的）；RV 说第二组按武器字段。**两边还没对过** | 没人排，建议加进 r5 |
+| ~~5~~ | ~~**移动 punch 和子弹**：落地马上开枪，子弹偏不偏；第二组弹簧常数拿枪时听谁的~~ | ~~CR 用 k 65 c 9（空手测的）；RV 说第二组按武器字段。**两边还没对过**~~ | ~~没人排，建议加进 r5~~ 〔11-13 [实测] [F-GAPS](combat/gun-measure/F-GAPS.md) §1〕偏：子弹 = 瞄准 + punch1 + punch2；第二组拿枪用武器弹簧，空手 65 / 9，两边都对 |
 | 6 | 其他枪的开镜动画，枪的横滚，移动中的枪 | §6.4 只有 3 把 | r5 会话（部分） |
 | ~~7~~ | ~~灵敏度，关镜那一下回到 ×1 是不是真的~~ | ~~ADS §3 不确定~~ | ~~和 #1 一起~~ 〔11-13 [实测] [E-MOUSE](combat/gun-measure/E-MOUSE.md) §2〕是真的：关镜第一帧就是 ×1；开镜中每帧按 tan 比 |
-| 8 | 枪口闪光、受击抖动、枪模大小 | 反馈语言缺这几块 | r5 会话 |
-| 9 | 开枪时屏幕震动 | §6.5 说"自己的震屏 R5 没有"，只查了移动 | r5 会话 |
-| 10 | 长距离弹道，归零 | 样本太少 | IP2 §5 |
-| 11 | 表尾循环、Wingman 第 3、4 发 | RV §7 | |
+| 8 | 枪口闪光、受击抖动、枪模大小 | 反馈语言缺这几块 | r5 会话；〔11-13 [F-GAPS](combat/gun-measure/F-GAPS.md) §3、§4〕受击抖动：没有 [实测，hyb]；枪口焰：粒子寿命量到（步枪 0.5–0.6 s），亮度本地没测成 |
+| ~~9~~ | ~~开枪时屏幕震动~~ | ~~§6.5 说"自己的震屏 R5 没有"，只查了移动~~ | ~~r5 会话~~ 〔11-13 [实测] [F-GAPS](combat/gun-measure/F-GAPS.md) §2〕没有；拉栓 / 泵动动画带镜头（§6.5） |
+| 10 | 长距离弹道，归零 | 样本太少 | IP2 §5；〔11-13 [实测，hyb] [F-GAPS](combat/gun-measure/F-GAPS.md) §7〕50–300 m 11 发：下坠 ≈ 公式 × 0.85，没有归零；样本仍少 |
+| ~~11~~ | ~~表尾循环、Wingman 第 3、4 发~~ | ~~RV §7~~ | 〔11-13 [实测] [F-GAPS](combat/gun-measure/F-GAPS.md) §5〕表尾停在最后一行（Flatline、R-99）；Wingman 第 3、4 发 = 开镜 drift 进子弹 |
 | 12 | 音频 | 完全没有 | 没人排 |
-| 13 | 准星 UI、命中反馈 | 完全没有 | 没人排 |
+| 13 | 准星 UI、命中反馈 | 完全没有 | 没人排；〔11-13 [F-GAPS](combat/gun-measure/F-GAPS.md) §9〕30 把枪腰射 / 开镜截图在私有仓库；命中标记没认出 |
 
 ### 10.3 只来自混合构建的现象，不该学
 
@@ -860,7 +876,7 @@ t = clamp01((zf − ads_fov_zoomfrac_start) / (ads_fov_zoomfrac_end − ads_fov_
 |---|---|---|---|
 | 连发停火约 0.17 s 的 punch 跳变 0.2–1.07° | 服务端纠正，推断 S3 dedi 和 S21 客户端的预测差 | **不做** | RV §2.1 |
 | R-301 开镜回落比公式慢 0.07 s | 〔11-04 更正：不是这一类。RV §10.3 否定了服务端纠正；现在差 0.04 s，没解释。不是"不该学"，是"没查清"〕 | 用公式 | LOG `leader-recoil-diffs` |
-| Wingman 第 3、4 发子弹高 0.1–0.4° | 推断 dedi 差别 | 不做 | RV §1.3 |
+| ~~Wingman 第 3、4 发子弹高 0.1–0.4°~~ | ~~推断 dedi 差别~~ 〔11-13 [实测] [F-GAPS](combat/gun-measure/F-GAPS.md) §5.2〕不是混合构建：服务端和客户端 `attackDir` 相同，偏高的是开镜 drift | ~~不做~~ 照做：drift 进子弹（T3） | RV §1.3 |
 | 30-30 蓄力没有 ×1.4（43，S21 60.2） | SDK 只有别名 | 按 S21（D-85） | IP2 #5 |
 | L-STAR 锁 3.25 s（S21 3.69） | SDK 补的 | 按 S21 | IP2 #9 |
 | 点射、热量、Energize、过热 | SDK 重写，字段语义可信，曲线存疑 | 按 S21 字段，差别进 DIFF | W1 §2.2、D-85 |
@@ -878,9 +894,9 @@ t = clamp01((zf − ads_fov_zoomfrac_start) / (ads_fov_zoomfrac_end − ads_fov_
 
 ### 10.4 文档之间互相对不上的地方
 
-- 第二组弹簧常数：见 §10.2 第 5 条。
+- ~~第二组弹簧常数：见 §10.2 第 5 条。~~ 〔11-13 解决，[F-GAPS](combat/gun-measure/F-GAPS.md) §1.3〕拿枪用武器弹簧，空手 65 / 9。
 - CR §3.1 仍写眼高 64，K-4 改成 70。
-- CR §2.1 俯仰峰值用 k 65 c 9 两组算；RV 第二组用字段。空手这两个是否相同没有确认。
+- ~~CR §2.1 俯仰峰值用 k 65 c 9 两组算；RV 第二组用字段。空手这两个是否相同没有确认。~~ 〔11-13 解决，[F-GAPS](combat/gun-measure/F-GAPS.md) §1.3〕空手时两组都是 65 / 9（CR 对），拿枪时第二组换成武器弹簧（RV 对）。
 - `attachments/SYSTEM.md` 写"基础 `zoom_fov` 70"，`mp_weapon_rspn101.txt` 顶层是 55，R-301 实测 55（ADS §1）。这里按 55。
 - `W-SPREAD-RECOIL` 还写着弹簧不在 `.txt`，RV §4 已更正，合并后回填。
 
@@ -895,14 +911,14 @@ t = clamp01((zf − ads_fov_zoomfrac_start) / (ads_fov_zoomfrac_end − ads_fov_
 | ~~配件（含改玩法模块、金配、最新配件、瞄具、枪托）~~ 已补 §7.9 | §7.9、T4、P5 瞄具 | 只改字段，5–15 % | 瞄具是否只改窗口和时间？有没有配件不是字段能说的？ |
 | ~~移动状态下的后坐、扩散、抖动~~ 已补 §7.8 | §7.8、P6、§7.4 | 字段值 | 蹲走空中滑铲的缩放实际多少？`air_scale_ads` 2 成立吗？滑铲有没有专门规则？ |
 | ~~换弹、切枪、切刀曲线~~ 见 `gun-measure` 01、02 卷；解锁用 RM-SUMMARY（D-118） | T1、§6.4、P5 | 不知道 | 也是线性进度 + 读者吗？ |
-| 射速、蓄力 | §7.5 | IP2 的值 | 爬升曲线的形状 |
+| ~~射速、蓄力~~ 〔11-13〕已补 §7.5，[F-GAPS](combat/gun-measure/F-GAPS.md) §6 | §7.5 | IP2 的值 | 爬升曲线的形状：蓄力线性；Kraber、Sentinel、Charge Rifle 实际间隔 |
 | 伤害 | §7.6 | IP2 的值 | |
-| 弹道 | §7.6 | 公式，样本少 | 归零，积分方式 |
-| 枪口闪光 | §6、§7 | 没写 | 时长和亮度 |
-| 受击抖动 | §6.2 kick 表 | 没写（CI BND-03） | 也是进 punch 吗？第几组？多大？ |
+| 弹道 〔11-13 部分：归零已补 §7.6，[F-GAPS](combat/gun-measure/F-GAPS.md) §7〕 | §7.6 | 公式，样本少 | ~~归零~~（S3 dedi 没有），积分方式（没查） |
+| 枪口闪光 〔11-13 部分，[F-GAPS](combat/gun-measure/F-GAPS.md) §4〕 | §6、§7 | 没写 | ~~时长~~ 粒子寿命已量；亮度没测成 |
+| ~~受击抖动~~ 〔11-13〕已补 §6.2、§9.5，[F-GAPS](combat/gun-measure/F-GAPS.md) §3 | §6.2 kick 表 | 没写（CI BND-03） | ~~也是进 punch 吗？第几组？多大？~~ 第一人称没有 |
 | ~~枪模大小~~ 见 SCREEN-TRACER、IRON-SIGHTS | §6.4 | 没写 | |
 | ~~真实鼠标（用户给时间）~~ 〔11-13〕已补 P1、T1、T3、§6.4、§9.5，见 [E-MOUSE](combat/gun-measure/E-MOUSE.md) | P1 反例、T3、§9.5 | 只有反编译 | 下压吃 punch 吗？灵敏度关镜那一下？ |
-| 建议加：落地后马上开枪 | T2、§10.2 第 5 条 | 推断不进子弹 | 第二组进子弹吗？ |
+| ~~建议加：落地后马上开枪~~ 〔11-13〕已补 P1、T2、T3、§7.1、§7.8，[F-GAPS](combat/gun-measure/F-GAPS.md) §1 | T2、§10.2 第 5 条 | ~~推断不进子弹~~ 两组都进 | 第二组进子弹吗？ |
 
 **补完以后**：改对应小节的值和标注，把这一行划掉，写一条共享日志。规律被推翻时，改 §4 的那一条并在 §12 记一笔，不删原话。
 
@@ -912,6 +928,7 @@ t = clamp01((zf − ads_fov_zoomfrac_start) / (ads_fov_zoomfrac_end − ads_fov_
 |---|---|---|
 | 2026-11-02 | 第一版 | 见 §2.2；全枪械实测之前 |
 | 2026-11-13 | 真实鼠标三项补进 P1、T1、T3、§6.4、§9.5、§10.2 第 1、7 条、§11。没有推翻 §4 的原则：P1 原来列的"可能的反例"实测后不算反例，T3 加了一句 | [E-MOUSE](combat/gun-measure/E-MOUSE.md)（会话 r5gap-a，分支 r5gap/gun，未合并） |
+| 2026-11-13 | 枪械补测 B 批补进 P1、T2、T3、§6.2、§6.5、§7.1、§7.3、§7.5、§7.6、§7.8、§9.5、§10.1–10.4、§11。**推翻了两条推断**：T2 / §10.1“移动 punch 不进子弹”（实测整组进子弹）和 §10.3“Wingman 第 3、4 发偏高是 dedi 差别”（实测是开镜 drift）；T3 的子弹公式因此改成 eang + punch1 + punch2 + drift + 扩散。§4 的原则没有被推翻，P1 加了一行：开镜时子弹永远在屏幕中心。新增 §6.5 一条：动作动画带镜头 | [F-GAPS](combat/gun-measure/F-GAPS.md)（会话 r5gap-b，分支 r5gap/gun，未合并） |
 
 **这份文档没有做的**：不改 Unity；没有新实测；没有写进 DECISIONS（这里没有用户决定）。
 
