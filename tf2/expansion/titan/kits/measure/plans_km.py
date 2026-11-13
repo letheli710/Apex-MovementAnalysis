@@ -292,4 +292,26 @@ def km_graze2():
     return s + [CLEAR, C("hsd_km_log 0"), C("hsd_tag -")] + out("northstar")
 
 
+
+def _pitch(deg, up=True):
+    """turn the view by deg at cl_pitchspeed 100 (the titan stays put: teleports can lock it on mp_homestead)"""
+    return [C("cl_pitchspeed 100"), C("+lookup" if up else "+lookdown"), W(deg / 100.0), C("-lookup" if up else "-lookdown"), W(0.3)]
+
+
+def km_life():
+    """mp_homestead (--map mp_homestead), open sky: projectile lifetimes (railgun, 40 mm, thermite, cluster missile fired
+    30 deg up, server 10 Hz until they vanish) and cluster-missile bomblets on the ground (ownerless props, PF lines)."""
+    from plans_tail import _ride_at
+    x0, y0, _ = HOMESTEAD_START
+    s = [W(2.0), C("hsd_km_log 1"), C("hsd_km_die"), W(9.0)] + _ride_at("northstar", x0, y0, 0, 180) + _prep()
+    s += [C("hsd_km_view -35"), W(0.4), C("hsd_tag lf_rg")] + tap("attack", 0.05) + [W(4.0)]
+    s += [C("hsd_kit_refill 0"), C("hsd_tag lf_cluster")] + tap("offhand0") + [W(12.0)]
+    s += [C("hsd_weapon mp_titanweapon_sticky_40mm"), W(1.5), C("hsd_tag lf_40mm")] + tap("attack", 0.05) + [W(12.0)]
+    s += [C("hsd_weapon mp_titanweapon_meteor"), W(1.5), C("hsd_tag lf_meteor")] + tap("attack", 0.05) + [W(8.0)]
+    s += [C("hsd_km_view 12"), W(0.4)]
+    for i in range(3):
+        s += [C("hsd_km_view %d %d" % (12 + 4 * i, 180 + 25 * (i - 1))), W(0.4), C("hsd_kit_refill 0"), C("hsd_tag cb_%d" % i)] + tap("offhand0") + [W(6.0)]
+    return s + [C("cl_pitchspeed 225"), C("hsd_km_log 0"), C("hsd_tag -")]
+
+
 PLANS = [n for n in list(globals()) if n.startswith("km_")]

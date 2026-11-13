@@ -51,6 +51,7 @@ void function HsdKm_Init()
 	AddClientCommandCallback( "hsd_km_nukepas", HsdKm_CC_NukePas )
 	AddClientCommandCallback( "hsd_km_slide", HsdKm_CC_Slide )
 	AddClientCommandCallback( "hsd_km_aimfoe", HsdKm_CC_AimFoe )
+	AddClientCommandCallback( "hsd_km_view", HsdKm_CC_View )
 	AddDamageFinalCallback( "npc_titan", HsdKm_OnFinal )
 	AddDamageFinalCallback( "npc_soldier", HsdKm_OnFinal )
 	AddDamageFinalCallback( "player", HsdKm_OnFinal )
@@ -127,10 +128,13 @@ void function HsdKm_LogProjectiles( vector o )
 	}
 	foreach ( entity pp in GetEntArrayByClass_Expensive( "prop_physics" ) )
 	{
-		if ( !IsValid( pp ) || !IsValid( pp.GetOwner() ) )
+		if ( !IsValid( pp ) )
 			continue
 		vector po = pp.GetOrigin()
 		vector pv = pp.GetVelocity()
+		// owned props = thermite fire; ownerless but moving and near = cluster-missile bomblets (CreateClusterBurst)
+		if ( !IsValid( pp.GetOwner() ) && ( Length( pv ) < 1.0 || Distance( po, o ) > 6000.0 ) )
+			continue
 		printt( format( "HSDDIAG PF %.4f %s %.2f %.2f %.2f %.2f %.2f %.2f", Time(), HsdKm_S( pp.GetEncodedEHandle() ), po.x, po.y, po.z, pv.x, pv.y, pv.z ) )
 	}
 }
@@ -495,5 +499,16 @@ bool function HsdKm_CC_AimFoe( entity player, array<string> args )
 	vector a = VectorToAngles( file.foes[i].GetWorldSpaceCenter() - player.EyePosition() )
 	player.SetAngles( < a.x, a.y, 0.0 > )
 	printt( format( "HSDDIAG KM aimfoe %d %.2f %.2f %.4f", i, a.x, a.y, Time() ) )
+	return true
+}
+
+// hsd_km_view <pitch> [yaw]: set the view pitch (Source: negative = up), keep the yaw unless given
+bool function HsdKm_CC_View( entity player, array<string> args )
+{
+	if ( args.len() < 1 || !IsAlive( player ) )
+		return true
+	float yaw = args.len() > 1 ? float( args[1] ) : player.EyeAngles().y
+	player.SetAngles( < float( args[0] ), yaw, 0.0 > )
+	printt( format( "HSDDIAG KM view %s %.2f %.4f", args[0], yaw, Time() ) )
 	return true
 }

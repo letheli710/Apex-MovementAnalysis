@@ -23,6 +23,7 @@
 | `an_tether.py` | 系留陷阱（敌人被拴，只测到一部分） |
 | `an_homing.py`、`an_homing_end.py` | 逐帧转向角速度、反推 `SetHomingSpeeds` 的 H |
 | `an_graze.py` | 擦边测试：经过靶子时离中轴多远、有没有直接命中 |
+| `an_life.py` | 弹体寿命（朝天打）、集束导弹小弹的爆炸点 |
 
 运行：
 
@@ -48,6 +49,7 @@ py -3 -I an_expand.py ../../../../runtime/data/<运行> sv_1
 | `hsd_km_nukepas` | 把 Nuclear Ejection 被动直接给玩家（`GetNuclearPayload` 读玩家身上的被动） |
 | `hsd_km_slide <idx> vx vy dur` | 冻结的敌人按恒定速度平移（每个服务端帧 `SetOrigin`，10 Hz 一跳） |
 | `hsd_km_aimfoe <idx>` | 视角对准敌人中心 |
+| `hsd_km_view <pitch> [yaw]` | 直接设视角（泰坦上 `+lookup` 不起作用） |
 | `hsd_km_fire ... tether ...` | 敌人用 `FireTether` 对玩家扔系留陷阱 |
 
 客户端每帧：`PC`（玩家位置、速度、视角、眼睛）、`PJNEW` / `PJ` / `PJEND`（只限 `rpg_missile`）、`SA`（当前武器和三个副手的 `SmartAmmo_GetTargets()`：目标、`fraction` = 锁的把数）。
