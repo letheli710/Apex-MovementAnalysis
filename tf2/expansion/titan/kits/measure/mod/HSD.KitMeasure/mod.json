@@ -1,0 +1,23 @@
+{
+	"Name": "HSD.KitMeasure",
+	"Description": "HSD research tf2-kits-measure (11-13): projectile / lock-on / thermite probes (local server only; installed only during kitm_runner.py runs)",
+	"Version": "0.1.0",
+	"LoadPriority": 3,
+	"RequiredOnClient": false,
+	"Scripts": [
+		{
+			"Path": "hsd_km.gnut",
+			"RunOn": "SERVER && MP",
+			"ServerCallback": {
+				"After": "HsdKm_Init"
+			}
+		},
+		{
+			"Path": "hsd_km_cl.gnut",
+			"RunOn": "CLIENT && MP",
+			"ClientCallback": {
+				"After": "HsdKm_InitClient"
+			}
+		}
+	]
+}
