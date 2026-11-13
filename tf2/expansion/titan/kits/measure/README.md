@@ -20,7 +20,9 @@
 | `an_ion.py` | 涡旋接住、打回：速度、方向、伤害 |
 | `an_scorch.py` | 铝热火团：几个、滑多远、最后的分布、每个伤害源的跳数 |
 | `an_hover.py` | 悬停 / 飞行核心的高度曲线 |
-| `an_tether.py` | 系留陷阱（这次只测到一部分） |
+| `an_tether.py` | 系留陷阱（敌人被拴，只测到一部分） |
+| `an_homing.py`、`an_homing_end.py` | 逐帧转向角速度、反推 `SetHomingSpeeds` 的 H |
+| `an_graze.py` | 擦边测试：经过靶子时离中轴多远、有没有直接命中 |
 
 运行：
 
@@ -43,13 +45,17 @@ py -3 -I an_expand.py ../../../../runtime/data/<运行> sv_1
 | `hsd_km_die` | 杀掉铁驭（`mp_homestead` 第一次是运输机出场，之后叫的泰坦会被锁住，要先死一次） |
 | `hsd_km_head [x y z]` | 某点头顶泰坦大小的净空 |
 | `hsd_km_smoke_give` | 把电烟放进 `OFFHAND_INVENTORY`（配 `+ability 6`） |
+| `hsd_km_nukepas` | 把 Nuclear Ejection 被动直接给玩家（`GetNuclearPayload` 读玩家身上的被动） |
+| `hsd_km_slide <idx> vx vy dur` | 冻结的敌人按恒定速度平移（每个服务端帧 `SetOrigin`，10 Hz 一跳） |
+| `hsd_km_aimfoe <idx>` | 视角对准敌人中心 |
+| `hsd_km_fire ... tether ...` | 敌人用 `FireTether` 对玩家扔系留陷阱 |
 
 客户端每帧：`PC`（玩家位置、速度、视角、眼睛）、`PJNEW` / `PJ` / `PJEND`（只限 `rpg_missile`）、`SA`（当前武器和三个副手的 `SmartAmmo_GetTargets()`：目标、`fraction` = 锁的把数）。
 
 ## 踩过的坑（11-13）
 
 1. `ProjectileGetWeaponClassName()` / `ProjectileGetDamageSourceID()` / `ProjectileGetMods()`：在服务端对脚本开的弹体、在客户端对部分导弹返回坏值，放进 `format()` 让进程崩溃（`server.dll+0x79fa1` / `client.dll+0x7a011`，都在 Squirrel 的 `format` 里）。现在两边都不调用；武器从时间段和标签判断。
-2. 客户端 `GetProjectileArrayEx( "any", ... )` 一遇到 `crossbow_bolt`（40 mm、狙击、铝热、霰弹）就报错（"Failed to CreateScriptInstance for crossbow_bolt"）：客户端只列 `rpg_missile`，弹体只有服务端 10 Hz 的数据。
+2. 客户端 `GetProjectileArrayEx` 只要场上有 `crossbow_bolt`（40 mm、狙击、铝热、霰弹）就报错（"Failed to CreateScriptInstance for crossbow_bolt"），加类名过滤也一样：现在出错的那一帧跳过、下一帧再试；弹体本身只有服务端 10 Hz 的数据。
 3. 客户端实体没有 `GetEncodedEHandle`；客户端按实体自己编号。
 4. 本地玩家的导弹在客户端是两份：本地预测的那份活约 0.1 s，然后换成服务端那份。`an_expand.py` 按位置拼接。
 5. `format()` 里拼字符串（`"..." + x`）的行偶尔丢掉开头的 `HSDDIAG ...`，被 runner 漏掉；全部改回 `format`，参数先过 `HsdKm_S()`（null 变 "-"）。

@@ -49,6 +49,8 @@ void function HsdKm_Init()
 	AddClientCommandCallback( "hsd_km_head", HsdKm_CC_Head )
 	AddClientCommandCallback( "hsd_km_smoke_give", HsdKm_CC_SmokeGive )
 	AddClientCommandCallback( "hsd_km_nukepas", HsdKm_CC_NukePas )
+	AddClientCommandCallback( "hsd_km_slide", HsdKm_CC_Slide )
+	AddClientCommandCallback( "hsd_km_aimfoe", HsdKm_CC_AimFoe )
 	AddDamageFinalCallback( "npc_titan", HsdKm_OnFinal )
 	AddDamageFinalCallback( "npc_soldier", HsdKm_OnFinal )
 	AddDamageFinalCallback( "player", HsdKm_OnFinal )
@@ -144,8 +146,8 @@ void function HsdKm_LogThread( entity player )
 			vector v = player.GetVelocity()
 			vector a = player.EyeAngles()
 			entity soul = player.GetTitanSoul()
-			printt( format( "HSDDIAG TS %.4f %s %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %d %d", Time(), player.IsTitan() ? "1" : "0",
-				o.x, o.y, o.z, v.x, v.y, v.z, a.x, a.y, player.GetHealth(), IsValid( soul ) ? soul.GetShieldHealth() : 0 ) )
+			printt( format( "HSDDIAG TS %.4f %s %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %d %d %.3f", Time(), player.IsTitan() ? "1" : "0",
+				o.x, o.y, o.z, v.x, v.y, v.z, a.x, a.y, player.GetHealth(), IsValid( soul ) ? soul.GetShieldHealth() : 0, HsdKm_Status( player, eStatusEffect.tethered ) ) )
 			foreach ( int i, entity f in file.foes )
 			{
 				if ( !IsAlive( f ) )
@@ -188,6 +190,9 @@ bool function HsdKm_CC_Foe( entity player, array<string> args )
 	file.foes.append( npc )
 	file.foeSpawn.append( p )
 	thread HsdKm_FoeMode( npc, mode )
+	vector bmin = npc.GetBoundingMins()
+	vector bmax = npc.GetBoundingMaxs()
+	printt( format( "HSDDIAG KM foe_bounds %d %.1f %.1f %.1f %.1f %.1f %.1f", file.foes.len() - 1, bmin.x, bmin.y, bmin.z, bmax.x, bmax.y, bmax.z ) )
 	printt( format( "HSDDIAG KM foe %d %s %s h=%s %.1f %.1f %.1f %.4f", file.foes.len() - 1, args[0], mode, HsdKm_S( npc.GetEncodedEHandle() ), p.x, p.y, p.z, Time() ) )
 	return true
 }
@@ -257,6 +262,7 @@ string function HsdKm_KindClass( string kind )
 		case "salvo": return "mp_titanweapon_salvo_rockets"
 		case "tracker": return "mp_titanweapon_tracker_rockets"
 		case "leadwall": return "mp_titanweapon_leadwall"
+		case "tether": return "mp_titanability_tether_trap"
 	}
 	return ""
 }
@@ -289,7 +295,7 @@ entity function HsdKm_FoeWeapon( entity npc, string cls )
 		if ( IsValid( w ) && w.GetWeaponClassName() == cls )
 			return w
 	}
-	bool offhand = cls == "mp_titanweapon_salvo_rockets" || cls == "mp_titanweapon_tracker_rockets"
+	bool offhand = cls == "mp_titanweapon_salvo_rockets" || cls == "mp_titanweapon_tracker_rockets" || cls == "mp_titanability_tether_trap"
 	if ( offhand )
 	{
 		if ( IsValid( npc.GetOffhandWeapon( 0 ) ) )
@@ -363,6 +369,15 @@ void function HsdKm_Fire( entity player, entity npc, string kind, int n, float g
 					{
 						proj.kv.gravity = 0.4
 						proj.SetProjectileLifetime( 2.0 )
+					}
+					break
+				case "tether":
+					proj = FireTether( w, start, dir, false, 1000 )
+					if ( IsValid( proj ) )
+					{
+						SetCustomSmartAmmoTarget( proj, true )
+						proj.e.spawnTime = Time()
+						proj.e.noOwnerFriendlyFire = true
 					}
 					break
 				case "salvo":
@@ -443,5 +458,42 @@ bool function HsdKm_CC_NukePas( entity player, array<string> args )
 {
 	GivePassive( player, ePassives.PAS_BUILD_UP_NUCLEAR_CORE )
 	printt( format( "HSDDIAG KM nukepas %s %.4f", PlayerHasPassive( player, ePassives.PAS_BUILD_UP_NUCLEAR_CORE ) ? "1" : "0", Time() ) )
+	return true
+}
+
+// hsd_km_slide <idx> <vx> <vy> <dur>: move a (frozen) foe at a constant velocity by SetOrigin every server frame
+bool function HsdKm_CC_Slide( entity player, array<string> args )
+{
+	if ( args.len() < 4 )
+		return true
+	int i = int( args[0] )
+	if ( i >= file.foes.len() || !IsAlive( file.foes[i] ) )
+		return true
+	thread HsdKm_Slide( file.foes[i], < float( args[1] ), float( args[2] ), 0.0 >, float( args[3] ) )
+	printt( format( "HSDDIAG KM slide %d %s %s %s %.4f", i, args[1], args[2], args[3], Time() ) )
+	return true
+}
+
+void function HsdKm_Slide( entity npc, vector vel, float dur )
+{
+	npc.EndSignal( "OnDestroy" )
+	vector o = npc.GetOrigin()
+	float t0 = Time()
+	while ( Time() - t0 < dur )
+	{
+		WaitFrame()
+		npc.SetOrigin( o + vel * ( Time() - t0 ) )
+	}
+}
+
+// hsd_km_aimfoe <idx>: turn the player's view to the foe's world-space centre
+bool function HsdKm_CC_AimFoe( entity player, array<string> args )
+{
+	int i = args.len() > 0 ? int( args[0] ) : 0
+	if ( i >= file.foes.len() || !IsAlive( file.foes[i] ) || !IsAlive( player ) )
+		return true
+	vector a = VectorToAngles( file.foes[i].GetWorldSpaceCenter() - player.EyePosition() )
+	player.SetAngles( < a.x, a.y, 0.0 > )
+	printt( format( "HSDDIAG KM aimfoe %d %.2f %.2f %.4f", i, a.x, a.y, Time() ) )
 	return true
 }

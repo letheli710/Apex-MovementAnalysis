@@ -3,6 +3,7 @@
 Probe commands: measure/mod/HSD.KitMeasure (hsd_km_*); kit commands from the shared HSD.TF2Diag (hsd_kit_*).
 mp_lf_stacks titan lane (plans_kits): start (-800, -1400, 7) facing +x, about 1360 u clear toward +x.
 """
+import math
 from plans import C, W, U  # noqa: F401
 from plans_titan import _ride
 from plans_kits import lane, tap, _prep, out
@@ -189,6 +190,106 @@ def km_nuke():
     s += [W(1.6), C("hsd_kit_foe_shield 0"), lane(), W(0.3), C("hsd_km_nukepas"), C("hsd_shield 0"), C("hsd_kit_hp 3000"), C("hsd_tag nuke_doom"), C("hsd_hurt 3500 0"), W(1.0)]
     s += [C("hsd_tag nuke_eject"), C("hsd_eject"), W(10.0), CLEAR]
     return s + [C("hsd_km_log 0"), C("hsd_tag -")]
+
+
+def _marks(n=3):
+    s = []
+    for i in range(n):
+        s += [C("hsd_tag mk")] + tap("attack", 0.05) + [W(0.75)]
+    return s
+
+
+def km_homing():
+    """Homing per client frame: Tone tracker rockets on a static foe at 900 / 1500 u and on a foe sliding sideways
+    at 300 u/s; salvo core on a static foe; Northstar cluster missile (straight + drift) and flight core rockets at a
+    static foe; cluster missiles aimed past a static foe at 700 u with lateral offsets (graze: missile hit size)."""
+    s = [C("hsd_km_log 1")] + _ride("tone") + _prep()
+    for tag, f, r, slide in (("tr_fix900", 900, 0, None), ("tr_fix1500", 1500, 0, None), ("tr_slide", 900, 300, "0 300 6"), ("tr_slide_fast", 900, 400, "0 600 3")):
+        s += [CLEAR, lane(), W(0.3), kfoe(f, r, "static"), W(1.6), C("hsd_kit_refill 0"), C("hsd_km_aimfoe 0"), W(0.3)] + _marks()
+        if slide:
+            s += [C("hsd_km_slide 0 " + slide), W(0.3)]
+        s += [C("hsd_tag " + tag)] + tap("offhand0") + [W(3.5)]
+    s += [CLEAR, lane(), W(0.3), kfoe(1100, 0, "static"), W(1.6), lane(), W(0.3), C("hsd_core"), W(0.3), C("hsd_tag salvo_core")] + tap("ability 1") + [W(4.5), CLEAR]
+    s += out("tone")
+    s += _ride("northstar") + _prep()
+    s += [lane(pitch=-1), W(0.4), C("hsd_kit_refill 0"), C("hsd_tag cl_wall")] + tap("offhand0") + [W(2.0)]
+    s += [CLEAR, lane(), W(0.3), kfoe(1000, 0, "static"), W(1.6), lane(), W(0.3), C("hsd_core"), W(0.3), C("hsd_tag fc_fix")] + tap("ability 1") + [W(1.5), C("+attack"), W(1.5), C("-attack"), W(5.0), CLEAR]
+    s += [lane(), W(0.3), kfoe(700, 0, "static"), W(1.6)]
+    for d in (0, 60, 80, 90, 100, 110, 120, 130, 140, 160):
+        yaw = -math.degrees(math.atan2(d, 700))  # aim to the left of the foe (lane faces +x; positive yaw = left)
+        s += [lane(yaw=-yaw), W(0.4), C("hsd_kit_refill 0"), C("hsd_tag gz_%d" % d)] + tap("offhand0") + [W(1.4)]
+    return s + [CLEAR, C("hsd_km_log 0"), C("hsd_tag -")] + out("northstar")
+
+
+def km_tether2():
+    """Player tethered: the foe (static, 450 u ahead) throws a tether trap at the player's feet; after it arms the
+    player walks back (away) for 6 s, then forward; per-frame player path (PC) and tethered status (TS)."""
+    s = [C("hsd_km_log 1")] + _ride("ion") + _prep(100000) + [lane(), W(0.3), kfoe(450, 0, "static"), W(1.6), lane(), W(0.3)]
+    for i in range(2):
+        s += [C("hsd_tag tp_throw%d" % i), C("hsd_km_fire 0 tether 1 0 -170"), W(2.8), C("hsd_tag tp_back%d" % i), C("+back"), W(6.0), C("-back"), W(1.0),
+              C("hsd_tag tp_side%d" % i), C("+moveleft"), W(4.0), C("-moveleft"), W(2.0), lane(), W(0.5)]
+    s += [C("hsd_tag tp_ctrl"), C("+back"), W(4.0), C("-back"), W(0.5), CLEAR]
+    return s + [C("hsd_km_log 0"), C("hsd_tag -")] + out("ion")
+
+
+
+def km_homing2():
+    """Follow-up of km_homing: the lf_stacks lane is only ~180 u wide each side and ~1360 u long, so targets stay
+    inside it. Tracker rockets at 600 / 1200 u and on a foe sliding across the lane (150 u right -> left at 250 u/s);
+    flight core rockets at a static foe 1000 u; cluster missiles passing a static foe at 700 u with 10 - 60 u offsets."""
+    s = [C("hsd_km_log 1")] + _ride("tone") + _prep()
+    for tag, f, r, slide in (("tr_fix600", 600, 0, None), ("tr_fix1200", 1200, 0, None), ("tr_slide", 900, 150, "0 250 1.4")):
+        s += [CLEAR, lane(), W(0.3), kfoe(f, r, "static"), W(1.6), C("hsd_kit_refill 0"), C("hsd_km_aimfoe 0"), W(0.3)] + _marks()
+        if slide:
+            s += [C("hsd_km_slide 0 " + slide), W(0.1)]
+        s += [C("hsd_tag " + tag)] + tap("offhand0") + [W(3.0)]
+    s += [CLEAR] + out("tone")
+    s += _ride("northstar") + _prep()
+    s += [lane(), W(0.3), kfoe(1000, 0, "static"), W(1.6), lane(), W(0.3), C("hsd_core"), W(0.5), C("hsd_tag fc_fix")] + tap("ability 1") + [W(1.3), C("+attack"), W(1.5), C("-attack"), W(5.0), CLEAR]
+    s += [lane(), W(0.3), kfoe(700, 0, "static"), W(1.6)]
+    for d in (10, 20, 30, 40, 50, 60):
+        yaw = math.degrees(math.atan2(d, 700))
+        s += [lane(yaw=yaw), W(0.4), C("hsd_kit_refill 0"), C("hsd_tag gz_%d" % d)] + tap("offhand0") + [W(1.4)]
+    return s + [CLEAR, C("hsd_km_log 0"), C("hsd_tag -")] + out("northstar")
+
+
+
+def km_graze():
+    """Missile hit size, refined: cluster missiles past a static titan at 700 u. In km_homing2 an aim offset d gave a
+    lateral pass of about d - 43 u at chest height; here d = 75..110 (pass ~32..67 u), then vertical: aim over the
+    head (pitch up) so the missile passes 0..80 u above the 235 u top."""
+    s = [C("hsd_km_log 1")] + _ride("northstar") + _prep() + [lane(), W(0.3), kfoe(700, 0, "static"), W(1.6)]
+    for d in (75, 80, 85, 90, 95, 100, 105, 110):
+        yaw = math.degrees(math.atan2(d, 700))
+        s += [lane(yaw=yaw), W(0.4), C("hsd_kit_refill 0"), C("hsd_tag gz_%d" % d)] + tap("offhand0") + [W(1.6)]
+    for up in (40, 60, 70, 80, 90, 100, 120):
+        pitch = -math.degrees(math.atan2(up, 700))
+        s += [lane(pitch=pitch), W(0.4), C("hsd_kit_refill 0"), C("hsd_tag gv_%d" % up)] + tap("offhand0") + [W(1.6)]
+    return s + [CLEAR, C("hsd_km_log 0"), C("hsd_tag -")] + out("northstar")
+
+
+
+def km_tether3():
+    """Player tethered, pulling away down the open lane: player at x = -300 facing +x, the foe 450 u behind throws the
+    trap at the player's feet; after it arms the player holds forward 6 s. Control: the same walk with no trap."""
+    s = [C("hsd_km_log 1")] + _ride("ion") + _prep(100000)
+    s += [lane(x=-300), W(0.3), kfoe(-450, 0, "static", 0), W(1.6), lane(x=-300), W(0.3), C("hsd_tag tq_ctrl"), C("+forward"), W(5.0), C("-forward"), W(1.0)]
+    for i in range(2):
+        s += [lane(x=-300), W(0.5), C("hsd_tag tq_throw%d" % i), C("hsd_km_fire 0 tether 1 0 -170"), W(2.8), C("hsd_tag tq_fwd%d" % i), C("+forward"), W(6.0), C("-forward"), W(2.5)]
+    return s + [CLEAR, C("hsd_km_log 0"), C("hsd_tag -")] + out("ion")
+
+
+
+def km_graze2():
+    """Graze with a fixed foe and the player shifted sideways (yaw 0): pass offsets about -90..+90 u in 15 u steps at
+    chest height; then over the head: pitch so the missile passes 150..230 u above the foe's feet."""
+    s = [C("hsd_km_log 1")] + _ride("northstar") + _prep() + [lane(), W(0.3), kfoe(700, 0, "static"), W(1.6)]
+    for dy in (-90, -75, -60, -45, -30, 30, 45, 60, 75, 90):
+        s += [lane(y=-1400 + dy), W(0.4), C("hsd_kit_refill 0"), C("hsd_tag gs_%d" % dy)] + tap("offhand0") + [W(1.6)]
+    for up in (-30, -20, -10, 0, 10, 20, 30):
+        pitch = -math.degrees(math.atan2(up, 700))
+        s += [lane(y=-1440, pitch=pitch), W(0.4), C("hsd_kit_refill 0"), C("hsd_tag gh_%d" % up)] + tap("offhand0") + [W(1.6)]
+    return s + [CLEAR, C("hsd_km_log 0"), C("hsd_tag -")] + out("northstar")
 
 
 PLANS = [n for n in list(globals()) if n.startswith("km_")]

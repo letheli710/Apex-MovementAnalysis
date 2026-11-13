@@ -50,7 +50,7 @@ class Run:
                     ts = [(p[6 + 3 * i], float(p[7 + 3 * i]), int(p[8 + 3 * i])) for i in range(n)]
                     self.SA.append((float(p[2]), int(p[3]), p[4], ts))
                 elif k == "TS":
-                    self.TS.append([float(p[2]), int(p[3])] + fl(p[4:12]) + [int(p[12]), int(p[13])])
+                    self.TS.append([float(p[2]), int(p[3])] + fl(p[4:12]) + [int(p[12]), int(p[13])] + ([float(p[14])] if len(p) > 14 else []))
                 elif k == "TF":
                     self.TF.append([float(p[2]), int(p[3])] + fl(p[4:10]) + [int(p[10]), int(p[11]), float(p[12]), float(p[13])])
                 elif k == "PSNEW":

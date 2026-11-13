@@ -34,8 +34,6 @@ void function HsdKm_InitClient()
 
 void function HsdKm_Proj( vector o )
 {
-	if ( file.projErr )
-		return
 	array<entity> ps
 	try
 	{
@@ -43,8 +41,10 @@ void function HsdKm_Proj( vector o )
 	}
 	catch ( ex )
 	{
+		// fails on every frame a crossbow_bolt exists, even with a class filter: skip this frame, keep trying
+		if ( !file.projErr )
+			printt( "HSDDIAG KMERR cl_projarray (frames with bolts are skipped) " + ex )
 		file.projErr = true
-		printt( "HSDDIAG KMERR cl_projarray " + ex )
 		return
 	}
 	table<int, bool> now
