@@ -375,7 +375,7 @@ def P_drill(k):
 
 # shared
 def P_fist(k):
-    p = Panel("重拳", "HAMMERFIST · 俯视", "左拳；500；280 u（7.1 m）锥 20；0.8 s + 1.0 s")
+    p = Panel("重拳", "HAMMERFIST · 俯视", "左拳；500；280 u 锥 20；0.30 s 出伤；要低头 ≥15°")
     s = 24; x, y = 165, 260; p.titan(x, y)
     p.fan(x, y, 7.1 * s, -20, 20, INK, fill=(255, 255, 255, 120)); p.scale(s, 2)
     return p
@@ -401,7 +401,7 @@ def P_drop(k):
     p.scale(s, 2)
     return p
 def P_smoke(k):
-    p = Panel("电雾", "STATIC VEIL · 俯视", "内 320 / 外 375 u；1 s 后通电；每 0.1 s 一跳；5 s")
+    p = Panel("电雾", "STATIC VEIL · 俯视", "中心前方 3.6 m、高 2.1 m；内 320 / 外 375 u；0.97 s 起 40 跳")
     s = 12; x, y = 165, 160
     p.ring(x, y, u2m(375) * s, ENEMY, dash=True); p.ring(x, y, u2m(320) * s, ENEMY, w=2, fill=(170, 175, 180, 90))
     import random; random.seed(11)
@@ -411,7 +411,7 @@ def P_smoke(k):
     p.scale(s, 5)
     return p
 def P_core(k):
-    p = Panel("熔心弹射", "COREBREAK · 倒计时", "板缝从胸口亮到四肢末端 = 爆；数值缺页（O-4）")
+    p = Panel("熔心弹射", "COREBREAK · 倒计时", "1.8 s 弹出；3.27 s 起 11 次；满额 350 → 750 u 为 0")
     x, y = 165, 160
     p.d.rectangle([x - 40, y - 70, x + 40, y + 10], outline=INK, width=2)
     for i, (dx, dy) in enumerate(((-70, -40), (70, -40), (-25, 90), (25, 90))):
