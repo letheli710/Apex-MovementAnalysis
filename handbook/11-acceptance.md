@@ -13,7 +13,7 @@
 3. **怎么防止改坏**：几百个回放输出算 sha256，改代码前后必须逐字节相同；要动基线有严格的"没有变差"判据和留档要求（§11.4）。再加上两千多个自动测试、参数表校验和单位开关的等价检查（§11.5）。
 4. **差多少算合格**：§11.6 是全手册的**合格线总表**，从各章、各 D 行、测试和脚本里收集，每行写出处。
 
-最后 §11.7 讲为什么 R5 对照永远在 u 模式下跑，§11.8 给新功能的验收流程。
+最后 §11.7 讲为什么 R5 对照永远在 u 模式下跑，§11.8 给新功能的验收流程，§11.9 用阶段 4 的重建检验做示范，讲"只看手册能不能重新做出来"怎么验收。
 
 **这些都证明不了"好玩"**。移动哈希只保证移动没变；自动测试只测写下来的逻辑；对照只说明"像 R5"。手感最后由用户玩了以后定（TECH-REPORT 11-04 §6）。
 
@@ -309,10 +309,16 @@ EditMode 全绿；PlayMode 全绿；`-smoke` ok；`check_params.py` 退出码 0�
 
 #### 规则和公式
 
-- 线写的是"Unity 和 R5（或公式）差多少算合格"，单位都是 u 模式。
+- 线写的是"Unity 和 R5（或公式）差多少算合格"，单位都是 u 模式（泰坦模型的线是 [m]，已标）。
 - "检查"列：`类名.方法名`（EditMode 测试）、脚本名，或"人工"。
 - "出处"列：章节 §、D 行、文档；没合并的写 PR 号。
-- 只收已经存在的线。第 05、06、08、09 章今晚还在写，它们的线没收全（缺口 1）。
+- 只收已经存在的线。
+
+**原件是 [`tables/pass-lines.tsv`](tables/pass-lines.tsv)**（185 行），这里是给人看的摘要。TSV 的列：`id`（PL-001 …）、`领域`、`章`、`节`、`量`、`合格线`、`检查`、`出处`、`在哪`、`来源`（章节 / 脚本容差 / 测试 / D行 / 重建检验）。
+
+- PL-001 – PL-055：不属于某一章的线（总口径、FM / CC 的容差、技能和 AI、单位、泰坦模型、TF2、流水线、重建检验），手写。
+- PL-056 – PL-185：从 02、03、04、05、06、07、08、09、12 各章每一项"验收"段里的"合格线"一句逐条摘出来（02 7、03 13、04 13、05 47、06 13、07 3、08 9、09 23、12 2），"检查"列是同一段里写到的测试名。各章分支：`handbook/ch02` – `ch09`（12 章在 `handbook/ch08`），都还没合并；摘的是 11-14 晚上的版本（ch05 3be1917、ch06 63dad4f、ch08 16190c0、ch09 d4c4944）。章节改了合格线，要重新摘。
+- 有的行写的是"还没有合格线"（例：03 §3.11 起跳缓冲、09 §5.2 扩散分布），照原样保留，提醒这里是空的。
 
 **总口径**
 
@@ -378,7 +384,7 @@ EditMode 全绿；PlayMode 全绿；`-smoke` ok；`check_params.py` 退出码 0�
 | superglide | 窗口中间出口 460.000 ± 0.01；切断 / 起跳分界在剩余 0.1025 s（R5 混合区 0.086 – 0.12 s）；滑铲后 < 2 s 不给 | `SuperglideM8BTests.SprintSuperglideLeavesAt460AtEveryMeasuredHeight`、`TheTimeLeftDecidesCutSuperglideOrPlainJump` | 04 §4.13；D-31 |
 | S27 翻越加速 | 每类窗口秒数在 R5 ± 0.02 s；站姿 0.09 – 0.18 s、蹲姿 0.15 – 0.50 s（守护测试） | `MantleBoostS27Tests.TheWindowOpensWhereR5OpensIt`、`TheLiveConfigsKeepTheStandingWindowInTheR5Range`、`TheLiveConfigsKeepTheCrouchedWindowInTheR5Range` | 04 §4.14 |
 
-**墙、外力、技能（05、10 章）**
+**技能层、战斗层（10 章），以及直接从测试收的外力技能行（和上面 05 章的行有重叠，以 05 章为准）**
 
 | 量 | 合格线 | 检查 | 出处 |
 |---|---|---|---|
@@ -395,6 +401,66 @@ EditMode 全绿；PlayMode 全绿；`-smoke` ok；`check_params.py` 退出码 0�
 | 技能组合 | 全部通过；随机 30 s + 12 s 后全部 Idle、站在地上 | `SkillComboTests.*`、`SkillFuzzTests.*` | 10 §10.2、§10.4 |
 | 减速语义 | W2 实测速度由读回严重度算出；同类取最大；冲刺门槛 0.05 | `CombatFrameworkTests.TheMeasuredR5SpeedsComeOutOfTheReadBackSeverities`、`ASlowAboveFivePercentBlocksTheSprint` | 10 §10.6（HSD-Unity PR #53，还没合并） |
 | 战斗层不动身体 | 什么都没装时身体逐字节不变 | `CombatControlTests.NothingActingIsAnExactNoOp`；`CombatBaseTests.EmptyCombatLeavesEveryDemoByteIdentical` | 10 §10.5 |
+
+**跑墙、滑索、外力（05 章，摘要；全部 47 行见 TSV PL-089 – PL-135）**
+
+| 量 | 合格线 | 检查 | 出处 |
+|---|---|---|---|
+| 跑墙关卡尺度 LS-18 / 19 / 20 | 改动以后 549.84 / 535.67 / 701.03 u 不变（差 < 1 u），除非改动就是要改它们 | `Tf2WallRunTests.DefaultsStayM7AndThePresetsCarryTheSpecValues` | 05 §5.1 |
+| TF2 跑墙中 | A 的水平稳定速度 375 ± 4 %；重力系数和 1 − f(1 − t/T) 差 ≤ 0.03 | `Tf2WallRunTests.PresetAHorizontalSettlesNear375AndBNear225` | 05 §5.3 |
+| HSD 跑墙（游戏默认） | 随机测试里蹬墙跳水平速度 ≤ 480；沿墙速度 ≤ max(进入, 345)；LS-18 = 549.84 ± 1 u | `WallRunTests.*` | 05 §5.7 |
+| TF2 二段跳 | 水平和 T5 差 ≤ 0.2 u/s；竖直"换成"分支和 300 差 < 1e-6；LS-22 = 114.8 ± 0.5 u | `Tf2SuperJumpTests.T5TrialsAreReproduced` | 05 §5.9 |
+| 挂上滑索 | 抓点差 ≤ 1.6 u；视锥 33.18° 必须挂、35.94° 必须拒；候选距离 115.6 挂、128.0 不挂 | `A3Zipline.FindRuleMinimumAngleWithinRadiusAndCone` | 05 §5.15 |
+| 滑索滑行 / 到端 | 每条命令速度和时间线差 < 0.01 u/s；1.243 – 1.257 s 内到 600；到端 600 精确、离端点 90 – 95 u 脱离 | `A3Zipline.RideProfileMatchesTheMeasuredCurve`、`AutoDetachNinetyBeforeTheEndAt600` | 05 §5.18、§5.21 |
+| 钩爪发射和拉 | 挂上 / 开拉的命令和 t0 + L/2035、+0.2005 s 差 ≤ 1 条；无输入拉动和 S(t) 差 ≤ 4.2 u/s；按住 W 483.000 ± 0.01 | `GrappleTests.AimFromEyeAttachHopWindupAndPullTiming`；`GrappleM10ATests.NoInputWallPullFollowsTheRamp` | 05 §5.25、§5.26 |
+| 钩爪自动脱钩 | 往墙上拉的脱钩命令差 ≤ 2 条、最高点差 ≤ 1.0 u；天花板超时 1.5 ± 0.02 s；回放基线不变 | `GnGrappleTests.*` | 05 §5.27 |
+| 跳板 | 发射后第一帧速度和公式差 < 0.01 u/s、角度 < 0.1°；站着发射最高点和 707.8 u 差 < 1 u | `JumpPadTests.LaunchFormula`、`ApproachLaunchSlowMoFlightAndHardLanding` | 05 §5.32、§5.33 |
+| 兴奋剂 | 倍率和 1.298038 差 < 2e-6；冲刺上限 420.954 ± 1e-3 | `StimTests.BoostAndFadeShape` | 05 §5.36 |
+| 爆炸击退 | 衰减和 R5 / TF2 差 ≤ 0.01；满额 Δv = 推力 / 100；门槛两侧 310 / 315 结果和 R5 相同；741 个文件开关开 / `-preRJA` 都和 main 逐字节相同 | `RjaKnockbackTests.*` | 05 §5.37 |
+| Wraith 虚空 / 传送门 | 平台 msc 和 1.596078 差 < 1e-4；冲刺 414.98 ± 0.05；出口速度 0；放置冲刺 364 / 415 / 468 / 519 各差 < 0.05 u/s | `VoidM10WTests.TheVoidTimelineMatchesTheR5MoveScale`；`RiftM10WTests.*` | 05 §5.42、§5.43 |
+| 升梯 / 喷气 / 突袭 | 弹出 450 / 400 差 < 0.05、悬停 0.500 ± 1 条；喷气一步残差 rms ≤ 0.05 u/s；突袭速度误差 ≤ 2 u/s、角度 ≤ 0.01° | `GravityLiftTests.*`、`JetpackTests.*`、`PounceM9BTests.*` | 05 §5.47、§5.49、§5.50 |
+
+**动量、仲裁、输入（06 章，摘要；全部 13 行见 PL-136 – PL-148）**
+
+| 量 | 合格线 | 检查 | 出处 |
+|---|---|---|---|
+| 速度上限 | R5 实测里的每个动作在对应装备上不被夹；随机测试 0 次越过天花板 | `SkillComboTests.CeilingClipsALongGrapplePull`；`M7FuzzTests.*` | 06 §6.3 |
+| 驱动者和跳键 | 随机测试 0 次"两个驱动者"、0 次双重效果、0 次超时以外的卡住 | `JumpArbitrationTests.*`、`SkillComboTests.*` | 06 §6.7 – §6.10 |
+| 按键边沿 / 逐键输入 | 松开永远不产生边沿；没有相反键时键写法和轴写法逐位相同；组合 lurch 角度差 ≤ 0.5° | `InputM10DTests.*` | 06 §6.11、§6.13、§6.15 |
+| 游戏侧采样 | 任意帧率下同样的按键序列得到同样的状态；每格滚轮一个边沿 | `M6GameTests.ATapInsideOneFrameIsAOneCommandPress` | 06 §6.14 |
+
+**身体动画和泰坦电机（08、12 章，摘要；PL-152 – PL-160、PL-184 – PL-185）**
+
+| 量 | 合格线 | 检查 | 出处 |
+|---|---|---|---|
+| 持枪姿势 | 站立枪口和 HP-POSE 差 < 0.1 u、角度 < 0.5° [设计] | `CombatHoldPoseTests.EveryGunThatShowsAModelHasAMeasuredHold` | 08 §1.2 |
+| 冲刺姿势 | 平均姿势枪口差 < 0.5 u、角度 < 1°；波形角度中位差 < 1.5° [设计] | `CombatHoldPoseTests.SprintIsThePoseOfThatGun` | 08 §1.4 |
+| 转视角枪超前 | 233 °/s 稳定时 2.44 ± 0.2°；停转 0.6 s 时 < 15 % [设计] | `CombatHoldPoseTests.TheGunLeadsATurn` | 08 §1.7 |
+| 泰坦脚滑 | 走路路线 ≤ 2 × 平地（中型 9.9、重型 2.2 m / 100 m） | `TitanAnimTests.PlantedFeetBarelySlide` | 08 §2.2 |
+| 泰坦镜头 | 峰值差 < 5 %、时间形状对上 | `TitanCamTests.*` | 08 §3.1 |
+| 泰坦地面速度 / dash | 各时间和 T0 / 713 差 ≤ 0.02 s；dash 后 0.3 s 速度差 ≤ 5 u/s | `TitanMotorTests.NoughtToWalkSpeedAsT0`、`DashIsAtOnceHeldThenDownAtSprintDeceleration` | 12 §1.1、§2.1 |
+
+**战斗手感（09 章，摘要；全部 23 行见 PL-161 – PL-183）**
+
+| 量 | 合格线 | 检查 | 出处 |
+|---|---|---|---|
+| 开一枪 | 第一发偏移 0（逐位）；射速和字段差 < 3 % | `CombatWeaponTests.*` | 09 §1.1 |
+| 武器 punch 弹簧 | 到 50 % 的时间差 ≤ 0.02 s（已知例外 R-301 开镜 0.04 s） | `CombatWeaponTests.TheSpringStepIsExact` | 09 §2.1 |
+| 每发 kick | 幅度比差 ≤ 0.1；方向逐发一致；D-94 缩放和 R5 差在 ±0.2 噪声内 | `CombatWeaponTests.ANegativeTableYawGoesRight` | 09 §2.2、§2.3 |
+| 开镜 | zf 到 1 = `zoom_time_in` ± 1 命令；R-301 FOV 曲线差 ≤ 0.01°；枪的路径差 ≤ 0.05 u | `CombatWeaponTests.TheZoomFollowsTheMeasuredSmoothstep` | 09 §3.1、§3.2、§3.4 |
+| 重量轴字段 | 逐位等于 R5 读回值（775 项只差 Sheila 的 `LerpEnd`） | `CombatWeaponTests.TheTableHoldsEveryKeptGunWithItsSource` | 09 §4.1 |
+| 霰弹 | 关掉随机时和 R5 固定图案差 ≤ 0.006°；区域两两不重叠 | `ShotgunScatterTests.*` | 09 §5.3 |
+| 换弹 / 切枪 | 解锁时刻差 ≤ 0.05 s；切枪"能开火"时刻差 ≤ 0.02 s | `CombatReloadSwapTests.*` | 09 §7.1、§7.4 |
+| 扩散分布 | **还没有合格线**（等 R5 实测） | — | 09 §5.2 |
+
+**重建检验（§11.9；PL-052 – PL-055）**
+
+| 量 | 合格线 | 检查 | 出处 |
+|---|---|---|---|
+| 移动：位置 / 速度 | 每条命令差 ≤ 0.5（u、u/s） | `handbook/rebuild-test/judge/compare.py` | judge REPORT §0 |
+| 移动：事件 | 同一条命令（±1 条算"基本过"） | 同上 | 同上 |
+| 镜头：落地 kick | 峰值差 ≤ 0.05°；峰值时刻 ±1 帧；回到 0.05° 以内 ±2 帧 | 同上 | 同上 |
+| 第一次结果 | 移动 10 / 10 逐命令一致（最大 0.0001 u）；镜头随机数取 0 时 5 / 5（0.0000°） | 同上 | judge REPORT §1 |
 
 **镜头（07 章）**
 
@@ -460,7 +526,7 @@ EditMode 全绿；PlayMode 全绿；`-smoke` ok；`check_params.py` 退出码 0�
 
 #### 出处
 
-见每行。收集来源：02、03、04、07 章（分支 `handbook/ch02`、`ch03`、`ch04`、`ch07`，还没合并）；FM、CC；DECISIONS（main、#116、#117）；HSD-Unity 测试（main、PR #53 / #58 / #88）。
+见每行。收集来源：02 – 09、12 章（分支 `handbook/ch02` – `ch09`，还没合并）；FM、CC；DECISIONS（main、#116、#117）；HSD-Unity 测试（main、PR #53 / #58 / #88）；重建检验 `handbook/rebuild-test/judge/REPORT.md`（分支 `handbook/rebuild-judge`，还没合并）。原件 [`tables/pass-lines.tsv`](tables/pass-lines.tsv)（本分支 `handbook/ch10`）。
 
 ---
 
@@ -551,11 +617,82 @@ RunR5Comparison():
 
 ---
 
+## 11.9 重建验收（示范：阶段 4 的重建检验）
+
+#### 原理
+
+前面几节验收的是"Unity 做得像不像 R5"。手册还有一个更根本的目标：**删掉 R5 和 TF2，只看手册也能重新做出同样的移动和镜头**。这要单独验收：找一个没看过 Unity 代码的人（这里是一个单独的会话 hb-rebuild），只给他手册，让他从零写一个实现，再和 Unity 的参考实现逐命令比。比出来的差别分三类：**手册错了**、**手册没写死、靠猜**（猜对了也要补）、**题目本身有歧义**。只有第一类说明手册的规则有问题。
+
+#### 规则和公式
+
+1. **两个隔离的角色**：
+   - 出题和评分（hb-judge，分支 `handbook/rebuild-judge`）：写题目、用 Unity 参考实现（`MovementConfigs.Reference()` + 原生镜头 `NativeCameraFeedback`）生成标准答案、写评分脚本。
+   - 重建（hb-rebuild，分支 `handbook/rebuild-build`）：**只读 `handbook/*.md` 和 `handbook/tables/`**，不看评分文件夹、不看 Unity 代码；从零写一个实现，对每道题输出逐命令的 CSV；看不懂的地方记进 `GAPS.md`（猜了什么）。
+2. **题目**：每道题是一串固定输入（每条命令按什么键），输出每条命令的位置、速度、竖直速度、事件（起滑、结束、起跳、落地）、镜头角度、眼高。这一轮 10 题：滑铲 S1 – S5（含斜坡、滑铲跳、冷却），落地镜头 L1（50 / 100 / 200 / 400 u 落下），原地跳镜头 L2。
+3. **合格线**（评分脚本 `compare.py` 开头）：
+
+   | 量 | 合格线 [u] |
+   |---|---|
+   | 位置、速度 | 每条命令差 ≤ 0.5 u、0.5 u/s |
+   | 事件 | 同一条命令（±1 条 = 基本过） |
+   | 落地镜头 | 峰值差 ≤ 0.05°；峰值时刻 ±1 帧；回到 0.05° 以内 ±2 帧 |
+
+4. **分开评**，把随机和条件的影响拆出来：
+   - 主评分：题目原样，镜头随机数按 R5 的种子规则；
+   - 镜头随机数全取 0（`r0`）：只比镜头公式本身；
+   - 换一个条件（msc 1.15）：检查规则对条件是否成立；
+   - "按重建方的读法"：题目有歧义时，按重建方合理的读法再评一次。
+5. **差别归类**：每一个不过的题，找到差在哪一条命令、哪一个量，归到"手册错 / 手册没写死 / 题目"之一，写出要改的句子。
+6. 评分方自己先做**自检**：用标准答案对标准答案评分必须全过；故意挪一条命令、放大 2 % 必须被抓出来。
+
+#### 实现模板
+
+```
+出题：PROBLEMS.md（题目原文 + 标准答案用的读法） → harness（只读编译 Unity 参考实现） → answers/<题>.csv、answers/r0/、answers/msc115/
+重建：只读 handbook/ → src/ → out/<题>.csv、out/r0/、out/msc115/ + GAPS.md
+评分：compare.py out/ answers/；compare.py --build-dir out/r0 --answers answers/r0；…
+报告：逐题结果表 → 差别归类 → 要改的句子 → 建议的下一轮
+```
+
+方法步骤在 [附录 A §A.9](A-research-methods.md)。
+
+#### 验收
+
+第一次结果（重建 62f0418，评分 11-14）：
+
+| 口径 | 过 | 不过 |
+|---|---|---|
+| 按题目原样 | 5 / 10 | 5（S5、L2 是题目读法；L1_50、L1_400 是手册错） |
+| 按重建方的读法 | 8 / 10 | 2（L1_50、L1_400：手册错） |
+| **移动列**（位置、速度、竖直速度、事件），按重建方读法 | **10 / 10**（最大差 0.0001 u） | 0 |
+| **镜头随机数取 0** | **5 / 5**（0.0000°） | 0 |
+| msc 1.15，S1 – S4 | 4 / 4 | 0 |
+
+- **唯一的手册错误：07 §1.4 的随机种子**。手册写成"无符号数直接取模"，参考实现把混合后的种子当**有符号 32 位整数**（< 1 先取反，还 < 1 用 0xbc8f，再用 Schrage 方法算 48271·s mod (2³¹ − 1)）。种子最高位是 1 的命令，随机数正好变号（命令 42：Unity −0.4159，重建 +0.4159），所以 L1_50、L1_400 的落地 kick 峰值不对（1.609° / 2.204°、17.780° / 21.824°）。随机数取 0 时镜头完全一致，说明 07 章的 kick 公式、弹簧、落地速度定义全对，只错这一句。改法写在评分报告 §2，交给整合会话改 07 §1.4。
+- **两个题目造成的不过**：S5"滑铲结束后第 1 条命令再按冲刺 + 蹲"——结束时速度约 124 u/s，低于起滑门槛 200，怎么按都起不了滑，测不到冷却；L2"原地跳一次"没说哪条命令（出题方 tick 30、重建方 tick 0），位置和事件错开 30 条，按命令号取的随机数也对不上（错开 30 条以后随机数取 0 的镜头 0.0000° 一致）。这两题要改题目，不改手册。
+- 另外两处题目不清（S4 滑不停没说录多久；msc 是 1 还是空手 1.15）没有丢分。
+- **手册没写死、靠猜（猜对了）的 14 处**（H-1 – H-14：msc 默认、滑铲跳退还用严格小于、硬着陆取哪一刻的竖直速度、按键锁存不产生新的按下沿、镜头只在命令上更新等），评分报告 §4 逐条写了要改的句子，交给整合会话。
+- 结论：凡是规则本身，只看手册就能逐命令重建；改完 07 §1.4 和两道题，预计下一轮 10 / 10。
+
+**这次重建检验教会我们的验收规矩**：
+
+1. 随机量要把"公式"和"随机数"分开验：随机数取 0 先比公式，再单独比随机数生成器（种子规则写到位级：有符号还是无符号、字节顺序、初值）。
+2. 题目要写死每一个会影响结果的条件：从哪条命令开始、录多久、移动倍率、命令号的定义。按命令号取随机数的题，命令号错开一条整题都比不了。
+3. 重建方"猜对了"也要记：下一个重建方可能猜错。`GAPS.md` 是手册的补漏清单。
+
+#### 出处
+
+- `handbook/rebuild-test/judge/REPORT.md` §0 – §5、`README.md`、`PROBLEMS.md`、`compare.py`。分支 `handbook/rebuild-judge`（11afdb7），还没合并
+- `handbook/rebuild-test/build/GAPS.md`、`out/`。分支 `handbook/rebuild-build`（62f0418），还没合并
+- `HANDBOOK-PLAN.md` 阶段 4。工作区，不在 git
+
+---
+
 ## 缺口
 
 都写进了 [`_notes/hb-ch10.md`](_notes/hb-ch10.md)。
 
-1. **05、06、08、09 章的合格线没收全**：这几章今晚还在写（hb-ch05、hb-ch06、hb-ch08、hb-ch09）。枪、后坐、换弹、霰弹的线都在没合并的 PR 上（D-94、D-95、D-118、D-128、D-137），这次没收。整合时补进 §11.6。
+1. **合格线是 11-14 晚上从各章摘的**（[`tables/pass-lines.tsv`](tables/pass-lines.tsv)）：章节以后改了合格线，TSV 要重新摘；TSV 和测试代码里实际的容差还没有自动对照（建议以后让校验脚本查"测试里的容差 = 表里的线"）。07 章只有 3 行写成"合格线："，其余项的验收是测试名，没摘进来。
 2. **章节和测试的线不一样**（三处）：04 §4.2 横向 41 ± 1，测试 ±1.5；03 §3.15 tap strafe ≤ 2°，测试 ±8°；04 §4.5 < 1 u/s²，测试 R5 拟合 ±4 %（账本 S-09 写 3 %）。要么收紧测试，要么改章节。
 3. **两个指标脚本的"帧"不一样**：FM 1/144 s，CC 1/120 s；M3 有 60 / 120 / 144 fps 的片段，帧容差和片段自己的帧率无关。
 4. **FeelBatch 315 个和镜头批没有提交的哈希清单**，只能改前改后各跑一次比。建议加一个 `feel_check.py`（和 `rud_check.py` 同一套规则）。
