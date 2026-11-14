@@ -45,3 +45,36 @@
 - 在 R5 里搭和 `level_scale_harness` 一样的几何（平地跳远、最高墙、坡上滑铲距离），跑一次对照。现在关卡尺度表只有 Unity 的数。
 - TF2 本体的跑墙长度和二段跳高度没量过。
 - `slideStopSpeed` 125 对 M10 实测 112 的差（S-05）还没细读。
+
+## 镜头事件名对照（hb-ch07 的英文名，11-14 收到）
+
+hb-ch07 的事件名在共享备注目录 `hb-ch07-event-names.md`。`camera-events.tsv` 用的是 `CE-xx` 编号 + 中文事件名，这里**没改**。hb-integrate 要统一时，可以照下面的对照加一列或改名：
+
+| hb-ch07 名 | camera-events.tsv |
+|---|---|
+| jump | CE-01 – CE-03 |
+| double_jump | CE-04 – CE-06 |
+| land | CE-07 – CE-11 |
+| zip_detach | CE-31 – CE-33 |
+| mantle | CE-36 – CE-39 |
+| slide_start | CE-14 |
+| wall_kick、wallrun_start / timeout | CE-13（合在一行） |
+| hit | CE-59 |
+| explosion | CE-45（屏幕震动） |
+| fire | CE-47 – CE-54 |
+| melee、ability、titan_embark / eject | 表里没有 |
+| eye_height | CE-18（另有 slide 眼高 CE-17） |
+| sprint_eye | CE-19 |
+| step_bob | CE-21、CE-22 |
+| view_drift | CE-40、CE-41 |
+| ads_drift | CE-42 |
+| weapon_sway | 表里没有（CE-43 是 cockpit sway，不同） |
+| slide_tilt | CE-15 |
+| sprint_tilt | CE-20 |
+| wallrun_tilt | CE-24、CE-25 |
+| rope_roll | CE-27、CE-28、CE-34、CE-67 |
+| zip_eye_offset | CE-29、CE-30 |
+| slide_fov | CE-16 |
+| ads_fov | CE-58 |
+
+表里有、hb-ch07 名单里没有的：CE-12 跳板起跳、CE-23 侧移横滚、CE-26 闪避倾斜、CE-35 滑索 bank tilt、CE-46 上升气流震动、CE-55 – 57 拉栓 / 泵动动画镜头、CE-60 – 71 组合规则、CE-72 – 76 M5.5。
