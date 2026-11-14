@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- 重建检验（阶段 4）：只照 handbook/ 写的最小移动 + 镜头实现。
+       运行（在本目录）：
+         dotnet run -c Release (双横线) 1.0 ../out          题目条件 msc = 1
+         dotnet run -c Release (双横线) 1.15 ../out/msc115  手册"空手"条件，对照用
+       见 ../GAPS.md 开头。 -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <InvariantGlobalization>true</InvariantGlobalization>
+  </PropertyGroup>
+</Project>
