@@ -1,0 +1,39 @@
+id	项	条件	量纲	[u]	[m]	身高比例	怎么算的	R5 对照	备注
+LS-01	原地跳高度	站着不动按跳，脚离地最高	Length	54.798	1.392	0.7611 H	Unity 模拟：tables/level_scale_harness/Program.cs `jump`（游戏身体 Reference / 装备 Wraith S21，120 Hz 命令，[u] 模式）	连续公式 = jumpHeight 56 u；R5 实测起跳速度 289.823 u/s	离散积分比 56 少 V·dt/2 = 1.2 u（120 Hz）；R5 按自己的命令频率同样少一点。设计关卡用 54.8 u 更稳
+LS-02	原地跳滞空	起跳到落地	Time	0.75	—	—	Unity 模拟：tables/level_scale_harness/Program.cs `jump`（游戏身体 Reference / 装备 Wraith S21，120 Hz 命令，[u] 模式）	连续 2V/g = 0.773 s	
+LS-03	走路跳远	不按冲刺跑到 199.5 u/s 起跳，空中按住前	Length	151.5	3.848	2.104 H	Unity 模拟：tables/level_scale_harness/Program.cs `jump`（游戏身体 Reference / 装备 Wraith S21，120 Hz 命令，[u] 模式）	没对照（R5 没测平地跳远）	起跳速度 199.525 u/s
+LS-04	冲刺跳远	冲刺 299 u/s 起跳，空中按住前	Length	226.86	5.762	3.151 H	Unity 模拟：tables/level_scale_harness/Program.cs `jump`（游戏身体 Reference / 装备 Wraith S21，120 Hz 命令，[u] 模式）	没对照	起跳速度 299 u/s；跳的高度不随速度变
+LS-05	蹲走跳远	一直按蹲，92 u/s 起跳	Length	70.112	1.781	0.9738 H	Unity 模拟：tables/level_scale_harness/Program.cs `jump`（游戏身体 Reference / 装备 Wraith S21，120 Hz 命令，[u] 模式）	没对照	
+LS-06	滑铲跳远（最远）	冲刺 → 按蹲滑铲 → 0.208 s 后起跳	Length	291.75	7.41	4.052 H	Unity 模拟：tables/level_scale_harness/Program.cs `jump`（游戏身体 Reference / 装备 Wraith S21，120 Hz 命令，[u] 模式）	R5 规则：0.2 s 下蹲过渡完成前起跳会退还加速（J-08）	起跳后水平 407 u/s，高 48.8 u，滞空 0.708 s；0.05 s 起跳（退还）只有 205 u，0.5 s 起跳 251 u，1 s 起跳 171 u（slidejump_sweep.tsv）
+LS-07	滑铲跳最佳时机	按蹲到按跳	Time	0.208	—	—	Unity 模拟：tables/level_scale_harness/Program.cs `jump`（游戏身体 Reference / 装备 Wraith S21，120 Hz 命令，[u] 模式）	= 下蹲过渡 0.2 s + 1 条命令	
+LS-08	能翻上去的最高墙：贴墙原地跳	站在墙前按跳 + 前，允许爬墙	Length	222	5.639	3.083 H	Unity 模拟：tables/level_scale_harness/Program.cs `mantle`（游戏身体 Reference / 装备 Wraith S21，120 Hz 命令，[u] 模式）	没对照最高值；R5 h200 站姿能上（D72-REPORT §2）	事件：CLIMB_START → MANTLE；1 u 网格
+LS-09	能翻上去的最高墙：冲刺跳	冲刺接近，30 个起跳时刻取最好	Length	275	6.985	3.819 H	Unity 模拟：tables/level_scale_harness/Program.cs `mantle`（游戏身体 Reference / 装备 Wraith S21，120 Hz 命令，[u] 模式）	没对照	爬墙中按跳上蹿（CLIMB_JUMPUP）
+LS-10	能翻上去的最高墙：不爬墙，只靠跳 + 翻越	站着跳，没有 CLIMB 事件的最高	Length	84	2.134	1.167 H	Unity 模拟：tables/level_scale_harness/Program.cs `mantle`（游戏身体 Reference / 装备 Wraith S21，120 Hz 命令，[u] 模式）	mantleHeight 80 u（离脚）	跳到顶 54.8 u + 台面探测；1 u 网格
+LS-11	能翻上去的最高墙：蹲着	一直按蹲（或空中按蹲），站着跳	Length	155	3.937	2.153 H	Unity 模拟：tables/level_scale_harness/Program.cs `mantle`（游戏身体 Reference / 装备 Wraith S21，120 Hz 命令，[u] 模式）	R5：按着蹲不爬墙、h140 只有空中蹲到底才上（D-75 E）；h160 R5 0 / 66	Unity 一直蹲 156、空中按蹲 155、冲刺 + 空中蹲 155；爬墙开始后按蹲就结束（CLIMB_CROUCH_END）
+LS-12	台阶高度	走过去不跳就上去的最高台阶	Length	18	0.4572	0.25 H	Unity 模拟：tables/level_scale_harness/Program.cs `step`（游戏身体 Reference / 装备 Wraith S21，120 Hz 命令，[u] 模式）	R5 setfile stepHeight 22 u（params B-04 不一致）	0.25 u 网格；= TF2 的 18
+LS-13	斜坡上限	冲刺能跑上去的最陡坡	Angle	45.5	—	—	Unity 模拟：tables/level_scale_harness/Program.cs `slope`（游戏身体 Reference / 装备 Wraith S21，120 Hz 命令，[u] 模式）	法线 z ≥ 0.7 → 45.57°（SDK / native S-10）	0.25° 网格，和 0.7 一致
+LS-14	平地滑铲距离	299 u/s 冲刺后按住蹲	Length	461.07	11.71	6.404 H	Unity 模拟：tables/level_scale_harness/Program.cs `slide`（游戏身体 Reference / 装备 Wraith S21，120 Hz 命令，[u] 模式）	R5 M10：普通滑铲 1.69 s 后结束	用时 1.692 s，最高 457.8 u/s（加速封顶 460）
+LS-15.5d	下坡滑铲距离	5° 下坡，坡顶平台冲刺进坡时按蹲	Length	684.48	17.39	9.507 H	Unity 模拟：tables/level_scale_harness/Program.cs `slide`（游戏身体 Reference / 装备 Wraith S21，120 Hz 命令，[u] 模式）	R5 坡上滑铲规则见 R6U（D-45 / D-46）；距离没测	用时 2.575 s
+LS-16.5u	上坡滑铲距离	5° 上坡，平地冲刺到坡脚时按蹲	Length	350.78	8.91	4.872 H	Unity 模拟：tables/level_scale_harness/Program.cs `slide`（游戏身体 Reference / 装备 Wraith S21，120 Hz 命令，[u] 模式）	R6：40° 上坡 R5 123.6 u（另一种进入方式，不能直接比）	用时 1.275 s；沿坡面量
+LS-15.10d	下坡滑铲距离	10° 下坡，坡顶平台冲刺进坡时按蹲	Length	1422.4	36.13	19.76 H	Unity 模拟：tables/level_scale_harness/Program.cs `slide`（游戏身体 Reference / 装备 Wraith S21，120 Hz 命令，[u] 模式）	R5 坡上滑铲规则见 R6U（D-45 / D-46）；距离没测	用时 5.933 s
+LS-16.10u	上坡滑铲距离	10° 上坡，平地冲刺到坡脚时按蹲	Length	284.24	7.22	3.948 H	Unity 模拟：tables/level_scale_harness/Program.cs `slide`（游戏身体 Reference / 装备 Wraith S21，120 Hz 命令，[u] 模式）	R6：40° 上坡 R5 123.6 u（另一种进入方式，不能直接比）	用时 1.025 s；沿坡面量
+LS-15.15d	下坡滑铲距离	15° 下坡，坡顶平台冲刺进坡时按蹲	Length	不停	—	—	Unity 模拟：tables/level_scale_harness/Program.cs `slide`（游戏身体 Reference / 装备 Wraith S21，120 Hz 命令，[u] 模式）	R5 坡上滑铲规则见 R6U（D-45 / D-46）；距离没测	6000 u 坡底还没停，245 u/s
+LS-16.15u	上坡滑铲距离	15° 上坡，平地冲刺到坡脚时按蹲	Length	241.37	6.131	3.352 H	Unity 模拟：tables/level_scale_harness/Program.cs `slide`（游戏身体 Reference / 装备 Wraith S21，120 Hz 命令，[u] 模式）	R6：40° 上坡 R5 123.6 u（另一种进入方式，不能直接比）	用时 0.867 s；沿坡面量
+LS-15.20d	下坡滑铲距离	20° 下坡，坡顶平台冲刺进坡时按蹲	Length	不停	—	—	Unity 模拟：tables/level_scale_harness/Program.cs `slide`（游戏身体 Reference / 装备 Wraith S21，120 Hz 命令，[u] 模式）	R5 坡上滑铲规则见 R6U（D-45 / D-46）；距离没测	坡底 395 u/s
+LS-16.20u	上坡滑铲距离	20° 上坡，平地冲刺到坡脚时按蹲	Length	213.13	5.414	2.96 H	Unity 模拟：tables/level_scale_harness/Program.cs `slide`（游戏身体 Reference / 装备 Wraith S21，120 Hz 命令，[u] 模式）	R6：40° 上坡 R5 123.6 u（另一种进入方式，不能直接比）	用时 0.767 s；沿坡面量
+LS-15.30d	下坡滑铲距离	30° 下坡，坡顶平台冲刺进坡时按蹲	Length	不停	—	—	Unity 模拟：tables/level_scale_harness/Program.cs `slide`（游戏身体 Reference / 装备 Wraith S21，120 Hz 命令，[u] 模式）	R5 坡上滑铲规则见 R6U（D-45 / D-46）；距离没测	坡底 625 u/s
+LS-16.30u	上坡滑铲距离	30° 上坡，平地冲刺到坡脚时按蹲	Length	179.14	4.55	2.488 H	Unity 模拟：tables/level_scale_harness/Program.cs `slide`（游戏身体 Reference / 装备 Wraith S21，120 Hz 命令，[u] 模式）	R6：40° 上坡 R5 123.6 u（另一种进入方式，不能直接比）	用时 0.642 s；沿坡面量
+LS-15.40d	下坡滑铲距离	40° 下坡，坡顶平台冲刺进坡时按蹲	Length	不停	—	—	Unity 模拟：tables/level_scale_harness/Program.cs `slide`（游戏身体 Reference / 装备 Wraith S21，120 Hz 命令，[u] 模式）	R5 坡上滑铲规则见 R6U（D-45 / D-46）；距离没测	坡底 742 u/s
+LS-16.40u	上坡滑铲距离	40° 上坡，平地冲刺到坡脚时按蹲	Length	166.25	4.223	2.309 H	Unity 模拟：tables/level_scale_harness/Program.cs `slide`（游戏身体 Reference / 装备 Wraith S21，120 Hz 命令，[u] 模式）	R6：40° 上坡 R5 123.6 u（另一种进入方式，不能直接比）	用时 0.6 s；沿坡面量
+LS-17	≥ 15° 下坡滑铲不停	—	Angle	15	—	—	Unity 模拟：tables/level_scale_harness/Program.cs `slide`（游戏身体 Reference / 装备 Wraith S21，120 Hz 命令，[u] 模式）	—	"10° 还能停（1422 u），15° 起滑铲在坡上一直滑；""多陡的坡滑不停""在 10–15° 之间，没细扫"
+LS-18	跑墙距离：M7 HSD 设计（游戏默认）	Fun 配置，冲刺斜 10° 跳上墙，按住前	Length	549.84	13.97	7.637 H	Unity 模拟：tables/level_scale_harness/Program.cs `wall`（游戏身体 Reference / 装备 Wraith S21，120 Hz 命令，[u] 模式）	R5 没有跑墙（setfile wallrun = false）	1.608 s，最高比起点高 15.5 u；24 种接近方式取最长
+LS-19	跑墙距离：TF2 规则 + R5 残留值（预设 B）	同上	Length	535.67	13.61	7.44 H	Unity 模拟：tables/level_scale_harness/Program.cs `wall`（游戏身体 Reference / 装备 Wraith S21，120 Hz 命令，[u] 模式）	—	1.825 s，升 87.1 u
+LS-20	跑墙距离：TF2 规则 + TF2 值（预设 A）	同上	Length	701.03	17.81	9.737 H	Unity 模拟：tables/level_scale_harness/Program.cs `wall`（游戏身体 Reference / 装备 Wraith S21，120 Hz 命令，[u] 模式）	TF2 本体没量过跑墙长度	1.758 s，升 62.4 u
+LS-21	二段跳高度：HSD 设计	原地跳 + 空中再跳（0.383 s 按）	Length	99.794	2.535	1.386 H	Unity 模拟：tables/level_scale_harness/Program.cs `djump`（游戏身体 Reference / 装备 Wraith S21，120 Hz 命令，[u] 模式）	R5 没有（Sparrow 以外）	二段 45 u（设计）
+LS-22	二段跳高度：TF2 规则	同上	Length	114.8	2.916	1.594 H	Unity 模拟：tables/level_scale_harness/Program.cs `djump`（游戏身体 Reference / 装备 Wraith S21，120 Hz 命令，[u] 模式）	[算] TF2 本体（重力 600、起跳 300 u/s）约 75 + 75 = 150 u，没实测	Unity 用 R5 重力 750 和 superjump 60 u
+LS-23	跳板：冲刺上跳板的水平飞行距离	冲刺进 Octane 跳板	Length	1412.5	35.88	19.62 H	Unity 模拟：tables/level_scale_harness/Program.cs `pad`（游戏身体 Reference / 装备 Wraith S21，120 Hz 命令，[u] 模式）	[算] 1150·normalize(ĥ + 2ẑ)：同高落地约 1411 u	最高 707.9 u，滞空 3.43 s
+LS-24	跳板：站着的跳起高度	站在跳板上	Length	841.28	21.37	11.68 H	Unity 模拟：tables/level_scale_harness/Program.cs `pad`（游戏身体 Reference / 装备 Wraith S21，120 Hz 命令，[u] 模式）	[算] 竖直 1150 u/s → 约 877 u	比纯公式低，原因没查（可能是跳板的竖直规则或命中时刻），记下
+LS-25	钩爪最远距离	参数	Length	850	21.59	11.81 H	参数 grapple.range（params P-01）	grapple_maxLength 850 [数据]	不是模拟；一次拉多远看地形
+LS-26	滑索枪绳长范围（最短）	参数	Length	700	17.78	9.722 H	参数 ziplineGun.minDistance	[实测] M10-B 700–8000 u	
+LS-27	滑索枪绳长范围（最长）	参数	Length	8000	203.2	111.1 H	参数 ziplineGun.maxDistance	[实测] M10-B	
+LS-28	滑索速度	参数	Velocity	600	15.24	8.333 H/s	参数 advanced.zipline.speed（params Z-01）	ziplineSpeed 600 [数据]	滑索枪的绳 1000 u/s；地图滑索的典型长度没算（没有 R5 地图尺寸数据）
