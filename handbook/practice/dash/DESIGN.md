@@ -204,4 +204,31 @@ OnKill(): if killResetsCooldown: charges = max else next charge -= killCooldownC
 
 ## 8. 实现时定下 / 改动的地方
 
-（第 2 步填写。）
+第 2 步（11-14）写。§1 – §7 是第 1 步原文。
+
+**实现位置**：技能 / 动作框架里的一个能力（Driving 状态），不进电机、不进配置。
+
+| 东西 | 在哪（HSD-Unity `practice/dash`，叠在 `practice/slam` 上，draft PR，还没合并） |
+|---|---|
+| 能力、参数 | `Assets/HSD/R5Replay/Runtime/Abilities/Dash/DashAbility.cs`（`DashAbility`、`DashParams`（`Design()` 15 s / `Playtest()` 2 s）、`IHorizontalCeilingOverride`） |
+| 按键位 | `SkillInput.dash` → usercmd 位 `DashAbility.ButtonBit` = 1L << 41（`FunButtons.Gravity` 1L << 40 后面那一位，R5 不用）；不按就没有这一位，所有旧输入不变 |
+| 天花板抬高 | `SkillArbiter.Clamp` 读 `IHorizontalCeilingOverride`（冲刺中 = max(峰值, 冲刺前速度)；没有这种能力 = 原样） |
+| 开关 | `PracticeSession.SetDash(bool, DashParams)` / `Dash` / `DashOn`：开 = 每个新身体用 `DashAbility.AddTo` 插到**能力列表第一个**（在下砸前面） |
+| 镜头 | `NativeCameraParams.dashPunch`、`dashPitchBase` 4.5、`dashRollBase` 3、`dashFovPunch`（开）、`dashFovScale` 1.14、`dashFovIn` 0.08、`dashFovOut` 0.35、盐 `SaltDash*`；`Observe` 只读 `DashAbility.starts / startForward / startRight` |
+| 游戏 | `PracticeGameDash.cs`：按键（左 Alt / 鼠标侧键 4）、HUD 冲刺框、喷气声、开火限制、击倒减冷却（读 `CombatSim.kills`）、菜单"实验动作 · 冲刺"和调参、`-dashShots` 巡游；`PracticeMapSlam.cs` 的冲刺场地 DY；`Build.cs` 的 `-practiceDash` |
+| 测试 | `Assets/HSD/Game/Tests/Editor/DashTests.cs`（`DashTests`，24 个用例） |
+
+**和设计不一样 / 设计没写到的地方**
+
+| # | 设计 | 实现 | 原因 |
+|---|---|---|---|
+| 1 | 撞墙"剩余推力取消" | 撞墙要等**下一条命令**才知道：世界的碰撞扫掠在能力的 `AfterMove` 之后（`SkillBody.Step`：电机一步 → 世界扫掠）。撞墙那条命令身体已经停在墙面，下一条命令开头结束冲刺、速度取扫掠后的沿墙速度 | 每条命令的顺序（REPORT G-1 / D-1）；效果和设计一样，只是事件晚一条命令 |
+| 2 | 地面起冲"贴着地面平飞" | 每条命令把身体设成"离地"、竖直速度 0、重力 × 0，电机走空中移动（没有摩擦，空中加速只补不削） | 不改电机；空中移动本来就不削速度（03 §3.6） |
+| 3 | 喷气声"噪声嘶声" | 程序生成的低通噪声 0.3 s（`PracticeGameDash.JetHiss`），用游戏已有的提示音源（`cueAudio`，跳板二段跳的提示音也用它） | 项目没有音效系统，只有这个提示音源 |
+| 4 | 速度线 / 暗角（可选） | **没做** | 可选项；99 A-2 待研究 |
+| 5 | 镜头 | 只在原生镜头里；M5.5 没碰 | 同实践检验 A |
+| 6 | 冲刺中开枪 | 战斗层的开火键在冲刺中和恢复期被拦（`PracticeGame.ReadInput` 的 `fire`）；移动不受影响 | 09 的数，接口是游戏层 |
+| 7 | 击倒减冷却 | 游戏层每帧看 `CombatSim.kills` 增加了几次，调 `DashAbility.OnKill`；场地 DY 加了 3 个静止假人 | 战斗层和移动层之间没有事件接口（REPORT D-6） |
+| 8 | 试玩 build | Practice-Dash：冲刺默认开、冷却 2 s（存 PlayerPrefs `hsd.exp.dash.practice`）；下砸默认关；两个场地都有，出生在 DY | 总控要求 |
+
+**实测和设计对上的**：一次冲刺 40 条命令、403.33 u（设计 403.3 u）；冲完 420 u/s；冲刺跑起冲出口 420、滑铲中起冲出口保留滑铲速度 457.8；空中高度变化 0；地面冲完 0.108 s 降回 299（03 §3.4 的 1250 u/s² 预言 (420 − 299) / 1250 = 0.097 s + 一条命令）；跳 + 冲 + 翻越最高 134 u（预言：起跳最高点 54.8 + 翻越 80 = 134.8 u）。
