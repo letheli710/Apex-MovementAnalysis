@@ -1,0 +1,256 @@
+== C1 reload x movement (R-301)
+c1_grapple_rl_1 NO reload seq; ['ads_out', 'lower_onehanded', 'raise_onehanded', 'holster', 'raise', 'ads_out']
+c1_grapple_rl_2 NO reload seq; ['ads_out', 'lower_onehanded', 'raise_onehanded', 'holster', 'raise', 'ads_out']
+c1_rl_grapple_1 reload reload len 4.24 cyc_end 1.00 -> ads_out {'ground': 395, 'grapple': 211, 'air': 4}
+c1_rl_grapple_2 reload reload len 4.24 cyc_end 1.00 -> ads_out {'ground': 393, 'grapple': 213, 'air': 4}
+c1_rl_grapple_late_1 reload reload len 1.99 cyc_end 0.83 -> lower_onehanded {'ground': 286, 'grapple': 1}
+c1_rl_grapple_late_2 reload reload len 1.99 cyc_end 0.83 -> lower_onehanded {'ground': 287}
+c1_rl_slide_1 reload reload len 2.40 cyc_end 1.00 -> ads_out {'spr': 51, 'slide': 214, 'duck': 79}
+c1_rl_slide_2 reload reload len 2.40 cyc_end 1.00 -> ads_out {'spr': 52, 'slide': 214, 'duck': 80}
+c1_rl_zip_1 reload reload len 3.02 cyc_end 1.00 -> ads_out_onehanded {'ground': 50, 'zip': 385}
+c1_rl_zip_2 reload reload len 3.02 cyc_end 1.00 -> ads_out_onehanded {'ground': 53, 'zip': 382}
+c1_slide_rl_1 reload reload len 2.40 cyc_end 1.00 -> ads_out {'slide': 177, 'duck': 168}
+c1_slide_rl_2 reload reload len 2.40 cyc_end 1.00 -> ads_out {'slide': 178, 'duck': 168}
+c1_slidehold_rl_1 reload reload len 2.40 cyc_end 0.95 -> ads_out {'slide': 345}
+c1_slidehold_rl_2 reload reload len 2.40 cyc_end 0.95 -> ads_out {'slide': 345}
+c1_slidehold_rl_3 reload reload len 2.40 cyc_end 0.95 -> ads_out {'slide': 346}
+c1_stand_1 reload reload len 2.40 cyc_end 1.00 -> ads_out {'ground': 334}
+c1_stand_2 reload reload len 2.40 cyc_end 1.00 -> ads_out {'ground': 345}
+c1_stand_3 reload reload len 2.40 cyc_end 1.00 -> ads_out {'ground': 345}
+c1_walk_1 reload reload len 2.40 cyc_end 1.00 -> ads_out {'ground': 345}
+c1_walk_2 reload reload len 2.40 cyc_end 1.00 -> ads_out {'ground': 346}
+c1_walk_3 reload reload len 2.40 cyc_end 1.00 -> ads_out {'ground': 345}
+c1_zip_rl_1 reload reload_onehanded len 2.40 cyc_end 1.00 -> ads_out_onehanded {'zip': 344}
+c1_zip_rl_2 reload reload_onehanded len 2.40 cyc_end 1.00 -> ads_out_onehanded {'zip': 345}
+== C3 sprint loop vs speed
+c2_g7_sprint_1 speed 150-200 n=44 rate 1.799/s loop 0.556s sprintfrac 0.08 ampY 0.42 ampR 0.43
+c2_g7_sprint_1 speed 200-250 n=72 rate 1.799/s loop 0.556s sprintfrac 0.55 ampY 1.02 ampR 1.20
+c2_g7_sprint_1 speed 250-300 n=523 rate 1.799/s loop 0.556s sprintfrac 1.00 ampY 1.16 ampR 1.04
+c2_longbow_sprint_1 speed 150-200 n=44 rate 1.799/s loop 0.556s sprintfrac 0.08 ampY 0.25 ampR 0.71
+c2_longbow_sprint_1 speed 200-250 n=72 rate 1.799/s loop 0.556s sprintfrac 0.55 ampY 0.60 ampR 0.17
+c2_longbow_sprint_1 speed 250-300 n=523 rate 1.799/s loop 0.556s sprintfrac 1.00 ampY 1.09 ampR 1.11
+c2_p2020_sprint_1 speed 150-200 n=44 rate 1.801/s loop 0.555s sprintfrac 0.08 ampY 0.52 ampR 0.81
+c2_p2020_sprint_1 speed 200-250 n=72 rate 1.801/s loop 0.555s sprintfrac 0.55 ampY 0.45 ampR 0.57
+c2_p2020_sprint_1 speed 250-300 n=523 rate 1.802/s loop 0.555s sprintfrac 1.00 ampY 1.29 ampR 1.98
+c2_peacekeeper_sprint_1 speed 150-200 n=35 rate 1.801/s loop 0.555s sprintfrac 0.07 ampY 0.27 ampR 0.70
+c2_peacekeeper_sprint_1 speed 200-250 n=69 rate 1.802/s loop 0.555s sprintfrac 0.54 ampY 0.59 ampR 0.15
+c2_peacekeeper_sprint_1 speed 250-300 n=531 rate 1.802/s loop 0.555s sprintfrac 1.00 ampY 1.05 ampR 1.08
+c2_r99_sprint_1 speed 150-200 n=44 rate 1.799/s loop 0.556s sprintfrac 0.08 ampY 0.25 ampR 0.71
+c2_r99_sprint_1 speed 200-250 n=72 rate 1.799/s loop 0.556s sprintfrac 0.54 ampY 0.60 ampR 0.16
+c2_r99_sprint_1 speed 250-300 n=525 rate 1.799/s loop 0.556s sprintfrac 1.00 ampY 1.09 ampR 1.11
+c2_spitfire_sprint_1 speed 150-200 n=44 rate 1.799/s loop 0.556s sprintfrac 0.08 ampY 0.33 ampR 0.41
+c2_spitfire_sprint_1 speed 200-250 n=71 rate 1.800/s loop 0.556s sprintfrac 0.56 ampY 0.97 ampR 1.22
+c2_spitfire_sprint_1 speed 250-300 n=524 rate 1.799/s loop 0.556s sprintfrac 1.00 ampY 1.16 ampR 1.04
+c2b_r99_sprint_1 speed 150-200 n=46 rate 1.800/s loop 0.555s sprintfrac 0.09 ampY 0.25 ampR 0.72
+c2b_r99_sprint_1 speed 200-250 n=73 rate 1.799/s loop 0.556s sprintfrac 0.57 ampY 0.59 ampR 0.21
+c2b_r99_sprint_1 speed 250-300 n=513 rate 1.800/s loop 0.555s sprintfrac 1.00 ampY 1.09 ampR 1.12
+c3_r301_sprint_b0.1_1 speed 200-250 n=52 rate 1.802/s loop 0.555s sprintfrac 0.15 ampY 0.59 ampR 0.38
+c3_r301_sprint_b0.1_1 speed 250-300 n=60 rate 1.802/s loop 0.555s sprintfrac 0.63 ampY 1.05 ampR 1.21
+c3_r301_sprint_b0.1_1 speed 300-350 n=448 rate 1.801/s loop 0.555s sprintfrac 1.00 ampY 1.17 ampR 1.07
+c3_r301_sprint_b0.1_2 speed 200-250 n=52 rate 1.802/s loop 0.555s sprintfrac 0.14 ampY 0.56 ampR 0.40
+c3_r301_sprint_b0.1_2 speed 250-300 n=61 rate 1.802/s loop 0.555s sprintfrac 0.62 ampY 0.97 ampR 1.17
+c3_r301_sprint_b0.1_2 speed 300-350 n=447 rate 1.802/s loop 0.555s sprintfrac 1.00 ampY 1.16 ampR 1.07
+c3_r301_sprint_b0.3_1 speed 300-350 n=44 rate 1.802/s loop 0.555s sprintfrac 0.29 ampY 0.85 ampR 0.75
+c3_r301_sprint_b0.3_1 speed 350-400 n=45 rate 1.800/s loop 0.555s sprintfrac 0.69 ampY 1.00 ampR 1.19
+c3_r301_sprint_b0.3_1 speed 400-450 n=448 rate 1.801/s loop 0.555s sprintfrac 1.00 ampY 1.18 ampR 1.07
+c3_r301_sprint_b0.3_2 speed 300-350 n=45 rate 1.802/s loop 0.555s sprintfrac 0.29 ampY 0.85 ampR 0.76
+c3_r301_sprint_b0.3_2 speed 350-400 n=45 rate 1.802/s loop 0.555s sprintfrac 0.69 ampY 1.00 ampR 1.19
+c3_r301_sprint_b0.3_2 speed 400-450 n=449 rate 1.802/s loop 0.555s sprintfrac 1.00 ampY 1.17 ampR 1.06
+c3_r301_sprint_b0.6_1 speed 400-450 n=32 rate 1.802/s loop 0.555s sprintfrac 0.16 ampY 0.28 ampR 0.61
+c3_r301_sprint_b0.6_1 speed 450-500 n=33 rate 1.802/s loop 0.555s sprintfrac 0.43 ampY 0.57 ampR 0.10
+c3_r301_sprint_b0.6_1 speed 500-550 n=33 rate 1.802/s loop 0.555s sprintfrac 0.73 ampY 0.30 ampR 0.16
+c3_r301_sprint_b0.6_1 speed 550-600 n=443 rate 1.802/s loop 0.555s sprintfrac 1.00 ampY 1.14 ampR 1.11
+c3_r301_sprint_b0.6_2 speed 400-450 n=33 rate 1.802/s loop 0.555s sprintfrac 0.16 ampY 0.28 ampR 0.64
+c3_r301_sprint_b0.6_2 speed 450-500 n=33 rate 1.802/s loop 0.555s sprintfrac 0.43 ampY 0.56 ampR 0.10
+c3_r301_sprint_b0.6_2 speed 500-550 n=32 rate 1.802/s loop 0.555s sprintfrac 0.73 ampY 0.30 ampR 0.15
+c3_r301_sprint_b0.6_2 speed 550-600 n=451 rate 1.802/s loop 0.555s sprintfrac 1.00 ampY 1.14 ampR 1.09
+c3_r301_sprint_n_1 speed 150-200 n=44 rate 1.799/s loop 0.556s sprintfrac 0.08 ampY 0.44 ampR 0.45
+c3_r301_sprint_n_1 speed 200-250 n=72 rate 1.799/s loop 0.556s sprintfrac 0.55 ampY 1.03 ampR 1.21
+c3_r301_sprint_n_1 speed 250-300 n=450 rate 1.799/s loop 0.556s sprintfrac 1.00 ampY 1.14 ampR 1.07
+c3_r301_sprint_n_2 speed 150-200 n=44 rate 1.800/s loop 0.555s sprintfrac 0.08 ampY 0.46 ampR 0.45
+c3_r301_sprint_n_2 speed 200-250 n=72 rate 1.799/s loop 0.556s sprintfrac 0.55 ampY 1.07 ampR 1.22
+c3_r301_sprint_n_2 speed 250-300 n=450 rate 1.799/s loop 0.556s sprintfrac 1.00 ampY 1.13 ampR 1.07
+c3_r301_sprint_wall_1 speed 0-50 n=314 rate 1.802/s loop 0.555s sprintfrac 1.00 ampY 1.56 ampR 1.44
+c3_r301_sprint_wall_1 speed 150-200 n=44 rate 1.799/s loop 0.556s sprintfrac 0.09 ampY 0.45 ampR 0.45
+c3_r301_sprint_wall_1 speed 200-250 n=56 rate 1.800/s loop 0.555s sprintfrac 0.51 ampY 1.02 ampR 1.23
+c3_r301_sprint_wall_1 speed 250-300 n=63 rate 1.802/s loop 0.555s sprintfrac 1.00 ampY 0.58 ampR 0.54
+c3_r301_sprint_wall_2 speed 0-50 n=375 rate 1.800/s loop 0.556s sprintfrac 1.00 ampY 1.51 ampR 1.27
+c3_r301_sprint_wall_2 speed 150-200 n=44 rate 1.800/s loop 0.555s sprintfrac 0.08 ampY 0.44 ampR 0.45
+c3_r301_sprint_wall_2 speed 200-250 n=71 rate 1.800/s loop 0.555s sprintfrac 0.55 ampY 1.02 ampR 1.21
+c3_r301_sprint_wall_2 speed 250-300 n=74 rate 1.800/s loop 0.555s sprintfrac 0.99 ampY 0.76 ampR 0.70
+c3_wingman_sprint_b0.1_1 speed 200-250 n=53 rate 1.802/s loop 0.555s sprintfrac 0.16 ampY 0.56 ampR 1.01
+c3_wingman_sprint_b0.1_1 speed 250-300 n=60 rate 1.802/s loop 0.555s sprintfrac 0.63 ampY 1.34 ampR 1.60
+c3_wingman_sprint_b0.1_1 speed 300-350 n=446 rate 1.802/s loop 0.555s sprintfrac 1.00 ampY 1.51 ampR 1.67
+c3_wingman_sprint_b0.1_2 speed 200-250 n=52 rate 1.802/s loop 0.555s sprintfrac 0.15 ampY 0.55 ampR 1.00
+c3_wingman_sprint_b0.1_2 speed 250-300 n=60 rate 1.802/s loop 0.555s sprintfrac 0.61 ampY 1.33 ampR 1.49
+c3_wingman_sprint_b0.1_2 speed 300-350 n=448 rate 1.802/s loop 0.555s sprintfrac 1.00 ampY 1.50 ampR 1.66
+c3_wingman_sprint_b0.3_1 speed 300-350 n=45 rate 1.802/s loop 0.555s sprintfrac 0.30 ampY 1.05 ampR 1.45
+c3_wingman_sprint_b0.3_1 speed 350-400 n=45 rate 1.802/s loop 0.555s sprintfrac 0.68 ampY 1.34 ampR 1.55
+c3_wingman_sprint_b0.3_1 speed 400-450 n=449 rate 1.802/s loop 0.555s sprintfrac 1.00 ampY 1.49 ampR 1.68
+c3_wingman_sprint_b0.3_2 speed 300-350 n=46 rate 1.802/s loop 0.555s sprintfrac 0.29 ampY 1.05 ampR 1.45
+c3_wingman_sprint_b0.3_2 speed 350-400 n=45 rate 1.802/s loop 0.555s sprintfrac 0.68 ampY 1.34 ampR 1.55
+c3_wingman_sprint_b0.3_2 speed 400-450 n=448 rate 1.802/s loop 0.555s sprintfrac 1.00 ampY 1.49 ampR 1.68
+c3_wingman_sprint_b0.6_1 speed 400-450 n=33 rate 1.802/s loop 0.555s sprintfrac 0.16 ampY 0.31 ampR 1.11
+c3_wingman_sprint_b0.6_1 speed 450-500 n=33 rate 1.802/s loop 0.555s sprintfrac 0.43 ampY 0.25 ampR 0.18
+c3_wingman_sprint_b0.6_1 speed 500-550 n=33 rate 1.802/s loop 0.555s sprintfrac 0.73 ampY 0.53 ampR 0.29
+c3_wingman_sprint_b0.6_1 speed 550-600 n=449 rate 1.802/s loop 0.555s sprintfrac 1.00 ampY 1.36 ampR 2.04
+c3_wingman_sprint_b0.6_2 speed 400-450 n=32 rate 1.802/s loop 0.555s sprintfrac 0.16 ampY 0.31 ampR 1.10
+c3_wingman_sprint_b0.6_2 speed 450-500 n=33 rate 1.802/s loop 0.555s sprintfrac 0.43 ampY 0.25 ampR 0.18
+c3_wingman_sprint_b0.6_2 speed 500-550 n=33 rate 1.802/s loop 0.555s sprintfrac 0.73 ampY 0.52 ampR 0.30
+c3_wingman_sprint_b0.6_2 speed 550-600 n=450 rate 1.802/s loop 0.555s sprintfrac 1.00 ampY 1.36 ampR 2.05
+c3_wingman_sprint_n_1 speed 150-200 n=44 rate 1.800/s loop 0.555s sprintfrac 0.08 ampY 0.39 ampR 1.13
+c3_wingman_sprint_n_1 speed 200-250 n=72 rate 1.800/s loop 0.555s sprintfrac 0.56 ampY 1.31 ampR 2.06
+c3_wingman_sprint_n_1 speed 250-300 n=450 rate 1.800/s loop 0.555s sprintfrac 1.00 ampY 1.52 ampR 1.67
+c3_wingman_sprint_n_2 speed 150-200 n=44 rate 1.800/s loop 0.556s sprintfrac 0.08 ampY 0.39 ampR 1.13
+c3_wingman_sprint_n_2 speed 200-250 n=72 rate 1.800/s loop 0.555s sprintfrac 0.55 ampY 1.31 ampR 2.06
+c3_wingman_sprint_n_2 speed 250-300 n=449 rate 1.800/s loop 0.555s sprintfrac 1.00 ampY 1.51 ampR 1.67
+c3_wingman_sprint_wall_1 speed 0-50 n=376 rate 1.800/s loop 0.555s sprintfrac 1.00 ampY 1.60 ampR 2.02
+c3_wingman_sprint_wall_1 speed 150-200 n=44 rate 1.800/s loop 0.555s sprintfrac 0.08 ampY 0.39 ampR 1.13
+c3_wingman_sprint_wall_1 speed 200-250 n=72 rate 1.800/s loop 0.555s sprintfrac 0.55 ampY 1.31 ampR 2.07
+c3_wingman_sprint_wall_1 speed 250-300 n=73 rate 1.800/s loop 0.556s sprintfrac 0.99 ampY 1.21 ampR 1.53
+c3_wingman_sprint_wall_2 speed 0-50 n=376 rate 1.800/s loop 0.555s sprintfrac 1.00 ampY 1.61 ampR 2.01
+c3_wingman_sprint_wall_2 speed 150-200 n=44 rate 1.800/s loop 0.555s sprintfrac 0.08 ampY 0.39 ampR 1.13
+c3_wingman_sprint_wall_2 speed 200-250 n=72 rate 1.800/s loop 0.555s sprintfrac 0.56 ampY 1.31 ampR 2.06
+c3_wingman_sprint_wall_2 speed 250-300 n=73 rate 1.800/s loop 0.555s sprintfrac 0.99 ampY 1.21 ampR 1.53
+== C3/C4 walk and crouch-walk bob vs speed
+c2_g7_adswalk_1 g2 adswalk 73.7 0.00 0.15 0.150 0.150 0.000 0.005 0.117 0.015 0.015
+c2_g7_crouchwalk_1 g2 crouchwalk 80.0 1.00 0.16 1.660 1.615 1.357 1.314 1.164 0.127 0.243
+c2_g7_walk_1 g2 walk 173.5 0.00 0.35 0.800 0.800 0.503 1.384 1.010 0.182 0.096
+c2_longbow_adswalk_1 rspn101_dmr adswalk 60.7 0.00 0.12 0.150 0.150 0.001 0.000 0.001 0.002 0.002
+c2_longbow_crouchwalk_1 rspn101_dmr crouchwalk 80.0 1.00 0.16 1.505 1.510 1.419 1.207 1.135 0.176 0.312
+c2_longbow_walk_1 rspn101_dmr walk 173.5 0.00 0.35 0.800 1.600 0.495 1.364 1.039 0.223 0.094
+c2_p2020_adswalk_1 p2011 adswalk 173.5 0.00 0.35 0.150 0.150 0.002 0.000 0.004 0.009 0.010
+c2_p2020_crouchwalk_1 p2011 crouchwalk 80.0 1.00 0.16 1.510 1.505 1.378 1.249 1.143 0.288 0.372
+c2_p2020_walk_1 p2011 walk 173.5 0.00 0.35 0.800 0.800 0.472 1.383 1.015 0.324 0.033
+c2_peacekeeper_adswalk_1 peacekeeper adswalk 156.1 0.00 0.31 0.150 0.150 0.001 0.000 0.000 0.008 0.008
+c2_peacekeeper_crouchwalk_1 peacekeeper crouchwalk 80.0 1.00 0.16 1.510 1.505 0.980 1.510 1.151 0.194 0.202
+c2_peacekeeper_walk_1 peacekeeper walk 173.5 0.00 0.35 0.800 1.600 0.552 1.373 1.019 0.206 0.091
+c2_r99_adswalk_1 r97 adswalk 130.1 0.00 0.26 0.150 0.150 0.001 0.000 0.005 0.009 0.009
+c2_r99_crouchwalk_1 r97 crouchwalk 80.0 1.00 0.16 1.500 1.510 1.336 1.295 1.149 0.234 0.289
+c2_r99_walk_1 r97 walk 173.5 0.00 0.35 0.800 1.600 0.494 1.397 0.993 0.230 0.074
+c2_spitfire_adswalk_1 lmg_hemlok adswalk 69.4 0.00 0.14 0.150 0.150 0.001 0.001 0.007 0.017 0.024
+c2_spitfire_crouchwalk_1 lmg_hemlok crouchwalk 80.0 1.00 0.16 1.510 1.505 1.435 1.193 1.120 0.229 0.350
+c2_spitfire_walk_1 lmg_hemlok walk 173.5 0.00 0.35 0.800 1.600 0.480 1.397 0.994 0.251 0.084
+c2b_r99_walk_1 r97 walk 173.5 0.00 0.35 0.800 1.600 0.497 1.398 0.991 0.230 0.074
+c3_r301_walk_s0.3_1 rspn101 walk 121.8 0.00 0.24 1.145 1.135 0.644 1.502 1.101 0.218 0.096
+c3_r301_walk_s0.3_2 rspn101 walk 121.8 0.00 0.24 1.145 1.135 0.642 1.501 1.100 0.218 0.096
+c3_r301_walk_s0.6_1 rspn101 walk 69.4 0.00 0.14 0.150 1.010 0.762 1.594 1.165 0.231 0.113
+c3_r301_walk_s0.6_2 rspn101 walk 69.4 0.00 0.14 0.150 1.010 0.760 1.593 1.164 0.231 0.113
+c3_wingman_walk_s0.3_1 b3wing walk 121.8 0.00 0.24 0.995 0.985 0.554 1.454 1.083 0.341 0.031
+c3_wingman_walk_s0.3_2 b3wing walk 121.8 0.00 0.24 0.995 0.985 0.553 1.454 1.082 0.341 0.032
+c3_wingman_walk_s0.6_1 b3wing walk 69.4 0.00 0.14 1.660 0.855 0.669 1.580 1.173 0.370 0.034
+c3_wingman_walk_s0.6_2 b3wing walk 69.4 0.00 0.14 1.655 0.855 0.663 1.580 1.172 0.370 0.034
+c4_r301_cw_b0.5_1 rspn101 cw 159.7 1.00 0.32 0.865 0.860 1.245 1.048 1.021 0.144 0.265
+c4_r301_cw_b0.5_2 rspn101 cw 159.7 1.00 0.32 0.860 0.865 1.253 1.045 1.023 0.143 0.265
+c4_r301_cw_n_1 rspn101 cw 80.0 1.00 0.16 1.660 1.660 1.445 1.244 1.150 0.170 0.312
+c4_r301_cw_n_2 rspn101 cw 80.0 1.00 0.16 1.660 1.660 1.447 1.246 1.150 0.170 0.316
+c4_r301_cw_s0.3_1 rspn101 cw 56.1 1.00 0.11 0.150 0.150 1.468 1.291 1.175 0.177 0.325
+c4_r301_cw_s0.3_2 rspn101 cw 56.1 1.00 0.11 0.150 0.150 1.482 1.277 1.174 0.175 0.319
+c4_r301_cw_s0.6_1 rspn101 cw 32.0 1.00 0.06 0.150 0.150 1.276 1.347 1.168 0.184 0.336
+c4_r301_cw_s0.6_2 rspn101 cw 32.0 1.00 0.06 0.150 0.150 1.538 0.967 1.164 0.133 0.258
+c4_wingman_cw_b0.5_1 b3wing cw 159.7 1.00 0.32 0.805 0.800 1.178 1.056 1.013 0.242 0.320
+c4_wingman_cw_b0.5_2 b3wing cw 159.7 1.00 0.32 0.800 0.805 1.175 1.055 1.012 0.242 0.322
+c4_wingman_cw_n_1 b3wing cw 80.0 1.00 0.16 1.505 1.500 1.372 1.258 1.144 0.290 0.367
+c4_wingman_cw_n_2 b3wing cw 80.0 1.00 0.16 1.500 1.510 1.381 1.249 1.145 0.288 0.367
+c4_wingman_cw_s0.3_1 b3wing cw 56.1 1.00 0.11 0.150 0.150 1.423 1.301 1.168 0.301 0.377
+c4_wingman_cw_s0.3_2 b3wing cw 56.1 1.00 0.11 0.150 0.150 1.419 1.300 1.170 0.300 0.375
+c4_wingman_cw_s0.6_1 b3wing cw 32.0 1.00 0.06 0.150 0.150 1.488 1.377 1.134 0.319 0.378
+c4_wingman_cw_s0.6_2 b3wing cw 32.0 1.00 0.06 0.150 0.150 1.476 1.374 1.137 0.318 0.379
+== C2 guns
+c2_g7_adswalk_1 g2 ads_out:0.29 ads_in:4.13 ads_out:1.51 | L0:on:idle_TEMP L1:off:land_low
+c2_g7_crouch_1 g2 ads_out:0.30 idle_to_crouch_TEMP:0.83 ads_out:1.70 crouch_to_idle_TEMP:0.84 ads_out:1.37 | L0:on:idle_TEMP / L0:off:idle_TEMP / L0:on:crouch_TEMP / L0:off:crouch_TEMP / L0:on:idle_TEMP
+c2_g7_crouchwalk_1 g2 ads_out:0.30 idle_to_crouch_TEMP:0.84 ads_out:4.51 crouch_to_idle_TEMP:0.84 ads_out:1.36 | L0:on:idle_TEMP / L0:off:idle_TEMP / L0:on:crouch_TEMP / L0:off:crouch_TEMP / L0:on:idle_TEMP
+c2_g7_jump_1 g2 ads_out:3.29 | L0:on:idle_TEMP / L0:on:idle_TEMP L1:on:jump / L0:on:idle_TEMP L1:on:land_low
+c2_g7_reload_1 g2 ads_out:0.65 reload:2.40 ads_out:2.87 | L0:on:idle_TEMP L1:off:land_low / L0:off:idle_TEMP L1:off:land_low / L0:on:idle_TEMP L1:off:land_low
+c2_g7_reloadwalk_1 g2 ads_out:1.16 reload:2.40 ads_out:2.88 | L0:on:idle_TEMP L1:off:land_low / L0:off:idle_TEMP L1:off:land_low / L0:on:idle_TEMP L1:off:land_low
+c2_g7_slide_1 g2 ads_out:0.30 sprint:1.22 sprintslide:0.43 ads_out:1.60 sprint:0.01 sprintraise_regrip:0.33 ads_out:1.37 | L0:on:idle_TEMP / L0:off:idle_TEMP / L0:on:crouch_TEMP / L0:off:crouch_TEMP / L0:on:idle_TEMP
+c2_g7_sprint_1 g2 ads_out:0.30 sprint:4.54 sprintraise_regrip:0.33 ads_out:1.88 | L0:on:idle_TEMP / L0:off:idle_TEMP / L0:on:idle_TEMP
+c2_g7_stand_1 g2 ads_out:4.32 | L0:on:idle_TEMP
+c2_g7_walk_1 g2 ads_out:7.06 | L0:on:idle_TEMP
+c2_longbow_adswalk_1 rspn101_dmr ads_out:0.29 ads_in:4.14 ads_out:1.51 | L0:on:idle L1:off:land_low
+c2_longbow_crouch_1 rspn101_dmr ads_out:5.06 | L0:on:idle / L0:on:idle_to_crouch / L0:on:crouch / L0:on:crouch_to_idle / L0:on:idle
+c2_longbow_crouchwalk_1 rspn101_dmr ads_out:7.88 | L0:on:idle / L0:on:idle_to_crouch / L0:on:crouch / L0:on:crouch_to_idle / L0:on:idle
+c2_longbow_jump_1 rspn101_dmr ads_out:3.29 | L0:on:idle / L0:on:idle L1:on:jump / L0:on:idle L1:on:land_low
+c2_longbow_reload_1 rspn101_dmr ads_out:0.65 reload:2.66 ads_out:2.62 | L0:on:idle L1:off:land_low / L0:off:idle L1:off:land_low / L0:on:idle L1:off:land_low
+c2_longbow_reloadwalk_1 rspn101_dmr ads_out:1.17 reload:2.66 ads_out:2.62 | L0:on:idle L1:off:land_low / L0:off:idle L1:off:land_low / L0:on:idle L1:off:land_low
+c2_longbow_slide_1 rspn101_dmr ads_out:0.30 sprint:1.22 sprintslide:0.43 ads_out:1.59 sprint:0.01 sprintraise:0.33 ads_out:1.37 | L0:on:idle / L0:off:idle / L0:on:crouch / L0:off:crouch / L0:on:idle
+c2_longbow_sprint_1 rspn101_dmr ads_out:0.30 sprint:4.54 sprintraise:0.33 ads_out:1.88 | L0:on:idle / L0:off:idle / L0:on:idle
+c2_longbow_stand_1 rspn101_dmr ads_out:4.31 | L0:on:idle
+c2_longbow_walk_1 rspn101_dmr ads_out:7.05 | L0:on:idle
+c2_p2020_adswalk_1 p2011 ads_out:0.29 ads_in:4.14 ads_out:1.51 | L0:on:idle_TEMP L1:off:land_low
+c2_p2020_crouch_1 p2011 ads_out:0.30 idle_to_crouch_TEMP:0.84 ads_out:1.70 crouch_to_idle_TEMP:0.84 ads_out:1.36 | L0:on:idle_TEMP / L0:off:idle_TEMP / L0:on:crouch_TEMP / L0:off:crouch_TEMP / L0:on:idle_TEMP
+c2_p2020_crouchwalk_1 p2011 ads_out:0.30 idle_to_crouch_TEMP:0.84 ads_out:4.51 crouch_to_idle_TEMP:0.84 ads_out:1.37 | L0:on:idle_TEMP / L0:off:idle_TEMP / L0:on:crouch_TEMP / L0:off:crouch_TEMP / L0:on:idle_TEMP
+c2_p2020_jump_1 p2011 ads_out:3.29 | L0:on:idle_TEMP / L0:on:idle_TEMP L1:on:jump / L0:on:idle_TEMP L1:on:land_low
+c2_p2020_reload_1 p2011 ads_out:0.65 reload_alt:1.25 ads_out:4.03 | L0:on:idle_TEMP L1:off:land_low / L0:off:idle_TEMP L1:off:land_low / L0:on:idle_TEMP L1:off:land_low
+c2_p2020_reloadwalk_1 p2011 ads_out:1.17 reload_alt:1.24 ads_out:4.04 | L0:on:idle_TEMP L1:off:land_low / L0:off:idle_TEMP L1:off:land_low / L0:on:idle_TEMP L1:off:land_low
+c2_p2020_slide_1 p2011 ads_out:0.30 sprint:1.22 sprintraise:0.25 ads_out:1.78 sprint:0.01 sprintraise:0.24 ads_out:1.46 | L0:on:idle_TEMP / L0:off:idle_TEMP / L0:on:crouch_TEMP / L0:off:crouch_TEMP / L0:on:idle_TEMP
+c2_p2020_sprint_1 p2011 ads_out:0.30 sprint:4.54 sprintraise:0.25 ads_out:1.96 | L0:on:idle_TEMP / L0:off:idle_TEMP / L0:on:idle_TEMP
+c2_p2020_stand_1 p2011 ads_out:4.30 | L0:on:idle_TEMP
+c2_p2020_walk_1 p2011 ads_out:7.06 | L0:on:idle_TEMP
+c2_peacekeeper_adswalk_1 peacekeeper ads_out:0.29 ads_in:4.13 ads_out:1.51 | L0:on:idle_TEMP L1:off:land_low
+c2_peacekeeper_crouch_1 peacekeeper ads_out:0.30 idle_to_crouch_TEMP:0.84 ads_out:1.66 crouch_to_idle_TEMP:0.83 ads_out:1.38 | L0:on:idle_TEMP / L0:off:idle_TEMP / L0:on:crouch_TEMP / L0:off:crouch_TEMP / L0:on:idle_TEMP
+c2_peacekeeper_crouchwalk_1 peacekeeper ads_out:0.30 idle_to_crouch_TEMP:0.83 ads_out:4.49 crouch_to_idle_TEMP:0.83 ads_out:1.38 | L0:on:idle_TEMP / L0:off:idle_TEMP / L0:on:crouch_TEMP / L0:off:crouch_TEMP / L0:on:idle_TEMP
+c2_peacekeeper_jump_1 peacekeeper ads_out:3.29 | L0:on:idle_TEMP / L0:on:idle_TEMP L1:on:jump / L0:on:idle_TEMP L1:on:land_low
+c2_peacekeeper_reload_1 peacekeeper ads_out:0.70 reload:2.45 ads_out:2.77 | L0:on:idle_TEMP L1:off:land_low / L0:off:idle_TEMP L1:off:land_low / L0:on:idle_TEMP L1:off:land_low
+c2_peacekeeper_reloadwalk_1 peacekeeper ads_out:1.20 reload:2.46 ads_out:2.78 | L0:on:idle_TEMP L1:off:land_low / L0:off:idle_TEMP L1:off:land_low / L0:on:idle_TEMP L1:off:land_low
+c2_peacekeeper_slide_1 peacekeeper ads_out:0.30 sprint:1.22 sprintslide:0.43 ads_out:1.59 sprint:0.01 sprintraise_regrip:0.33 ads_out:1.37 | L0:on:idle_TEMP / L0:off:idle_TEMP / L0:on:crouch_TEMP / L0:off:crouch_TEMP / L0:on:idle_TEMP
+c2_peacekeeper_sprint_1 peacekeeper ads_out:0.28 sprint:4.55 sprintraise_regrip:0.39 ads_out:1.83 | L0:on:idle_TEMP / L0:off:idle_TEMP / L0:on:idle_TEMP
+c2_peacekeeper_stand_1 peacekeeper ads_out:4.31 | L0:on:idle_TEMP
+c2_peacekeeper_walk_1 peacekeeper ads_out:7.05 | L0:on:idle_TEMP
+c2_r99_adswalk_1 r97 ads_out:0.29 ads_in:4.13 ads_out:1.51 | L0:on:idle_TEMP L1:off:land_low
+c2_r99_crouch_1 r97 ads_out:0.30 idle_to_crouch_TEMP:0.84 ads_out:1.70 crouch_to_idle_TEMP:0.84 ads_out:1.38 | L0:on:idle_TEMP / L0:off:idle_TEMP / L0:on:crouch_TEMP / L0:off:crouch_TEMP / L0:on:idle_TEMP
+c2_r99_crouchwalk_1 r97 ads_out:0.30 idle_to_crouch_TEMP:0.83 ads_out:4.52 crouch_to_idle_TEMP:0.84 ads_out:1.37 | L0:on:idle_TEMP / L0:off:idle_TEMP / L0:on:crouch_TEMP / L0:off:crouch_TEMP / L0:on:idle_TEMP
+c2_r99_jump_1 r97 ads_out:3.29 | L0:on:idle_TEMP / L0:on:idle_TEMP L1:on:jump / L0:on:idle_TEMP L1:on:land_low
+c2_r99_reload_1 r97 ads_out:0.65 reload_seq:1.80 ads_out:3.47 | L0:on:idle_TEMP L1:off:land_low / L0:off:idle_TEMP L1:off:land_low / L0:on:idle_TEMP L1:off:land_low
+c2_r99_reloadwalk_1 r97 ads_out:1.17 reload_seq:1.80 ads_out:3.48 | L0:on:idle_TEMP L1:off:land_low / L0:off:idle_TEMP L1:off:land_low / L0:on:idle_TEMP L1:off:land_low
+c2_r99_slide_1 r97 ads_out:0.30 sprint:1.21 sprintslide:0.43 ads_out:1.60 sprint:0.01 sprintraise:0.33 ads_out:1.37 | L0:on:idle_TEMP / L0:off:idle_TEMP / L0:on:crouch_TEMP / L0:off:crouch_TEMP / L0:on:idle_TEMP
+c2_r99_sprint_1 r97 ads_out:0.30 sprint:4.54 sprintraise_regrip:0.33 ads_out:1.89 | L0:on:idle_TEMP / L0:off:idle_TEMP / L0:on:idle_TEMP
+c2_r99_stand_1 r97 ads_out:4.31 | L0:on:idle_TEMP
+c2_r99_walk_1 r97 ads_out:7.06 | L0:on:idle_TEMP
+c2_spitfire_adswalk_1 lmg_hemlok ads_out:0.29 ads_in:4.14 ads_out:1.51 | L0:on:idle L1:off:land_low
+c2_spitfire_crouch_1 lmg_hemlok ads_out:5.08 | L0:on:idle / L0:on:idle_to_crouch / L0:on:crouch / L0:on:crouch_to_idle / L0:on:idle
+c2_spitfire_crouchwalk_1 lmg_hemlok ads_out:7.88 | L0:on:idle / L0:on:idle_to_crouch / L0:on:crouch / L0:on:crouch_to_idle / L0:on:idle
+c2_spitfire_jump_1 lmg_hemlok ads_out:3.29 | L0:on:idle / L0:on:idle L1:on:jump / L0:on:idle L1:on:land_low
+c2_spitfire_reload_1 lmg_hemlok ads_out:0.65 reload:3.40 ads_out:1.87 | L0:on:idle L1:off:land_low / L0:off:idle L1:off:land_low / L0:on:idle L1:off:land_low
+c2_spitfire_reloadwalk_1 lmg_hemlok ads_out:1.16 reload:3.40 ads_out:1.88 | L0:on:idle L1:off:land_low / L0:off:idle L1:off:land_low / L0:on:idle L1:off:land_low
+c2_spitfire_slide_1 lmg_hemlok ads_out:0.30 sprint:1.22 sprintslide:0.43 ads_out:1.60 sprint:0.01 sprintraise_regrip:0.33 ads_out:1.37 | L0:on:idle / L0:off:idle / L0:on:crouch / L0:off:crouch / L0:on:idle_check / L0:on:idle
+c2_spitfire_sprint_1 lmg_hemlok ads_out:0.30 sprint:4.54 sprintraise_regrip:0.33 ads_out:1.88 | L0:on:idle / L0:off:idle / L0:on:idle_check / L0:on:idle
+c2_spitfire_stand_1 lmg_hemlok ads_out:4.31 | L0:on:idle
+c2_spitfire_walk_1 lmg_hemlok ads_out:7.05 | L0:on:idle
+c2b_r99_crouch_1 r97 ads_out:0.30 idle_to_crouch_TEMP:0.83 ads_out:1.70 crouch_to_idle_TEMP:0.84 ads_out:1.36 | L0:on:idle_TEMP / L0:off:idle_TEMP / L0:on:crouch_TEMP / L0:off:crouch_TEMP / L0:on:idle_TEMP
+c2b_r99_reload_1 r97 ads_out:0.65 reload_seq:1.80 ads_out:3.47 | L0:on:idle_TEMP / L0:off:idle_TEMP / L0:on:idle_TEMP
+c2b_r99_sprint_1 r97 ads_out:0.30 sprint:4.54 sprintraise:0.33 ads_out:1.87 | L0:on:idle_TEMP / L0:off:idle_TEMP / L0:on:idle_TEMP
+c2b_r99_stand_1 r97 ads_out:4.30 | L0:on:idle_TEMP
+c2b_r99_walk_1 r97 ads_out:7.05 | L0:on:idle_TEMP
+c4_r301_cw_b0.5_1 rspn101 ads_out:8.48 | L0:on:idle / L0:on:idle_to_crouch / L0:on:crouch / L0:on:crouch_to_idle / L0:on:idle
+c4_r301_cw_b0.5_2 rspn101 ads_out:8.48 | L0:on:idle / L0:on:idle_to_crouch / L0:on:crouch / L0:on:crouch_to_idle / L0:on:idle
+c4_r301_cw_n_1 rspn101 ads_out:8.48 | L0:on:idle / L0:on:idle_to_crouch / L0:on:crouch / L0:on:crouch_to_idle / L0:on:idle
+c4_r301_cw_n_2 rspn101 ads_out:8.48 | L0:on:idle / L0:on:idle_to_crouch / L0:on:crouch / L0:on:crouch_to_idle / L0:on:idle
+c4_r301_cw_s0.3_1 rspn101 ads_out:8.48 | L0:on:idle / L0:on:idle_to_crouch / L0:on:crouch / L0:on:crouch_to_idle / L0:on:idle
+c4_r301_cw_s0.3_2 rspn101 ads_out:8.47 | L0:on:idle / L0:on:idle_to_crouch / L0:on:crouch / L0:on:crouch_to_idle / L0:on:idle
+c4_r301_cw_s0.6_1 rspn101 ads_out:8.49 | L0:on:idle / L0:on:idle_to_crouch / L0:on:crouch / L0:on:crouch_to_idle / L0:on:idle
+c4_r301_cw_s0.6_2 rspn101 ads_out:8.49 | L0:on:idle / L0:on:idle_to_crouch / L0:on:crouch / L0:on:crouch_to_idle / L0:on:idle
+c4_wingman_cw_b0.5_1 b3wing ads_out:0.31 idle_to_crouch_TEMP:0.84 ads_out:5.42 crouch_to_idle_TEMP:0.83 ads_out:1.06 | L0:on:idle_TEMP / L0:off:idle_TEMP / L0:on:crouch_TEMP / L0:off:crouch_TEMP / L0:on:idle_TEMP
+c4_wingman_cw_b0.5_2 b3wing ads_out:0.30 idle_to_crouch_TEMP:0.84 ads_out:5.42 crouch_to_idle_TEMP:0.83 ads_out:1.07 | L0:on:idle_TEMP / L0:off:idle_TEMP / L0:on:crouch_TEMP / L0:off:crouch_TEMP / L0:on:idle_TEMP
+c4_wingman_cw_n_1 b3wing ads_out:0.30 idle_to_crouch_TEMP:0.84 ads_out:5.42 crouch_to_idle_TEMP:0.83 ads_out:1.07 | L0:on:idle_TEMP / L0:off:idle_TEMP / L0:on:crouch_TEMP / L0:off:crouch_TEMP / L0:on:idle_TEMP
+c4_wingman_cw_n_2 b3wing ads_out:0.30 idle_to_crouch_TEMP:0.84 ads_out:5.43 crouch_to_idle_TEMP:0.84 ads_out:1.06 | L0:on:idle_TEMP / L0:off:idle_TEMP / L0:on:crouch_TEMP / L0:off:crouch_TEMP / L0:on:idle_TEMP
+c4_wingman_cw_s0.3_1 b3wing ads_out:0.30 idle_to_crouch_TEMP:0.83 ads_out:5.43 crouch_to_idle_TEMP:0.84 ads_out:1.06 | L0:on:idle_TEMP / L0:off:idle_TEMP / L0:on:crouch_TEMP / L0:off:crouch_TEMP / L0:on:idle_TEMP
+c4_wingman_cw_s0.3_2 b3wing ads_out:0.30 idle_to_crouch_TEMP:0.83 ads_out:5.43 crouch_to_idle_TEMP:0.84 ads_out:1.05 | L0:on:idle_TEMP / L0:off:idle_TEMP / L0:on:crouch_TEMP / L0:off:crouch_TEMP / L0:on:idle_TEMP
+c4_wingman_cw_s0.6_1 b3wing ads_out:0.31 idle_to_crouch_TEMP:0.84 ads_out:5.42 crouch_to_idle_TEMP:0.84 ads_out:1.06 | L0:on:idle_TEMP / L0:off:idle_TEMP / L0:on:crouch_TEMP / L0:off:crouch_TEMP / L0:on:idle_TEMP
+c4_wingman_cw_s0.6_2 b3wing ads_out:0.30 idle_to_crouch_TEMP:0.84 ads_out:5.42 crouch_to_idle_TEMP:0.83 ads_out:1.07 | L0:on:idle_TEMP / L0:off:idle_TEMP / L0:on:crouch_TEMP / L0:off:crouch_TEMP / L0:on:idle_TEMP
+c5_r301_crouch_1 rspn101 ads_out:5.07 | L0:on:idle / L0:on:idle_to_crouch / L0:on:crouch / L0:on:crouch_to_idle / L0:on:idle
+c5_r301_crouch_2 rspn101 ads_out:5.06 | L0:on:idle / L0:on:idle_to_crouch / L0:on:crouch / L0:on:crouch_to_idle / L0:on:idle
+c5_r301_crouch_3 rspn101 ads_out:5.07 | L0:on:idle / L0:on:idle_to_crouch / L0:on:crouch / L0:on:crouch_to_idle / L0:on:idle
+c5_r301_tapduck_1 rspn101 ads_out:4.92 | L0:on:idle / L0:on:idle_to_crouch / L0:on:crouch_to_idle / L0:on:idle / L0:on:idle_to_crouch / L0:on:crouch_to_idle / L0:on:idle
+c5_r301_tapduck_2 rspn101 ads_out:4.93 | L0:on:idle / L0:on:idle_to_crouch / L0:on:crouch_to_idle / L0:on:idle / L0:on:idle_to_crouch / L0:on:crouch_to_idle / L0:on:idle
+c5_r301_tapduck_3 rspn101 ads_out:4.91 | L0:on:idle / L0:on:idle_to_crouch / L0:on:crouch_to_idle / L0:on:idle / L0:on:idle_to_crouch / L0:on:crouch_to_idle / L0:on:idle
+c5_wingman_crouch_1 b3wing ads_out:0.30 idle_to_crouch_TEMP:0.84 ads_out:1.19 crouch_to_idle_TEMP:0.83 ads_out:1.88 | L0:on:idle_TEMP / L0:off:idle_TEMP / L0:on:crouch_TEMP / L0:off:crouch_TEMP / L0:on:idle_TEMP
+c5_wingman_crouch_2 b3wing ads_out:0.30 idle_to_crouch_TEMP:0.84 ads_out:1.18 crouch_to_idle_TEMP:0.83 ads_out:1.88 | L0:on:idle_TEMP / L0:off:idle_TEMP / L0:on:crouch_TEMP / L0:off:crouch_TEMP / L0:on:idle_TEMP
+c5_wingman_crouch_3 b3wing ads_out:0.30 idle_to_crouch_TEMP:0.84 ads_out:1.19 crouch_to_idle_TEMP:0.84 ads_out:1.88 | L0:on:idle_TEMP / L0:off:idle_TEMP / L0:on:crouch_TEMP / L0:off:crouch_TEMP / L0:on:idle_TEMP
+c5_wingman_tapduck_1 b3wing ads_out:0.30 idle_to_crouch_TEMP:0.05 crouch_to_idle_TEMP:0.84 ads_out:0.68 idle_to_crouch_TEMP:0.30 crouch_to_idle_TEMP:0.84 ads_out:1.88 | L0:on:idle_TEMP / L0:off:idle_TEMP / L0:on:idle_TEMP / L0:off:idle_TEMP / L0:on:idle_TEMP
+c5_wingman_tapduck_2 b3wing ads_out:0.30 idle_to_crouch_TEMP:0.05 crouch_to_idle_TEMP:0.83 ads_out:0.69 idle_to_crouch_TEMP:0.30 crouch_to_idle_TEMP:0.83 ads_out:1.88 | L0:on:idle_TEMP / L0:off:idle_TEMP / L0:on:idle_TEMP / L0:off:idle_TEMP / L0:on:idle_TEMP
+c5_wingman_tapduck_3 b3wing ads_out:0.30 idle_to_crouch_TEMP:0.05 crouch_to_idle_TEMP:0.84 ads_out:0.68 idle_to_crouch_TEMP:0.30 crouch_to_idle_TEMP:0.84 ads_out:1.87 | L0:on:idle_TEMP / L0:off:idle_TEMP / L0:on:idle_TEMP / L0:off:idle_TEMP / L0:on:idle_TEMP
+f_r301_fire_1 rspn101 ads_out:3.23 | L0:on:idle / L0:on:fire_regrip / L0:on:fire / L0:on:fire_regrip / L0:on:fire / L0:on:idle
+f_r301_fire_2 rspn101 ads_out:3.23 | L0:on:idle / L0:on:fire / L0:on:fire_regrip / L0:on:fire / L0:on:fire_regrip / L0:on:fire / L0:on:fire_regrip / L0:on:fire / L0:on:fire_regrip / L0:on:fire / L0:on:idle
+f_wingman_fire_1 b3wing ads_out:3.20 | L0:on:idle_TEMP / L0:on:fire_regrip / L0:on:fire / L0:on:fire_regrip / L0:on:idle_TEMP
+f_wingman_fire_2 b3wing ads_out:3.20 | L0:on:idle_TEMP / L0:on:fire / L0:on:idle_TEMP
