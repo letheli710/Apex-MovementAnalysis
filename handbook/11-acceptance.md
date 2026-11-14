@@ -526,7 +526,7 @@ EditMode 全绿；PlayMode 全绿；`-smoke` ok；`check_params.py` 退出码 0�
 
 #### 出处
 
-见每行。收集来源：02 – 09、12 章（分支 `handbook/ch02` – `ch09`，还没合并）；FM、CC；DECISIONS（main、#116、#117）；HSD-Unity 测试（main、PR #53 / #58 / #88）；重建检验 `handbook/rebuild-test/judge/REPORT.md`（分支 `handbook/rebuild-judge`，还没合并）。原件 [`tables/pass-lines.tsv`](tables/pass-lines.tsv)（本分支 `handbook/ch10`）。
+见每行。收集来源：02 – 09、12 章（11-14 已合进 `handbook/base`，PR #124，还没合并进 main）；FM、CC；DECISIONS（main、#116、#117）；HSD-Unity 测试（main、PR #53 / #58 / #88）；重建检验 `handbook/rebuild-test/judge/REPORT.md`（已合进 `handbook/base`，PR #124，还没合并进 main）。原件 [`tables/pass-lines.tsv`](tables/pass-lines.tsv)（本分支 `handbook/ch10`）。
 
 ---
 

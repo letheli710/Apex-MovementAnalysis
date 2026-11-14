@@ -11,6 +11,7 @@
 | 参数对照表 | [`params.tsv`](params.tsv) | [`params.md`](params.md) | 173 个设计参数（含持枪动画 AN、泰坦步态 TG）：R5 原值 [u]、[m]、身高比例、TF2、Unity 现在的值、一致吗、差别、出处 |
 | 镜头事件表 | [`camera-events.tsv`](camera-events.tsv) | [`camera-events.md`](camera-events.md) | 76 行（第 3 列是第 07 章的事件名，可互查）：每个镜头事件 × 通道的触发、力度、时长、叠加规则、R5 和 Unity 的值 |
 | 关卡尺度表 | [`level-scale.tsv`](level-scale.tsv) | [`level-scale.md`](level-scale.md) | 38 行：跳多高多远、能翻多高的墙、台阶、斜坡、滑铲距离、跑墙、二段跳、跳板，全部由移动代码跑出来 |
+| 合格线总表 | [`pass-lines.tsv`](pass-lines.tsv) | [11 §11.6](../11-acceptance.md) | 185 行：全手册每一项的合格线（领域、章、节、量、合格线、检查、出处），hb-ch10 11-14 写；`check_params.py` 还不核对它 |
 | 单位换算 | [`units-conversion.tsv`](units-conversion.tsv) | [01 §2](../01-units-body.md) | 每种量纲乘多少（[01 §2.4](../01-units-body.md) 要的机器可读版） |
 
 附件：

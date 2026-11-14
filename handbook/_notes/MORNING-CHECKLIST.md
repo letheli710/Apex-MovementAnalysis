@@ -85,7 +85,7 @@ D 号用了 **D-193 – D-234**（两次编号前都查过：main 最大 D-93，
 
 - hb0 列的清单：[hb0-pr-merge-list.md](hb0-pr-merge-list.md)（14 个可合、14 个等你定、1 个不合）。
 - 先看那页开头的"先看这三条"：战斗研究是叠着的链（#86 → #88 → #92 → #93 → #95 → …），#92 / #90 正文写着"等你看"，所以手册最需要的 #93、#95、#97、#99、#122、#123 都卡在 #92；三个 PR（#98、#102、#121）的 base 已经合并，要先改 base 到 main；`DESIGN-PHILOSOPHY.md` 建议 #114 → #122 → #102 的顺序。
-- 本 PR（技术手册 v1，[research #124](https://github.com/letheli710/Apex-MovementAnalysis/pull/124)）也在里面算一个：它现在是 draft（标题"技术手册 v1"），章节都写完、重建检验跑了一轮；等 hb-ch10 补完第 11 章、重建题目改完再跑一轮、你看过以后再转正式。`DECISIONS.md` 的 D-193 – D-210 和其他 PR 的 D 号不重叠，合并时只有末尾追加的机械冲突。
+- 本 PR（技术手册 v1，[research #124](https://github.com/letheli710/Apex-MovementAnalysis/pull/124)）也在里面算一个：它现在是 draft（标题"技术手册 v1"）。**所有手册分支都已合进 `handbook/base`**（ch02 – ch10、tables、rebuild-build、rebuild-judge，最后一次是 11-14 深夜 ch10 7eff406）；等重建题目改完再跑一轮、你看过以后再转正式。`DECISIONS.md` 的 D-193 – D-234 和其他 PR 的 D 号不重叠，合并时只有末尾追加的机械冲突。
 
 ## 9. 手册自己的规矩，一起确认即可
 
@@ -159,11 +159,11 @@ D 号用了 **D-193 – D-234**（两次编号前都查过：main 最大 D-93，
 
 - 放在 Drive HSD 文件夹 `设计规范/HSD 技术手册/`（新建的文件夹）：README、01 – 12 章、附录 A、99、三张表的 md（`tables/`）、重建检验报告，另加 HSD-Unity #88 的 `UNITS-SWITCH.md`（改名 `单位开关说明.md`）。没放 TSV、脚本、`_notes`、C# 代码；00-INVENTORY 没在总控的清单里，也没放。
 - 文件夹是新的，**没有同名旧文件，没覆盖任何东西**。`00-索引.md` 已加一行。
-- 还没同步：第 11 章和 `tables/pass-lines.tsv` hb-ch10 还在补，补完合进来以后要再同步一次；`决策记录/DECISIONS.md` 的副本还是 11-07 的旧链（PR #104），这次没动。
+- 第 11 章、附录 A、README 在 ch10 最后一次合并（7eff406：`tables/pass-lines.tsv` 185 行、11 §11.6 / §11.9、附录 A §A.9）以后又同步了一次。`pass-lines` 是 TSV，按规则没放 Drive，给人看的摘要在 11 §11.6。`决策记录/DECISIONS.md` 的副本还是 11-07 的旧链（PR #104），这次没动。
 
 ## 这一轮没解决的
 
-- **hb-ch10 还在补**：`tables/pass-lines.tsv`、11 §11.6 的补充。合进来以后再合一次、再同步 Drive。
+- **所有手册分支都已合进 `handbook/base`**（11-14 深夜 ch10 7eff406 是最后一个）。合格线表还剩：07 章大多数项只写测试名、没写"合格线："一句；PL-061（台阶）/ 073（起跳缓冲）/ 098（挂墙）/ 178（扩散分布）本身还没有线；摘取脚本没提交（99 B11-7）。
 - 第 06 章查出的矛盾里有 5 条"待定 / 下一轮改"（S27 BOOST 后禁 lurch 03 / 04 口径、02 §2.5 天花板默认、05 §5.50 第 5 条的前提、03 §3.14 第 11 条滑索跳离、落地续滑 / 翻越算不算落地），见 00-INVENTORY"第 06 章查出的矛盾"和 99 B06-9、B06-10。
 - 文档里的小矛盾没改：二段跳 punch 峰值三种写法（R5-DIFF FND"5.6 – 7.7°"、`NativeCamera.cs` 注释"4.6 – 6.6°"，手册按公式 6.2 – 7.7°）；`fps-camera-design` SKILL 两处过时；各章 `_notes` 里点名的 HSD-Unity 注释和 README 过时（Climb 1.8 s、DimensionalRift `reuseDebounce` 0.5、`GrappleAbility` 类注释等）。都在 HSD-Unity 或主线文档里，等 PR 合并后改。
 - 后坐 / 霰弹图案表只有 Unity 生成的一份（99 B09-17）：要不要导一份进手册附件，等你定。

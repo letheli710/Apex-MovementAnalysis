@@ -40,11 +40,11 @@ High Speed Doom（HSD）的移动、镜头、动画、战斗手感，过去三�
 | [08-body-animation.md](08-body-animation.md) | 持枪和移动叠加、泰坦步态 / 脚 / 地形 / 惯性、驾驶舱镜头（受击、上下机在 07）；附件 [08-body-animation/](08-body-animation/) | hb-ch08 | 完成（11-14 合入） |
 | [09-combat-feel.md](09-combat-feel.md) | 后坐、开镜、枪的重量、扩散、命中反馈；附件 [09-combat-feel/](09-combat-feel/README.md) | hb-ch09 | 完成（11-14 合入） |
 | [10-abilities-ai.md](10-abilities-ai.md) | 技能设计结构、敌人 AI（AI 没有参考实现，写成规格） | hb-ch10 | 完成（11-14 合入） |
-| [11-acceptance.md](11-acceptance.md) | 手感怎么验收：指标、回放对比、自动测试、合格线总表 | hb-ch10 | 完成（11-14 合入）（§11.6 合格线和 `tables/pass-lines.tsv` 还在补） |
+| [11-acceptance.md](11-acceptance.md) | 手感怎么验收：指标、回放对比、自动测试、合格线总表（§11.6，原件 [tables/pass-lines.tsv](tables/pass-lines.tsv)）、重建验收示范（§11.9） | hb-ch10 | 完成（11-14 合入） |
 | [12-titan-motor.md](12-titan-motor.md) | 泰坦电机：地面速度律、冲刺跑、dash 推力和能量、蹲、转向、状态缩放、重力 / 小跳 / 硬落地、和铁驭电机的区别 | hb-ch08 | 完成（11-14 合入）（11-14 新加的章） |
 | [A-research-methods.md](A-research-methods.md) | 附录 A：反编译、Frida 实测、回放对比怎么做 | hb-ch10 | 完成（11-14 合入） |
 | [99-TODO-RESEARCH.md](99-TODO-RESEARCH.md) | 待研究清单（这一轮不做） | hb0 建，hb-integrate 合并各章备注 | 已并全部章节和重建检验 |
-| [tables/](tables/README.md) | 参数对照表（含持枪动画、泰坦步态）、镜头事件表、关卡尺度表（TSV + 给人看的 md）、`check_params.py` | hb-tables；hb-integrate 补 | 完成（11-14 合入） |
+| [tables/](tables/README.md) | 参数对照表（含持枪动画、泰坦步态）、镜头事件表、关卡尺度表（TSV + 给人看的 md）、合格线总表 [pass-lines.tsv](tables/pass-lines.tsv)（185 行，给人看的摘要在 11 §11.6）、`check_params.py` | hb-tables；hb-integrate 补 | 完成（11-14 合入） |
 | [rebuild-test/](rebuild-test/judge/REPORT.md) | 阶段 4 重建检验：只看手册写一个纯 C# 实现（`build/`），和 Unity 逐命令对比（`judge/`）。**结果**：移动 10 / 10 逐命令一致（最大差 0.0001 u），镜头随机数取 0 时 5 / 5 一致；按题目原样 5 / 10，不过的里 2 题是题目读法、3 题是同一个手册错误（07 §1.4 随机种子的符号），11-14 已改正，题目要改后再跑一轮（99 RB-1） | hb-rebuild / hb-judge | 第一轮完成（存档） |
 | `_notes/<会话名>.md` | 各会话给总控的备注：想改 README / 表 / 别章的地方、建议的 D-xx 行；[早上要定的事](_notes/MORNING-CHECKLIST.md)、[研究仓库 PR 合并清单](_notes/hb0-pr-merge-list.md) | 各会话 | — |
 
