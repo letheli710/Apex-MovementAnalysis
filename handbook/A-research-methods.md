@@ -1,5 +1,536 @@
-# 附录 A 研究方法：反编译、Frida 实测、回放对比
+# 附录 A 研究方法
 
-由 hb-ch10 写。
+由 hb-ch10 写（2026-11-14）。分支 `handbook/ch10`，还没合并。写法照 [README.md](README.md)；附录按步骤写，每一节固定为"为什么 / 步骤 / 坑 / 怎么算做对了 / 出处"五段，对应正文的"原理 / 规则 / 实现模板 / 验收 / 出处"。
 
-（占位文件，阶段 0 建。写之前先读 [README.md](README.md) 的写法规范和 [00-INVENTORY.md](00-INVENTORY.md) 里本章的资料清单。）
+## 白话说明
+
+手册正文里的每个数，都是用下面五种办法之一拿到的：**读代码**（反编译游戏程序）、**读脚本和数据**（游戏自带的设置文件、ConVar 默认值）、**在游戏里实测**（让游戏自己跑一段固定的输入，把每一帧记下来）、**挂钩观察**（游戏运行时用 Frida 看某个函数的输入输出），以及**同输入回放对比**（把同一串输入喂给 Unity，和实测叠在一起比）。
+
+这一附录讲这五种办法**怎么做、有哪些坑、怎么判断结论是真的**。它是给"以后要补测一个数"或"想核对手册里某个数"的人看的。读完能做到：
+
+1. 从零开始，把一个移动规则在游戏程序里找到、读懂、用实测核对；
+2. 安排一场 R5 或 TF2 的本地实验，拿到能进 Unity 对照的数据；
+3. 知道哪些数据能进公开仓库、哪些必须进私有仓库。
+
+只写方法。**本机路径、启动命令里的具体目录、账号名都不写**：文中 `<工作区>` 指放研究仓库、Unity 工程和游戏锁文件的那个文件夹，`<游戏目录>` 指游戏安装目录，`<工具目录>` 指 Ghidra 等工具的安装目录。仓库里的路径从研究仓库根目录算。
+
+**和别章的分界**
+
+| 内容 | 在哪 |
+|---|---|
+| 回放对比的**指标、容差、合格线**，自动测试，哈希回归 | [11 手感怎么验收](11-acceptance.md)。本附录 A.7 只讲"对比怎么做" |
+| 依据标签 [实测] [反编译] 等的定义 | [README 写法规范第 5 条](README.md)、`research/DESIGN-PHILOSOPHY.md` §2.1。本附录 A.1 讲"怎么判断一个结论为真" |
+| 单位换算、u 模式 | [01 单位与身体](01-units-body.md) |
+
+**本附录出处缩写**（都在 `main`，除非注明）
+
+| 缩写 | 文件 |
+|---|---|
+| RP | `research/rea-native/REA-PLAN-DRAFT.md` |
+| N0 | `research/rea-native/N0-PILOT.md` |
+| NR | `research/rea-native/N-REPORT.md` |
+| RN | `research/rea-native/README.md` |
+| LED | `research/rea-native/CROSSCHECK-LEDGER.md`、`ledger.csv` |
+| CVD | `research/rea-native/convar-defaults/README.md`、`CONVAR-DEFAULTS.md` |
+| SB | `research/phase2-local/SESSION-BASELINE.md` |
+| M0 | `research/phase2-local/m0/M0-REPORT.md` |
+| TS | `research/phase2-prep/TELEMETRY-SCHEMA.md` |
+| UDC | `research/phase2-prep/UNITY-DATA-CONTRACT.md` |
+| T5 | `tf2/runtime/T5-REPORT.md`、`tf2/HANDOFF-T5.md` |
+| FEEL | `research/feel/FEEL.md` |
+| DP | `research/DESIGN-PHILOSOPHY.md` |
+| IP2 | `research/combat/IP2-RUNTIME.md`（PR #92，还没合并；分支见 [00-INVENTORY §0.2](00-INVENTORY.md)） |
+
+---
+
+## A.0 研究的对象和总原则
+
+**R5** 指本地混合构建：S21 客户端（DX12 版，实验和 Frida 都挂它）+ S3 专用服务器（dedi，权威端）+ 社区 SDK（有源码，不逆向）。另有 S21 客户端 DX11 版，只作静态对照。S21 正版从来没有跑过。
+
+**TF2** 指 Titanfall 2 + Northstar 本地私服。项目规则：**只有 Apex 没有原型、或者 R5 测不了的东西才研究 TF2**。
+
+三条总原则（RP §2）：
+
+1. **实测是真值，代码是解释层**。两边都有才算定论。
+2. **每个机制三方对照**：原生代码、R5 实测、HSD-Unity 现状，记进对照账本（LED）。
+3. **全程只读**：不改游戏文件、不 patch 程序、研究时不改 Unity；改 Unity 的建议进账本，由用户决定。
+
+---
+
+## A.1 怎么判断一个结论是真的
+
+#### 为什么
+
+反编译会读错，实测会被测试条件骗，混合构建会产生正版没有的现象。手册里每个数都要能经得起"换一个办法再查一次"。
+
+#### 步骤
+
+1. **先定标**：任何新的读法（读代码、读内存、新的实测脚本），先在已经测准到 0.1 % 的量上复现一次（`sv_gravity` 750、`jump_grace_cutoff_speed` 1100、`skip_speed_reduce` 100、lurch 夹紧 209.3 u/s 等），对上了才去读未知的东西。
+2. **两份独立证据**：静态值 + 运行时读数（ConVar）；反编译公式 + Frida 逐帧验证；代码 + 黑盒实测。只有一份的，标签照实写（[反编译] 或 [实测]），不升格。
+3. **回到每一帧对账**：推出公式以后，回到每一发、每一帧算残差（例：蹲着翻越的模型 195 段里 177 段差 ≤ 1 帧）。
+4. **记进三方账本**：每条记原生 / 实测 / Unity 三个值和状态（一致、数值差、结构差、只有代码、只有实测、未定）。不一致时写原因代码：
+
+   | 代码 | 原因 |
+   |---|---|
+   | 1 | 代码读错 |
+   | 2 | 实测条件（测试工具、地形、帧率） |
+   | 3 | 混合构建（S21 客户端和 S3 dedi 不一致） |
+   | 4 | SDK 钩子改写了原生行为 |
+   | 5 | 真正的未知 |
+   | U | 代码和实测一致，但 Unity 写法不同 |
+
+5. **主动去否定**：一个解释要能被检验。例：某把枪开镜的差别曾被解释成"服务端纠正"，3000 次模拟对 3 次实测分不出差别，这个解释被否定。
+6. **作废也留档**：无效批次（例如弹药池空导致换弹全错）放单独目录，不进表，写清作废原因。
+7. **单次不当精确值**：只跑了 1 次的格子标次数。组合值拆开写，每个值单独带标签。
+
+**混合构建的伪现象**（DP §10.3）：S21 客户端和 S3 dedi 不一致时，参考实现跟 S21 客户端（有社区证据支持时），标 `[S21-client; local dedi differs]`，两边分开记。客户端一侧的现象（镜头、FOV、灵敏度、动画）推断和正版相同；服务端一侧的（子弹、状态机、AI）都要带问号。已经列为"不该学"的例子：钩爪视线离开脱钩时本地 dedi 每约 0.1 s 把钩子重新给回来造成的"闪烁"；测试重置被 dedi 算成落地导致的原地跳矮 1.8 u（D-55）；客户端脚本错误关掉 host；Frida 下 113–140 fps 的帧率。
+
+#### 坑
+
+- "程序里有这个函数"≠"S21 的行为用到它"；"脚本里有这段"≠"S21 生效"。
+- 默认值 ≠ 生效值：playlist、cfg、class mod 都可能覆盖（A.3）。
+- 同一个量在不同 R5 会话之间就不一样时（例：跑步晃动俯仰 0.53° / 0.60° / 0.73°），先在同一会话补测，不算差别（FEEL §8.3 K-3）。
+
+#### 怎么算做对了
+
+一个结论写进手册之前：有定标、有标签、有次数；不是单一证据的，账本里状态是"一致"；差别写了原因代码。拟合原则：尽量贴合 R5 原生；差零点几个百分比可以不追，但要写出差在哪、差多少（D-70）。
+
+#### 出处
+
+- RP §2：三条总原则。main
+- LED：账本字段、状态、原因代码；定标是验收标准之一。main
+- `research/rea-native/README.md`：证据标签 [meas] [fit] [src] [sdk-cvar] [census] [inf] [hyb] [native] [native-inf]。main
+- DP §2.1、§10.3：手册沿用的标签；混合构建伪现象。main
+- `research/phase2-local/D72-REPORT.md` §8：195 段对账的例子。main
+- D-55（测试重置算落地）、D-70（差零点几可以不追）。main
+
+---
+
+## A.2 静态反编译：Ghidra 持久工程
+
+#### 为什么
+
+规则藏在游戏程序的移动代码里。只靠实测拟合，常数能对上，但分支条件（什么时候开、什么时候关）会漏（DP §3）。反编译让我们看到条件本身，再用实测核对。
+
+#### 步骤
+
+1. **先查程序能不能分析**（N0 §1）：读 PE 节表，看 `.text` 的大小、熵、入口点是否在 `.text` 里。熵约 6.6 是普通编译代码，接近 8.0 是加壳或加密（三个 exe 都是 6.62，没加壳）。顺手记下可疑的小节（可写可执行的小节、dedi 的特殊节），确认它们不在移动代码区间里。
+2. **选主目标程序**（N0 §2）：用 SDK 源码里的特征码（N0 用了 103 个）在两个客户端里各找一次，按 `.pdata` 的函数块边界取出所在块，逐字节比较（`research/rea-native/n0/cmp_clients.py <SDK 源码> <exe A> <exe B>`）。结果 93 / 93 个移动函数块长度相同，差异只在 ≤ 4 字节的地址、偏移字段。结论：移动代码相同，结论可以互用，但**地址以 DX12 版为准**（实验和 Frida 都挂它）。
+3. **一次性全量自动分析，存成持久工程**：Ghidra headless，默认自动分析，堆给大（16 GB）。每个 exe 约 10 分钟（590–608 s）。工程放在仓库外、只在本机（约 500 MB），不进 git。`<工作区>/ghidra-projects/` 里每个程序一个工程（R5 客户端 DX11、R5 客户端 DX12、TF2 的 `server.dll` + `client.dll`），各带一份分析日志。
+4. **核对函数边界**（N0 §3）：`research/rea-native/n0/CheckBounds.java` 对每个特征码命中点输出 Ghidra 认定的函数入口和大小、"命中点是不是入口"、"`.pdata` 起点是不是入口"。103 个里 102 个正好是入口。
+5. **定标**（A.1 第 1 步），然后过**闸门**：能分析 + 定标对上 + SDK 命名函数边界对上，才进入下一阶段；否则停下来报告，备选方案是运行时 dump 或只用 Frida。
+6. **之后每次查询都复用持久工程，只读运行脚本**：
+
+   ```
+   analyzeHeadless <工程目录> <工程名> -process <exe 名> -noanalysis -readOnly \
+       -scriptPath <脚本目录> -postScript <脚本>.java <参数…>
+   ```
+
+   常用脚本（都在 `research/rea-native/n2/`）：`DecompileList.java`（按地址表反编译，输出只写本机 `local/`）、`annotate.py`（把 setfile 描述符、ConVar、函数地址换成地图里的名字）、`FindOffsetRefs.java`（按结构体偏移找所有读写指令）、`RefsToAddrs.java`（列出对某些地址的全部引用）。
+7. **成果存在我们自己的 CSV / Markdown 里，不存进 Ghidra 数据库**：函数地图 `research/rea-native/NATIVE-MAP.md` + `map/*.csv`；子系统公式 `research/rea-native/subsystems/N2-*.md`；账本 LED。这样只读分析可以并行开好几个。
+8. **公开仓库只放**：地址、我们起的函数名、用自己的话重写的公式、常量、分支条件、很短的必要摘录。大段伪代码、汇编、完整 dump 只放本机 `local/`（`.gitignore` 排除）或私有仓库（A.8）。
+
+**读代码的规律**（NR §4.3）
+
+- ConVar：R5 的代码从 ConVar 对象 **+0x40** 取值指针（值在父对象 +0x60）；TF2 是 **+0x38**（浮点 +0x58、整数 +0x5c）。
+- setfile 键通过 `.data` 里的描述符读，"谁读描述符 +0"就是"谁读这个键"。
+- 大多数客户端移动函数被 SDK 钩子包着：每个子系统先查钩子默认开没开，标清"原生"还是"SDK 改写"。
+- 按偏移找字段：整个程序只有几条指令用到某个偏移时，读写它的代码就说明了这个字段是什么。
+- TF2 的 `.set` 默认值表是 `server.dll` `.data` 里 0x30 字节一条的记录（`tf2/static-values/tools/scan_set_schema.py`）；`-1` 表示"关闭 / 回退"；按站姿区分的键在第二张没有默认值的表里。
+
+#### 坑
+
+- **通用逆向工具直接打开 44 MB 的 exe 会超时**：它每次在临时目录新建工程、重新分析（约 590 s），超过自己 330 s 的启动时限。对策就是上面的持久工程 + headless 脚本。
+- 地址分版本：ConVar 表的地址是 DX11 版的，函数地图是 DX12 版的，混用要换算。
+- 反编译警告：两个客户端各有 3 个"跳进不存在的内存"的函数，都不在移动代码区间（移动函数集中在一段连续区间里）。
+- `.pdata` 给的是"函数块"，大函数会被拆成多块，比较时只比到特征码所在那块。
+- 函数地图里有过时的名字（00-INVENTORY 过时文档表：NATIVE-MAP §3 有两个函数名以 N2 为准）。
+- TF2 解包 VPK 时二进制管道走 Bash，PowerShell 会把二进制流弄坏。
+
+#### 怎么算做对了
+
+定标项全部复现；读出的公式在账本里和实测"一致"；地址写在"出处"段，并注明是哪个版本的程序。
+
+#### 出处
+
+- N0 §1 – §3、闸门：加壳检查、两客户端比较、边界核对。main
+- `research/rea-native/n0/cmp_clients.py`、`CheckBounds.java`、`dx12-bounds.tsv`。main
+- NR §4.3：读法规律。main
+- RN：公开仓库只放什么。main
+- `research/rea-native/n2/*.java`、`annotate.py`。main
+- `tf2/static-values/ghidra/`、`tf2/static-values/tools/scan_set_schema.py`。main
+- [反编译] 移动函数区间 0x140230300 – 0x140adf530（DX12）。
+
+---
+
+## A.3 ConVar 默认值导出
+
+#### 为什么
+
+很多移动常数（重力、跳跃截断速度、lurch 参数）是 ConVar。它们的默认值写在程序的静态初始化函数里，读出来就是"S21 出厂值"，比在游戏里一个一个查快，也不受 cfg 覆盖影响。
+
+#### 步骤
+
+1. **原理**：注册一个 ConVar 时，初始化函数先把一个字符串字面量复制进对象作默认值，再赋名字和 flags。所以"找名字字符串 → 跟到引用它的初始化函数 → 读名字之前被复制的那个字面量"就是默认值。
+2. 名字表 `research/rea-native/convar-defaults/ghidra/convar-names.txt`（一行一个，`#` 开头是注释）。
+3. 在持久工程上只读运行 `DumpConVarRegistrations.java <names.txt> <out.txt>`（命令同 A.2 第 6 步）。对每个名字：在内存里搜 `\0名字\0`；列出引用它的函数；每个函数反编译一次（超时 120 s），打印上下文；在名字赋值之前找第一个字面量，读出字符串、地址和**复制长度**。输出开头记录 exe 的 SHA-256、镜像基址、Ghidra 版本和脚本名。
+4. **自检**：复制长度都等于字符串长度 + 1，说明读到的就是被复制的字面量。
+5. **运行时核对**（第二份证据）：`research/phase2-local/tools/hsd_cvar_help.py --names <表> --out <目录>` 按实验的方式启动游戏（firing range，没有 cfg 覆盖），等玩家活着：dedi 上执行 `help <cvar>`；客户端用脚本 `GetConVarString` 读值（客户端控制台的 `help` 输出不回传）。原始回复存 JSON，关游戏。
+6. 结果进 `CONVAR-DEFAULTS.md`：名字、默认值、注册函数地址、字面量地址、dedi 值、客户端值、引擎说明。"—"表示该进程里没有这个 ConVar（例如 `jump_grace_*` 只在 S21 客户端有）。
+7. 完整反编译输出含游戏代码，只留本机；运行时原始回复照 A.8 处理。
+
+TF2 同法：`tf2/static-values/ghidra/DumpConVarRegistrations.java`，以及 `DumpAllRegistrations.java`（给定注册函数地址，把每一次调用打成一行，拿到全部 ConVar）。TF2 的注册形式是 `Register(&obj, name, &default, flags[, help])`。
+
+#### 坑
+
+- 默认值 ≠ 生效值。核对在 firing range 下做，那里全等于默认值；别的 playlist 要另查。
+- 有些名字不是 ConVar：代码里没有注册引用、两边都读不到的（如 `player_slideBoost*`）是 setfile 键；`slide_super_jump_enabled` 是一次带回退值的设置查询。
+- 有的 ConVar 是 Source 遗留值，引擎说明自己写着"等价的设置在 player settings 文件里"（`sv_friction`、`sv_airaccelerate` 等）：生效的是 setfile。
+
+#### 怎么算做对了
+
+复制长度自检全过；静态值和 dedi、客户端运行时值全部一致（2026-10 那次 35 个全部一致）。
+
+#### 出处
+
+- CVD：方法、结果表、自检。main
+- `research/rea-native/convar-defaults/ghidra/DumpConVarRegistrations.java`、`convar-names.txt`。main
+- `research/phase2-local/tools/hsd_cvar_help.py`。main
+- `tf2/static-values/ghidra/`。main
+
+---
+
+## A.4 Frida 运行时观察
+
+#### 为什么
+
+反编译告诉我们"代码可能怎么走"，实测告诉我们"结果是什么"，中间缺一段：**一条命令内部**的中间值、执行顺序、哪条分支返回了"脱钩"、随机数种子是什么。Frida 在游戏运行时挂到函数上读这些值，只看、不改。
+
+用户 2026-10-23 批准使用 Frida（RP §10 第 2 条）。脚本**只挂钩、只记录，不改任何东西**，只挂 S21 客户端 DX12 版。
+
+#### 步骤
+
+1. 先在 Ghidra 里定好要挂的函数入口、参数含义、要读的偏移（A.2）。
+2. 写脚本，固定开头把 Ghidra 地址换成运行时地址：
+
+   ```js
+   const mod = Process.getModuleByName('<客户端模块名>');
+   const at = (a) => mod.base.add(ptr(a).sub(ptr('0x140000000')));   // Ghidra 默认基址 → 运行时
+   ```
+
+   输出文件路径在脚本里写占位符，加载时替换（不把本机路径提交进仓库）。
+3. 启动实验时多给挂载时间：`hsd_session.py … --settle-s 120`（默认 15 s）。在这段时间里附加客户端进程、加载脚本；脚本就绪后 `send({ready})`。
+4. 两种取数方式：
+   - **挂函数**（`Interceptor.attach`）：`onEnter` 读参数和对象字段，`onLeave` 读返回值；需要时用 `NativeFunction` 调游戏自己的取值函数（例：蹲着翻越时调台面点、方向两个 getter）。
+   - **轮询内存**：每 1 ms 读一个字节，只在值变化时记一行（例：轮询钩爪激活字节，发现在拉动函数之外决定的脱钩）。
+5. 输出两路：大批逐行数据写 CSV（定期 flush，例如每 5000 行）；少量事件和一次性的设置值用 `send()` 回传。设置表 / ConVar 值在第一次调用时读一次。
+6. 分析脚本把 Frida 的行和实验的试次对上（下面"对齐"），汇总成表，再用模型逐段检查。
+
+**已有的脚本**（都在 `main`）
+
+| 脚本 | 挂什么 | 回答了什么 |
+|---|---|---|
+| `research/rea-native/n6/frida_grapple_detach.js` | 钩爪拉动函数和它调用的 6 个辅助函数；轮询钩爪激活字节 | 每次脱钩走的是哪条分支（视线离开、rodeo、贴地拉过钩点） |
+| `research/rea-native/gn/frida_hook_parent.js` | 拉动函数 + 脱钩规则函数 | 钩子的父实体（世界 / 实体）怎么影响"远离 > 500"和撞上上抬（D-50） |
+| `research/feel/frida_kick_seed.js` | 落地 kick 函数 + 种子混合函数 | 落地 kick 的随机数来自命令号：第 k 次 kick ↔ 遥测里第 k 次落地（8 / 8） |
+| `research/phase2-local/d72/frida_d72_trav.js` | 翻越函数（进入 / 返回）+ 移动函数（返回） | 蹲着翻越的原生状态机（D-75 / D-76） |
+| `research/rea-native/cam2/frida_cam2_stages.js` | 第一人称 CalcView | 镜头各阶段拆开：眼睛角度、翻越动画、两组 punch 弹簧、横滚、滑索偏移（K-5 – K-7） |
+| `research/rea-native/g6/frida_impact.js`、`n10/frida_n10_camera.js`、`ledger-open/frida_zipline_roll.js` | 撞上上抬、镜头、滑索横滚 | 用法写在各自报告里 |
+
+**和游戏 tick 对齐**：Frida 不知道命令号，靠这几种办法对齐：
+
+- **墙钟**：行里写毫秒时间，和实验的试次时间按时间并起来；
+- **事件序号**：第 k 次 kick 对第 k 次落地；
+- **同一行记引擎时钟**（curtime / frametime），和遥测的游戏时间同源；
+- **只在变化时记**：事件流按变化切段，不依赖精确时刻；
+- 客户端预测后被服务器改掉的段单独列（顺手记预测标志字节）。
+
+#### 坑
+
+- **挂 Frida 会把 R5 拖到约 113 fps**，过不了 ±3 % 的帧率检查。做法：挂 Frida 的会话改用 100 fps 跑，**只用来拆阶段、读指针和数值，不进 Unity 对照**（100 fps 时每条命令 0.01 s，Unity 按 1/120 重放会把滞空拉长 1.2 倍）。对照另跑一场不挂 Frida 的 120 fps 会话。
+- 帧率改了，按帧数排的助跑也会变：100 fps 下按 120 fps 帧数排的助跑会晚 0.24 s 起跳，要提前 24 帧补回同样的几何。
+- **不同时钟不能直接相减**：Frida 墙钟和脚本日志的游戏时间是两个时钟。曾经因为拿脚本时钟减 Frida 时钟，换弹解锁表整体偏早约 0.05 s（00-INVENTORY 提到的 11-04 技术报告复核第 1 条）。分析脚本里强制只用一个时钟。
+- 偏移和地址绑死这个构建，换版本要重新定位。
+- Frida 看到的是客户端预测内部的值，最后的轨迹可能被 dedi 纠正掉（例：客户端拉动里 vz 被抬到 299，录下的轨迹没有跳）。Frida 的结论和轨迹的结论分开写。
+
+#### 怎么算做对了
+
+Frida 结论和反编译读法一致（同一条分支、同一个常数），并且能用不挂 Frida 的实测轨迹复现结果（或者明确写出"只在客户端预测里出现"）。
+
+#### 出处
+
+- RP §10 第 2 条：Frida 的批准和范围。main
+- `research/rea-native/n6/N6-MEASURE.md`：脱钩分支、轮询法。main
+- `research/rea-native/gn/GN-GRAPPLE-NATIVE.md` §2、§7：父实体、客户端 vz 被纠正。main
+- FEEL §9.2：kick 种子 8 / 8。main
+- `research/phase2-local/D72-REPORT.md` §8：100 fps 会话、提前 24 帧、195 段对账。main
+- `research/rea-native/cam2/CAM2-CAMERA.md`：镜头阶段。main
+- [反编译] 拉动函数 0x14066fb60、脱钩规则 0x14066f600、落地 kick 0x140a35750、种子混合 0x140ad55b0、翻越 0x140a45380、移动 0x140a54e80（DX12）。
+
+---
+
+## A.5 R5 本地实验
+
+#### 为什么
+
+R5 能在本机完整跑起来（客户端 + dedi），而且 SDK 提供了一个本地回环接口，能用脚本控制游戏、读日志。所以"让游戏自己跑一段固定输入、每条命令记下来"是可以全自动、可重复的。手册里所有 [实测] 都是这样来的。
+
+#### 步骤
+
+**环境基线**（SB，M0 冻结；每次测量写明和基线的偏离）
+
+- 场景：playlist `survival_firingrange`，平地、有墙、没有计时。
+- 传奇由实验脚本固定（firing range 每场随机发传奇，各传奇参数不同）；空手；每场记录移动倍率 msc。
+- 帧率：M0 – M2 144 fps，M3 起 **120 fps**；帧率是实验变量，每场写明。
+- 启动：开发者模式、`sv_cheats 1`、两边离线、窗口化、关垂直同步和抗锯齿（只为稳帧；移动按每条命令自己的 dt 算）。
+- 遥测：两边开 SDK 的逐命令记录，客户端开我们模组的逐帧记录。
+- Python 一律用 `py -3`（裸 `py` / `python` 可能落到系统的空壳，退出码 9009 且没有输出）。
+
+**工具**（都在 `research/phase2-local/tools/`，除非注明）
+
+| 工具 | 作用 |
+|---|---|
+| `hsd_launch.ps1` | 不经过启动器界面，照"本地 + 开发者 + cheats"的参数启动：先停掉游戏目录下的残留进程，等 dedi 端口空闲，起 dedi，等它报就绪，再起客户端。只停自己目录下的进程，不写游戏文件 |
+| `agentlink.py` | SDK 本地回环接口的客户端：dedi、客户端各一个端口，令牌在游戏目录里。一行一个请求：认证、在 server / client / ui 虚拟机里执行代码、执行控制台命令、读日志环 |
+| `hsd_session.py` | 一键一场：启动 → 等两边都报"玩家活着" → 静置 → 跑 N 个试次 → 退出 → 关游戏 → 收日志 → 生成一个数据文件夹 |
+| `hsd_trial.py` | 自动试次：计划表、传奇、测试几何（墙、台阶、滑索、斜坡）、技能套件、帧率和容差（默认 3 %）、热身、轮流、会话内 ConVar |
+| `hsd_input.ps1` | 硬件扫描码发键、截窗口图。墙钟计时、要前台，只用于冒烟和准备步骤 |
+| `hsd_cvar_help.py` | ConVar 运行时核对（A.3） |
+| `map_scan.py` | 在 dedi 上跑射线扫网格，找最长的平坦跑道并用站立碰撞盒查通畅，按数据选试次起点和朝向 |
+| `research/phase2-prep/tools/hsd_tel.py` | 遥测命令行：解析、校验、事件、跳跃、普查、滑铲、拟合、画图、导出 Unity 片段（`hsdmove-trial/2`）和检查 |
+| `research/phase1/mod/hsd_movediag/` | 我们的只观察模组（HSD.MoveDiag），两边都装，不改任何移动值 |
+
+**遥测记录什么**（TS）
+
+- SDK 逐命令记录：每条命令每个玩家一行：命令号、速度、冲刺 / 蹲 / 滑铲 / 地面实体、输入轴、按键掩码、msc、移动**前**和**后**的原点和速度。没有时间字段。
+- 模组：客户端每渲染帧一行（游戏时间、帧时间、位置、速度、状态、视角、输入、镜头和眼睛的位置角度、FOV）；dedi 事件（起跳、离地、落地、翻越、跑墙、滑铲、重生）；起跳 / 落地摘要；setfile 值；被拦下的脚本错误。
+- 每列有来源类别：引擎直接给的、模组运行时算的、离线算的。结论要写明用了哪些列；用了后两类就继承它们的假设。
+- 客户端 / dedi 对齐：按（会话、实体、重置批次、命令号）配对；同号多候选时按移动前原点 8 u 内或墙钟最近裁决；裁不了标"有歧义"。冒烟时配对率 99.9 %。
+
+**一场实验的流程**
+
+1. **查锁、写锁**（A.6 的共用锁）：读 `<工作区>/GAME-LOCK.txt`。第一个词是 `tf2` 就每 30 s 查一次，直到文件被删（一次 TF2 运行最多约 10 分钟）；超过 6 小时的锁算失效。然后写 `r5 <会话名> <开始时间>`。游戏关掉、整场结束后删掉。
+2. **启动**：`hsd_session.py --label <名> --trials N … -- <试次选项>`。第一次进图约 5 分钟（建 shader 缓存）；进图后静置（默认 15 s，挂 Frida 时 120 s）。
+3. **会话开头**：设传奇、可选给技能套件、刷出测试几何、设帧率上限、做参数普查（两边的 class var 和 setfile dump）。
+4. **每个试次**：
+   - dedi 设试次标签；
+   - dedi 按 1v1 模式的传送配方重置玩家（速度清零、站姿、原点、角度、贴地、视角），记一行重置批次号；
+   - 客户端起一个线程，等客户端预测状态在目标点稳定（脚本改的位置不被预测，要等服务器状态到达），然后**按计数的脚本帧**发 `+/-` 按键，每个边沿记一行（帧号、平台时间、游戏时间）；
+   - 等计划表的结束行出现，标签归零。
+   - 计划表语言：`wait N`（按 144 fps 的帧数，按实际帧率缩放）、`wait Xs`、`waitf N`（精确帧）、`waitair` / `waitland`、`down / up / tap <键>`、`set <cvar> <值>`。
+5. **帧率检查**：用开始到结束的平台时间算实际帧率，超出计划 ±3 % 就判试次无效。**不放宽，重跑。**
+6. **热身**：每场先跑 1 个不计分的热身试次（进图后第一个试次会卡）。
+7. **轮流**：`--interleave` 让各档轮流跑，避免会话漂移和某一档对齐。
+8. **结束**：退出、关游戏、收两边日志，生成 `research/phase2-local/data/<时间>_<标签>/`。
+9. **处理**：`hsd_tel.py report <日志目录> -o report/`，得到事件、跳跃、拟合、摘要、校验、报告和图；要给 Unity 时导出 `hsdmove-trial/2` 片段并检查（UDC）。
+10. **存档**：派生结果进公开仓库，原始日志进私有仓库（A.8）。删锁。
+
+#### 坑
+
+- 关掉失焦降帧（`not_focus_sleep 0`）。
+- 服务端未捕获的脚本错误会关掉 host，**客户端未捕获的脚本错误也会**。执行代码一律包 `try/catch`；不在运行中的虚拟机上试未知方法；无效的 AI 设置名也会让游戏崩。
+- 冲刺键位是 bit 15（0x8000），不是头文件里的 1<<17；后退是 `+backward`。
+- 试次标签写在命令行上无效，要进图后设。
+- 测试重置会被 dedi 当成"落地"，触发原生防连跳降高：**重置后等 > 0.75 s 再跳**（D-55）。
+- 翻越过程中两边都不打印命令，命令号会跳一段（120 u 墙约 63 条）。
+- 给武器后弹匣是 0，要先设弹匣数再 `+attack`；部分武器一开火就关客户端（IP2）。
+- 某些启动探针可能永远不返回，用有超时、按 ping 轮询的重启脚本（IP2 的 `relaunch.sh`）。
+- 生成的列表去掉 CRLF。
+- 只占后台，不占鼠标和焦点（用户能继续用电脑），代价是真实鼠标类的项目（下压抵消、开镜灵敏度）测不了。
+- **一次只开一个游戏**；Unity 一次只开一个批处理实例，驱动游戏时不开 Unity。
+- 查锁是会话规矩，R5 的 `hsd_session.py` 自己不查锁（TF2 的 runner 会查）。
+
+#### 怎么算做对了
+
+每个计分试次过了 ±3 % 帧率检查；有热身；`hsd_tel.py validate` 没有错误（有错误退出码 2）；客户端 / dedi 配对率接近 100 %；数据文件夹里有 `runner.json` 写明传奇、帧率、几何和偏离基线的地方。
+
+#### 出处
+
+- SB：环境基线。main
+- M0：流水线修复和冒烟。main
+- `research/phase2-prep/LOCAL-SETUP.md`：安装和启动。main
+- TS、`research/phase2-prep/tools/hsd_tel.py`：遥测格式和对齐。main
+- UDC：Unity 片段格式。main
+- `research/phase2-local/tools/`：工具。main
+- `research/phase1/mod/hsd_movediag/`：观察模组（它的 readme 状态行"没在游戏里跑过"已过时）。main
+- IP2 §坑：战斗实测的运行时坑。PR #92，还没合并
+- D-55：测试重置算落地。main
+
+---
+
+## A.6 TF2 / Northstar 本地实验，以及共用游戏锁
+
+#### 为什么
+
+TF2 有 Apex 没有的原型（跑墙、泰坦、敌人 AI、部分武器）。它和 R5 用同一台机器，两个游戏同时开会互相干扰（端口、帧率、焦点），所以有一把**共用的游戏锁**，加上一个自动 runner 保证 R5 优先。
+
+#### 步骤
+
+**共用锁 `GAME-LOCK.txt`**（放在 `<工作区>` 根目录，不进 git）
+
+- 内容一行：`<r5|tf2> <会话名> <开始时间>`（TF2 runner 另加 `pid=`）。
+- 要启动任何一个游戏前：读锁。有别人的锁就等（R5 一方每 30 s 查一次）；超过 6 小时算失效。没有锁或锁失效 → 写自己的锁 → 启动。游戏关掉以后删锁。
+- **R5 优先**：TF2 运行中检测到 R5 要用机器，3 秒内关掉自己。
+
+**工具**
+
+- 诊断模组 `tf2/mod/HSD.TF2Diag/`：只在本地私服用。两个 ConVar：`hsd_autorun`（平时 0，runner 运行期间写成 1）、`hsd_map`。UI / CLIENT / SERVER 三个虚拟机：客户端每帧记一行状态；服务端提供实验命令（打标签、传送 + 速度 + 视角、施加冲量、读 setfile 键、给技能 / 武器、射线探测等），后来加了泰坦、套件、NPC、武器扩展。
+- `tf2/runtime/runner.py <实验名> [--map] [--timeout] [--r5-wait] [--attach]`：一条命令跑完一次实测。
+- `tf2/runtime/r5_guard.py`：检测 R5 是否在测（四类信号：R5 进程；命令行里有 R5 实验工具的进程；R5 回环端口在监听；锁的第一个词是 `r5`），以及拿锁 / 放锁。
+- `tf2/runtime/lock_race_test.py`：不启动游戏的锁竞争测试：5 轮 × 8 个进程同时抢，每轮恰好 1 个拿到；失效锁 8 抢 1；6 个排队持锁时间 0 重叠。
+
+**一次实测**
+
+1. 实验表写在 `tf2/runtime/plans*.py`，由"命令 / 等几秒 / 等条件"三种步骤组成；runner 把它生成 Squirrel 脚本。
+2. 先查 R5：在测就等（最多 `--r5-wait` 分钟），等不到放弃。
+3. 拿锁：**独占创建**（文件不存在才能建），再读回确认 `pid=` 是自己；拿到后再查一次有没有游戏或 R5 混进来，有就放锁再等。失效锁先原子改名挪开再建。
+4. 把模组复制进 Northstar 的 mods 目录，运行参数写进 `mod.json` 的默认值（Steam 会丢掉过长的启动参数）。
+5. 通过 Steam 启动 Northstar，参数带 `-nojoy`。模组的 UI 脚本走和"启动 Northstar"按钮相同的本地认证流程，再进图。
+6. 实验表在**客户端线程**执行：先等游戏状态到 Playing（开局约 10 s 入场动画会冻结玩家）；"等几秒"用客户端游戏时间；命令经 UI 的 `ClientCommand` 在本地控制台执行并打印时间；"等条件"逐帧等（着地、空中、跑墙、高度…）。
+7. 跑完自动退出，收集：诊断行 `diag.tsv`、原始日志 `raw.log`、生成的计划脚本、`meta.json`（结果 `exited / aborted_r5 / timeout / no_game`，客户端帧间隔中位数应约 7 ms）。恢复 `hsd_autorun` 0，释放锁。
+8. 分析（`tf2/runtime/analyze_t5.py`、`t5_metrics.py`）：**按客户端命令时间和状态变化切段**。
+
+**不可违反的规则**（T5 HANDOFF §2）
+
+1. TF2 只通过 runner 启动，不绕过它手动开游戏做实验。
+2. 不加任何认证绕过参数；Atlas 同意书由用户自己给，模组读不到同意就退出。
+3. 启动方式不改：直接运行 Northstar 启动器会认证失败；不能去掉 `-nojoy`（有一次启动触发了虚拟手柄驱动蓝屏）。每次运行后在日志的命令行一行核对。
+4. 只读：游戏目录只允许写本模组目录和启动参数文件。
+5. 只在本地私服实验，不连官方或公开服务器。
+6. 意外关机后清两处残留：留下的 `tf2` 锁、`mod.json` 里的 `hsd_autorun` 改回 0。
+7. 本地服务器用和 R5 不同的端口（R5 的启动脚本要求自己的端口空闲）。
+8. 平时模组什么都不做（`hsd_autorun` 0），不影响手动游玩。
+
+#### 坑
+
+- 后台窗口默认失焦降帧 → 只有 20 fps、移动积分步长 50 ms。UI 脚本运行时设 0、退出前恢复；`meta.json` 核对帧间隔约 7 ms。
+- 服务器启动配置会把"上报主服务器"重新打开，由服务端脚本关掉，日志核对不再出现注册尝试。
+- 传送后客户端还停在旧状态，"等落地"会误判：先等 `air` 再等 `ground`。
+- 标签的时间戳比按键实际生效晚（网络往返），不能按标签切段。
+- 客户端日志的速度是帧末值：起跳后第一帧 vz 比理论值低约 6.3 u/s，二段跳低约 4.2 u/s（一帧重力），结论要扣掉。
+- 命令频率 ≤ 约 17 条 / 秒，否则被限额踢掉。
+- Squirrel：CLIENT 没有全局 `ClientCommand`（UI 有）；服务端 `WaitFrame` 只有 10 Hz，逐帧记录放客户端；客户端 `IsSliding` / `IsSprinting` 不一定能用；引用别的文件的全局函数，那个文件要在 `mod.json` 里排前面。
+- 读 setfile 的命令读不到按站姿区分的键和第二张表的键。
+- 多个会话共用同一个 runner：runner 会等任何 `tf2` 锁或游戏。
+- 2026-11 起 TF2 本机启动不了（00-INVENTORY 第 10 章），TF2 侧的新实测暂时做不了。
+
+#### 怎么算做对了
+
+`meta.json` 结果是 `exited`、帧间隔约 7 ms；日志命令行一行里有 `-nojoy`、没有认证绕过参数；锁已释放、`hsd_autorun` 为 0。
+
+#### 出处
+
+- T5 §2、HANDOFF-T5 §2：方法和规则。main
+- `tf2/runtime/README.md`、`runner.py`、`r5_guard.py`、`lock_race_test.py`、`plans*.py`。main
+- `tf2/mod/HSD.TF2Diag/`。main
+- 锁的规则：工作区 `CLAUDE.md` 和各会话的约定；锁文件本身在 `<工作区>`，不在 git。
+
+---
+
+## A.7 回放对比怎么做
+
+#### 为什么
+
+Unity 没有动画、真人试玩手感不可靠，所以验收改成：**同一串输入**，喂给 R5（真值）和 Unity 的身体，用**同一套指标代码**算，叠在一起比（D-25）。指标、容差、合格线在 [第 11 章](11-acceptance.md)，这里讲操作。
+
+#### 步骤
+
+1. **取片段**：R5 实测按试次导出成 `hsdmove-trial/2` 片段（`hsd_tel.py export-contract … --run rN`）：`trial.json`（清单、初始状态、地形、参数）+ `samples.csv`（每条命令一行：命令号、输入、按键、位置、速度、状态）。`check-contract` 严格检查时间和命令序列、输入完整、边沿一致。
+   - 攀爬 / 翻越：`research/feel/climb_to_trial.py` 从原始会话转。翻越中没有命令的那段用同时刻的客户端帧补；`trial.json` 加 `world`（地面高度、墙的盒子，墙顶 / 墙面 / 厚度从多次实测的中位数反推）。
+   - 镜头：`research/feel/camera_to_trial.py` 另写 `camera.csv`：每帧镜头**额外加上的**俯仰 / 偏航 / 横滚 = 镜头角 − 瞄准角、眼高 = 眼睛 z − 原点 z、FOV 倍数 = 本帧 / 第一帧。落差片段没有输入、R5 落地比客户端打标签早，写成合成片段（从 H 高处自由落下），R5 镜头取落地前 0.3 s 到后 1.5 s，**按落地对齐**。
+2. **喂给 Unity 的几个身体**（FEEL §1）：回放电机（研究电机，按规矩不改，D-66）；Reference（练习游戏里实际玩的身体，`MovementConfigs.Reference()`，`FeelReplay.GameBody` 把每条命令喂进去）；Fun（设计版，只作参考）。批处理 `HSD.R5Replay.Editor.FeelBatch.Run -trials <目录> -out <目录>` 每片段写 `replay.csv` / `reference.csv` / `fun.csv`；镜头用 `HSD.Game.Editor.CameraFeelBatch.Run`。有随机的量按 R5 的命令号复现（落地 kick 的种子，A.4）。
+3. **同一套指标代码**：`research/feel/feel_metrics.py`（移动）、`camera_compare.py`（镜头 13 个指标）。每次起跳、每次滑铲、每段稳定移动各算一个值，另算逐帧路线偏差和事件时间差。
+4. **分档**：一致（容差内）/ 接近（3 倍容差内）/ 不一致 / 次数不同（[11 §11.2](11-acceptance.md)）。
+5. **只比两边定义相同的量**：例：攀爬片段 R5 的翻越状态比接触晚几条命令才置位、攀爬中地面标志一直是 1，所以只比翻越结束时刻、出口速度等。
+6. **输出**：`feel_compare.py … --export` / `camera_compare.py … --export` 写成绩表、片段表和曲线 JSON，放进叠图页面（选片段叠画速度、高度、俯视路线）。曲线文件大，可以重新生成，不提交。
+7. **差别进清单**，编号（F-1、C-1、K-1…），由用户决定改不改。改了用开关，旧版留着；回放电机和移动哈希逐字节不变证明没改坏（[11 §11.4](11-acceptance.md)）；改完重跑同一批。
+
+#### 坑
+
+- 时序按**被比对象自己的时钟**排（教训：Unity 翻越比 R5 长约 25 ms，按 R5 的时钟排按键就落错窗口）。
+- 挂 Frida 的 100 fps 会话不进对照（A.4）。
+- R5 有随机成分的量（落地 kick）同一高度就差好几度，只看平均值明显偏的。
+- Git Bash 不会转换逗号列表里的路径，传给 Python 的逗号列表路径用 Windows 风格。
+- **R5 对照永远在 u 模式下跑**（[11 §11.7](11-acceptance.md)）。
+
+#### 怎么算做对了
+
+`FeelReplayTests` 证明 `FeelReplay` 和手动逐帧调用 `SkillBody.Step` 完全相同；同一批片段重跑，成绩表除时间戳外不变。
+
+#### 出处
+
+- FEEL §1、§2、§5、§6.1、§8.1：做法、指标、怎么重跑、攀爬和镜头的转换。main
+- `research/feel/feel_metrics.py`、`feel_compare.py`、`camera_compare.py`、`camera_to_trial.py`、`climb_to_trial.py`。main
+- UDC：片段格式。main
+- D-25（同输入叠图验收）、D-66（回放电机只当尺子）。main
+- `HSD-Unity: Assets/HSD/R5Replay/Editor/FeelBatch.cs`（`FeelBatch.Run`）、`Assets/HSD/Game/Editor/CameraFeelBatch.cs`、`Assets/HSD/R5Replay/Runtime/FeelReplay.cs`（`FeelReplay.GameBody`）。main
+
+---
+
+## A.8 原始数据进私有仓库（D-76）
+
+#### 为什么
+
+研究仓库是**公开的**。实验的原始日志里有本机绝对路径、启动命令行、文件系统和网络调试记录、玩家账号名；解包的游戏文件和反编译代码有版权问题。这些不能进公开仓库，但又不能丢：以后要核对一个数，必须能从原始数据重算。所以分两个仓库（D-76）：**公开仓库只提交地址、公式和派生结果；原始日志和解包文件进私有仓库 `HSD-RawData`**。
+
+#### 步骤
+
+**什么放哪**
+
+| 内容 | 放哪 | 原因 |
+|---|---|---|
+| 派生结果：实验摘要 `runner.json`、`report/`（事件、跳跃、拟合、摘要、校验、报告、图）、TF2 诊断行 / 元数据 / 计划脚本、汇总表、脚本、地址、函数名、重写的公式、常量 | 公开仓库 | 干净数据 |
+| R5 原始日志（`platform/`） | 私有仓库 | 含本机路径、启动命令行、调试记录；不能重建 |
+| R5 逐行表 `report/rows.csv` | 私有仓库 | 体积大（每次 4 – 19 MB）；能重建，但存档以保证和当时的报告逐字节对得上 |
+| TF2 原始日志 `raw.log` | 私有仓库 | 启动命令行、本机路径、账号名 |
+| TF2 本地文件夹 `local/`、R5 反编译片段 | 私有仓库 | 解包文件、反编译代码、ConVar 全表 dump、带本机路径的工具输出 |
+| 去掉用户名之前的原文 | 私有仓库 | 原文本身 |
+| Ghidra 工程、完整反编译 dump | 只在本机 | 体积大、含游戏代码 |
+
+公开仓库的 `.gitignore` 一直排除这些（`research/phase2-local/.gitignore` 的 `data/**/platform/`、`data/**/report/rows.csv`；`tf2/.gitignore` 的 `local/`、`runtime/data/*/raw.log`）。本机还有提交前检查，不让提交用户目录路径。
+
+**私有仓库的放法**
+
+1. **按公开仓库的路径放**：`apex/<路径>` 对应公开仓库 `<路径>`；`tf2/<路径>` 对应 `tf2/<路径>`；最早一批 R5 实测单独放 `apex-early/`。
+2. 每加一个文件，在 `MANIFEST.tsv` 追加一行：`path`、`size_bytes`、`sha256`、`archive_source`（来源）、`restore_to`（恢复到公开仓库的哪个路径；不恢复的写说明）、`category`（`r5-platform`、`r5-rowscsv`、`tf2-rawlog`、`tf2-local`、`tf2-redacted-original`、`worktree-leftover`、`index`、`r5-decompile`）。早期那批用 `MANIFEST-EARLY.tsv`（多了原始大小、原始 sha256、存储方式、运行号）。
+3. 按原字节存，不转换行符（`.gitattributes` 为 `* -text`）。不用 LFS；超过 100 MB 的文件 `gzip -n -9` 存，解压后逐字节一致。
+4. **核对**：推送后从远端重新检出，按 MANIFEST 逐文件算 sha256（不一致 0、缺失 0）。Windows 检出加 `-c core.longpaths=true`。
+5. **恢复**：把原始数据复制回公开仓库的工作副本，工具就能照原样重跑；放回去的文件仍被 `.gitignore` 排除，不会误提交。去用户名的原文**不要**复制回去覆盖公开版。
+
+**去用户名**：公开仓库里有几份文档原本含用户目录路径，提交前把用户目录换成 `<user>`，别的字节不动。`tf2/REDACTED.tsv` 一行一个文件：路径、替换处数、原文 sha256、公开版 sha256、原文存在哪。
+
+**存档清单**：每次把不进 git 的文件挪进存档时写一份清单（`tf2/ARCHIVE-INDEX.md` + `.tsv`、`research/phase2-local/data/ARCHIVE-INDEX-*`）：按组列文件数、大小、不进 git 的理由，逐文件路径、大小、sha256、存档位置；同时查有没有超过 50 MB 的文件。
+
+#### 坑
+
+- 本地的私有仓库工作副本是指向另一块盘的目录链接（junction）：**不要对它递归删除**。
+- 新的私有仓库工作树建在大盘上（工作区 `MOVED-TO-D.md` 的规则）。
+- 写手册、报告时同样不写本机路径和账号名；要写路径就用 `<工作区>` 之类的占位符。
+
+#### 怎么算做对了
+
+公开仓库的提交里没有用户目录路径、账号名、解包文件；每个私有文件在 MANIFEST 里有一行，远端检出后 sha256 全对；公开仓库的派生结果能从私有仓库恢复的原始数据重新算出来。
+
+#### 出处
+
+- `DECISIONS.md` 2026-10-30 一节、D-76：分仓规则。main
+- `tf2/ARCHIVE-INDEX.md` / `.tsv`、`tf2/REDACTED.tsv`。main
+- 私有仓库 `HSD-RawData` 的 `README.md`、`MANIFEST.tsv`、`MANIFEST-EARLY.tsv`。RawData
+- 工作区 `CLAUDE.md` §2 最后一条、§4（目录链接）。工作区，不在 git
+
+---
+
+## A.9 方法上还没做到的（缺口）
+
+已写进 [`_notes/hb-ch10.md`](_notes/hb-ch10.md) 的"待研究"，这里列结论：
+
+1. 通用逆向工具不能直接分析大 exe；"用持久工程给它做快照"没试。
+2. R5 的查锁 / 写锁是会话规矩，`hsd_session.py` 没有内置（TF2 runner 有）。
+3. 挂 Frida 必然掉帧；Frida 会话的轨迹不能直接进 Unity 对照。
+4. Frida 偏移绑死当前构建，没有按特征码自动重定位。
+5. 翻越中没有命令记录，靠客户端帧补，精度受帧率限制。
+6. 真实鼠标类输入（下压抵消、开镜灵敏度）在不占焦点的规则下测不了。
+7. S21 正版从未运行；服务端相关结论只代表 S3。
+8. TF2 服务端只有 10 Hz，逐帧只有客户端；TF2 目前本机启动不了。
+9. 很多格只测 1 次；跨两个时钟的计算曾漏查，分析脚本没有强制单时钟。
+10. **没有一份独立的 Frida 方法文档**（BA-1）和整体方法文档（BA-2）：本附录先补上，原报告里的用法仍是细节的出处。
