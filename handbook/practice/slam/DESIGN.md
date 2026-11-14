@@ -288,4 +288,33 @@ Unity 参考实现：第 2 步写，见 §8。
 
 ## 8. 第 2 步实现时定下 / 改动的地方
 
-（第 2 步填写：实现位置、和设计不一样的地方及原因。）
+第 2 步（11-14）写。正文 §1 – §7 保持第 1 步的原样，实现时定下 / 改动的地方只写在这里。
+
+**实现位置**：技能 / 动作框架里的一个能力（10 §10.2 的四种状态里的 Effect），不进电机、不进配置。
+
+| 东西 | 在哪（HSD-Unity `practice/slam`，draft PR，还没合并） |
+|---|---|
+| 能力、参数 | `Assets/HSD/R5Replay/Runtime/Abilities/GroundSlam/GroundSlamAbility.cs`（`GroundSlamAbility`、`GroundSlamParams`、`IHardLandingExempt`） |
+| 开关 | `PracticeSession.SetSlam(bool)` / `Slam` / `SlamOn`：开 = 每个新身体用 `GroundSlamAbility.AddTo` 插到**能力列表第一个**并登记到仲裁器；关（默认）= 任何身体都没有这个能力 |
+| 硬着陆豁免 | `LandingSlowdown.AfterMove` 读 `IHardLandingExempt`（身体上没有这种能力 = 规则原样） |
+| 不开 lurch 窗口 | `SkillArbiter.AfterAbilities` 的例外表加一行（`GroundSlamParams.opensLurchWindow` = false） |
+| 镜头 | `NativeCameraParams` 的 `slamPunch`、`slamStart*`、`slamLand*`、`slamFovPunch`（默认关）、盐 `SaltSlam*`；`NativeCameraFeedback.Observe` 读 `GroundSlamAbility.starts / landings`（只读） |
+| 试玩 | `PracticeMapSlam.cs`（场地 SY，只在要求时建）、`PracticeGameSlam.cs`（菜单"实验动作"、调参、`-slamShots` 截图巡游）、`Build.cs` 的 `-practiceSlam` |
+| 测试 | `Assets/HSD/Game/Tests/Editor/GroundSlamTests.cs`（`GroundSlamTests`，30 个用例） |
+
+**为什么是"第一个能力"**：§2.1 要求"这条命令开始时"没有驱动者、不在跑墙、蹲键没被别的能力用掉。排在第一个，它的 `BeforeMove` 看到的就是命令开始时所有能力的状态；滑索 / 跑墙 / 钩爪这条命令用蹲键结束自己时，它们在命令开始时还是 Driving / 跑墙中，下砸自然拒绝（`BUSY`）。顺带它在滑索之前，可以直接把使用键从这条命令里拿掉（§2.3 的"禁止挂滑索"）。
+
+**和设计不一样的地方**
+
+| # | 设计（§1 – §7） | 实现 | 原因 |
+|---|---|---|---|
+| 1 | 下砸的发射优先级 15 | 仲裁表的"其他"行：优先级 0、Effect 上限 10 s | 06 §6.7 的"其他（表里没有的）"行正好是"比所有现有发射低 + 10 s 保护"，不用另加一行；意思和 15 一样 |
+| 2 | 离地 = "从原点竖直往下找能站的面" | 离地 = 脚 − 电机的 `floorZ`（世界在每条命令前算的"碰撞体脚印下最高的可站面"） | 手册没有单独的"往下找地面"查询（02 章只写地面检测）；用现成的 `floorZ` 不加新查询。副作用：碰撞体还压着台边（半宽 16 u）时算在台上，要离开台边几 u 才能砸（写进 PLAYTEST"已知"） |
+| 3 | 落地时由下砸跳过硬着陆 | 下砸排第一个，`AfterMove` 也第一个跑：它先把落地转换成 520，硬着陆规则后跑。所以豁免标志要保持到**落地那条命令结束**（`landedThisCommand`），不能在转换时就清掉 | 第一次实现只在"下砸中"豁免，4 H 冲刺下砸落地 520 被硬着陆削成 0（关卡尺度程序第一次跑就看出来，已修） |
+| 4 | "取消"在下砸中每条命令检查 | 放在 `AfterMove`：别的发射要等 `AfterAbilities` 选完才知道（同一条命令下砸自己也是发射）；驱动者也是在它们自己的 `BeforeMove` 里开始的 | 每条命令的顺序（06 §6.7） |
+| 5 | 落地后的眼高"用滑铲的 0.2 s"（§2.6） | 空中按蹲照原样用 0.4 s 下蹲过渡，落地进滑铲以后才是 0.2 s | 1 H 下砸只有 0.06 s，空中那段几乎看不出来；不为它改眼高代码 |
+| 6 | FOV 收缩"做成默认关的偏离开关" | 做了：`slamFovPunch`（默认关），落地后 0.05 s 收到 × 0.94、0.30 s 回来，乘在 FOV 强度上 | 照设计；数是 [设计] |
+| 7 | 镜头"换掉这次落地的落地 kick" | 只在原生镜头里换；M5.5 镜头模型没碰（下砸落地在 M5.5 里是它自己的落地反馈） | 原生镜头是默认（D-18）；M5.5 只保留 |
+| 8 | 单位 | 只有 u；这条分支从 main 开，没有 #88 的单位开关 | #88 合并后，`GroundSlamParams` 和新镜头字段要补量纲标记（`UnitsTests.EveryNumericFieldIsMarked` 会提醒） |
+
+**和设计一致、实测对上的**：起砸后竖直速度 −1200 − ½·g·dt（发射写在移动前，只扣后半步重力，和 §3 的预言一样）；1 / 2 / 4 H 落地向下速度 1234.4 / 1278.1 / 1359.4 u/s（连续公式 1244.2 / 1286.9 / 1368.2，差的是 120 Hz 半步积分和起砸那条命令）；有助跑时落地 520；从 520 按住蹲滑 1.917 s、572.5 u（§2.5 的连续公式 1.91 s、约 573 u）。
