@@ -8,10 +8,12 @@
 |---|---|
 | [PROBLEMS.md](PROBLEMS.md) | 题目原文，以及标准答案用的精确读法（文字有歧义的地方）、关键数 |
 | `answers/<题号>.csv` | 标准答案：S1 – S5、L1_50 / 100 / 200 / 400、L2，每条命令一行 |
+| `answers/r0/`、`answers/msc115/` | 同一套题：俯仰随机项设 0（`JudgeHarness <out> r0`）；msc 1.15（`JudgeHarness <out> - 1.15`） |
 | `harness/` | 生成标准答案的 dotnet 工程：只读编译 HSD-Unity main（17260f2）的 `R5Replay/Runtime` 和 `Game/Runtime`，跑 `MovementConfigs.Reference()`（msc 1）+ 原生镜头 `NativeCameraFeedback` |
 | `ref_slide.py` / `ref_slide.md` | 用 04 章 §4.7 的伪代码（msc 1、带坡面项）逐命令重算每一段滑铲，和 Unity 答案对照 |
 | `compare.py` | 评分脚本（合格线见脚本开头） |
-| `REPORT.md` | 评分报告（重建方交卷后写） |
+| `REPORT.md` | 评分报告（重建方 62f0418） |
+| `compare_result.md` | `compare.py` 对 `out/` 的逐题输出 |
 
 ## 怎么重跑
 

@@ -51,10 +51,12 @@ static class Program
     static Sim NewSim(Func<PracticeMap, IMovementWorld> world, Vec3d start)
     {
         MovementConfig config = MovementConfigs.Reference();
-        config.motor.moveScale = 1.0;                       // the problem: msc = 1
+        config.motor.moveScale = msc;                       // the problem: msc = 1 (argument 3: another msc)
         var sim = new Sim();
         sim.s = new PracticeSession(null, new[] { config }, null, world);
-        sim.cam = new NativeCameraFeedback(CameraFeedbackSettings.Default(), null);
+        var cp = new NativeCameraParams();
+        if (zeroRandom) { cp.kickPitchRandom = 0; cp.jumpPitchRandom = 0; }   // variant r0: the pitch random terms off (r = 0 for the pitch)
+        sim.cam = new NativeCameraFeedback(CameraFeedbackSettings.Default(), cp);
         sim.cam.Attach(sim.s);
         sim.s.ResetToPose(start, 0, "rebuild-test");
         sim.cam.Reset();
@@ -109,7 +111,7 @@ static class Program
     }
 
     /// <summary>L1: still from height h, no keys; L2: standing jump on tick 30. Record until 180 commands after the landing.</summary>
-    static string Landing(string id, double h, bool jump)
+    static string Landing(string id, double h, bool jump, int jumpTick = 30)
     {
         Sim sim = NewSim(Flat, new Vec3d(0, 0, h));
         int stopAt = int.MaxValue, landTick = -1;
@@ -117,7 +119,7 @@ static class Program
         for (int guard = 0; guard < 120 * 10 && sim.tick < stopAt; guard++)
         {
             int k = sim.tick;
-            sim.Step(In(false, false, false, jump && k == 30));
+            sim.Step(In(false, false, false, jump && k == jumpTick));
             if (sim.landed && landTick < 0) { landTick = k; stopAt = k + 1 + 180; }
             double p = sim.cam.punchPitch.angle + sim.cam.punch2Pitch.angle;
             if (landTick >= 0 && Math.Abs(p) > Math.Abs(peak)) { peak = p; peakTick = k; }
@@ -127,10 +129,14 @@ static class Program
     }
 
     static string outDir;
+    static bool zeroRandom;
+    static double msc = 1.0;
 
     static void Main(string[] args)
     {
         outDir = args.Length > 0 ? args[0] : "out";
+        zeroRandom = args.Length > 1 && args[1] == "r0";
+        if (args.Length > 2) msc = double.Parse(args[2], Inv);   // JudgeHarness <out> [r0|-] [msc]
         Directory.CreateDirectory(outDir);
         var log = new List<string>
         {
