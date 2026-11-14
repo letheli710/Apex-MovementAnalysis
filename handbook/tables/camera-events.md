@@ -1,6 +1,6 @@
 # 镜头事件表
 
-由 hb-tables 写（2026-11-14）。**原件是同目录的 [`camera-events.tsv`](camera-events.tsv)**（76 行，16 列，UTF-8，制表符分隔），这一页是照着它手写的给人看的版本，只留了最常用的几列。两边对不上时以 TSV 为准；改数先改 TSV，再改这一页。
+由 hb-tables 写（2026-11-14）。**原件是同目录的 [`camera-events.tsv`](camera-events.tsv)**（76 行，17 列，UTF-8，制表符分隔；第 3 列"第 07 章事件名"是 [07 §0.5](../07-camera.md) 的英文事件名，用来和第 07 章互相查，hb-integrate 11-14 加），这一页是照着它手写的给人看的版本，只留了最常用的几列。两边对不上时以 TSV 为准；改数先改 TSV，再改这一页。
 
 ## 白话说明
 
@@ -181,7 +181,7 @@ M5.5 还有速度线（330 → 650 u/s），它是屏幕叠层，不属于六个
 
 两边都写，按"哪个更新、哪个是实测"标出现在用哪个。
 
-1. **横滚总上限**：`N2-C-CAMERA.md` §7 写"总上限 40°"；`CAM2-CAMERA.md` §5 和 `CAMERA-REFERENCE.md` §3.9 读了 `View_CalcRoll`，没有总上限，折回 ±180°。**用 CAM2**（D-53）。Unity 的 `maxRoll` 40 只在旧版开关（`rollWrap = false`）下起作用。
+1. **横滚总上限（待核）**：`N2-C-CAMERA.md` §7 写"总上限 40°"；`CAM2-CAMERA.md` §5 和 `CAMERA-REFERENCE.md` §3.9 读了 `View_CalcRoll`，没有总上限，折回 ±180°。表里暂按 CAM2 写（D-53），N2-C 的说法保留；**两边都留，标"待核"**，见 [99 B07-12](../99-TODO-RESEARCH.md)（hb-integrate 11-14，按总控决定）。Unity 的 `maxRoll` 40 只在旧版开关（`rollWrap = false`）下起作用。
 2. **二段跳 punch 的峰值**：同一个冲量 (4.5 + r)·20 °/s，DESIGN-PHILOSOPHY §6.2 写 6.2–7.7°（两组合计，按 0.0771 算是对的）；CAM2 §2.1 / §7 和 D-68 写"约 3.9–6.2°"；R5-DIFF FND 写"合计约 5.6–7.7°"；Unity 代码注释写"4.6–6.6°"。按弹簧公式两组合计是 6.17–7.71°，只算第一组是 5.14–6.42°。**表里用 6.2–7.7°**。
 3. **滑铲眼高到底的时间**：C3 实测 R5 64 → 32 用 0.208–0.213 s；R5-DIFF 二「滑铲下沉」写 R5 约 0.167 s、Unity 约 0.19 s。两者是不是同一个口径（眼高到底 / 到 32 ± 某个容差）没写清。
 4. **移动 punch 进不进子弹**：C3 写"punch 只动镜头，不动准星"（瞄准角不变，这一点仍然对）；主线 DESIGN-PHILOSOPHY T2 写"未测，推断不进"；`fps-camera-design` 规则 2 的子弹公式也没有 punch1。PR #122 的 F-GAPS §1 实测：**进**，子弹 = 瞄准 + punch1 + punch2。**用 PR #122**。
@@ -189,6 +189,35 @@ M5.5 还有速度线（330 → 650 u/s），它是屏幕叠层，不属于六个
 6. **rodeo 钩爪横滚**：N10 §7 和 00-INVENTORY B07-3 写"实测 13.9°、公式 18.5°，没查"；R5-DIFF C-12（D-42）改成共用 SmoothCD 后 Unity 是 13.7–13.9°。按 C-12 已经对上，B07-3 可以划掉（建议写进 `_notes`）。
 7. **CAMERA-REFERENCE 里过时的数**：§3.1 站立眼高 64（K-4 改成 70）；§3.8 跑步晃动幅度 0.335、淡入每秒 4（K-3 改成 0.25、每秒 20）；§1 写的"滑索横滚以 6.667 /s 平滑"是 C-12 以后才对，C-12 以前 Unity 滑索是 3.0 /s。
 8. **武器后坐动不动镜头**：主线 DECISIONS D-86 写"后坐只作用在子弹上，不动镜头"；PR #100 上的 D-88 取代了它（画面跟着 punch 走）。PR #100 还没合并，所以主线现在仍写着 D-86。
+
+## 和第 07 章事件名的对照
+
+`camera-events.tsv` 第 3 列"第 07 章事件名"就是这张对照（hb-integrate 11-14 按 `_notes/hb-tables.md` 加）。在第 07 章看到一个事件名，用它在 TSV 里筛；在表里看到一个 CE 编号，用它回到 07 的对应一节。
+
+| 第 07 章事件名 | CE 编号 |
+|---|---|
+| `jump` | CE-01 – CE-03 |
+| `double_jump` | CE-04 – CE-06 |
+| `land` | CE-07 – CE-11（CE-10 是 `land` + `jump`） |
+| `wall_kick`、`wallrun_start` / `wallrun_timeout` | CE-13（合在一行） |
+| `slide_start` | CE-14（滑铲眼高 CE-17 也由它开始） |
+| `slide_tilt` / `slide_fov` | CE-15 / CE-16 |
+| `eye_height` | CE-17（滑）、CE-18（站 / 蹲） |
+| `sprint_eye` / `sprint_tilt` | CE-19 / CE-20 |
+| `step_bob` | CE-21、CE-22 |
+| `wallrun_tilt` | CE-24、CE-25 |
+| `rope_roll` | CE-27、CE-28、CE-34、CE-67 |
+| `zip_eye_offset` | CE-29、CE-30 |
+| `zip_detach` | CE-31 – CE-33 |
+| `mantle` | CE-36 – CE-39 |
+| `view_drift` / `ads_drift` | CE-40、CE-41 / CE-42 |
+| `explosion` | CE-45（屏幕震动） |
+| `fire` | CE-47 – CE-54 |
+| `ads_fov` | CE-58 |
+| `hit` | CE-59 |
+| `melee`、`ability`、`titan_embark` / `titan_eject`、`weapon_sway` | 表里没有（CE-43 是 cockpit sway，不是 `weapon_sway`） |
+
+表里有、第 07 章没有单独名字的：CE-12 跳板起跳、CE-23 侧移横滚、CE-26 闪避倾斜、CE-35 滑索 bank tilt、CE-43 / 44 cockpit、CE-46 上升气流震动、CE-55 – 57 拉栓 / 泵动动画镜头、CE-60 – 71 组合规则（07 §4）、CE-72 – 76 M5.5。
 
 ## 本章出处缩写和出处
 

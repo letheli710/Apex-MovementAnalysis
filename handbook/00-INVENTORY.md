@@ -70,7 +70,7 @@ git -C HSD-Unity show origin/<分支>:<路径>
 | `workspace/TODO.md`、`RESEARCH-OVERVIEW.md` | main 停在 10-30；#84 到 10-31；工作区根目录的本地版更新（11-07） | 进度，**只作背景，过时处多** |
 | `L:TECH-REPORT-1104/` | 本地 | 11-04 技术报告（方法论、复核问题、各专题），给人读的整理 |
 
-**命名陷阱**：`U:…/ReferenceMotor.cs` 是 M1 的第一版模型；"Reference 配置"其实是 `MovementConfigs.Reference()`，跑的是 `R5MotorV2` + `R5MotorV2Params.R5Reference()`。手册写"参考实现"时指后者。
+**命名陷阱**：`U:…/ReferenceMotor.cs` 是 M1 的第一版模型；"Reference 配置"其实是 `MovementConfigs.Reference()`，跑的是 `R5MotorV2` + `R5MotorV2Params.R5Reference()` + N7 原生开关。手册写"参考实现"时指 `MovementConfigs.Reference()` 整套；`R5Reference()` 单独用是回放电机（D-66 的尺子）。（hb-integrate 11-14 按总控决定统一，见 README 写法规范第 4 条。）
 
 ---
 

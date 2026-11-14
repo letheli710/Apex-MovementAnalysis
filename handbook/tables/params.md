@@ -26,7 +26,7 @@
 | [m] | R5 原值 × 0.0254^k；角度、时间、比例写"—" |
 | 身高比例 | R5 原值 ÷ 72^k，单位 H、H/s、H/s² |
 | TF2 值 [u] | 有 TF2 对照的才写 |
-| Unity 现在的值 [u] | 导出快照的值（HSD-Unity `units/switch` 5c79a50，PR #88，还没合并；数值和 main 一样） |
+| Unity 现在的值 [u] | 导出快照的值（HSD-Unity `units/switch` 84e7a4a（11-14 由 5c79a50 换新，表里的值没变），PR #88，还没合并；数值和 main 一样） |
 | 回放电机 [u] | 同名参数在回放电机里的值（只对 `motor.*`） |
 | 和 R5 一致吗 | 一致 / 不一致 / 近似 / Unity 没有 / 没测过 / 只有 HSD / 不在 main |
 | 差别 | 不一致或有过改动的写 D-xx、R5-DIFF 条目 |
@@ -273,7 +273,7 @@
 | C-06 | `camera.native.slideFovScale` | 滑铲 FOV 倍率 | 1.1 | — | — | — | 1.1 | 一致 |
 | C-07 | `camera.native.slideTiltSide` | 滑铲侧倾 slide_viewTiltSide | 15 deg | — | — | — | 15 | 一致 |
 | C-08 | `camera.native.sprintTiltMaxRoll` | 冲刺转向横滚上限 sprinttiltMaxRoll | 2 deg | — | — | — | 2 | 一致 |
-| C-09 | `camera.native.maxRoll` | 横滚总上限 | 40 deg | — | — | — | 40 | 一致 |
+| C-09 | `camera.native.maxRoll` | 横滚总上限（**待核**：N2-C §7 说 40°，CAM2 §5 / CR §3.9 说没有总上限；见 99 B07-12） | 40 deg | — | — | — | 40 | 一致 |
 | C-10 | `camera.native.grappleRollMax` | 钩爪横滚上限 | 20 deg | — | — | — | 20 | 一致 |
 | C-11 | `camera.native.zipRollMax` | 滑索横滚上限 | 25 deg | — | — | — | 25 | 一致 |
 | C-12 | `camera.native.traversalLerpIn` | 翻越镜头淡入 traversal_viewLerpInDuration | 0.15 s | — | — | — | 0.15 | 一致 |
@@ -308,4 +308,4 @@
 - `R5-DIFF-ARCHIVE.md`：和 R5 不一样的地方的存档。main
 - `tf2/static-values/T1-REPORT.md`：TF2 对照值。main
 - `research/DESIGN-PHILOSOPHY.md` §9、P5–P7：开镜和后坐。main；细节在 `research/combat/RECOIL-VIEW.md`、`ADS-CURVES.md`（PR #93，还没合并）
-- Unity 值：`unity-export/units-params.tsv`（HSD-Unity `units/switch` 5c79a50 的 `Docs/units/` 快照，PR #88，还没合并）
+- Unity 值：`unity-export/units-params.tsv`（HSD-Unity `units/switch` 84e7a4a（11-14 由 5c79a50 换新，表里的值没变） 的 `Docs/units/` 快照，PR #88，还没合并）

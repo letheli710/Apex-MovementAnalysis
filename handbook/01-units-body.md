@@ -130,7 +130,7 @@ Unity 参考实现：`HSD-Unity: Assets/HSD/R5Replay/Runtime/SourceSpace.cs`（`
 | 下蹲眼高过渡（站 ↔ 蹲） | — | 0.4 s；滑铲时 0.2 s | — | [反编译] `Duck` 计时器；[实测] C3 滑铲下沉 0.208–0.213 s；形状按 smoothstep 拟合，±1 u [推断] |
 | 冲刺下沉的时间 | — | 冲刺开始 0.16 s 后以 1.25 /s 下沉；停止 0.11 s 后以 6.67 /s 回来 | — | [实测] N6 / N10 镜头录像，3 次以内差 0.01 s |
 | 台阶高度 `stepHeight`（R5） | 0.559 m | 22 u | 0.306 H | [数据] setfile census |
-| 台阶高度（HSD 现在用的） | 0.457 m | 18 u | 0.250 H | `MovementWorld.stepUp` 18，等于 **TF2** 的 `stepheight` 18，**不是 R5 的 22**；R5-DIFF 里没有这一条。交给 hb-ch02 核对（99-TODO） |
+| 台阶高度（HSD 现在用的） | 0.457 m | 18 u | 0.250 H | `MovementWorld.stepUp` 18，等于 **TF2** 的 `stepheight` 18，**不是 R5 的 22**。详见 [02 §2.7](02-foundation.md)；11-14 补进 R5-DIFF HB-1，D-194 等用户定 |
 | 翻越最大高度 `mantleHeight` | 2.032 m | 80 u | 1.111 H | [数据] setfile，N4-A 读回 |
 | 起跳高度 `jumpHeight` / 滑铲跳 `slideJumpHeight` | 1.422 m / 1.270 m | 56 u / 50 u | 0.778 / 0.694 H | [数据] [实测]，见 README 示范条目 |
 | 可站立的最陡坡（地面法线 z ≥） | — | 0.7（约 45.6°） | — | [数据] SDK `slope_launch_math.h`；`MovementWorld` 同 |

@@ -487,6 +487,14 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 - 灰盒 4756 面。19 个姿势真实网格没有碰撞；一个关节单独转到限位时手臂会撞身体，这项没过，你看过后通过。Unity 导入：HSD-Unity#64，EditMode 2295 / 2295（基线 2260 / 2260，建模会话报告）；PlayMode 和打包没跑。
 - 模型文件、解包模型和截图不进本仓库。三次实测的运行数据、解包模型和截图进了私有仓库（HSD-RawData#6，还没合并）。
 
+### 2026-11-14：技术手册 v1 第一轮整合 + 单位开关（D-193 – D-210，等你定）
+
+- 会话 hb-integrate。把 `handbook/ch02`（a5b1362）、`ch03`（4ab0007）、`ch04`（32790bc）、`ch07`（10ae546）、`tables`（0d04dcf）依次 merge 进 `handbook/base`（不 squash）。手册入口 [handbook/README.md](handbook/README.md)；05、06、08、09、10、11、附录 A 还在写。
+- 总控 11-14 的决定（照做，等你确认）：参考实现指 `MovementConfigs.Reference()`；攀爬留第 04 章；硬着陆降速留第 03 章（第 06 章写指针）；泰坦镜头其余部分归第 08 章；横滚总上限两种说法都留、标"待核"（`handbook/99-TODO-RESEARCH.md` B07-12）。
+- 各章盘点出 11 处和 R5 不一样的地方（台阶 18 / 22、冲刺加速 100 / 102、两条没做的滑铲 ConVar、落地条件、空中迈台面、碰撞顺序、蹲姿碰撞体、镜头第二组弹簧、子弹缺 punch1 / drift、鼠标抵消），写进 [R5-DIFF-ARCHIVE.md](R5-DIFF-ARCHIVE.md) 二节 HB-1 – HB-10（含 HB-4b），标"2026-11-14 手册盘点发现，待用户定"。
+- 各章建议的决定统一编成 D-193 – D-205；hb-units 在 HSD-Unity #88 描述里建议的单位开关决定编成 D-206 – D-210。编号前查过：main 最大 D-93，开着的研究 PR 最大 D-192（#120 `titan/kits-design-medium`），本机各工作树也没有更大的。全部**等你定**；早上要定的事、选项、推荐和数据在 [handbook/_notes/MORNING-CHECKLIST.md](handbook/_notes/MORNING-CHECKLIST.md)。
+- 没改任何代码；Unity 侧的数都来自 HSD-Unity `units/switch`（draft PR #88，5c79a50）的单位导出。
+
 ---
 
 ## 决定总表
@@ -572,6 +580,24 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 | D-91 | 11-02 | 基础泰坦的结构 | 按实测反推重做（v2）。**TF2 中型**：髋 2.80、膝 1.40、肩 4.2–4.8、顶 5.92、蹲时骨盆 1.82。**v2**：2.85、1.45、4.55、5.88、1.77。方块模型验算：TF2 动画 784 帧 772 帧无碰撞（1.5 % 有）。没选：继续用 713 中模补挂点（**旧模型**：3.60、2.10、5.30、6.25、2.37；腰弯 20° 髋碰躯干底，第一人称炮只露屏幕最右边） | 旧模型改名留在本机 `TF2-Research/expansion/titan/model/_old-713-base-medium/`，没删 | `tf2/expansion/titan/model/v2-design/DESIGN.md` |
 | D-92 | 11-02 | 泰坦腰部转动 | 腰 ±90 为主，骨盆 ±30 只给动作用。TF2 移动时腰扭 −86…88，来自横移时骨盆转向移动方向。旧中模实测腰 85° 只有 1 对零件接触。没选：骨盆 ±30 + 腰 ±55 分担（2 对接触，还要反向补偿腿）；保持 ±35（横移和侧向瞄准的第三人称姿势做不出） | `tf2/expansion/titan/model/v2-design/design.py` 的 `LIMITS` | `tf2/expansion/titan/pose/TITAN-POSE-CAMERA.md` 第 6 节 |
 | D-93 | 11-03 | 泰坦模型怎么进 Unity | 单独 PR，基于 `main`，只加资源和测试，游戏还不用它；1 Unity 单位 = 1 m，FBX 不缩放。没选：叠在战斗 PR #58–#63 上（导入不依赖它们，到 T2 开枪时再接） | `HSD-Unity/Assets/HSD/Titan/` | HSD-Unity#64 |
+| D-193 | 11-14 | 手册的单位规范 | **等你定**（推荐选中）：1 u = 0.0254 m 固定；参考身高 H = 72 u（站立碰撞体）；每个数写 `[m]` / `R5 原值 [u]` / 身高比例三列。没选：A 按眼高反推"更像真人"的系数约 0.0234（跳跃、冲刺一起变，和所有录像对不上）；B 用眼高 70 u 做 H（随姿态变，不适合做关卡基准） | 手册 `handbook/01-units-body.md` §3、§4.1；Unity `SourceSpace.DefaultMetersPerUnit` | hb0 `_notes/hb0.md` |
+| D-194 | 11-14 | 台阶高度 18 / 22 | **等你定**。A 保持 18（TF2 / Source 值，现有关卡和测试都按 18；没有 R5 数据支持）；B 改成 R5 的 22、18 留开关（R5 setfile `stepHeight` 22，没实测；同一个值管挡路、支撑、坡上贴地）；C 先测再定（99 B02-1 台阶梯 18 / 20 / 22 / 24 u）。推荐 C → B；改之前要查关卡里 18–22 u 的台阶 / 箱子（会从"墙"变成"台阶"）。关卡尺度表 LS-12 实跑 18 u | `MovementWorld.stepUp`（导出名 `world.default.stepUp`） | R5-DIFF HB-1；手册 02 §2.7；tables B-04 |
+| D-195 | 11-14 | 命令频率（补记，M5 起就是这样） | **等你确认**（推荐选中）：A 固定 120 Hz，身体只按整条 1/120 s 命令走，画面插值，一帧最多 12 条；30 / 60 / 75 / 144 / 240 fps（±20 % 抖动）逐位相同（`SameCommandsAtAnyFrameRateGiveTheSameState`）。没选：B 跟画面帧（R5 的做法，dt = 帧时长；冲到上限的时间随 dt 差 13 %，测试不能逐位重放）；C 固定 60 Hz（连招漂移约 35 u/s，M5） | `PracticeSession.CommandRate`（常量） | 手册 02 §2.1；R5-DIFF 三节 |
+| D-196 | 11-14 | 手册里的"Unity 参考实现"指什么 | **总控 11-14 定，等你确认**：指 `MovementConfigs.Reference()`（`R5MotorV2` + `R5Reference()` + N7 原生开关，含 RPS、R6U、D-75）；`R5Reference()` 单独用是回放电机，只当尺子（D-66）。04 章 Fun 的 HSD 斜坡滑铲、横向 superglide 只作 [设计] 注明，不写进规则段。没选：以回放电机为准（缺 6 条原生规则：超速连跳 −100、空中额外加速、固定冲刺边界、起跳推墙 +30、lurch 0.7 × 冲刺上限、1100 截断） | 手册 README"写法规范"、03 §3.0 | hb-ch03 / hb-ch04 `_notes` |
+| D-197 | 11-14 | 硬着陆降速的两种写法 | **等你定**（推荐选中）：手册暂以 Unity 实测拟合为准（M4 Octane 15 次，f0 = clamp(1.9965 − 1.6714e-6·vz²)，rms 1e-4，折成自由落体高度 397 → 796 u）；原生读法（`landSlowdownHeightMin/Max` 300 → 800 u）留档，等 99 B03-3（已升为"中"）实测再定。没选：以原生读法为准（没有实测，起点差约 100 u） | `LandingSlowdownParams` | 手册 03 §3.9；99 B03-3 |
+| D-198 | 11-14 | 起跳速度公式里的重力 | **等你定**。R5 / TF2 原生 V = √(2·`sv_gravity`·H)，不乘 `gravityScale`；Unity `JumpSpeed` 用 `svGravity × gravityScale`。现在 `gravityScale` = 1，没有区别。推荐：不改代码，定一条规矩"以后改 `gravityScale`（泰坦、Fun）之前先按原生改"。没选：现在就改（没有可见效果，要重跑基线）；不管（以后跳跃高度会随 `gravityScale` 变） | `R5MotorV2.JumpSpeed` | 手册 03 §3.8；hb-ch03 `_notes` §5 |
+| D-199 | 11-14 | 重建检验的滑铲标准答案 | **等你定**（推荐选中）：`handbook/04-slide-mantle/slide_ref.py`（照手册 §4.7 伪代码写、只用标准库；peak 460、退还 247.71 对 R5 247.77、抬到 350、松蹲 19 / 11 条命令后结束、M10 滑铲跳表都对上）；为免"泄题"，重建会话不先看，只在评分时由 hb-judge 用。没选：只用 Unity 回放基线（重建检验不应依赖 Unity 代码） | — | hb-ch04 `_notes` §1、§5 |
+| D-200 | 11-14 | NS S-05"按住蹲结束速度 112 对 125"关闭 | **等你定**（推荐选中）：不是矛盾。112 = 滑铲结束后第一条蹲走命令（124.75 − 1500/120 = 112.25）；S-05 改"一致"。[推断，没重跑数据，但数对得上]。没选：再开 R5 测一次 | 不改代码 | 手册 04 §4.3；hb-ch04 `_notes` §3 |
+| D-201 | 11-14 | 镜头第二组弹簧、子弹的 punch1 / 开镜 drift、鼠标抵消 | **等你定**。R5：移动事件 × 0.2 和武器 kick 进**同一个**第二组弹簧（拿枪时用武器弹簧），子弹 = 瞄准 + punch1 + punch2 + 开镜 drift，鼠标会抵消 punch。Unity：第二组永远 65 / 9、不乘 (1 − fraction)，武器 punch 是另一个 `ViewKick`；子弹 = 瞄准 + 武器 punch；没有鼠标抵消。影响：拿枪时移动事件第二组峰值 R5 小（R-301 腰射 0.13 倍对 0.20 倍），总峰值差约 6 %；落地 0.1 s 后开枪 R5 子弹低 16–17°，Unity 不低。A 按 R5 合并、旧版留开关；B 保持两个弹簧，只给子弹加 punch1 / drift；C 不改，只记 R5-DIFF。推荐 A，等 HSD-Unity #67 合并后再做 | `NativeCameraParams`（`punch2*`）、`ViewKick`（HSD-Unity #67，还没合并） | R5-DIFF HB-6 – HB-8；手册 07 §2.10；F-GAPS §1、§1.3、§5（PR #122，还没合并） |
+| D-202 | 11-14 | 冲刺加速 100 / 102 | **等你定**。R5 setfile 100，只有 Wraith 102；Unity 所有装备都用 102（M2 那次会话的传奇）。差 2 %，从走路速度到冲刺上限多约 0.02 s。A 游戏身体 Reference 改 100、102 留开关，回放电机保持 102（M2 录像就是那个传奇，D-66 的尺子不动）；B 保留 102，写进 R5-DIFF 三节。推荐 A | `preset.Reference.motor.sprintAcceleration`（`R5MotorV2Params.sprintAcceleration`） | R5-DIFF HB-9；tables G-07 |
+| D-203 | 11-14 | 滑铲上台阶减速 `slide_step_velocity_reduction` | **等你定**。R5 ConVar 10（上台阶减 10 × 台阶高度 u/s），原生代码是否读它没查；Unity 没有这条规则。A 实现（按 R5，旧版留开关）；B 只记 R5-DIFF 不做。推荐：先在 B02-1 台阶测试里一起测滑铲上台阶减多少，确认生效再做 A | 现在没有字段 | R5-DIFF HB-5；tables S-17；手册 02 §2.7 |
+| D-204 | 11-14 | 冲刺起滑的角度限制 `slide_max_angle_dot` | **等你定**。R5 ConVar 0.6：视角前向和速度方向点积要 ≥ 0.6，偏离约 53° 以上不能起滑；Unity 不检查。A 实现（按 R5，旧版留开关）；B 只记 R5-DIFF 不做。推荐：先读原生起滑条件（99 B04-4，Ghidra，只读），确认后做 A | 现在没有字段 | R5-DIFF HB-10；tables S-18；手册 04 §4.1 |
+| D-205 | 11-14 | 手册章节分界 | **总控 11-14 定，等你确认**：攀爬留第 04 章（"够不着先爬再翻"是翻越高度范围的一部分），05 章写蹬墙跳、挂墙；硬着陆降速留第 03 章，06 章动量总表只写指针；泰坦镜头除受击、上下机外归第 08 章。没选：攀爬放 05；硬着陆放 06 | — | 工作区 `HANDBOOK-PLAN.md`（不在 git）；hb-ch03 / hb-ch04 / hb-ch07 `_notes` |
+| D-206 | 11-14 | 单位开关 | **等你定**（推荐选中）：`UnitMode` 全局一个，`ResearchU` [u] 默认 = 研究状态，`Meters` [m] 只是保留设计；已建好的身体保持建时的单位。一键回研究状态：`-researchU`、Esc 菜单、编辑器 `HSD ▸ Units ▸ Back to research (u)`。没选：每个身体 / 会话各自一个模式（同一局混用两种单位正是要避免的数据串） | `UnitMode`（`Units`） | HSD-Unity [#88](https://github.com/letheli710/HSD-Unity/pull/88)（draft，还没合并）`Assets/HSD/UNITS-SWITCH.md` |
+| D-207 | 11-14 | 米模式怎么算 | **等你定**（推荐选中）：加载时把身体 / 世界 / 镜头对象图换算一次（`UnitConvert`），作者数据永远是 u；步进代码里写死的长度 × `Units.L`。[u] 下 869 个回放 / 手感 / 镜头输出逐字节不变。没选：只换显示（你明确不要）；每个参数类带比例字段、读参数时乘（几千处改动，容易漏） | `UnitConvert`、`Units.L` | HSD-Unity [#88](https://github.com/letheli710/HSD-Unity/pull/88)（draft，还没合并）`Assets/HSD/UNITS-SWITCH.md` §3 |
+| D-208 | 11-14 | 量纲标记放哪 | **等你定**（推荐选中）：一张总表 `UnitRegistry.Table.cs` + 完整性测试；1946 个字段，人工审 421 个（11-14 又改正 M5.5 镜头 52 处）。没选：字段上的 attribute（和 31 个开着的 Unity PR 大面积冲突；PR 合完后可以搬）；运行时按名字猜（试过约 15 % 猜错） | `UnitRegistry.Table.cs` | HSD-Unity [#88](https://github.com/letheli710/HSD-Unity/pull/88)（draft，还没合并）`Assets/HSD/UNITS-SWITCH.md`；`Assets/HSD/UNITS-INVENTORY.md` |
+| D-209 | 11-14 | R5 对照入口在米模式下 | **等你定**（推荐选中）：库函数在 [m] 下报错；批处理自动切回 [u] 并记日志（测试 `ReplayAndShortRangeEvalRefuseMeters`、`BatchEntryPointsSwitchBackToResearch`）。没选：一律报错（批处理多一步）；一律悄悄切回（掩盖误用） | 回放 / 短程评估入口 | HSD-Unity [#88](https://github.com/letheli710/HSD-Unity/pull/88)（draft，还没合并）`Assets/HSD/UNITS-SWITCH.md` |
+| D-210 | 11-14 | 单位开关的等价验收 | **等你定**（推荐选中）：同一输入两种模式，位置差 < 0.1 mm、镜头角度差 < 1e-6°、事件相同；10 段输入（跑、跳、滑铲、翻越、攀爬、滑索、钩爪）10 / 10 通过，位置差最大 2.2e-12 m、角度差最大 2.2e-12°；119 个演示 118 个等价（`wall_bounce` 差 4.6 mm，浮点舍入，不是单位错） | — | HSD-Unity [#88](https://github.com/letheli710/HSD-Unity/pull/88)（draft，还没合并）`Assets/HSD/UNITS-SWITCH.md` |
 
 **D-29 → D-31（C-2 为什么推翻）**：第一次决定时以为 Unity 的 102.5 ms 窗口已经盖住了 R5 的减量段，所以"简化 = 不改代码"。后来按 Unity 自己的翻越时钟重排（Unity 的翻越比 R5 长约 25 ms），发现减量段其实在窗口外面，原来的 Reference 在这段是"切到台面"，并不是"给完整 460"。你随后要求继续做 C-2 并合并。细节见 `research/feel/FEEL.md` §6.4 和 `Climb/README.md`。
 
@@ -620,6 +646,7 @@ High Speed Doom × Apex 移动机制项目的总日志，写给人读的。这�
 - **牛仔骑乘**：拆电池不要（D-90），骑乘本身你没明说。
 - **v2 的概念图和三视图**：还没按新比例重出。现在只有结构图和灰盒。
 - ~~**泰坦实测原始数据**~~：11-03 存进 HSD-RawData#6（245 个文件，430.9 MiB）。
+- **技术手册 v1 + 单位开关（11-14）**：D-193 – D-210 都等你定（台阶 18 / 22、冲刺加速 100 / 102、两条滑铲 ConVar、镜头第二组弹簧等）；每条的选项、推荐、数据和在哪看见 [handbook/_notes/MORNING-CHECKLIST.md](handbook/_notes/MORNING-CHECKLIST.md)。
 
 ---
 

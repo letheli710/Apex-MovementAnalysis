@@ -1,6 +1,6 @@
 # HSD 动作与技术手册
 
-版本：阶段 0 骨架（hb0，2026-11-14）。分支 `handbook/base`，还没合并进 `main`。
+版本：v1 整合中（hb-integrate 第一轮，2026-11-14；阶段 0 骨架 hb0）。分支 `handbook/base`，还没合并进 `main`（draft PR，见 `_notes/MORNING-CHECKLIST.md`）。
 
 ## 这份手册是什么
 
@@ -21,7 +21,7 @@ High Speed Doom（HSD）的移动、镜头、动画、战斗手感，过去三�
 
 - **第一次读**：先读本页的"写法规范"和"示范条目"，再读 [01 单位与身体](01-units-body.md)。所有数都从这里的单位规定出发。
 - **做一个功能**：在目录里找到章，读该项的"原理"和"规则和公式"，照"实现模板"做，最后用"验收"一段的测试和合格线检查。
-- **查一个数**：去 `tables/`（参数对照表，由 hb-tables 写）。表里每个数都能链回到某一章的某一项。
+- **查一个数**：去 [tables/](tables/README.md)（参数对照表、镜头事件表、关卡尺度表，由 hb-tables 写）。表里每个数都能链回到某一章的某一项。
 - **想知道资料在哪、还缺什么**：读 [00-INVENTORY.md](00-INVENTORY.md)。还没研究过的东西在 [99-TODO-RESEARCH.md](99-TODO-RESEARCH.md)。
 
 ## 目录
@@ -31,21 +31,21 @@ High Speed Doom（HSD）的移动、镜头、动画、战斗手感，过去三�
 | [README.md](README.md) | 本页：这是什么、怎么读、目录、写法规范、示范条目 | hb0 | 完成 |
 | [00-INVENTORY.md](00-INVENTORY.md) | 逐章盘点：资料在哪、已有什么、缺什么、缺的要不要新测 | hb0 | 完成 |
 | [01-units-body.md](01-units-body.md) | 单位与身体：哪些量换算、R5 角色尺寸、换算系数、u 模式和米模式 | hb0 | 完成 |
-| [02-foundation.md](02-foundation.md) | 底层：时间步长、每帧顺序、碰撞体、地面检测、台阶、斜坡 | hb-ch02 | 占位 |
-| [03-ground-air-jump.md](03-ground-air-jump.md) | 地面、空中、跳跃、时间窗口、lurch / tap strafe | hb-ch03 | 占位 |
-| [04-slide-mantle.md](04-slide-mantle.md) | 滑铲、斜坡滑铲、翻越、蹲着翻越、superglide | hb-ch04 | 占位 |
-| [05-wall-external.md](05-wall-external.md) | 跑墙、挂墙、二段跳、蹬墙跳；滑索、钩爪、跳板、击退 / 火箭跳、传送门 | hb-ch05 | 占位 |
-| [06-momentum-arbitration-input.md](06-momentum-arbitration-input.md) | 动量规则、动作仲裁、输入（等 03–05 写完） | hb-ch06 | 占位 |
-| [07-camera.md](07-camera.md) | 镜头：事件型、持续型、组合规则、力度规律 | hb-ch07 | 占位 |
-| [08-body-animation.md](08-body-animation.md) | 持枪和移动叠加、泰坦步态 / 脚 / 地形 / 惯性 | hb-ch08 | 占位 |
-| [09-combat-feel.md](09-combat-feel.md) | 后坐、开镜、枪的重量、扩散、命中反馈 | hb-ch08 | 占位 |
-| [10-abilities-ai.md](10-abilities-ai.md) | 技能设计结构、敌人 AI | hb-ch10 | 占位 |
-| [11-acceptance.md](11-acceptance.md) | 手感怎么验收：指标、回放对比、自动测试、合格线 | hb-ch10 | 占位 |
-| [A-research-methods.md](A-research-methods.md) | 附录 A：反编译、Frida 实测、回放对比怎么做 | hb-ch10 | 占位 |
-| [99-TODO-RESEARCH.md](99-TODO-RESEARCH.md) | 待研究清单（这一轮不做） | hb0 建，各章追加 | 完成初版 |
-| `tables/` | 参数对照表、镜头事件表、关卡尺度表（TSV + 给人看的 md） | hb-tables | 空 |
+| [02-foundation.md](02-foundation.md) | 底层：时间步长、每帧顺序、碰撞体、地面检测、台阶、斜坡 | hb-ch02 | 完成（11-14 合入） |
+| [03-ground-air-jump.md](03-ground-air-jump.md) | 地面、空中、跳跃、落地（含硬着陆降速）、时间窗口、lurch / tap strafe | hb-ch03 | 完成（11-14 合入） |
+| [04-slide-mantle.md](04-slide-mantle.md) | 滑铲、斜坡滑铲、翻越、攀爬、蹲着翻越、superglide；附件 [04-slide-mantle/](04-slide-mantle/)（`slide_ref.py`） | hb-ch04 | 完成（11-14 合入） |
+| [05-wall-external.md](05-wall-external.md) | 跑墙、挂墙、二段跳、蹬墙跳；滑索、钩爪、跳板、击退 / 火箭跳、传送门（攀爬在 04） | hb-ch05 | 在写 |
+| [06-momentum-arbitration-input.md](06-momentum-arbitration-input.md) | 动量规则、动作仲裁、输入（等 03–05 写完；硬着陆降速在 03，这里只写指针） | hb-ch06 | 没开始 |
+| [07-camera.md](07-camera.md) | 镜头：事件型、持续型、组合规则、力度规律；附件 [07-camera/](07-camera/README.md) | hb-ch07 | 完成（11-14 合入） |
+| [08-body-animation.md](08-body-animation.md) | 持枪和移动叠加、泰坦步态 / 脚 / 地形 / 惯性、泰坦镜头（受击、上下机在 07） | hb-ch08 | 在写 |
+| [09-combat-feel.md](09-combat-feel.md) | 后坐、开镜、枪的重量、扩散、命中反馈 | hb-ch09 | 在写 |
+| [10-abilities-ai.md](10-abilities-ai.md) | 技能设计结构、敌人 AI | hb-ch10 | 在写 |
+| [11-acceptance.md](11-acceptance.md) | 手感怎么验收：指标、回放对比、自动测试、合格线 | hb-ch10 | 在写 |
+| [A-research-methods.md](A-research-methods.md) | 附录 A：反编译、Frida 实测、回放对比怎么做 | hb-ch10 | 在写 |
+| [99-TODO-RESEARCH.md](99-TODO-RESEARCH.md) | 待研究清单（这一轮不做） | hb0 建，hb-integrate 合并各章备注 | 已并 02 / 03 / 04 / 07 / tables |
+| [tables/](tables/README.md) | 参数对照表、镜头事件表、关卡尺度表（TSV + 给人看的 md）、`check_params.py` | hb-tables | 完成（11-14 合入） |
 | `rebuild-test/` | 阶段 4 重建检验 | hb-judge / hb-rebuild | 空 |
-| `_notes/<会话名>.md` | 各会话给总控的备注：想改 README / 表 / 别章的地方、建议的 D-xx 行 | 各会话 | — |
+| `_notes/<会话名>.md` | 各会话给总控的备注：想改 README / 表 / 别章的地方、建议的 D-xx 行；[早上要定的事](_notes/MORNING-CHECKLIST.md)、[研究仓库 PR 合并清单](_notes/hb0-pr-merge-list.md) | 各会话 | — |
 
 总控计划和会话分工在工作区根目录 `HANDBOOK-PLAN.md`（不在这个仓库）。
 
@@ -99,6 +99,7 @@ High Speed Doom（HSD）的移动、镜头、动画、战斗手感，过去三�
 - **正文里的数**都带单位：`56 u`、`1.42 m`、`289.8 u/s`。不写裸数。
 - **伪代码和变量名**：变量名后缀标单位体系，例如 `jumpHeight_u`、`gravity_m`。只在一个体系里的伪代码可以在代码块第一行注明 `// 单位：u`，块内不再逐个标。
 - **Unity 参考实现**目前全是 u（模拟用 Source 单位，显示时才乘 0.0254，见 [01 §5](01-units-body.md)）。引用 Unity 字段时照写字段名，并注明 `[u]`。
+- **"参考实现"指什么**（全手册统一，D-196）：手册里的"Unity 参考实现"指游戏身体 `MovementConfigs.Reference()`（`R5MotorV2` + `R5MotorV2Params.R5Reference()` + N7 原生开关）。`R5Reference()` 单独用是**回放电机**，是 D-66 的尺子，缺几条原生规则（超速连跳 −100、空中额外加速、固定冲刺边界、起跳推墙、lurch 上限等），不能当参考实现引用。`ReferenceMotor.cs` 是 M1 的第一版模型，也不是。
 - 如果某一段**只在米模式下成立**（例如关卡按米设计的尺度），整段开头标 `[m 模式]`。
 
 ### 5. 出处写法
@@ -110,6 +111,7 @@ High Speed Doom（HSD）的移动、镜头、动画、战斗手感，过去三�
 ```
 
 - **路径**从研究仓库根目录算，例如 `research/rea-native/subsystems/N2-J-JUMP-AIR.md §1.1`。Unity 的路径前面加 `HSD-Unity:`，例如 `HSD-Unity: Assets/HSD/R5Replay/Runtime/R5MotorV2.cs`（`JumpCommand`）。
+- **测试名**写 `类名.方法名`，类名以 C# 里的 `class` 为准，不是文件名（例如 `R5MotorV2FormulaTests.MultiJumpPenaltyFraction`，类在 `R5MotorV2Tests.cs` 里）。
 - **"在哪"**写 `main`，或者未合并 PR 的写法（第 6 条），或者"本地，不在 git"（例如 `TF2-Research/REBUILD-GAP-1107.md`）。
 - **决定**写 D 编号：`D-55`。R5 和 HSD 的差别写 R5-DIFF 的条目名：`R5-DIFF-ARCHIVE.md K-4`。
 - **R5 函数地址和偏移**只写在这里：`[反编译] Jump 0x140a3b550；落地时刻 player+0x3680`。
@@ -174,9 +176,10 @@ research/combat/RECOIL-VIEW.md §3（PR #93，还没合并；分支 combat/recoi
 | 滑铲跳高度 `slideJumpHeight` | 1.270 m | 50 u | 0.694 H | TF2 50 u | [数据] |
 | 起跳速度 V（frac = 1） | 7.362 m/s | 289.83 u/s | 4.025 H/s | 实测 289.815–289.833 | [算] [实测] |
 | 到顶时间 V / g | — | 0.386 s | — | — | [算] |
+| 按命令步进的最高点（比 `jumpHeight` 低 V·dt/2） | 1.392–1.396 m | 54.8 u（120 Hz）– 54.95 u（144 fps 实测） | 0.761–0.763 H | 帧率越低越矮（60 fps 约 53.6 u） | [算] [实测] |
 | 连跳系数下限 f `antiMultiJumpHeightFrac` | — | 0.3（×） | — | — | [数据] [实测] |
 | 系数开始恢复 T_min `antiMultiJumpTimeMin` | — | 0.15 s | — | — | [数据] [实测] |
-| 系数恢复到 1 T_max `antiMultiJumpTimeMax` | — | 0.75 s | — | — | [数据] [实测] |
+| 系数恢复到 1 T_max `antiMultiJumpTimeMax`（Unity 存的是 `multiJumpRampT` = T_max − T_min = 0.60 s） | — | 0.75 s | — | — | [数据] [实测] |
 | 最矮的连跳速度（frac = 0.3） | 4.032 m/s | 158.74 u/s | 2.205 H/s | — | [算] [实测] |
 | 超速削减窗口 `skip_time` | — | 1.0 s | — | — | [数据] |
 | 超速削减量 `skip_speed_reduce` | 2.54 m/s | 100 u/s | 1.389 H/s | — | [数据] [实测] |
@@ -204,19 +207,19 @@ on command(dt):
         grounded = false
 ```
 
-离散化要注意：R5 按"半步重力"积分，起跳那一帧竖直速度一共扣了 1.5 个 g·dt。所以起跳后第一帧记录到的竖直速度不是 289.8，而是 V − 1.5·g·dt（144 fps 时约 282.0 u/s）；位移用的是 V − g·dt。照这个顺序做，跳到顶的高度才正好等于 `jumpHeight`。
+离散化要注意：R5 按"半步重力"积分，起跳那一帧竖直速度一共扣了 1.5 个 g·dt。所以起跳后第一帧记录到的竖直速度不是 289.8，而是 V − 1.5·g·dt（144 fps 时约 282.0 u/s）；位移用的是 V − g·dt。照这个顺序做，**连续公式**的最高点 V²/2g 等于 `jumpHeight`，但**按命令步进**的最高点 = V²/2g − V·dt/2 + g·dt²/8，比 `jumpHeight` 低约 V·dt/2：120 Hz 约 1.2 u（54.8 u），144 fps 约 1.0 u（实测 54.95 u），帧率越低越矮。这是 R5 本身的行为，照做才能和录像对上（详见 [03 §3.8](03-ground-air-jump.md)）。
 
-Unity 参考实现：`HSD-Unity: Assets/HSD/R5Replay/Runtime/R5MotorV2.cs`，`R5MotorV2.JumpCommand`、`MultiJumpFrac`、`JumpSpeed`、`GroundJumpSpeed`；参数在 `R5MotorV2Params.cs`（`jumpHeight`、`slideJumpHeight`、`antiMultiJumpHeightFrac`、`multiJumpHoldT0` = 0.15、`multiJumpRampT` = 0.60，全部 [u]）。
+Unity 参考实现：`HSD-Unity: Assets/HSD/R5Replay/Runtime/R5MotorV2.cs`，`R5MotorV2.JumpCommand`、`MultiJumpFrac`、`JumpSpeed`、`GroundJumpSpeed`；参数在 `R5MotorV2Params.cs`（`jumpHeight`、`slideJumpHeight`、`antiMultiJumpHeightFrac`、`multiJumpHoldT0` = 0.15、`multiJumpRampT` = 0.60 = TimeMax − TimeMin（是时长差，不是 TimeMax），全部 [u]）。
 
 #### 验收
 
 - 单元测试（Unity EditMode，`Assets/HSD/R5Replay/Tests/Editor/`）：
-  - `R5MotorV2Tests.JumpRemovesOneAndAHalfGravitySteps`：V = 289.828，起跳后 vz = V − 1.5·g·dt。
-  - `R5MotorV2Tests.MultiJumpPenaltyFraction`：frac(0) = frac(0.15) = 0.3，frac(0.45) = 0.65，frac(0.75) = 1。
-  - `R5MotorV2Tests.JumpRightAfterLandingIsPenalisedAndFirstJumpIsNot`。
-  - `R5ReplayTests.JumpApexMatchesJumpHeight`（测的是 M1 的 `ReferenceMotor`）：跳到顶的高度和 `jumpHeight` 差 ≤ 0.25 u，滞空 2V/g ≈ 0.773 s。
+  - `R5MotorV2FormulaTests.JumpRemovesOneAndAHalfGravitySteps`：V = 289.828，起跳后 vz = V − 1.5·g·dt。（类在文件 `R5MotorV2Tests.cs` 里。）
+  - `R5MotorV2FormulaTests.MultiJumpPenaltyFraction`：frac(0) = frac(0.15) = 0.3，frac(0.45) = 0.65，frac(0.75) = 1。
+  - `R5MotorV2FormulaTests.JumpRightAfterLandingIsPenalisedAndFirstJumpIsNot`。
+  - `R5MotorV2` 没有"最高点"测试。`ReferenceMotorTests.JumpApexMatchesJumpHeight`（文件 `R5ReplayTests.cs`）测的是 M1 的第一版 `ReferenceMotor`，不是参考实现，不能拿来验收这一项；要补的测试见 [99](99-TODO-RESEARCH.md) B03-10。
 - 对照数据：M2 的 42 次首跳，拟合起跳速度 289.823 u/s（sd 0.005）；连跳每一跳的系数（`research/phase2-local/m2/air_jump/AIR-JUMP-MODEL.md` §2.2、§4）。
-- 合格线：起跳速度和 289.83 u/s 差 < 0.05 u/s；连跳系数和 frac(t) 差 < 0.01；回放基线（第 11 章）不变。
+- 合格线：起跳速度和 289.83 u/s 差 < 0.05 u/s；144 fps 最高点和 54.95 u 差 < 0.1 u；连跳系数和 frac(t) 差 < 0.01；回放基线（第 11 章）不变。
 - 已知例外：测试工具在 dedi 上重置玩家会被算成一次落地，重置后 0.75 s 内的第一跳会被降高（D-55）。对照 R5 录像时，重置后等 0.75 s 以上再跳。
 
 #### 出处

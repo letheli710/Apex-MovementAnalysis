@@ -9,13 +9,13 @@
 | 表 | 原件 | 给人看 | 内容 |
 |---|---|---|---|
 | 参数对照表 | [`params.tsv`](params.tsv) | [`params.md`](params.md) | 150 个设计参数：R5 原值 [u]、[m]、身高比例、TF2、Unity 现在的值、一致吗、差别、出处 |
-| 镜头事件表 | [`camera-events.tsv`](camera-events.tsv) | [`camera-events.md`](camera-events.md) | 76 行：每个镜头事件 × 通道的触发、力度、时长、叠加规则、R5 和 Unity 的值 |
+| 镜头事件表 | [`camera-events.tsv`](camera-events.tsv) | [`camera-events.md`](camera-events.md) | 76 行（第 3 列是第 07 章的事件名，可互查）：每个镜头事件 × 通道的触发、力度、时长、叠加规则、R5 和 Unity 的值 |
 | 关卡尺度表 | [`level-scale.tsv`](level-scale.tsv) | [`level-scale.md`](level-scale.md) | 38 行：跳多高多远、能翻多高的墙、台阶、斜坡、滑铲距离、跑墙、二段跳、跳板，全部由移动代码跑出来 |
 | 单位换算 | [`units-conversion.tsv`](units-conversion.tsv) | [01 §2](../01-units-body.md) | 每种量纲乘多少（[01 §2.4](../01-units-body.md) 要的机器可读版） |
 
 附件：
 
-- [`unity-export/`](unity-export/)：Unity 单位导出的全量快照（`units-params.tsv` 13155 行参数值、`units-registry.tsv` 1945 个字段的量纲标记）。来自 HSD-Unity `units/switch` 5c79a50 的 `Docs/units/`（PR #88，还没合并），sha256 `b3fe6533…`（params）、`d4acbfc5…`（registry）。
+- [`unity-export/`](unity-export/)：Unity 单位导出的全量快照（`units-params.tsv` 13155 行参数值、`units-registry.tsv` 1946 个字段的量纲标记）。来自 HSD-Unity `units/switch` 84e7a4a 的 `Docs/units/`（PR #88，还没合并），sha256 `59fb7c50…`（params）、`8dff4739…`（registry）。hb-integrate 11-14 从 5c79a50 换成 84e7a4a（M5.5 镜头 52 处量纲标记改正后重新导出），`check_params.py` 照样通过。
 - [`level_scale_harness/`](level_scale_harness/)：算关卡尺度的程序、它的原始输出和滑铲跳时机扫描。
 
 ## 防止 u 和米串了：校验脚本

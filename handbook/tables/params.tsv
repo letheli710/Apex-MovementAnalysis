@@ -135,7 +135,7 @@ C-05	镜头	camera.native.kickMaxScale	落地 kick 最大倍率	Ratio	-	12	—	�
 C-06	镜头	camera.native.slideFovScale	滑铲 FOV 倍率	Ratio	-	1.1	—	—	—	1.1	—	一致	—	[数据]；[实测] 89 → 97.9	research/rea-native/subsystems/N2-C-CAMERA.md §7
 C-07	镜头	camera.native.slideTiltSide	滑铲侧倾 slide_viewTiltSide	Angle	deg	15	—	—	—	15	—	一致	—	[反编译] SlideTilt_Update	research/rea-native/subsystems/N2-C-CAMERA.md §7
 C-08	镜头	camera.native.sprintTiltMaxRoll	冲刺转向横滚上限 sprinttiltMaxRoll	Angle	deg	2	—	—	—	2	—	一致	—	[数据] setfile	research/rea-native/subsystems/N2-C-CAMERA.md §7
-C-09	镜头	camera.native.maxRoll	横滚总上限	Angle	deg	40	—	—	—	40	—	一致	—	[反编译] N2-C §7 写总上限 40；但 CAM2 §5 / CR §3.9 说没有上限、±180° 回绕（来源矛盾，见 camera-events.md）	research/rea-native/subsystems/N2-C-CAMERA.md §7
+C-09	镜头	camera.native.maxRoll	横滚总上限	Angle	deg	40	—	—	—	40	—	一致	待核：N2-C §7 写总上限 40°，CAM2 §5 / CR §3.9 写没有总上限、±180° 折回；两边都留（99 B07-12）	[反编译] N2-C §7 写总上限 40；但 CAM2 §5 / CR §3.9 说没有上限、±180° 回绕（来源矛盾，见 camera-events.md）	research/rea-native/subsystems/N2-C-CAMERA.md §7
 C-10	镜头	camera.native.grappleRollMax	钩爪横滚上限	Angle	deg	20	—	—	—	20	—	一致	—	[反编译]	research/rea-native/subsystems/N2-C-CAMERA.md §7
 C-11	镜头	camera.native.zipRollMax	滑索横滚上限	Angle	deg	25	—	—	—	25	—	一致	R5-DIFF-ARCHIVE.md CAM2 K-7（D-54）	[反编译]	research/rea-native/subsystems/N2-C-CAMERA.md §7
 C-12	镜头	camera.native.traversalLerpIn	翻越镜头淡入 traversal_viewLerpInDuration	Time	s	0.15	—	—	—	0.15	—	一致	R5-DIFF-ARCHIVE.md D-75 F	[数据] ConVar；[实测] D72	research/phase2-local/D72-REPORT.md §8
