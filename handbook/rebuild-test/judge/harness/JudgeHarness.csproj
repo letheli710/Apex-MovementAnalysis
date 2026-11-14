@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- hb-judge harness: compiles the HSD-Unity R5Replay + Game runtime sources read-only (nothing in HSD-Unity is changed or built
+       there) and runs the rebuild-test scenarios on MovementConfigs.Reference() with the native camera.
+       Build: dotnet build -c Release -o <out> [-p:HsdUnity=<path>] -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>9.0</LangVersion>
+    <Nullable>disable</Nullable>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <NoWarn>CS0618;CS0649;CS0414;CS0169;CS8632;CS0162;CS0067;CS0108;CS0114</NoWarn>
+    <ResolveAssemblyReferenceIgnoreTargetFrameworkAttributeVersionMismatch>true</ResolveAssemblyReferenceIgnoreTargetFrameworkAttributeVersionMismatch>
+    <HsdUnity Condition="'$(HsdUnity)' == ''">$(MSBuildThisFileDirectory)../../../../../HSD-Unity</HsdUnity>
+    <UnityManaged Condition="'$(UnityManaged)' == ''">C:\Program Files\Unity\Hub\Editor\6000.6.5f1\Editor\Data\Managed\UnityEngine</UnityManaged>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(HsdUnity)/Assets/HSD/R5Replay/Runtime/**/*.cs" />
+    <Compile Include="$(HsdUnity)/Assets/HSD/Game/Runtime/**/*.cs" />
+    <Compile Include="Program.cs" />
+    <Reference Include="$(UnityManaged)\UnityEngine*.dll" />
+  </ItemGroup>
+</Project>
