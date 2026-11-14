@@ -982,7 +982,7 @@ lurch（起跳后一小段时间里按方向键能改方向，第 03 章）的�
 | 跳板二段跳（Octane） | 算 | 算 | [实测] M8 | `PadDoubleJumpParams.restartsLurchWindow` |
 | 升降梯弹出（Horizon） | **不算** | 算 | [实测] M8 r_lift：弹出后 0.25 s 按后退 / 侧向是普通 800 u/s² | `MovementConfig.liftEjectOpensLurchWindow` |
 | Revenant 扑击 | **不算** | 算 | [实测] M9-B | `RevenantParams.pounceOpensLurchWindow` |
-| 其他发射（击退等，走仲裁的 launch） | 按 `SkillRules.launchOpensLurchWindow`（默认 true） | 同左 | 没测 | `SkillRules.launchOpensLurchWindow` |
+| 其他发射（走仲裁的 launch；**击退不算**） | 按 `SkillRules.launchOpensLurchWindow`（默认 true） | 同左 | 没测 | `SkillRules.launchOpensLurchWindow`。击退不走技能层的发射（§5.37 第 11 条），`R5MotorV2.ApplyDamageImpulse` 不写 `jumpTime`，所以 Reference 和 Fun 都**不开** lurch 窗口（HSD-Unity PR #52 代码核对（hb-integrate 11-14 按 hb-ch06 备注改）） |
 | Vantage 回声结束跳 | 不算 | 算 | — | `VantageParams.endJumpOpensLurchWindow` |
 
 #### 实现模板
@@ -2722,7 +2722,7 @@ Unity 参考实现：
    - 站着发射落地 |vz| ≈ 1025 u/s → f0 ≈ 0.24（514.3 → 约 124.6 u/s，移动倍率最低约 0.28）[实测]。
    - 蹲着发射落地 |vz| ≈ 798 u/s → f0 ≈ 0.93（移动倍率最低约 1.07）[实测]。
    - 跳板二段跳之后落地 |vz| 可到 1336 u/s → f0 = 0，当场停下 [实测，§5.34]。
-5. **落地马上再跳**（M4b，12 次）：落地后第 4 条命令起跳，起跳把水平速度夹到 `sprintspeed` × 当时的移动倍率（260 × 0.28 = 72.6 u/s），高度是连跳惩罚的最低档（frac 0.3）。**跳板速度只带走约 14 %** [实测]。起跳夹速度的规则在第 03 章。
+5. **落地马上再跳**（M4b，12 次）：落地后第 4 条命令起跳，起跳的超速削减给 max(R, v − 100)，R = `sprintspeed` × 当时的移动倍率（260 × 0.28 = 72.6 u/s）；这里 v − 100 < R，结果就是 R（03 §3.8 第 5 条；回放电机的旧写法 min(v, R) 在这里数值相同（hb-integrate 11-14 按 hb-ch06 备注改）），高度是连跳惩罚的最低档（frac 0.3）。**跳板速度只带走约 14 %** [实测]。起跳夹速度的规则在第 03 章。
 6. **软着陆结束降速**（M4b 新发现）：落地马上跳的那一下小跳落地时（|vz| ≈ 144 u/s，本身不触发降速），**降速直接结束**，移动倍率下一条命令就回到 1.15（10 / 12；另 2 / 12 落在 1.1347 / 1.146，原因不明）[实测]。"硬着陆后小跳一下"因此是最快的恢复办法（约 0.43 s 回满，不用等 1 s）。**HSD 没做这一条**（见下）。
 7. **HSD 的保护**：技能层给跳板一个 6.0 s 的"效果最长时间"（`SkillRules` traits `jump_pad` maxEffect 6.0）：慢放超过 6 s 还没落地就强行结束慢放（事件 `PAD_INTERRUPT_TIMEOUT`）[设计]。正常飞行 3.4 s 碰不到；只有"站在跳板上原地一直弹"这种情况才碰到。R5 没有这条。
 
@@ -2948,7 +2948,7 @@ Unity 参考实现：`HSD-Unity: Assets/HSD/R5Replay/Runtime/World/MovementWorld
 4. 不受影响：无输入减速 1250 u/s²、滑铲减速、重力、起跳高度 [实测]。lurch 上限 = 0.7 × 当时的冲刺上限 = 294.67 u/s [实测]。
 5. 再打一针：生效后 6.0 s 内按无效（不刷新、不扣血），之后还有 0.7 s 充能冷却；生效后 7.5 s 起可以 [实测 22 次] [数据 `charge_cooldown_time`]。网上"1.8 s 延迟"的说法和 R5 矛盾，HSD 跟 R5（M10-C O-2，还开着）。每针 −20 血（HSD 没做）。
 6. 和跳板：跳板替换速度，所以兴奋剂不改发射弧线 [实测 M4]。
-7. 兴奋剂连跳：R5 离地 410.6 u/s，HSD 按 min(v, sprintspeed · msc) 给 420.9（高 2.5 %），R5 的规则没认出来 [差别，没改]。
+7. 兴奋剂连跳：R5 离地 410.6 u/s，HSD 的超速削减 max(R, v − 100) 在这里结果等于 R = sprintspeed · msc = 420.9（高 2.5 %；不是 min(v, R)，那是回放电机的旧写法（hb-integrate 11-14 按 hb-ch06 备注改）），R5 的规则没认出来 [差别，没改]。
 
 | 量 | [m] | R5 原值 [u] | 身高比例 | 合理范围 | 依据 |
 |---|---|---|---|---|---|

@@ -58,7 +58,7 @@
 - **命令**：一条 usercmd，Unity 里固定 1/120 s（第 02 章）。R5 每条命令按自己的帧时长 dt 走；本章所有规则都按 dt 写，和帧率无关。
 - **now**：这条命令**开始**的时刻。"距离某事 t 秒"都用 now 减那件事所在命令的开始时刻。
 - **pre / post**：命令执行前 / 后的状态。表里写的"速度"没注明就是水平速度 s = |v_h|（u/s）。
-- **msc**：移动倍率（武器决定；空手 Gibraltar 1.15）。表里乘了 msc 的数会注明"× msc"，括号里给 msc = 1.15 的值。
+- **msc**：移动倍率（武器决定；空手 Gibraltar 1.15；定义和"默认武器"见 [03 §3.0](03-ground-air-jump.md) "移动倍率 msc"，msc = 1 是拿枪时的值）。表里乘了 msc 的数会注明"× msc"，括号里给 msc = 1.15 的值。
 - **dir**：水平速度方向 v_h / s。**wishvel**：前后轴 × 前向 + 左右轴 × 右向（第 03 章，原始轴，不归一化）。
 - **按下 / 按住**：按下 = 这条命令新按下（上一条没按）；按住 = 这条命令按着。
 - **ducked**（"蹲着"标志）= **上一条命令**按住了蹲。和冲刺标志一样晚一条命令（第 03 章）。
@@ -79,7 +79,7 @@
 1. **触发**：着地、不在滑铲中、这条命令**按下**蹲，并且：
    - pre 水平速度 s ≥ `slideRequiredStartSpeed`（不乘 msc）；
    - 地面法线 n_z > 0.7（坡度 < 约 45.6°，能站的坡都行）[反编译]；
-   - 原生另有两条，Unity 没做：视角前向和速度方向的点积 ≥ `slide_max_angle_dot`；下蹲比例 < `slide_max_duck_frac_to_start`。**两个值都没读出来**（见 `_notes` 待研究）。
+   - 原生另有两条，Unity 没做：视角前向和速度方向的点积 ≥ `slide_max_angle_dot`；下蹲比例 < `slide_max_duck_frac_to_start`。`slide_max_angle_dot` = **0.6**（ConVar 默认值，`tables/params` S-18；原生代码怎么读它没查）；`slide_max_duck_frac_to_start` 没读出来（99 B04-4；R5-DIFF HB-10，D-204 等用户定）。11-14 前这里写"两个值都没读出来"，和 S-18 矛盾，已改（重建检验 11-14 补，`rebuild-test/judge/REPORT.md`）。
 2. **加成**（在这条命令的移动**之前**加上）：距离上一次**开始滑铲**（任何一种开始：按蹲、落地续滑、换地面重新开始、superglide 的蹲，§4.4）≥ `slideBoostRearm` 才给：
 
    s_peak = min(s + `slideSpeedBoost` × msc, `slideSpeedBoostCap` × msc)
@@ -433,7 +433,7 @@ Unity 参考实现：`U:…/R5MotorV2.cs`，`R5MotorV2.Move` 里 `slopeTerm` 一
 着地、在滑铲中、这条命令按下跳：
 
 1. **水平速度**（只对**按蹲开始、有加成**的滑铲，即 boosted = true；落地续滑的、没拿到加成的滑铲保持原速）：
-   1. 退还：now − boostTime < `slideBoostRefundWindow` **并且** now − 下蹲过渡开始 < `slideDuckTransitionTime`（下蹲过渡从起滑的**下一条**命令开始算，§4.1）→ s ← max(0, s − lastBoost)。实际起作用的是后一条（约 0.2 s）。
+   1. 退还：now − boostTime < `slideBoostRefundWindow` **并且** now − 下蹲过渡开始 < `slideDuckTransitionTime`（下蹲过渡从起滑的**下一条**命令开始算，§4.1）→ s ← max(0, s − lastBoost)。时刻用 tick × dt 算（或累加 dt 时比较加 10⁻⁹ 容差），**严格小于**：120 Hz 下按蹲后第 25 条命令起跳（0.208 s）离下蹲过渡开始正好 0.200 s，**不退还**；第 24 条（0.200 s）退还（重建检验 11-14 补，`rebuild-test/judge/REPORT.md`）。实际起作用的是后一条（约 0.2 s）。
    2. 然后抬高：0.85 × `slideMaxJumpSpeed` < s < `slideMaxJumpSpeed` → s ← 350。退还后的速度一般 < 297.5，不会再被抬。
    3. 方向不变。每次滑铲最多处理一次。
 2. **起跳高度** `slideJumpHeight`，连跳惩罚照第 03 章（frac）。竖直速度 V = √(2·g·50·frac)，半步重力顺序和普通跳一样（第 03 章，起跳那条命令一共扣 1.5·g·dt）。
@@ -474,7 +474,7 @@ R5 实测（冲刺起滑、按住蹲，起跳前 → 起跳后水平速度）：
 // 单位：u、s。着地、jumpPressed、sliding
 frac = multiJumpFrac(now - lastLandTime)          // 第 03 章
 if boosted:
-    if now - boostTime < slideBoostRefundWindow and now - duckTransitionStart < slideDuckTransitionTime:
+    if now - boostTime < slideBoostRefundWindow and now - duckTransitionStart < slideDuckTransitionTime:   // 严格 <；now = tick·dt
         s = max(0, s - lastBoost)
     if slideJumpFloorLowFrac*slideMaxJumpSpeed < s < slideMaxJumpSpeed:
         s = slideMaxJumpSpeed
@@ -673,7 +673,7 @@ Unity 参考实现：`U:…/R5MotorV2.cs`，`R5MotorV2.Step` → `Move`（顺序
 
 **眼高**（眼睛在原点上方的高度）：
 
-1. "在蹲"= 在滑铲中，或"蹲着"标志（上一条命令按住蹲），或碰撞体是蹲着的。
+1. "在蹲"= 在滑铲中，或"蹲着"标志（上一条命令按住蹲），或碰撞体是蹲着的。"蹲着"标志用这条命令里电机实际用的值（松蹲 ≤ 350 结束的那一条被强制为真，§4.3）（重建检验 11-14 补，`rebuild-test/judge/REPORT.md`）。
 2. 下蹲比例 d ∈ [0, 1]：每条命令朝目标（在蹲 = 1，否则 0）匀速移动，速率 1 / 0.4 s；**在滑铲中** 1 / 0.2 s。从起身中途再蹲下，按当前比例继续（不会跳变）。
 3. 站立眼高带冲刺下沉：stand = 70 + (−6)·sin(f_sprint·π/2)，f_sprint 是冲刺比例（冲刺标志亮 0.16 s 后以 1.25 /s 上升；熄灭 0.11 s 后以 6.67 /s 下降；这一部分是镜头的事，第 07 章）。
 4. eye = stand + (32 − stand)·smoothstep(d)，smoothstep(x) = x²(3 − 2x)。所以冲刺中起滑是从 64 降到 32。
@@ -698,7 +698,7 @@ Unity 参考实现：`U:…/R5MotorV2.cs`，`R5MotorV2.Step` → `Move`（顺序
 | 空中蹲到底的时间（R5） | — | 0.42 s（0.40–0.43） | — | 地上明显快 | [实测] Frida D72 |
 | 空中蹲到底时原点抬高（R5） | 0.419 m | 16.5 u | 0.229 H | — | [实测] Frida D72 |
 
-**已知差别**（D-70 只记录不追）：滑铲眼高降到最低的时间 Unity 约 0.19 s、R5 约 0.167 s（差约 3 条命令）。注意 C3 测到的"滑铲下沉 0.208–0.213 s"是另一种量法（见 `_notes`，两处说法要统一）。
+**复刻的是公式**：下蹲比例按 1 / 0.2 s 线性走、眼高按 smoothstep，起滑后第 24 条命令到 32 u。研究里的三个时间——0.19 s（Unity）/ 0.167 s（R5，R5-DIFF 二节"滑铲下沉"）、0.208–0.213 s（C3 实测 64 → 32）——是不同的量法（"到底"怎么定义没记），**不是三个规则**；只记录不追（D-70）。重建检验照公式做，眼高逐命令差 0.000 u（重建检验 11-14 补，`rebuild-test/judge/REPORT.md`）。
 
 #### 实现模板
 

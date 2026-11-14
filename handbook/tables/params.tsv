@@ -149,3 +149,26 @@ A-07	开镜	（规则：ADS 曲线）	开镜 FOV 曲线（进度 zf 线性，FOV
 A-08	后坐	（规则：后坐弹簧回落 R-301 腰射）	后坐回落：R-301 腰射时间常数	Time	s	0.46	—	—	—	见 HSD-Unity PR #67（还没合并）ViewKick.cs	—	不在 main	—	[实测] RV §2	research/DESIGN-PHILOSOPHY.md §5 表；research/combat/RECOIL-VIEW.md（PR #93，还没合并）
 A-09	后坐	（规则：后坐弹簧回落 R-301 开镜）	后坐回落：R-301 开镜时间常数	Time	s	0.14	—	—	—	同上	—	不在 main	—	[实测] RV §2	research/DESIGN-PHILOSOPHY.md §5 表；RECOIL-VIEW（PR #93）
 A-10	后坐	（武器表：viewkick_air_scale_ads）	空中开镜 kick 倍率 viewkick_air_scale_ads（18 把枪，G7 是 1）	Ratio	×	2	—	—	—	同上	—	不在 main	—	[数据] 武器 .txt；[反编译]，没跑	research/DESIGN-PHILOSOPHY.md P6 表
+AN-01	持枪动画	（不在导出：HoldData（每把枪，R-301））	走路晃动：每个来回的距离 D（R-301）。R5 按走过的距离推进相位	Length	u	139	3.531	1.931 H	—	HSD 按时间推进（H-1）	—	不在 main（HSD-Unity PR #65，还没合并）	R5-DIFF H-1（08）；D-224	[实测] 7 档速度	handbook/08-body-animation.md §1.3；research/combat/movement-animation/MOVEMENT-ANIMATION.md §13.5（PR #123，还没合并）
+AN-02	持枪动画	（不在导出：HoldData（多数枪））	走路晃动：每个来回的距离 D（Wingman、R-99、Spitfire 等）	Length	u	120	3.048	1.667 H	—	同上	—	不在 main（HSD-Unity PR #65，还没合并）	R5-DIFF H-1（08）	[实测]	handbook/08-body-animation.md §1.3
+AN-03	持枪动画	（不在导出：HoldData.walkPeriod）	走路晃动最短来回时间 T_min（满速 173.5 u/s 时碰到；不是固定周期）	Time	s	0.80	—	—	—	0.80（当固定周期用）	—	不在 main（HSD-Unity PR #65，还没合并）	R5-DIFF H-1（08）	[实测] 所有枪	handbook/08-body-animation.md §1.3
+AN-04	持枪动画	（不在导出：HoldData.sprintPeriod）	冲刺循环周期（25–572 u/s 都是 0.555–0.556 s）	Time	s	0.556	—	—	—	0.556	—	不在 main（HSD-Unity PR #65，还没合并）	—	[实测] R-301 / Wingman 各 2 次	handbook/08-body-animation.md §1.4
+AN-05	持枪动画	（没有：sprintfrac）	冲刺进入的幅度爬升 sprintfrac 涨满时间	Time	s	1.0	—	—	—	没实现（按状态过渡约 0.2 s 进满幅）	—	不在 main（HSD-Unity PR #65，还没合并）	R5-DIFF H-2（08）	[实测] 约 1 s，和速度无关	handbook/08-body-animation.md §1.4
+AN-06	持枪动画	（不在导出：HoldData.TurnLead）	转视角时枪的偏航超前（233 °/s 时；Sheila 0.9°）	Angle	deg	2.44	—	—	—	2.44	—	不在 main（HSD-Unity PR #65，还没合并）	—	[实测] 全部枪各 2 次	handbook/08-body-animation.md §1.7；research/combat/hold-pose/HOLD-POSE.md §7（PR #95，还没合并）
+AN-07	持枪动画	（不在导出：HoldData.TurnRate）	测超前时的转速（只有这一档）	Other	°/s	233	—	—	—	233	—	不在 main（HSD-Unity PR #65，还没合并）	—	[实测]	handbook/08-body-animation.md §1.7
+AN-08	持枪动画	（不在导出：HoldData.TurnSettle）	超前的跟随时间常数（HSD 由"停转回到 10 %"拟合）	Time	s	—	—	—	—	0.26	—	不在 main（HSD-Unity PR #65，还没合并）	—	[算]	handbook/08-body-animation.md §1.7
+AN-09	持枪动画	（不在导出：HoldBlend.SmoothstepAt90）	动作过渡"到 90 %"的时间换成 smoothstep 全长的系数（过渡时长按 90 % 点实测）	Ratio	×	—	—	—	—	0.804	—	不在 main（HSD-Unity PR #65，还没合并）	—	[算]	handbook/08-body-animation.md §1.5
+TG-01	泰坦步态	（TF2 规则：走→跑门槛系数）	走 → 跑门槛 = 0.45 × 站姿速度（中型 112.5 u/s = 2.858 m/s = 0.479 H_t/s）	Ratio	×	—	—	—	0.45	—	—	不在 main（HSD-Unity PR #78 / #66，还没合并）	—	[TF2 反编译] [TF2 实测]	handbook/08-body-animation.md §2.1
+TG-02	泰坦步态	（TF2 规则：起步 / 停步混合）	待机 ↔ 移动混合时长（min(旧混出, 新混入)、smoothstep）	Time	s	—	—	—	0.2	一阶跟随 τ 0.22 / 0.14 s	—	不在 main（HSD-Unity PR #78 / #66，还没合并）	R5-DIFF H-7（08）；D-225	[TF2 实测] 0.189–0.208 s（32 次停步）	handbook/08-body-animation.md §2.1
+TG-03	泰坦步态	（TF2 规则：走 ↔ 跑混合）	走 ↔ 跑、跑 → 冲刺混合时长	Time	s	—	—	—	0.55	同上	—	不在 main（HSD-Unity PR #78 / #66，还没合并）	R5-DIFF H-7（08）；D-225	[TF2 实测] 0.557–0.64 s	handbook/08-body-animation.md §2.1
+TG-04	泰坦步态	（TF2 规则：播放速度死区）	播放速度死区（地速 / 片段地速在 1 ± 0.15 内按 1 播）	Ratio	×	—	—	—	0.15	—	—	不在 main（HSD-Unity PR #78 / #66，还没合并）	—	[TF2 反编译] [TF2 实测]	handbook/08-body-animation.md §2.2
+TG-05	泰坦步态	（TF2 ConVar：播放速度下限）	播放速度下限（上限 10、冲刺上限 1.25）	Ratio	×	—	—	—	0.25	—	—	不在 main（HSD-Unity PR #78 / #66，还没合并）	—	[TF2 反编译] ConVar	handbook/08-body-animation.md §2.2
+TG-06	泰坦步态	（TF2 数据：走一步距离）	走一步距离（3.543 m，0.594 H_t）	Length	u	—	—	—	139.5	—	—	不在 main（HSD-Unity PR #78 / #66，还没合并）	—	[TF2 数据]	handbook/08-body-animation.md §2.2
+TG-07	泰坦步态	（TF2 ConVar：mp_maxbodyyaw）	身体落后视线上限 mp_maxbodyyaw	Angle	deg	—	—	—	60	—	—	不在 main（HSD-Unity PR #78 / #66，还没合并）	R5-DIFF H-8（08）	[TF2 反编译] [TF2 实测]	handbook/08-body-animation.md §2.3
+TG-08	泰坦步态	（TF2 ConVar：mp_bodyyawrate）	腿追视线峰值速度 mp_bodyyawrate（× min(1, 差 / 60)）	Other	°/s	—	—	—	400	固定 0.42 s 两脚摆动	—	不在 main（HSD-Unity PR #78 / #66，还没合并）	R5-DIFF H-8（08）	[TF2 反编译]	handbook/08-body-animation.md §2.3
+TG-09	泰坦驾驶舱	（TF2 数据：footstepInterval 走）	驾驶舱步伐定时器：走（冲刺 0.417 s；三种底盘相同）	Time	s	—	—	—	0.70	0.70	—	不在 main（HSD-Unity PR #78 / #66，还没合并）	—	[TF2 实测] [TF2 数据]	handbook/08-body-animation.md §3.1
+TG-10	泰坦驾驶舱	（TF2 数据：footstepInterval 冲刺）	驾驶舱步伐定时器：冲刺	Time	s	—	—	—	0.417	0.417	—	不在 main（HSD-Unity PR #78 / #66，还没合并）	—	[TF2 实测] [TF2 数据]	handbook/08-body-animation.md §3.1
+TG-11	泰坦驾驶舱	（TF2 数据：cockpit_stepJolt_origin z）	每步踏步冲量（竖直，中型；轻 −6、重 −4；−0.127 m/s）	Velocity	u/s	—	—	—	-5	—	—	不在 main（HSD-Unity PR #78 / #66，还没合并）	—	[TF2 数据]	handbook/08-body-animation.md §3.1
+TG-12	泰坦驾驶舱	（TF2 数据：sprintViewOffset）	冲刺下沉（实测 25.4–25.6 u；0.635 m，0.106 H_t）	Length	u	—	—	—	25	—	—	不在 main（HSD-Unity PR #78 / #66，还没合并）	—	[TF2 数据] [TF2 实测]	handbook/08-body-animation.md §3.2
+TG-13	泰坦驾驶舱	（TF2 实测：dash 滚转峰值）	左右 dash 镜头滚转峰值（dodge_viewTiltMax 10 × …；0.171–0.18 s 到峰，0.52 s 回零）	Angle	deg	—	—	—	8.5	—	—	不在 main（HSD-Unity PR #78 / #66，还没合并）	—	[TF2 实测]	handbook/08-body-animation.md §3.3
+TG-14	泰坦驾驶舱	（TF2 数据：舱框晃动位移上限）	舱框晃动位移上限（角度上限 ±1.5°；回位时间常数 0.37 s；±0.076 m，0.013 H_t）	Length	u	—	—	—	3	—	—	不在 main（HSD-Unity PR #78 / #66，还没合并）	—	[TF2 数据]	handbook/08-body-animation.md §3.4

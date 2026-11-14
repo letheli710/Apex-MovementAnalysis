@@ -70,7 +70,11 @@ HSD-Unity 里同一个电机 `R5MotorV2` 有两套参数，本章的规则**以�
 
 ### 移动倍率 msc
 
-R5 的速度上限和加速度大多要乘一个**移动倍率 msc**（"拿什么武器、有没有兴奋剂"决定）。本章所有数都按 **空手 msc = 1.15** 写（Gibraltar 空手，M2 起全部实测都是这个值）。表里"R5 原值 [u]"一列写的是 setfile 原值，乘过 msc 的值另起一行或写在正文。规则里写明哪些乘 msc、哪些不乘，这是 R5 和 TF2 的一个主要区别（§3.2）。
+R5 的速度上限和加速度大多要乘一个**移动倍率 msc**（"拿什么武器、有没有兴奋剂"决定）。本章所有数都按 **空手 msc = 1.15** 写（Gibraltar 空手，M2 起全部实测都是这个值）。
+
+**msc 在全手册只在这里定义（其他章指向这里）**：R5 拿枪时 msc 由武器决定（实测拿枪 1.0，`tables/params` G-03）；空手 / 拿近战 1.15。参考身体 `MovementConfigs.Reference()` 的默认是 **空手 1.15**（`R5MotorV2Params.moveScale`）；HSD main 的游戏身体没有"默认武器"，msc 一直是 1.15，只有技能临时改它（收起武器 1.0 等，05 章）。本章规则对任意 msc 成立，带 × msc 的数照乘；"msc = 1"的数（例如冲刺上限 260、起滑上限 400）就是拿枪时的值（重建检验 11-14 补，`rebuild-test/judge/REPORT.md`）。
+
+表里"R5 原值 [u]"一列写的是 setfile 原值，乘过 msc 的值另起一行或写在正文。规则里写明哪些乘 msc、哪些不乘，这是 R5 和 TF2 的一个主要区别（§3.2）。
 
 Unity：`MotorInput.moveScale`（> 0 时用它，否则用 `R5MotorV2Params.moveScale` 1.15）。
 
@@ -177,7 +181,7 @@ Unity：`R5MotorV2.GroundCap`（`R5MotorV2.cs`），参数 `speed`、`sprintspee
 | 走路从 0 到上限 | — | 0.145 – 0.167 s | — | 随帧时长的分布变 | [实测] |
 | 冲刺从按下到 299 | — | 1.00 – 1.02 s | — | — | [实测] |
 
-`sprintAcceleration`：M2 复跑那次的 census 读到 102，用 102 时回放误差 0.005–0.03 u/s，用 100 是 0.39–0.96，所以这个构建用 102。DP §8.1 写的"冲刺 115 u/s²"是按 100 算的，以本表为准（写进 `_notes`）。
+`sprintAcceleration`：M2 复跑那次的 census 读到 102，用 102 时回放误差 0.005–0.03 u/s，用 100 是 0.39–0.96，所以这个构建用 102，**参考身体 `MovementConfigs.Reference()` 也用 102**（R5 其余传奇是 100，差别见 R5-DIFF HB-9，D-202 等用户定）（重建检验 11-14 补，`rebuild-test/judge/REPORT.md`）。DP §8.1 写的"冲刺 115 u/s²"是按 100 算的，以本表为准（写进 `_notes`）。
 
 **TF2 对比**：TF2 MP 铁驭的 `lowAcceleration`、`sprintAcceleration` 都是 −1（关），加速**始终 2500 u/s²，不乘 msc**（63.50 m/s²，34.72 H/s²）。R5 加了三段，并让加速乘 msc（TF §2.1，T5 实测）。所以 TF2 起步到冲刺上限几乎是瞬间，R5 冲刺要攒 1 秒。
 
@@ -231,7 +235,7 @@ Unity：`R5MotorV2.GroundAccelRate`（`sprintAccelFixedEdge` 为真时用固定�
 
 1. 一条命令算"冲刺中"，要同时满足：着地；这条和上一条命令都按着冲刺键；前后轴 > 0；不蹲（上一条和这一条都没按蹲）；不在滑铲。
    - "上一条也按着"的效果：按下冲刺后**下一条命令**上限才变成 299（M2 实测：MT 的 `ms` 晚一条命令从 199.525 跳到 299）。
-2. 冲刺中输入的两个轴先 × 1.25 再进输入曲线（§3.4 第 4 条）。前进键按满时 1.25 被归一化回 1，所以只影响半按和斜向（G-09，只有代码）。
+2. 冲刺中输入的两个轴先 × 1.25 再进输入曲线（§3.4 第 4 条）。前进键按满时 1.25 被归一化回 1；键盘斜向 m = √2 > 1 也会被归一，× 1.25 不起作用。所以只影响 m < 1 的输入（半按、摇杆），键盘基本碰不到（G-09，只有代码；06 §6.12）（hb-integrate 11-14 按 hb-ch06 备注改）。
 3. 冲刺中的加速见 §3.2；冲刺中的减速见 §3.4（h > msc × `speed` 时用 `sprintDeceleration`，R5 也是 1250，和普通减速分不开）。
 4. **冲刺起步键没有作用**：`sprintStartDelay` 0.2 s、`sprintStartDuration` 0.8 s、`sprintStartFastDuration` 0.2 s 在速度上都看不到（M2：按下后 0.14–0.17 s 冲刺段已经开始，没有 0.2 s 的平台，也没有"快段"）。可能只管动画或镜头 [推断]。
 5. 空中不冲刺：起跳以后上限是 `speed` × msc（199.525），但这个上限只影响空中加速的意图（§3.6），不削速度。
@@ -423,7 +427,7 @@ Unity：`R5MotorV2.GroundNativeStep`（有输入、`groundNativeFriction` 为真
 
 - 冲刺跳以后按着 W 不会更快，也不会变慢；
 - 按着方向键、只转鼠标，几乎拐不了弯（0.25 s 只转 3°）；
-- 想在空中大幅改方向，要用起跳后的 lurch（§3.12），而不是一直按着键。
+- 想在空中大幅改方向，要用起跳后的 lurch（§3.14），而不是一直按着键。
 
 这是 Source 系的"空中扫向"（air strafe）：只要速度在意图方向上的分量小于 69，就能补上去，所以边转视角边按侧向键可以慢慢拐弯、甚至略微提速，但效率很低。
 
@@ -434,10 +438,10 @@ Unity：`R5MotorV2.GroundNativeStep`（有输入、`groundNativeFriction` 为真
 1. wishspeed = min(|意图|, 1) × `speed` × msc（蹲着按 `crouchSpeed` × msc）；wishcap = min(wishspeed, `airSpeed` × msc) = 69 u/s。
 2. addspeed = wishcap − v_h · ŵ。
 3. **addspeed > 0**：v_h += min(addspeed, `airAcceleration` · dt) · ŵ。**不乘 wishspeed**（和 Quake / Source 的 `sv_airaccelerate` 写法不同）。
-4. **addspeed ≤ 0**（意图方向上已经够快）：v += `extraAirAccel` · dt · ŵ，然后 **3D** |v| 限制在 max(加速前的 3D |v|, wishcap)。效果：竖直速度不为 0 时水平方向能"借"到一点点速度，竖直分量被同比例压一点，每跳约 +0.3 u/s（0.1 %）。
+4. **addspeed ≤ 0**（意图方向上已经够快）：v += `extraAirAccel` · dt · ŵ，然后 **3D** |v| 限制在 max(加速前的 3D |v|, wishcap)（"加速前"= 空中加速那一刻的 v；起跳命令里是 −½g、+V、−½g 之后的 v，照 §3.8 模板的顺序）。效果：竖直速度不为 0 时水平方向能"借"到一点点速度，竖直分量被同比例压一点，每跳约 +0.3 u/s（0.1 %）。
 5. 空中没有摩擦、没有阻力（census `airFriction` 0、`airDrag` 0；实测无输入时水平速度每条命令变化 0.0000）。
 6. 意图方向用这条命令自己的视角（不是上一帧的）。
-7. 空中按方向键的新按下沿还会触发 lurch（§3.12），lurch 在空中加速**之后**做。
+7. 空中按方向键的新按下沿还会触发 lurch（§3.14），lurch 在空中加速**之后**做。
 
 | 量 | [m] | R5 原值 [u] | 身高比例 | 合理范围 | 依据 |
 |---|---|---|---|---|---|
@@ -557,7 +561,7 @@ Unity：`R5MotorV2.AirAccelerate`（静态，7 个参数的版本带 `extraAccel
 
 1. 起跳只在**着地时、跳跃键按下的那一帧（按下沿）**触发。按住不放不会自动连跳（R5 SDK 的 `sv_autobunnyhopping` 默认 0）。空中按下的跳跃，没有二段跳等能力接手就直接丢掉（没有缓冲，§3.11）。
 2. 高度 H_j：平时 `jumpHeight`，滑铲中 `slideJumpHeight`。
-3. 连跳高度系数（t = 现在 − 上次落地时刻；从没落过地则 t = ∞）：
+3. 连跳高度系数（t = 现在 − 上次落地时刻；从没落过地则 t = ∞；开局 / 重置的身体算从没落过地，不学 dedi 把重置当落地，D-55）：
 
    frac(t) = clamp(f + (1 − f) · (t − T_min) / (T_max − T_min), f, 1)，f = `antiMultiJumpHeightFrac`
 
@@ -667,7 +671,7 @@ Unity 参考实现：`HSD-Unity: Assets/HSD/R5Replay/Runtime/R5MotorV2.cs`，`R5
 4. 二段跳恢复：原生 `skip_replenish_double_jump` = 1，每次落地都恢复（第 05 章）。
 5. **硬着陆降速**（研究里有两种写法，**还没对上**，两种都写）：
 
-   - **Unity 现在用的（M4 实测拟合，15 次硬着陆，rms 1e-4）**：落地那条命令，以落地前的竖直速度 vz：f0 = clamp(a + b · vz², 0, 1)；f0 < 1 时水平速度 × f0；之后移动倍率 × [f0 + (1 − f0) · (t / T)²]，直到 t ≥ T。f0 = 1 在 |vz| = 772.1 u/s，f0 = 0 在 1092.9 u/s。
+   - **Unity 现在用的（M4 实测拟合，15 次硬着陆，rms 1e-4）**：落地那条命令，以**落地那条命令开始时**（= 上一条命令结束时）的竖直速度 vz（400 u 落下是 768.75 u/s，f0 = 1.009 → 不降速；不是落地命令清零前的 775）：f0 = clamp(a + b · vz², 0, 1)；f0 < 1 时水平速度 × f0；之后移动倍率 × [f0 + (1 − f0) · (t / T)²]，直到 t ≥ T。f0 = 1 在 |vz| = 772.1 u/s，f0 = 0 在 1092.9 u/s。恢复期的倍率乘在**这条命令的 msc** 上，所以所有"× msc"的数（冲刺上限、空中上限、滑铲加成、超速削减下限 R）都一起变小（Unity：`LandingSlowdown.BeforeMove` 读 `motor.vel.z`、改 `moveScaleFactor`，电机用 `input.moveScale` = 武器倍率 × 它）（重建检验 11-14 补，`rebuild-test/judge/REPORT.md`）。
    - **原生代码读出来的（NJ §3.2，没有实测）**：落地后 `landSlowdownDuration` 内，若下落高度 > `landSlowdownHeightMin`：a = clamp((高度 − 300)/(800 − 300), 0, 1)，b = (t / 1)²，倍率 = 1 − (1 − b) · a · (1 − `landSlowdownFrac`)，用作速度上限的倍率 [native-inf]。另有 `landSlowdownNoSprintFrac` 0.7（可能管落地后能不能冲刺，没读）。
    - **两者的差别**：把 vz 换成自由落体高度 h = vz² / 2g，Unity 的拟合是 f0 = 1.9965 − 0.002507 · h：从 h ≈ 397 u 开始降、到 796 u 降到 0；原生读法是从 300 u 开始降、到 800 u 降到 0。终点一致，起点差约 100 u，斜率不同。时间恢复部分（1 s、平方）两者一致。差别可能来自"下落高度"的定义（玩家偏移 0x3684 记的是什么高度）。要用 B03-3 的实测分开（从 300 / 500 / 800 u 落下）。**手册暂以 Unity 的实测拟合为准**（它对过 15 次 R5 落地），原生读法留档。
 
@@ -1102,4 +1106,4 @@ tap strafe 不是一条新规则，是 lurch 的一个用法：起跳后**一边
 6. 冲刺 × 1.25 对按键转向的影响只有代码（G-09）；斜后方、纯侧向能不能冲刺没单独测（§3.3）。
 7. 蹲姿 138 u/s 以上的加速、下蹲过渡中的移动没测（§3.5）。
 8. 原生摩擦里"0.5 s 淡入"的时刻 T 是什么没读（§3.4）。
-9. lurch：按住一个键再按另一个不同的键（A 按住、按 S）只测了 W；手柄没测；M8 b1 有 11.6 u/s 的残差没解释（§3.14）。
+9. lurch：按住一个键再按另一个不同的键（A 按住、按 S）只测了 W；手柄没测；M8 b1 的 11.6 u/s 残差已由 LEDGER-OPEN-5（10-24）定为一致（≤ 0.017 u/s，是 M8 分析脚本的问题，06 章备注 C-4）（hb-integrate 11-14 按 hb-ch06 备注改）（§3.14）。
