@@ -143,9 +143,9 @@ Unity 参考实现：`HSD-Unity: Assets/HSD/R5Replay/Runtime/SourceSpace.cs`（`
 | R5 铁驭 | 70（冲刺 64，蹲 32） | 32 × 32 × 72 [设计] | 22 | 上表 |
 | TF2 铁驭 | 60（冲刺下沉 6） | 没读 | 18 | `tf2/expansion/titan/T0-REPORT.md` §2.4；`tf2/static-values/T1-REPORT.md` |
 | TF2 泰坦（3 种底盘） | 185（Stryder 蹲 125） | 宽 120，高 235 | 80 | T0-REPORT §2.4、§1；`titan_base.set` |
-| HSD 泰坦（全部模型） | 185 | 按底盘（`TitanDims`，HSD-Unity PR #72，还没合并） | 80 | 设计规范见第 08 章 |
+| HSD 泰坦（全部模型） | 185 | 按底盘（`TitanDims`，HSD-Unity PR #72，还没合并） | 80 | 身体动画和驾驶舱见第 08 章，电机见第 12 章 |
 
-泰坦的身高比例按它自己的 H 算（建议 H_titan = 235 u），不要除以 72。
+泰坦的身高比例按它自己的参考身高算：**`H_t` = 235 u**（5.969 m，TF2 泰坦碰撞体高），不要除以 72（11-14 写进 README 写法规范第 3 条，第 08、12 章照用）。
 
 ## 5. u 模式和米模式
 

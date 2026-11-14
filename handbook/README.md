@@ -1,6 +1,6 @@
 # HSD 动作与技术手册
 
-版本：v1 整合中（hb-integrate 第一轮，2026-11-14；阶段 0 骨架 hb0）。分支 `handbook/base`，还没合并进 `main`（draft PR，见 `_notes/MORNING-CHECKLIST.md`）。
+版本：**v1**（hb-integrate 第二轮整合，2026-11-14；阶段 0 骨架 hb0）。01 – 12 章和附录 A 都写完了，阶段 4 重建检验也跑过一轮（结果见下面目录里 `rebuild-test/` 一行）。分支 `handbook/base`，还没合并进 `main`（draft PR [#124](https://github.com/letheli710/Apex-MovementAnalysis/pull/124)，早上要定的事见 [_notes/MORNING-CHECKLIST.md](_notes/MORNING-CHECKLIST.md)）。
 
 ## 这份手册是什么
 
@@ -34,17 +34,18 @@ High Speed Doom（HSD）的移动、镜头、动画、战斗手感，过去三�
 | [02-foundation.md](02-foundation.md) | 底层：时间步长、每帧顺序、碰撞体、地面检测、台阶、斜坡 | hb-ch02 | 完成（11-14 合入） |
 | [03-ground-air-jump.md](03-ground-air-jump.md) | 地面、空中、跳跃、落地（含硬着陆降速）、时间窗口、lurch / tap strafe | hb-ch03 | 完成（11-14 合入） |
 | [04-slide-mantle.md](04-slide-mantle.md) | 滑铲、斜坡滑铲、翻越、攀爬、蹲着翻越、superglide；附件 [04-slide-mantle/](04-slide-mantle/)（`slide_ref.py`） | hb-ch04 | 完成（11-14 合入） |
-| [05-wall-external.md](05-wall-external.md) | 跑墙、挂墙、二段跳、蹬墙跳；滑索、钩爪、跳板、击退 / 火箭跳、传送门（攀爬在 04） | hb-ch05 | 在写 |
-| [06-momentum-arbitration-input.md](06-momentum-arbitration-input.md) | 动量规则、动作仲裁、输入（等 03–05 写完；硬着陆降速在 03，这里只写指针） | hb-ch06 | 没开始 |
+| [05-wall-external.md](05-wall-external.md) | 跑墙、挂墙、二段跳、蹬墙跳；滑索、钩爪、跳板、击退 / 火箭跳、传送门（攀爬在 04） | hb-ch05 | 完成（11-14 合入） |
+| [06-momentum-arbitration-input.md](06-momentum-arbitration-input.md) | 动量规则（总表）、动作仲裁、输入（硬着陆降速在 03，这里只写指针） | hb-ch06 | 完成（11-14 合入） |
 | [07-camera.md](07-camera.md) | 镜头：事件型、持续型、组合规则、力度规律；附件 [07-camera/](07-camera/README.md) | hb-ch07 | 完成（11-14 合入） |
-| [08-body-animation.md](08-body-animation.md) | 持枪和移动叠加、泰坦步态 / 脚 / 地形 / 惯性、泰坦镜头（受击、上下机在 07） | hb-ch08 | 在写 |
-| [09-combat-feel.md](09-combat-feel.md) | 后坐、开镜、枪的重量、扩散、命中反馈 | hb-ch09 | 在写 |
-| [10-abilities-ai.md](10-abilities-ai.md) | 技能设计结构、敌人 AI | hb-ch10 | 在写 |
-| [11-acceptance.md](11-acceptance.md) | 手感怎么验收：指标、回放对比、自动测试、合格线 | hb-ch10 | 在写 |
-| [A-research-methods.md](A-research-methods.md) | 附录 A：反编译、Frida 实测、回放对比怎么做 | hb-ch10 | 在写 |
-| [99-TODO-RESEARCH.md](99-TODO-RESEARCH.md) | 待研究清单（这一轮不做） | hb0 建，hb-integrate 合并各章备注 | 已并 02 / 03 / 04 / 07 / tables |
-| [tables/](tables/README.md) | 参数对照表、镜头事件表、关卡尺度表（TSV + 给人看的 md）、`check_params.py` | hb-tables | 完成（11-14 合入） |
-| `rebuild-test/` | 阶段 4 重建检验 | hb-judge / hb-rebuild | 空 |
+| [08-body-animation.md](08-body-animation.md) | 持枪和移动叠加、泰坦步态 / 脚 / 地形 / 惯性、驾驶舱镜头（受击、上下机在 07）；附件 [08-body-animation/](08-body-animation/) | hb-ch08 | 完成（11-14 合入） |
+| [09-combat-feel.md](09-combat-feel.md) | 后坐、开镜、枪的重量、扩散、命中反馈；附件 [09-combat-feel/](09-combat-feel/README.md) | hb-ch09 | 完成（11-14 合入） |
+| [10-abilities-ai.md](10-abilities-ai.md) | 技能设计结构、敌人 AI（AI 没有参考实现，写成规格） | hb-ch10 | 完成（11-14 合入） |
+| [11-acceptance.md](11-acceptance.md) | 手感怎么验收：指标、回放对比、自动测试、合格线总表 | hb-ch10 | 完成（11-14 合入）（§11.6 合格线和 `tables/pass-lines.tsv` 还在补） |
+| [12-titan-motor.md](12-titan-motor.md) | 泰坦电机：地面速度律、冲刺跑、dash 推力和能量、蹲、转向、状态缩放、重力 / 小跳 / 硬落地、和铁驭电机的区别 | hb-ch08 | 完成（11-14 合入）（11-14 新加的章） |
+| [A-research-methods.md](A-research-methods.md) | 附录 A：反编译、Frida 实测、回放对比怎么做 | hb-ch10 | 完成（11-14 合入） |
+| [99-TODO-RESEARCH.md](99-TODO-RESEARCH.md) | 待研究清单（这一轮不做） | hb0 建，hb-integrate 合并各章备注 | 已并全部章节和重建检验 |
+| [tables/](tables/README.md) | 参数对照表（含持枪动画、泰坦步态）、镜头事件表、关卡尺度表（TSV + 给人看的 md）、`check_params.py` | hb-tables；hb-integrate 补 | 完成（11-14 合入） |
+| [rebuild-test/](rebuild-test/judge/REPORT.md) | 阶段 4 重建检验：只看手册写一个纯 C# 实现（`build/`），和 Unity 逐命令对比（`judge/`）。**结果**：移动 10 / 10 逐命令一致（最大差 0.0001 u），镜头随机数取 0 时 5 / 5 一致；按题目原样 5 / 10，不过的里 2 题是题目读法、3 题是同一个手册错误（07 §1.4 随机种子的符号），11-14 已改正，题目要改后再跑一轮（99 RB-1） | hb-rebuild / hb-judge | 第一轮完成（存档） |
 | `_notes/<会话名>.md` | 各会话给总控的备注：想改 README / 表 / 别章的地方、建议的 D-xx 行；[早上要定的事](_notes/MORNING-CHECKLIST.md)、[研究仓库 PR 合并清单](_notes/hb0-pr-merge-list.md) | 各会话 | — |
 
 总控计划和会话分工在工作区根目录 `HANDBOOK-PLAN.md`（不在这个仓库）。
@@ -86,7 +87,8 @@ High Speed Doom（HSD）的移动、镜头、动画、战斗手感，过去三�
 
 - **`[m]` 列**：R5 原值 × 换算系数（[01 §3](01-units-body.md)：1 u = 0.0254 m）。保留 3–4 位有效数字。这一列是算出来的，不是独立来源。
 - **`R5 原值 [u]` 列**：研究里量到 / 读到的原始数，原样照抄，带单位（u、u/s、u/s²）。TF2 的数写 `TF2 原值 [u]`，在依据列注明 TF2。HSD 自己定的值写 `HSD 设计值 [u]`，依据列写 [设计]。
-- **身高比例列**：除以参考身高 H = 72 u（站立碰撞体高度，[01 §4](01-units-body.md)）。速度写 `H/s`，加速度写 `H/s²`，长度写 `H`。
+- **身高比例列**：除以参考身高 H = 72 u（站立碰撞体高度，[01 §4](01-units-body.md)）。速度写 `H/s`，加速度写 `H/s²`，长度写 `H`。TF2 铁驭的数也除以 H = 72 u。
+- **泰坦用自己的参考身高 `H_t` = 235 u**（5.969 m，[01 §4.3](01-units-body.md)）：泰坦的身体、步态、驾驶舱、电机（第 08、12 章）的身高比例列写 `H_t`、`H_t/s`、`H_t/s²`，不要和铁驭的 H 混用。
 - **不换算的量**（角度、时间、比例、次数、帧数、角速度 °/s）：`[m]` 和身高比例两列写"—"，原值写在 `R5 原值 [u]` 列并注明单位（°、s、×）。哪些量换、哪些不换，以 [01 §2](01-units-body.md) 为准；组合量（比如 °/(u/s)、1/u）按那里的规则换。
 - 时间一律用秒（s），角度一律用度（°）。原文是毫秒、弧度、英尺的，换好再写，并在依据列注明原单位。
 - **合理范围**：这个数改到多少还"像这个功能"。有实测就写实测的散布；只有设计判断就标 [设计]；不知道就写"未知"，不要编。
@@ -136,6 +138,7 @@ research/combat/RECOIL-VIEW.md §3（PR #93，还没合并；分支 combat/recoi
 - 建议的新决定写进自己的 `_notes`，D 编号留空（`D-??`），由 hb-integrate 统一编号写进 `DECISIONS.md`。
 - 研究里有矛盾、或者手册和 Unity 现在的做法不一样：两边都写，标出哪个是 R5、哪个是 HSD 现在的版本，并写进 `_notes`。不要悄悄选一个。
 - R5 原值和 HSD 有意不同的（R5-DIFF "有意和 R5 不一样"一节），规则段写 HSD 的做法，并在同一段写"R5 原值是 …，HSD 有意改成 …，理由 …"。
+- **没有参考实现的功能**（例如第 10 章的 AI）："实现模板"一段的标题写成"实现模板（没有参考实现）"，"验收"里的测试名写成"建议的测试（名字是建议，还没有）"。
 - 一项"没测过"就写没测过，放进 [99-TODO-RESEARCH.md](99-TODO-RESEARCH.md) 的建议（写进 `_notes`），不要用推断冒充实测。
 
 ---
