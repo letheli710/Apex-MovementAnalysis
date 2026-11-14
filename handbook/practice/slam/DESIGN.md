@@ -300,7 +300,7 @@ Unity 参考实现：第 2 步写，见 §8。
 | 不开 lurch 窗口 | `SkillArbiter.AfterAbilities` 的例外表加一行（`GroundSlamParams.opensLurchWindow` = false） |
 | 镜头 | `NativeCameraParams` 的 `slamPunch`、`slamStart*`、`slamLand*`、`slamFovPunch`（默认关）、盐 `SaltSlam*`；`NativeCameraFeedback.Observe` 读 `GroundSlamAbility.starts / landings`（只读） |
 | 试玩 | `PracticeMapSlam.cs`（场地 SY，只在要求时建）、`PracticeGameSlam.cs`（菜单"实验动作"、调参、`-slamShots` 截图巡游）、`Build.cs` 的 `-practiceSlam` |
-| 测试 | `Assets/HSD/Game/Tests/Editor/GroundSlamTests.cs`（`GroundSlamTests`，30 个用例） |
+| 测试 | `Assets/HSD/Game/Tests/Editor/GroundSlamTests.cs`（`GroundSlamTests`，31 个用例） |
 
 **为什么是"第一个能力"**：§2.1 要求"这条命令开始时"没有驱动者、不在跑墙、蹲键没被别的能力用掉。排在第一个，它的 `BeforeMove` 看到的就是命令开始时所有能力的状态；滑索 / 跑墙 / 钩爪这条命令用蹲键结束自己时，它们在命令开始时还是 Driving / 跑墙中，下砸自然拒绝（`BUSY`）。顺带它在滑索之前，可以直接把使用键从这条命令里拿掉（§2.3 的"禁止挂滑索"）。
 
@@ -309,7 +309,7 @@ Unity 参考实现：第 2 步写，见 §8。
 | # | 设计（§1 – §7） | 实现 | 原因 |
 |---|---|---|---|
 | 1 | 下砸的发射优先级 15 | 仲裁表的"其他"行：优先级 0、Effect 上限 10 s | 06 §6.7 的"其他（表里没有的）"行正好是"比所有现有发射低 + 10 s 保护"，不用另加一行；意思和 15 一样 |
-| 2 | 离地 = "从原点竖直往下找能站的面" | 离地 = 脚 − 电机的 `floorZ`（世界在每条命令前算的"碰撞体脚印下最高的可站面"） | 手册没有单独的"往下找地面"查询（02 章只写地面检测）；用现成的 `floorZ` 不加新查询。副作用：碰撞体还压着台边（半宽 16 u）时算在台上，要离开台边几 u 才能砸（写进 PLAYTEST"已知"） |
+| 2 | 离地 = "脚现在离下方地面"≥ 72 u | **落差** = max(脚现在的高度, 上一次站在地上时脚的高度) − 原点正下方的地面 ≥ 72 u。正下方用世界新加的点查询 `MovementWorld.PointSupportHeight`（碰撞体脚印下的 `floorZ` 不用） | 试玩 build 截图巡游发现：从 72 u 的台子走下去，第一条空中命令脚就已经低于 72 u（脚印离开台边前身体一直算着地），按原规则 1 H 的台子**永远砸不了**。按"落差"算，平地上的跳起落同一块地面，仍然永远不触发；从 1 H 台子走下去 0.1 s 后再按也行（测试 `SprintingOffAOneBodyHeightLedgeSlams`）。第一版先用了 `floorZ`，同样的问题更严重。11-14 改，共享日志有两条（选中 / 没选） |
 | 3 | 落地时由下砸跳过硬着陆 | 下砸排第一个，`AfterMove` 也第一个跑：它先把落地转换成 520，硬着陆规则后跑。所以豁免标志要保持到**落地那条命令结束**（`landedThisCommand`），不能在转换时就清掉 | 第一次实现只在"下砸中"豁免，4 H 冲刺下砸落地 520 被硬着陆削成 0（关卡尺度程序第一次跑就看出来，已修） |
 | 4 | "取消"在下砸中每条命令检查 | 放在 `AfterMove`：别的发射要等 `AfterAbilities` 选完才知道（同一条命令下砸自己也是发射）；驱动者也是在它们自己的 `BeforeMove` 里开始的 | 每条命令的顺序（06 §6.7） |
 | 5 | 落地后的眼高"用滑铲的 0.2 s"（§2.6） | 空中按蹲照原样用 0.4 s 下蹲过渡，落地进滑铲以后才是 0.2 s | 1 H 下砸只有 0.06 s，空中那段几乎看不出来；不为它改眼高代码 |
