@@ -272,6 +272,10 @@ kick 里有随机项（同样高度落地，每次画面点头的深浅略有不
 | 起跳 `jump` | 0x76704a58 / 59 / 5a（'vpJ X/Y/Z'） | 起跳那条 |
 | 二段跳 `double_jump` | 0x76444a58 / 59 / 5a（'vDJ X/Y/Z'） | 二段跳那条 |
 | 下滑索 `zip_detach` | 和起跳同一组盐 | **下绳后的那一条**（冲量加在下绳那条） |
+| 下砸开始 / 下砸落地（实践检验，[设计]） | 0x76535358 / 59 / 5a（'vSS X/Y/Z'）；0x76534c58 / 59 / 5a（'vSL X/Y/Z'） | 起砸那条 / 落地那条 |
+| 冲刺开始（实践检验，[设计]） | 0x76445358 / 59 / 5a（'vDS X/Y/Z'） | 起冲那条 |
+
+**新事件的盐怎么取**（v1.1，11-15 实践检验补）：照 R5 的格式，4 个字节 = 'v' + 两个大写字母（事件的缩写）+ 'X' / 'Y' / 'Z'（俯仰 / 偏航 / 横滚），按大端拼成 uint32（'vSL' + 'X' = 0x76534c58）。取之前查上表和 `NativeCameraParams` 里所有 `Salt*` 常量，不和已有的撞（'vDJ' 是二段跳，所以冲刺用 'vDS'）。盐不同，同一条命令上两个事件的随机数就互相独立。
 
 #### 实现模板
 
@@ -1391,7 +1395,7 @@ R5 没有"哪个效果优先"的规则。所有 kick 都进同两组线性弹簧
 3. **单项上限**：滑铲 15°、冲刺 2°、钩爪 20°、滑索 25° × 0.7、跑墙 10°（TF2 15°）。总和实际很少超过 40°。
 4. **三选一**：绳子横滚只取一个来源，共用一个 SmoothCD 状态，切换时连续。
 5. **控制效果不叠，反馈效果叠**：状态效果（减速等）取最大；镜头反馈都相加（DP P8 反例）。
-6. **一个事件替换另一个事件**不是优先级：例如自己按出来的下砸落地不想用落地律，就在这次落地上换一个 kick（用一个只读字段关掉原触发），同一条命令上的其他 kick 照样相加（SKILL `channels-and-composition.md`）。
+6. **一个事件替换另一个事件**不是优先级（v1.1，11-15 实践检验补）：做法是**在原触发的条件上加一个"这次被接管"的只读判断**，其余不动。下砸的写法：`NativeCameraFeedback.Observe` 里落地 kick 的条件 `if (m.landed && sameBody)` 改成 `if (m.landed && sameBody && !(slamLanded && p.slamPunch))`，`slamLanded` = 下砸能力的只读计数 `landings` 比上一条命令大（镜头自己记 `lastSlamLandings`）；身体上没有这个能力时 `slamLanded` 恒为假，镜头逐位不变。开关（`slamPunch` = false）关掉时回到普通落地 kick。原来这一条的说法：例如自己按出来的下砸落地不想用落地律，就在这次落地上换一个 kick（用一个只读字段关掉原触发），同一条命令上的其他 kick 照样相加（SKILL `channels-and-composition.md`）。
 
 实测的组合：
 
@@ -1613,7 +1617,7 @@ Unity：`CameraFeedbackSettings`（`heightIntensity`、`rollIntensity`、`fovInt
 
 ### 5.6 实现和验收
 
-1. 按 §4.1 只读身体；需要的事实由能力暴露只读字段，模拟输出逐位不变。
+1. 按 §4.1 只读身体；需要的事实由能力暴露只读字段，模拟输出逐位不变。镜头在一条命令的最后（02 §2.2 第 10 步 `OnCommand`）才 `Observe`，读到的是这条命令的最终结果；能力那边用**只增的计数器**（`starts`、`landings`）比"布尔标志"好：镜头记住上次看到的数，大了就是这条命令发生了，不会漏也不会重复（v1.1，11-15 实践检验补）。
 2. 测试（照 `NativeCameraTests` / `Cam2CameraTests` 抄）：
    - kick：峰值、峰值时间、回到静止、和已有事件同命令相加；
    - 持续项：上下限钉在 `ContinuousTermsStayInsideTheirMeasuredBounds`；
@@ -1651,6 +1655,18 @@ Unity：`CameraFeedbackSettings`（`heightIntensity`、`rollIntensity`、`fovInt
 
 ---
 
+### 5.9 实践检验的偏离示范：下砸的 FOV 收缩、冲刺的 FOV 跳和喷气声（v1.1，11-15 实践检验补）
+
+两次实践检验（11.10）都按 §5 的七步做了镜头。kick 部分都在 R5 的语言里（力度梯子 §4.5：起砸 2、下砸落地和冲刺 4.5）；下面三项是 R5 移动里**没有**的东西（§3.10 第 5 条：移动里 FOV 只有滑铲 × 1.1；§6），所以照 §5.2 写成**明确偏离**：为了让动作看得出来（"可读性"）而加，有开关，写清默认值。它们是设计示范，不是 R5 规则；屏幕效果和声音同步本身仍是 99 的 A-2、A-3（待研究），这里不展开。
+
+| 偏离 | 做什么 | 开关和默认 | 为什么默认这样 | 在哪 |
+|---|---|---|---|---|
+| 下砸落地 FOV 收缩 | FOV × (1 − 0.06·w)，w 0.05 s 线性升、0.30 s 线性降；乘 FOV 强度 | `NativeCameraParams.slamFovPunch`，**默认关**（`slamFovDepth` 0.06、`slamFovIn` 0.05、`slamFovOut` 0.30） | 总控初稿要的；手册判定是偏离（§3.10），所以只给试玩开 | `NativeCamera.cs`（HSD-Unity PR #89 / #90（`practice/slam` / `practice/dash`），还没合并） |
+| 冲刺开始 FOV 跳 | FOV × (1 + 0.14·w)，w 0.08 s 线性升、0.35 s smoothstep 降（4:3 水平 86° 时约 +12°）；乘 FOV 强度 | `NativeCameraParams.dashFovPunch`，**冲刺默认开**（`dashFovScale` 1.14、`dashFovIn` 0.08、`dashFovOut` 0.35） | 用户要求冲刺"明显"；身体上没有冲刺能力时这段不跑 | 同上 |
+| 冲刺喷气声 | 起冲那一刻放一个占位的过滤噪声（快起、下降的包络） | 跟着冲刺开关；smoke 跑不放 | 声音没研究（99 A-3），占位 | `Game/Runtime/PracticeGameDash.cs`（`JetHiss`） |
+
+写法上的要点：偏离的 FOV 项都乘"FOV 强度"设置（07 §4.4 / 防晕，99 A-1），强度 0 时为 0；只做在原生镜头上（M5.5 没碰）；关掉开关以后输出和没有这个功能时逐位相同。
+
 ## 6. R5 没有的东西（做了就要写成偏离）
 
 | 效果 | R5 | HSD 里在哪 |
@@ -1663,6 +1679,7 @@ Unity：`CameraFeedbackSettings`（`heightIntensity`、`rollIntensity`、`fovInt
 | 侧移横滚 | 没有（`sv_rollangle` 0） | M5.5：1.5° × min(1, v/300) [设计] |
 | 自己的屏幕震动 | 没有（震屏是世界事件）；开枪、受击都没有 | — |
 | 受击镜头（铁驭） | 没有 | — |
+| 下砸落地 FOV 收缩、冲刺 FOV 跳、冲刺喷气声 | 没有 | 实践检验的偏离示范，§5.9（默认：收缩关、冲刺 FOV 开）（v1.1，11-15 实践检验补） |
 
 M5.5 是用户 10-21 认可过的另一种好语言（D-05），10-24 改成默认原生（D-18），代码保留在 `HSD-Unity: Assets/HSD/Game/Runtime/Camera/M55/CameraFeedback.cs`（`CriticalSmoother`、`CameraFeedbackDesign`），菜单可以切回。M5.5 的 kick 是临界阻尼"鼓包"（不回弹），这是和 R5 最大的结构差别。
 

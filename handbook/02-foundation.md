@@ -139,50 +139,103 @@ Unity 参考实现：
 6. 重力后半步。
 7. 在地面时，去掉速度沿地面法线的分量。
 
-**HSD 的顺序**（一条命令，`SkillBody.Step`）：
+**HSD 的顺序**（一条游戏命令，`PracticeSession.Step` → `SkillBody.Step` → `R5MotorV2.Step`）（v1.1，11-15 实践检验补）：
 
-| 步 | 做什么 | 对应 R5 |
+11-15 以前这里的表把"能力的 BeforeMove"写在"世界·移动前"之前、把"世界·移动后"写在"能力的 AfterMove"之前，**两处都和代码相反**（main 和实践分支都是下表的顺序）。两次实践检验（下砸、冲刺）都撞在这上面，所以这一版把整条链写全。
+
+```
+PracticeSession.Step(input)                          // 会话：一条命令
+│ 0  input.Resolved()；CombatSim.BeforeStep          // 每键 → 轴（06 §6.13）；战斗层可以改移动输入
+└─ SkillBody.Step(input, dt)                         // 身体
+   │ 1  按钮 → 按下沿 pressed = b & ~prevButtons      // 06 §6.11；建 MotorInput
+   │ 2  world.BeforeStep(motor)                      // 世界·移动前：碰撞体高度、floorZ、离地、坡上贴地
+   ├─ motor.Step(input, dt)                          // 电机
+   │  │ 3  清这条命令的标志（landed、jumped、slideStarted…），mods = 默认
+   │  │ 4  abilities.BeforeMove                      // 能力·移动前（4a – 4g，见表）
+   │  │ 5  Move：摆位置 / 发射 / 起滑 / 起跳 / 地面 / 空中；落地判断
+   │  │ 6  time += dt；记离地时刻
+   │  └ 7  abilities.AfterMove；arbiter.EndCommand   // 能力·移动后；扣次数、驱动者唯一、超时、天花板
+   │ 8  world.AfterStep(motor, start)                // 世界·移动后：扫掠、撞墙 / 天花板、迈台阶；记下接触
+   └ 9  收这条命令的事件
+│ 10 CombatSim.AfterStep；检查点；OnCommand          // 镜头 Observe（07 §0.2）、HUD、录像
+```
+
+| 步 | 谁（Unity） | 做什么 | 对应 R5 |
+|---|---|---|---|
+| 0 | `PracticeSession.Step` | 每键输入换成轴（06 §6.13）；战斗层 `CombatSim.BeforeStep` 可以改这条命令的移动输入（减速、拦开火，06 §6.18） | — |
+| 1 | `SkillBody.Step` | 按钮 → 按下沿（按钮 & ~上一条的按钮）、前后左右轴、视角，建 `MotorInput` | `ProcessMovement` 的按钮处理（NT §3） |
+| 2 | `MovementWorld.BeforeStep` | **世界·移动前**：定碰撞体高度（站 / 蹲，§2.4）；找脚下的支撑面 `floorZ`（**脚印**下最高的能站面，§2.6）、法线、地面实体；脚下低了 > 2 u 就离地；斜坡上的贴地（§2.9） | 上一条命令末尾的 CategorizePosition |
+| 3 | `R5MotorV2.Step` 开头 | 清这条命令的标志（`landed`、`jumped`、`slideStarted`、`tookOff`…）；`mods` 清成默认 | — |
+| 4a | `MovementAbilitySet.BeforeMove` | 跳键仲裁开始（06 §6.8）；仲裁器 `BeginCommand`：充能、拦掉没次数 / 被锁的技能键、驱动中屏蔽空中跳 | — |
+| 4b | 同上 | **每个能力的 `BeforeMove`，按能力列表的顺序**（06 §6.7 的表）。这时电机还是**命令开始时**的状态（`vel.z` 是移动前的）；能力可以改电机字段、申请发射（`ctx.Launch`）、申请倍率、改 `mods`（重力倍率、时间倍率、摆位置）；**上一条命令第 8 步的接触**在 `ctx.Contact` 里 | 各技能 |
+| 4c | 同上 | 合并倍率（06 §6.4）；仲裁器 `AfterAbilities`：一条命令只选一个发射（优先级）、截到天花板、结束可打断的驱动者、开不开 lurch 窗口（10 §10.5A.5） | — |
+| 4d – 4g | 同上 | 跳键 `Resolve`；锁操作 / 强制冲刺；`input.moveScale` = 武器倍率 × 能力倍率；晚到的能力 `ILateMoveAbility.BeforeMoveLate`；改过的参数生效 | — |
+| 5 | `R5MotorV2.Move` | dt′ = dt × 时间倍率；下蹲碰撞体（§2.4）；然后：摆位置（`KinematicCommand`）**或** 发射（`LaunchCommand`）**或** 起滑（按蹲沿）→ 起跳命令 / 地面命令 / 空中命令（5a – 5c 见下）。空中、起跳、发射三种命令末尾做**落地判断**（`CheckLanding`，用第 2 步的 `floorZ`） | 第 2 – 6 步 |
+| 5a | 地面命令 | 摩擦、加速（第 03 章）或滑铲（第 04 章）；v_z = 0；位置：平地 pos += v·dt′、z = 地面高度；坡上按 §2.8 | 第 4、7 步 |
+| 5b | 空中命令 | v_z −= ½g·dt′；空中加速、lurch（第 03 章）；pos += v·dt′；v_z −= ½g·dt′；落地判断（§2.6） | 第 2、4、5、6 步 |
+| 5c | 起跳命令 | v_z = 0；−½g·dt′；+V；−½g·dt′；空中加速；pos += v·dt′；−½g·dt′；落地判断（README 示范条目） | 第 2、3、4、6 步 |
+| 6 | `R5MotorV2.Step` | 时钟 += dt（真实 dt，不乘时间倍率）；记离地时刻 | — |
+| 7 | `MovementAbilitySet.AfterMove` | **每个能力的 `AfterMove`，同样按列表顺序**：能看到这条命令的结果（`landed`、`slideStarted`…）；只改速度和自己的状态。然后仲裁器 `EndCommand`：扣次数、最多一个驱动者、超时、水平 900 / 向上 1100 天花板（06 §6.3） | — |
+| 8 | `MovementWorld.AfterStep` | **世界·移动后**：从命令开始的位置扫到电机给的新位置（§2.5）；撞到的面去掉撞向它的速度；迈台阶；记下墙 / 天花板接触 `SurfaceContact`（**能力要到下一条命令的 4b 才看得到**） | 第 4 步里的 TryPlayerMove |
+| 9 | `SkillBody.Step` | 收这条命令的事件 | — |
+| 10 | `PracticeSession.Step` | 战斗层 `AfterStep`；检查点；`OnCommand`：镜头 `Observe`（07 §0.2）、HUD、录像 | — |
+
+**新代码放在哪**（按上表）：
+
+| 要做的事 | 放在 | 为什么 |
 |---|---|---|
-| 0 | 输入：按钮、按下边沿 = 按钮 & ~上一条的按钮、前后左右轴、视角 | `ProcessMovement` 的按钮处理（NT §3） |
-| 1 | 技能的 BeforeMove：可以改参数、重力倍率、时间倍率，或者整条命令改成"弹射"/"由技能直接摆位置"（第 05 章） | 各技能 |
-| 2 | **世界·移动前**：定碰撞体高度（站 / 蹲，§2.4）；找脚下的支撑面、法线、地面实体（§2.6）；脚下低了 > 2 u 就离地；斜坡上的贴地（§2.9） | 上一条命令末尾的 CategorizePosition |
-| 3 | **电机**：dt′ = dt × 时间倍率；下蹲碰撞体（§2.4）；滑铲开始；然后三选一：**起跳命令** / **地面命令** / **空中命令** | 第 2 – 6 步 |
-| 3a | 地面命令：摩擦、加速（第 03 章）或滑铲（第 04 章）；v_z = 0；位置：平地 pos += v·dt′、z = 地面高度；坡上按 §2.8 | 第 4、7 步 |
-| 3b | 空中命令：v_z −= ½g·dt′；空中加速、lurch（第 03 章）；pos += v·dt′；v_z −= ½g·dt′；**落地判断**（§2.6） | 第 2、4、5、6 步 |
-| 3c | 起跳命令：v_z = 0；−½g·dt′；+V；−½g·dt′；空中加速；pos += v·dt′；−½g·dt′；落地判断（README 示范条目） | 第 2、3、4、6 步 |
-| 4 | **世界·移动后**：从第 2 步时的位置扫到电机给的新位置（§2.5）；撞到的面去掉撞向它的速度；记下墙 / 天花板接触 | 第 4 步里的 TryPlayerMove |
-| 5 | 技能的 AfterMove（只改速度）；收集这条命令的事件；时钟 += dt（真实 dt，不乘时间倍率） | — |
+| 按"命令开始时"的状态判断触发（"在空中按蹲""离地多高"） | 能力 `BeforeMove`，能力加在列表**最前面**（`set.abilities.Insert(0, …)`） | 排在前面的能力看到的是还没被别的能力改过的状态（06 §6.7） |
+| 发射（替换速度） | `BeforeMove` 里 `ctx.Launch(v, this)`；电机在第 5 步走发射命令 | 仲裁器在 4c 一条命令只放一个发射 |
+| 每条命令推速度（驱动者） | `BeforeMove` 设速度和 `mods`（10 §10.5A.1） | 电机第 5 步照常积分 |
+| 处理落地（转换落地速度、接滑铲） | `AfterMove`，读 `motor.landed`；移动前的竖直速度要在 `BeforeMove` 自己记下 | 落地在第 5 步才判断出来 |
+| 豁免 / 改别的能力对落地的处理 | 让那个能力能查到你（例如 `IHardLandingExempt`，硬着陆降速在第 7 步查） | 第 7 步各能力按列表顺序跑，谁先谁后决定结果（见下面例 1） |
+| 撞墙结束 | 下一条命令的 `BeforeMove` 读 `ctx.Contact`（比较 `contact.time` 和上一条命令的开始时刻） | 扫掠在第 8 步，晚于所有能力（例 2） |
+| 镜头、声音、HUD | `OnCommand`（第 10 步），**只读**能力的计数器 | 第 10 步模拟已经结束，读到的是这条命令的最终结果（07 §5.6） |
+
+**两次实践检验撞上的例子**：
+
+1. **下砸接滑铲：硬着陆把 520 削成 0**（`handbook/practice/slam/REPORT.md` G-1，研究 PR #125，还没合并）。下砸能力排在列表第一。落地那条命令的第 7 步，下砸先把落地速度转换成 520 u/s 的滑铲，然后排在后面的硬着陆降速（`LandingSlowdown`，06 §6.7 表第 5 位）照常跑：它用自己在 4b 记下的移动前竖直速度（≥ 1200 u/s，03 §3.9 的拟合给 f0 = 0），把水平速度乘 0。修法：硬着陆在第 7 步先问列表里有没有 `IHardLandingExempt` 的能力正在豁免（下砸在"正在下砸或这条命令刚落地"时豁免）。
+2. **冲刺撞墙晚一条命令才知道**（`handbook/practice/dash/REPORT.md` D-1，PR #126，还没合并）。冲刺在 4b 推速度，扫掠在第 8 步才发现撞墙，那时所有能力的 `AfterMove` 都跑完了。所以冲刺在**下一条命令**的 4b 读到接触才结束。身体已经停在墙面上（扫掠去掉了撞向墙的速度），所以看不出来，但"撞墙那条命令"和"冲刺结束那条命令"差一条。
+3. **下砸的触发高度**（G-3）：`floorZ` 是脚印下的支撑面，不是脚下一个点（§2.6 第 1 条）。走下 72 u 的台子时，脚印还压着台边就一直算站着，等完全离开、第一条空中命令时脚已经开始往下掉，"现在离地"就已经 < 72 u。所以按"脚现在离地 ≥ 72 u"写的触发在 1 H 的台子上永远不成立，要用"落差"（10 §10.5A.4）。
 
 **和 R5 顺序的两处不同**（都是 HSD 现在的写法，R5 没有专门测过这两处的差别）：
 
 1. **地面命令不加重力**。R5 地面命令也做两个重力半步，然后第 7 步去掉法线分量；HSD 直接令 v_z = 0、速度保持水平。平地上两者完全相同。坡上 R6 实测：不滑铲时速度保持水平，滑铲结束后在上坡上"向下坡方向的最大速度都是 0.00"（没有倒滑），和 HSD 的写法一致。
-2. **碰撞在落地判断之后**。R5 的碰撞在移动里面、落地判断之前；HSD 的落地判断（3b / 3c 末尾）用的是第 2 步找到的"命令开始时脚下的地面"，碰撞（第 4 步）在后面。从高处落到一个**比原来脚下更高**的台面上时，HSD 先在第 4 步把脚放到台面上，下一条命令才算落地，最多晚一条命令（8.3 ms）。没有发现哪个对照因此变差，但这是写法上的差别，记在 `_notes`。
+2. **碰撞在落地判断之后**。R5 的碰撞在移动里面、落地判断之前；HSD 的落地判断（第 5 步末尾）用的是第 2 步找到的"命令开始时脚下的地面"，碰撞（第 8 步）在后面。从高处落到一个**比原来脚下更高**的台面上时，HSD 先在第 8 步把脚放到台面上，下一条命令才算落地，最多晚一条命令（8.3 ms）。没有发现哪个对照因此变差，但这是写法上的差别，记在 `_notes`。
 
 #### 实现模板
 
 ```
-// 单位：u、s
-body.step(input, dt):
-    edges   = input.buttons & ~prevButtons;  prevButtons = input.buttons
-    abilities.beforeMove(body, input)          // 可能设 mods：timeScale、gravityScale、launch、kinematic、参数
-    world.beforeStep(motor)                    // §2.4 碰撞体高度，§2.6 支撑面，§2.9 贴地
-    start = motor.pos
-    motor.step(input, dt):
-        dt2 = dt * mods.timeScale; g = svGravity * gravityScale * mods.gravityScale
-        updateDuckHull()                       // §2.4
-        if mods.kinematic: pos, vel, grounded = ability's; return
-        if mods.launch:    vel = launch; airAccel; pos += vel*dt2; vel.z -= g*dt2/2; checkLanding(); return
-        trySlideStart()                        // 第 04 章
-        if grounded and edges.jump:  jumpCommand()          // 第 03 章 / README 示范条目
-        elif grounded:               groundCommand()        // vel.z = 0; 平地 pos += vel*dt2, z = floorZ; 坡上 §2.8
-        else:                        airCommand()           // 半步重力 / 空中加速 / pos / 半步重力 / checkLanding()
-    world.afterStep(motor, start)              // §2.5 扫掠
-    abilities.afterMove(body, input)
-    motor.time += dt
+// 单位：u、s。顺序照上表（11-15 改正：能力在电机里面，世界扫掠在能力之后）
+session.step(input):
+    input = combat.beforeStep(input.resolved())  // 0
+    body.step(input, dt):
+        edges = input.buttons & ~prevButtons; prevButtons = input.buttons   // 1
+        world.beforeStep(motor)                    // 2  §2.4 碰撞体高度，§2.6 支撑面 floorZ，§2.9 贴地
+        start = motor.pos
+        motor.step(input, dt):
+            clearFlags(); mods = identity          // 3
+            abilities.beforeMove(motor, input)     // 4  列表顺序；可能设 mods：timeScale、gravityScale、launch、kinematic、参数
+            dt2 = dt * mods.timeScale; g = svGravity * gravityScale * mods.gravityScale
+            updateDuckHull()                       // §2.4
+            if mods.kinematic: pos, vel, grounded = ability's
+            elif mods.launch:  vel = launch; airAccel; pos += vel*dt2; vel.z -= g*dt2/2; checkLanding()   // 10 §10.5A.5
+            else:
+                trySlideStart()                    // 第 04 章
+                if grounded and edges.jump:  jumpCommand()          // 第 03 章 / README 示范条目
+                elif grounded:               groundCommand()        // vel.z = 0; 平地 pos += vel*dt2, z = floorZ; 坡上 §2.8
+                else:                        airCommand()           // 半步重力 / 空中加速 / pos / 半步重力 / checkLanding()
+            motor.time += dt                       // 6
+            abilities.afterMove(motor, input)      // 7  列表顺序；然后 arbiter.endCommand（次数、驱动者、超时、天花板）
+        contact = world.afterStep(motor, start)    // 8  §2.5 扫掠；能力下一条命令才在 ctx.Contact 里看到
+        events = drain()                           // 9
+    combat.afterStep(); onCommand()                // 10 镜头 Observe（07 §0.2）
 ```
 
 Unity 参考实现：
+- `U:Assets/HSD/Game/Runtime/PracticeSession.cs`：`PracticeSession.Step`（第 0、10 步：`CombatSim.BeforeStep` / `AfterStep`、`OnCommand`）。
 - `U:…/Abilities/_Core/SkillBody.cs`：`SkillBody.Step`（按钮边沿、`world.BeforeStep` → `motor.Step` → `world.AfterStep`、事件）。
+- `U:…/Abilities/_Core/MovementAbility.cs`：`MovementAbilitySet.BeforeMove`（4a – 4g）、`AfterMove`（第 7 步）；`SkillArbiter.BeginCommand` / `AfterAbilities` / `EndCommand`。
 - `U:…/R5MotorV2.cs`：`R5MotorV2.Step`（BeforeMove / AfterMove、时钟）、`Move`（三选一）、`JumpCommand`、`AirMove`、`LaunchCommand`、`KinematicCommand`、`CheckLanding`。`CommandModifiers`（时间倍率、重力倍率、弹射、摆位置）。
 - `U:…/World/MovementWorld.cs`：`BeforeStep`、`AfterStep`。
 
@@ -435,8 +488,9 @@ Unity 参考实现：`U:…/World/MovementWorld.cs`：`Offset`、`Inside`、`Ent
 
 1. **支撑面**（每条命令开始，§2.2 第 2 步）：在碰撞体脚印（32 × 32）下面，找比脚高不超过 `stepUp` 的、最高的能站的顶面；没有就是基础地面。给出高度、法线、表面 id、地面实体（道具算单独的实体，静态关卡几何算一个，第 04 章滑铲二次加成用）。
 2. **离地**：在地面上、而脚下的支撑面低了 > `groundProbe` → 离地（滑铲同时结束）。斜坡例外见 §2.9。
-3. **落地**（空中命令、起跳命令、弹射命令的末尾）：v_z < 0 **而且** 脚离支撑面 ≤ `groundProbe` → 着地：v_z = 0，这一条命令的 z 不动，下一条地面命令再贴到地面上；"上次落地时刻" = 这条命令开始的时钟（连跳惩罚、超速削减用，第 03 章）；按着下蹲且水平速度 ≥ `slideRequiredStartSpeed` → 接着滑铲（第 04 章）。
+3. **落地**（空中命令、起跳命令、弹射命令的末尾）：v_z < 0 **而且** 脚离支撑面 ≤ `groundProbe` → 着地：v_z = 0，这一条命令的 z 不动（已经穿到支撑面下面时夹回支撑面高度，`CheckLanding`），下一条地面命令再贴到地面上；"上次落地时刻" = 这条命令开始的时钟（连跳惩罚、超速削减用，第 03 章）；按着下蹲且水平速度 ≥ `slideRequiredStartSpeed` → 接着滑铲（第 04 章）。
 4. 起跳、弹射命令自己令"不在地面"，不走离地判断。
+5. **`floorZ` 是脚印，不是一个点**（v1.1，11-15 实践检验补）：脚印（32 × 32）还压着台边就一直算站着；完全离开台边以后的第一条空中命令，脚已经比台面低了一点。所以"离地多高"有两种量法：`motor.pos.z − motor.floorZ`（脚印下的支撑面，移动用的）和"正下方一个点"的支撑面（`MovementWorld.PointSupportHeight`，HSD-Unity PR #89 / #90（`practice/slam` / `practice/dash`），还没合并，只给下砸用）。要按"从多高掉下来"判断的新动作用**落差** = max(脚现在, 上次站地时的脚) − 正下方的地面（10 §10.5A.4；例子见 §2.2 例 3）。
 
 **和 R5 的差别**：HSD 落地要求 v_z < 0；R5 是 v_z ≤ 140 就可以着地。平地上看不出来（离开地面后 v_z 只会从正变负）；可能有差别的是**上坡时被抛起来、v_z 是小的正值又碰到坡面**的情况（例如冲上坡顶又落回坡上、跳板弹到斜面上）。R5 没测过，DIFF 里没有这一条，写进 `_notes`。
 

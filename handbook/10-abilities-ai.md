@@ -417,6 +417,76 @@ Unity 参考实现：`U:…/Abilities/_Core/SkillArbiter.cs`（`CombineBoosts`�
 
 ---
 
+## 10.5A 新移动技能的实现模板（v1.1，11-15 实践检验补）
+
+#### 原理
+
+10.5 写的是技能和移动之间**有哪些口子**；这一节写**怎么用这些口子做一个新动作**。两次实践检验（下砸接滑铲、冲刺，11.10）都是照手册设计、照 Unity 实现的，手册不够的地方几乎都在"怎么接进代码"，这里按它们的做法写成模板。规则本身（速度怎么处理、仲裁、镜头）还是看 06、07 章；每一步在一条命令里的位置看 **02 §2.2**。
+
+#### 规则和公式
+
+**10.5A.1 每条命令推速度的能力（速度驱动者）**。最简单的驱动者不摆位置，只在每条命令的 `BeforeMove` 里设速度，让电机照常走空中移动：
+
+1. 状态 `Driving`（同时只有一个驱动者，06 §6.9；它在空中屏蔽跳键，06 §6.8）。
+2. 每条命令：v_h = 方向 · v(t_mid)，t_mid = 这条命令的中点（now − 开始 + ½dt）；v_z = 0；`grounded = false`（不吃地面摩擦、不能地面跳）；`mods.gravityScale = 0`（不掉高度）。
+3. 结束：在 `AfterMove` 里 now + dt ≥ 开始 + 时长时结束；结束时**替换**成出口速度（06 §6.1；冲刺用 max(出口, 开始前的速度)，不削更快的速度，P3）。
+4. 副作用：电机走空中命令，所以**空中加速只补不削**（03 §3.6，按着方向键也不会把速度拉下来）；结束后在地面上按地面减速很快回到冲刺上限（冲刺实测 0.108 s 回到 299 u/s）。
+5. 撞墙：扫掠在 02 §2.2 第 8 步，所以要在**下一条命令**的 `BeforeMove` 读 `ctx.Contact`（只认 `contact.time` = 上一条命令开始时刻的接触），晚一条命令结束（02 §2.2 例 2）。
+6. 禁止口：`IMantleBlocker`、`IWallRunBlocker`（10.5 第 6 条）在运行中返回真。
+
+**10.5A.2 只在某个状态里抬高速度天花板**。06 §6.3 的天花板（水平 900、向上 1100 u/s）平时只能按装备抬（`MovementConfig.Apply`）。要"只在这个动作进行中抬"，实现 `IHorizontalCeilingOverride`（HSD-Unity PR #89 / #90（`practice/slam` / `practice/dash`），还没合并）：运行中返回要的上限，不运行时返回 NaN；仲裁器在截发射（02 §2.2 第 4c 步）和命令末尾（第 7 步 `EndCommand`）都取 max(天花板, 所有能力报的值)。不加的话，冲刺的 2000 u/s 每条命令都被截到 900（位置照走，但速度读数、事件都错）。向上的 1100 没有这个口子（D-217 等用户定）。
+
+**10.5A.3 从代码里开始一次滑铲**：照 04 §4.7 末尾的"伪代码名 ↔ Unity 字段"表写字段；落地后接滑铲放在 `AfterMove`（读 `motor.landed`），并且每一次开始都写 `slideStartTime`（2 s 冷却，04 §4.4）。要让刚开始就起跳退还这次的加成（04 §4.6），同时写 `slideBoosted`、`lastBoost`、`boostTime`、`slideDuckPressTime`。
+
+**10.5A.4 "离地多高"和"走下台边"**：电机的 `floorZ` 是脚印下的支撑面（02 §2.6 第 1、5 条）。按"从多高掉下来"判断的动作用**落差** = max(脚现在, 上次站地时的脚) − 正下方一个点的地面（`MovementWorld.PointSupportHeight`，HSD-Unity PR #89 / #90（`practice/slam` / `practice/dash`），还没合并）。只用"脚现在离地"会让 1 H（72 u）的台子永远不够高：走下台边时，脚印完全离开台边的第一条空中命令，脚已经比台面低了（02 §2.2 例 3）。平地上的跳起落在同一块地上，落差就是起跳高度，所以平地永远不触发（LS-01、LS-06：54.8 / 48.8 u < 72）。
+
+**10.5A.5 发射（替换速度）**：
+
+1. 在 `BeforeMove` 里 `ctx.Launch(v, this)`；一条命令只放一个（优先级最高的，06 §6.9），被比下去的发射方收到 `Interrupt("LAUNCH_LOST")`。
+2. **发射那条命令的积分**（`R5MotorV2.LaunchCommand`）：v = 发射速度（相当于在前半步重力之后替换，所以这条命令只扣后半步）；照常空中加速、空中阻力；pos += v·dt；v_z −= ½g·dt；水平上限；落地判断。所以这条命令结束时 v_z = 发射 v_z − ½g·dt（下砸 −1200 → −1203.1 u/s）。发射离地、结束滑铲、关冲刺；**不算一次起跳**（不写连跳惩罚的时钟）。
+3. **开不开 lurch 窗口**（= 发射以后能不能用按方向键的 lurch 改方向；平常的空中加速 69 u/s 意图上限照常有，03 §3.6）：仲裁器在 `SkillArbiter.AfterAbilities` 里按 `launchOpensLurchWindow`（默认开）决定，例外是**按能力类型写死的一张表**：升降梯弹出（`ejectOpensLurchWindow`）、扑击、跳板（Reference 关，R5 r_d1）、下砸（`opensLurchWindow`，[设计] 关）。**新发射默认会开窗口**；不想开，要在这张例外表里加一行（或者以后改成能力自己报告）。
+4. 发射会结束可打断的驱动者（`launchEndsDrivers`），这时驱动者的重力倍率也恢复成 1。
+5. 下砸的做法：起砸 = 发射 (v_h × 0.5, −1200)；Effect 状态；另一个能力的发射赢了 / 有驱动者开始 / v_z > 0 / 超时都取消，取消时不做落地转换。
+
+**10.5A.6 改别的能力对同一件事的处理**：不要去改那个能力的代码，给它一个能查到你的接口。例：硬着陆降速查 `IHardLandingExempt`（下砸在"正在下砸或这条命令刚落地"时返回真；02 §2.2 例 1）。
+
+**10.5A.7 加到身体上和开关**：实践检验的能力都用静态 `AddTo(body)`：`set.abilities.Insert(0, a)`（放最前面，看到命令开始时的状态）+ `arbiter.Add(a, null)`（基础层，没有技能槽，自己管次数）。没有仲裁行的用兜底行"其他"（06 §6.7）。开关关时**不加这个能力**，身体逐位不变（下砸、冲刺的回放和手感对照 741 / 741 逐字节相同）。新参数在 HSD-Unity #88（单位开关）合并前只写 `[u]` 注释，合并后要补量纲标记（01 §5）。
+
+**10.5A.8 游戏侧接入的惯例**（`PracticeGame` 的写法，不是规则）：新场地加在所有旧东西**之后**（旧测试断言"最后一个方块"）；菜单在 `PracticeGame` 右栏的"实验动作"一块；偏好键名 `hsd.exp.<动作>`（PlayerPrefs）；截图巡游参数 `-<动作>Shots <目录>`；按键在画面帧锁存、每条命令清掉（02 §2.1）。
+
+#### 实现模板
+
+```
+// 单位：u、s。一个"按键 → 速度驱动 → 结束替换"的新动作（照冲刺）
+class NewMove : ISkillAbility, IMantleBlocker, IWallRunBlocker, IHorizontalCeilingOverride
+  static AddTo(body): body.set.abilities.Insert(0, a); body.arbiter.Add(a, null)
+  BeforeMove(ctx):                              // 02 §2.2 第 4b 步
+    if running:
+      if ctx.Contact 来自上一条命令 且 撞向前进方向: end(沿墙); return
+      push(ctx); return                         // vel = dir·v(t_mid); grounded = false; mods.gravityScale = 0
+    if not (ctx.pressed & ButtonBit): return
+    if 有别的驱动者 / 没次数 / 恢复期: refuse; return
+    记下开始前的速度；结束滑铲（04 §4.7 表）；sprinting = false；扣次数
+    running = true; start = now; push(ctx)
+  AfterMove(ctx):                               // 第 7 步
+    if running and now + dt >= start + duration: end(出口 = max(exit, 开始前的速度))
+  HorizontalCeiling = running ? max(peak, 开始前的速度) : NaN
+```
+
+Unity 参考实现（都在 HSD-Unity PR #89 / #90（`practice/slam` / `practice/dash`），还没合并）：`Abilities/Dash/DashAbility.cs`（`DashAbility`、`IHorizontalCeilingOverride`）、`Abilities/GroundSlam/GroundSlamAbility.cs`（`GroundSlamAbility`、`IHardLandingExempt`）、`World/MovementWorld.cs`（`PointSupportHeight`）、`Abilities/_Core/SkillArbiter.cs`（`AfterAbilities` 的 lurch 例外表、`Clamp`）。现成的同类：`VantageEchoAbility`（05 §5.52，R5 里结构最像冲刺的位移）。
+
+#### 验收
+
+- 实践检验的测试：`GroundSlamTests`（31 个）、`DashTests`（24 个），55 / 55（HSD-Unity PR #89 / #90（`practice/slam` / `practice/dash`），还没合并）。
+- 必有的不变量：开关关（不加能力）时原有 EditMode 全过、回放和手感对照逐字节相同；开关开但不按时，和关逐位相同（`GroundSlamTests.OnWithoutASlamPressIsTheSameBodyBitForBit`）。
+- 测试坑：`ResetToPose`、换配置、开关会**重建身体**，之前拿到的能力引用就作废了，要重新取（`PracticeSession.Ability<T>()` = `Body.set.Get<T>()`）。
+
+#### 出处
+
+- `handbook/practice/slam/REPORT.md` §2 G-1 – G-11、`DESIGN.md` §8（研究 PR #125，还没合并）。
+- `handbook/practice/dash/REPORT.md` §2 D-1 – D-8、`DESIGN.md` §8（研究 PR #126，还没合并）。
+- HSD-Unity `practice/slam` / `practice/dash`（PR #89 / #90，还没合并）：上面列的类；`R5MotorV2.LaunchCommand`、`CheckLanding`（main 也有）。
+
 ## 10.6 状态效果和控制（减速、眩晕、电击）
 
 #### 原理

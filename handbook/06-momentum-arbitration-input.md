@@ -282,6 +282,8 @@ Unity：`SkillArbiter.Clamp`（`AfterAbilities` 和 `EndCommand` 里调用）；
 
 ---
 
+**只在某个状态里抬天花板**（v1.1，11-15 实践检验补）：上面的抬高只能按装备；要"只在这个动作进行中"抬（例如冲刺 2000 u/s），见 10 §10.5A.2（`IHorizontalCeilingOverride`）。
+
 ### 6.4 速度倍率怎么叠：加速取大、减速相乘
 
 #### 原理
@@ -474,14 +476,17 @@ HSD 照 R5 的方式跑每条命令，只是"各个动作"变成了一串**能�
 
 #### 规则和公式
 
-**一条命令里的顺序**（`MovementAbilitySet.BeforeMove` / `AfterMove`，第 02 章 §2.2 的第 1、5 步展开）：
+**一条命令里的顺序**（`MovementAbilitySet.BeforeMove` / `AfterMove`，第 02 章 §2.2 的第 4、7 步展开；整条链——世界、电机、战斗层、镜头在哪一步——以 **02 §2.2** 为准（v1.1，11-15 实践检验补））：
 
 1. 仲裁器 `BeginCommand`：技能充能；没有次数 / 被独占锁住的技能键被拦掉（`SLOT_REFUSED_<能力>_COOLDOWN` / `_LOCKED`）；空中按跳而有非"自己处理跳"的驱动者在跑 → 跳键被屏蔽（`JUMP_BLOCKED_DRIVING`）。
 2. 每个能力的 `BeforeMove`，按下面的能力顺序。
 3. 仲裁器 `CombineBoosts`（速度倍率合成，§6.4）、`AfterAbilities`（发射选择，§6.9）。
 4. 跳键仲裁 `JumpArbitration.Resolve`（§6.8）。
-5. 电机移动、世界碰撞。
+5. 电机移动（02 §2.2 第 5 步，含落地判断）。
 6. 每个能力的 `AfterMove`；仲裁器 `EndCommand`（扣次数、独占、驱动者唯一、超时、速度天花板）。
+7. **世界碰撞在这之后**（02 §2.2 第 8 步）：撞墙、天花板的接触，能力要到下一条命令的 `BeforeMove`（`ctx.Contact`）才看得到。11-15 以前这里把世界碰撞写在第 5 步，和代码不符，已改。
+
+**能力在列表里的位置 = 它看到的是谁的旧状态**（v1.1，11-15 实践检验补）：排在前面的能力在 `BeforeMove` 看到的是命令开始时、还没被别的能力改过的状态；在 `AfterMove` 里先改结果，后面的能力看到的是改过的结果（02 §2.2 例 1）。新能力用 `AddTo`（`set.abilities.Insert(0, …)` + `arbiter.Add(a, null)`）放在最前面、进仲裁器的基础层；没有仲裁行的能力用仲裁行表最后一行"其他"的兜底值。
 
 **能力顺序**（`MovementConfig.CreateBody`，前面的先看输入）：
 
@@ -802,11 +807,15 @@ Unity：`SkillArbiter.AfterAbilities`、`SkillArbiter.EndCommand`、`SkillArbite
 1. 边沿 = 这条命令的按钮 & ~上一条命令的按钮。
 2. 按钮位（R5 usercmd，Unity 照用）：跳 0x2、蹲 0x4、前 0x8、后 0x10、使用 0x20、左 0x200、右 0x400；冲刺 `IN_SPEED`（bit 17）；技能键 Offhand1（战术）/ Offhand4（大招），中间两个槽位用 bit 22 / 23。四个方向键合起来 0x618。
 3. 上一条命令的按钮在这条命令处理完后保存（不是在开始时）。
+4. **HSD 自己加的按钮位**（v1.1，11-15 实践检验补）：从 bit 40 往上分配，高于回放会读的所有 R5 按钮位，所以回放永远碰不到。已经用掉的见下表；**下一个新按键用 bit 42**，在 `SkillBody.Buttons` 里把 `SkillInput` 的字段映射到位，能力用 `ctx.pressed & 位` 读按下沿。
 
 | 量 | [m] | 原值 | 身高比例 | 合理范围 | 依据 |
 |---|---|---|---|---|---|
 | 方向键位 前 / 后 / 左 / 右 | — | 0x8 / 0x10 / 0x200 / 0x400 | — | — | [反编译] NT §3 |
 | 跳 / 蹲 / 使用 | — | 0x2 / 0x4 / 0x20 | — | — | [反编译] |
+| 技能槽 Slot1 / Slot2 / Slot3 / Slot4 | — | `R5Buttons.Offhand1` / bit 22 / bit 23 / `R5Buttons.Offhand4` | — | — | `SkillButtons.Bit` |
+| HSD 重力切换 `FunButtons.Gravity` | — | bit 40（`1L << 40`） | — | — | [设计] Fun |
+| HSD 冲刺 `DashAbility.ButtonBit`（实践检验） | — | bit 41（`1L << 41`） | — | — | [设计]，HSD-Unity PR #89 / #90（`practice/slam` / `practice/dash`），还没合并 |
 
 #### 实现模板
 
@@ -1012,6 +1021,24 @@ Unity：`G:TapKey.cs`（`TapKey`、`Press`、`Queue`、`MaxQueued`）、`G:Pract
 | 翻越跳 / superglide 的出口方向 | 跟输入，要按着 W [实测] | Reference：要 W；Fun：只按侧向也给速度 [设计] | 04 §4.13 |
 | 鼠标左键 | — | 同时是相位突破确认和开火 | HSD |
 
+**练习游戏的全部按键**（v1.1，11-15 实践检验补）（`PracticeGame.ReadInput`；新按键先查这张表，冲刺的初稿用 V 就撞了投掷物）：
+
+| 键 | 用途 | 层 | 备注 |
+|---|---|---|---|
+| W / A / S / D | 方向键 | 移动 | 每键单独（06 §6.13） |
+| Space | 跳 | 移动 | 仲裁见 06 §6.8 |
+| Left Ctrl / C | 蹲 | 移动 | 也是下砸（实践检验，在空中按蹲沿） |
+| Shift | 冲刺 | 移动 | — |
+| X | 使用（滑索等） | 移动 | — |
+| Q / E / F / Z | 技能槽 Slot1 – Slot4 | 移动技能 | — |
+| G | 重力切换（Fun） | 移动 | bit 40 |
+| 鼠标左键 | 开火 / 确认 | 战斗 | 冲刺和恢复期被拦（06 §6.18） |
+| 鼠标右键 | 开镜 | 战斗 | — |
+| V | 投掷物（按住） | 战斗（TF2X） | — |
+| B / N / J | 战术 / 增益 / 引爆 | 战斗（TF2X） | — |
+| Left Alt / 鼠标侧键（Mouse3） | 冲刺（实践检验） | 移动 | bit 41，HSD-Unity PR #89 / #90（`practice/slam` / `practice/dash`），还没合并 |
+| Esc、Tab / F1、F2、F4、F6 – F10、`=`、`\`、`'` | 菜单、换配置、换路线、调试、演示、反馈、换装备 | 游戏 | 不进命令 |
+
 #### 实现模板
 
 无：表里每一行都由 §6.11 – §6.14 和 §6.6 – §6.10 的规则给出。
@@ -1090,3 +1117,37 @@ HSD：没有 Input System 包、没有摇杆轴。代码上，旧的轴写法能
 | 反向输入不减速的修复（M10-D4） | 03 §3.4；M10D4 | 现在两种配置都走原生地面（`groundNativeFriction`），D4 修的那条路只在 M5 开关下才走 |
 
 输入层：锁存的按键用掉就清（§6.14）；跳键仲裁拒绝的按下沿直接丢掉（`JumpPressRecord` 记下来但不保留，§6.8）。所以 HSD 现在**没有任何跨命令的输入缓冲**。
+
+
+### 6.18 战斗层和移动能力之间的接口（v1.1，11-15 实践检验补）
+
+#### 原理
+
+移动和战斗是两层代码：移动在 `SkillBody`（固定 120 Hz 命令），战斗在 `CombatSim`（同一条命令的前后，02 §2.2 第 0、10 步）。新动作常常两边都要碰（冲刺中不能开火、击倒敌人减冷却），这里写清现在两层之间**有哪些口子**、**没有哪些**。
+
+#### 规则和公式
+
+1. **战斗 → 移动**：战斗层在第 0 步（`CombatSim.BeforeStep`）可以改这条命令的移动输入；战斗层的减速 / 加速通过电机接口进移动倍率（10 §10.5 第 7 条，`CombatLoadout.motorHooks`）。
+2. **移动 → 战斗："不能开火"**：移动能力**只报告**一个时刻 `FireBlockedUntil`（电机时钟；运行中 = +∞，结束后 = 结束时刻 + 恢复期）；**游戏层**在建输入时拦开火位（`fire = 鼠标左键 && !被拦`），战斗层不知道原因。冲刺的恢复期 0.25 s 照 09 的冲刺到开火上限（D-211 等用户定）。
+3. **战斗事件 → 移动能力**：战斗层**没有事件**，只有计数（`CombatSim.kills`）。要"击倒敌人减冷却"，游戏层每帧比较计数，有新增就调能力的方法（`DashAbility.OnKill(motor.time)`）。粗糙但够用；以后战斗层有了命中 / 击倒回调再换。
+4. **按键**：战斗层的键也占练习游戏的键盘，新按键先查 §6.15 的全键表，按钮位按 §6.11 第 4 条分配。
+
+#### 实现模板
+
+```
+// 游戏层（PracticeGame），每画面帧
+blocked = dash != null and motor.time < dash.FireBlockedUntil
+input.fire = (mouseLeft or latchFire) and not blocked
+while seenKills < combat.kills: seenKills++; dash.OnKill(motor.time)
+```
+
+Unity（HSD-Unity PR #89 / #90（`practice/slam` / `practice/dash`），还没合并）：`Game/Runtime/PracticeGameDash.cs`（`DashBlocksFire`、`DashFrame`）、`DashAbility.FireBlockedUntil` / `OnKill`；`Game/Runtime/Combat/CombatSim.cs`（`kills`）。
+
+#### 验收
+
+- `DashTests.FireIsBlockedDuringTheDashAndTheRecovery`、`DashTests.ChargeCooldownRecoveryAndKills`（HSD-Unity PR #89 / #90（`practice/slam` / `practice/dash`），还没合并）。
+- 合格线：恢复期最后一条命令前不能开火、之后能；一次击倒只减一次冷却。
+
+#### 出处
+
+- `handbook/practice/dash/REPORT.md` §2 D-4 – D-6（研究 PR #126，还没合并）。

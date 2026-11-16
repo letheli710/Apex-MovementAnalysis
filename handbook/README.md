@@ -1,6 +1,6 @@
 # HSD 动作与技术手册
 
-版本：**v1**（hb-integrate 第二轮整合，2026-11-14；阶段 0 骨架 hb0）。01 – 12 章和附录 A 都写完了，阶段 4 重建检验也跑过一轮（结果见下面目录里 `rebuild-test/` 一行）。分支 `handbook/base`，还没合并进 `main`（draft PR [#124](https://github.com/letheli710/Apex-MovementAnalysis/pull/124)，早上要定的事见 [_notes/MORNING-CHECKLIST.md](_notes/MORNING-CHECKLIST.md)）。
+版本：**v1.1**（2026-11-15 按两次实践检验补，见下面"v1.1"一节；v1 是 hb-integrate 第二轮整合，2026-11-14；阶段 0 骨架 hb0）。01 – 12 章和附录 A 都写完了，阶段 4 重建检验也跑过一轮（结果见下面目录里 `rebuild-test/` 一行）。分支 `handbook/base`，还没合并进 `main`（draft PR [#124](https://github.com/letheli710/Apex-MovementAnalysis/pull/124)，早上要定的事见 [_notes/MORNING-CHECKLIST.md](_notes/MORNING-CHECKLIST.md)）。
 
 ## 这份手册是什么
 
@@ -40,7 +40,7 @@ High Speed Doom（HSD）的移动、镜头、动画、战斗手感，过去三�
 | [08-body-animation.md](08-body-animation.md) | 持枪和移动叠加、泰坦步态 / 脚 / 地形 / 惯性、驾驶舱镜头（受击、上下机在 07）；附件 [08-body-animation/](08-body-animation/) | hb-ch08 | 完成（11-14 合入） |
 | [09-combat-feel.md](09-combat-feel.md) | 后坐、开镜、枪的重量、扩散、命中反馈；附件 [09-combat-feel/](09-combat-feel/README.md) | hb-ch09 | 完成（11-14 合入） |
 | [10-abilities-ai.md](10-abilities-ai.md) | 技能设计结构、敌人 AI（AI 没有参考实现，写成规格） | hb-ch10 | 完成（11-14 合入） |
-| [11-acceptance.md](11-acceptance.md) | 手感怎么验收：指标、回放对比、自动测试、合格线总表（§11.6，原件 [tables/pass-lines.tsv](tables/pass-lines.tsv)）、重建验收示范（§11.9） | hb-ch10 | 完成（11-14 合入） |
+| [11-acceptance.md](11-acceptance.md) | 手感怎么验收：指标、回放对比、自动测试、合格线总表（§11.6，原件 [tables/pass-lines.tsv](tables/pass-lines.tsv)）、重建验收示范（§11.9）、**实践检验**（§11.10，v1.1） | hb-ch10 | 完成（11-14 合入） |
 | [12-titan-motor.md](12-titan-motor.md) | 泰坦电机：地面速度律、冲刺跑、dash 推力和能量、蹲、转向、状态缩放、重力 / 小跳 / 硬落地、和铁驭电机的区别 | hb-ch08 | 完成（11-14 合入）（11-14 新加的章） |
 | [A-research-methods.md](A-research-methods.md) | 附录 A：反编译、Frida 实测、回放对比怎么做 | hb-ch10 | 完成（11-14 合入） |
 | [99-TODO-RESEARCH.md](99-TODO-RESEARCH.md) | 待研究清单（这一轮不做） | hb0 建，hb-integrate 合并各章备注 | 已并全部章节和重建检验 |
@@ -49,6 +49,21 @@ High Speed Doom（HSD）的移动、镜头、动画、战斗手感，过去三�
 | `_notes/<会话名>.md` | 各会话给总控的备注：想改 README / 表 / 别章的地方、建议的 D-xx 行；[早上要定的事](_notes/MORNING-CHECKLIST.md)、[研究仓库 PR 合并清单](_notes/hb0-pr-merge-list.md) | 各会话 | — |
 
 总控计划和会话分工在工作区根目录 `HANDBOOK-PLAN.md`（不在这个仓库）。
+
+## v1.1：两次实践检验以后补的（2026-11-15）
+
+v1 写完以后，拿手册**创造了两个 R5 里没有的新动作**（下砸接滑铲、冲刺），检验"手册能不能用来做新东西"——和阶段 4 的重建检验（"能不能复现已有的东西"）是两种检验。结论：规则够用，缺的都在"怎么接进代码"。v1.1 补了这些（详见 [11 §11.10](11-acceptance.md)）：
+
+| 补在哪 | 补了什么 |
+|---|---|
+| [02 §2.2](02-foundation.md) | **一条命令里的完整顺序**（会话 → 身体 → 世界 → 电机 → 能力 → 世界 → 镜头），新代码放在哪，两次实践撞上的 bug；**改正了原来写反的两处**（能力在世界之前、世界碰撞在能力之后） |
+| [02 §2.6](02-foundation.md) | `floorZ` 是脚印不是点；"离地多高"的两种量法 |
+| [03 §3.9](03-ground-air-jump.md)、[06 §6.7](06-momentum-arbitration-input.md) | 硬着陆、能力列表在一条命令里的位置；指向 02 §2.2 |
+| [04 §4.7](04-slide-mantle.md) | 从代码开始一次滑铲：伪代码名 ↔ Unity 字段 |
+| [06 §6.11、§6.15、§6.18](06-momentum-arbitration-input.md) | HSD 自己的按钮位怎么分配；练习游戏全键表（含战斗键）；拦开火、击倒事件的接口 |
+| [07 §1.4、§4.2、§5.6、§5.9](07-camera.md) | 新 kick 的盐；一个事件怎么换掉另一个；FOV 收缩 / FOV 跳 / 喷气声作为偏离示范 |
+| [10 §10.5A](10-abilities-ai.md) | 新移动技能的实现模板：速度驱动者、按状态抬天花板、开始滑铲、落差、发射命令和 lurch 窗口例外表、加到身体上 |
+| [11 §11.10](11-acceptance.md) | 实践检验：做了什么、发现了什么、流程 |
 
 ---
 
@@ -117,7 +132,7 @@ High Speed Doom（HSD）的移动、镜头、动画、战斗手感，过去三�
 - **"在哪"**写 `main`，或者未合并 PR 的写法（第 6 条），或者"本地，不在 git"（例如 `TF2-Research/REBUILD-GAP-1107.md`）。
 - **决定**写 D 编号：`D-55`。R5 和 HSD 的差别写 R5-DIFF 的条目名：`R5-DIFF-ARCHIVE.md K-4`。
 - **R5 函数地址和偏移**只写在这里：`[反编译] Jump 0x140a3b550；落地时刻 player+0x3680`。
-- **依据标签**沿用 `research/DESIGN-PHILOSOPHY.md §2.1`：[实测] [反编译] [数据] [算] [推断] [设计]，另加 [TF2 实测] [TF2 数据] 区分 TF2 来源。"R5" 都指本地混合构建（S21 客户端 + S3 dedi + SDK）；只在混合构建里出现、不该学的现象见 DESIGN-PHILOSOPHY §10.3，引用前先查。
+- **依据标签**沿用 `research/DESIGN-PHILOSOPHY.md §2.1`：[实测] [反编译] [数据] [算] [推断] [设计]，另加 [TF2 实测] [TF2 数据] 区分 TF2 来源；参考别的游戏（不是 R5、TF2）定的数标 **[参考]**，并写明参考的是什么（v1.1，实践检验 A2 冲刺用过）。"R5" 都指本地混合构建（S21 客户端 + S3 dedi + SDK）；只在混合构建里出现、不该学的现象见 DESIGN-PHILOSOPHY §10.3，引用前先查。
 - 可以复用 DESIGN-PHILOSOPHY §2.2 的缩写（NG、NJ、CR、DIFF、DEC 等），第一次出现时在本章开头的"本章出处缩写"小表里列一次。
 
 ### 6. 引用还没合并的 PR

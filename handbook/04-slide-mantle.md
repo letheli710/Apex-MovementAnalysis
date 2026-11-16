@@ -638,6 +638,24 @@ Command(input, dt):
 
 Unity 参考实现：`U:…/R5MotorV2.cs`，`R5MotorV2.Step` → `Move`（顺序同上）、`JumpCommand`、`AirMove`、`CheckLanding`；参数 `U:…/R5MotorV2Params.cs`（`R5Reference()`，以及 `U:…/MovementConfig.cs` `MovementConfigs.Reference()` 加的斜坡开关）。游戏身体和回放电机的滑铲规则一样（D-47）；斜坡规则只在 Reference（D-66）。旧规则一键切回：`R5MotorV2Params.LegacyM2()` / `WithLegacyM2Slide()`、`BatchReplay -legacyM2`。
 
+**从代码里开始一次滑铲：伪代码名 ↔ Unity 字段**（v1.1，11-15 实践检验补）
+
+新动作（例如下砸落地、冲刺打断滑铲）要在代码里开始 / 结束一次滑铲时，照下表改 `R5MotorV2` 的字段。在哪一步改见 02 §2.2（落地后接滑铲在第 7 步的 `AfterMove`）。
+
+| 本节伪代码 | Unity `R5MotorV2` 字段 | 说明 |
+|---|---|---|
+| `sliding` | `sliding` | 在滑铲中 |
+| `slideStartTime` | `slideStartTime` | 开始时刻；**每一次开始滑铲都要写**（2 s 冷却从这里算，§4.4） |
+| `boostTime` / `lastBoost` | `boostTime` / `lastBoost` | 加成的时刻和大小；滑铲跳退还用（§4.6） |
+| `duckTransitionStart` | `slideDuckPressTime` | 下蹲过渡开始；`slideDuckTransitionFromNextCommand` 为真时 = now + dt（从下一条命令算） |
+| `boosted` | `slideBoosted` | 这次滑铲有没有可退还的加成 |
+| — | `slideStarted` | **这条命令开始了滑铲**的标志（每条命令开头清掉）；镜头和眼高读它，漏了镜头就不知道进了滑铲 |
+| — | `slideUnboosted` | 开始了但没有加成（冷却中）的标志 |
+| — | `sprinting` | 开始滑铲时清成 false |
+| 结束 | `sliding = false; slideBoosted = false; slideEnded = true` | 发射、摆位置、冲刺打断滑铲都这样写 |
+
+电机自己有三处开始滑铲：按蹲起滑（`Move` 里"slide start"一段，有加成）、落地续滑（`CheckLanding`：写 `sliding`、`slideStartTime`、`slideBoosted = false`、`slideStarted`，**不写** `slideDuckPressTime`）、换地面实体重新开始（`RebeginSlide`，§4.4）。下砸的落地转换（`GroundSlamAbility.Land`，HSD-Unity PR #89 / #90（`practice/slam` / `practice/dash`），还没合并）是第四处，写法照按蹲起滑。
+
 #### 验收
 
 - **重建检验的对照**：附件 `04-slide-mantle/slide_ref.py` 是照本节伪代码写的独立实现（只用 Python 标准库，平地、按住 W），运行 `py -3 slide_ref.py` 打印：
