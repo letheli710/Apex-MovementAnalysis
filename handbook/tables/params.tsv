@@ -1,0 +1,174 @@
+id	功能	参数名(Unity 导出)	含义	量纲	单位[u]	R5 原值 [u]	[m]	身高比例	TF2 值 [u]	Unity 现在的值 [u]	回放电机 [u]	和 R5 一致吗	差别(D-xx / R5-DIFF)	R5 依据	出处
+B-01	身体	world.default.hullRadius	站立碰撞体半宽	Length	u	没测过	—	—	—	16	—	没测过	—	[设计] Source 默认；R5 setfile poseSettings 没读出来	handbook/01-units-body.md §4.2；Movement-Analysis §8
+B-02	身体	world.default.hullHeight	站立碰撞体高度（参考身高 H）	Length	u	没测过	—	—	—	72	—	没测过	—	[设计] 同上，H = 72 u 是 HSD 用的值	handbook/01-units-body.md §4.2
+B-03	身体	world.default.crouchHullHeight	蹲姿碰撞体高度	Length	u	没测过	—	—	—	48	—	没测过	99-TODO（hb0 已列）	[推断] 由 airUnduckDrop 16.5 推出 55.5 或 39，都不是 48	handbook/01-units-body.md §4.2
+B-04	身体	world.default.stepUp	能直接走上去的台阶高度	Length	u	22	0.5588	0.3056 H	18	18	—	不一致	R5-DIFF 没有这一条：Unity 18 = TF2 的值（01 §4.2 已提，交 hb-ch02 核对）	[数据] setfile stepHeight 22	research/phase2-local/static-values/STATIC-VALUES.md §1；tf2/static-values/T1-REPORT.md
+B-05	身体	world.default.standableNormalZ	能站住的最陡地面：法线 z 下限（0.7 ≈ 45.57°）	Ratio	-	0.7	—	—	—	0.7	—	一致	—	[数据] SDK slope_launch_math.h；[反编译] S-10 起滑法线 z > 0.7	research/rea-native/subsystems/N2-S-SLIDE.md S-10；handbook/01-units-body.md §4.2
+B-06	身体	preset.Reference.motor.hullBottomRadius	坡上碰撞体底部按圆底算的半径	Length	u	16	0.4064	0.2222 H	—	16	0	一致	R5-DIFF-ARCHIVE.md R6U U-2（D-45 / D-46）；回放电机 0（D-66）	[实测] R6	research/phase2-local/slope/SLOPE-SLIDE.md
+B-07	身体	preset.Reference.motor.groundProbe	着地探测向下距离	Length	u	2	0.0508	0.02778 H	—	2	2	一致	—	[反编译] CategorizePosition 向下 2.0 u	R5-DIFF-ARCHIVE.md RUD
+B-08	身体	camera.native.eye.standEye	站立眼高	Length	u	70	1.778	0.9722 H	60	70	—	一致	R5-DIFF-ARCHIVE.md K-4（旧版 64）	[数据] setfile viewheight (0,0,70)，N4-A 读回	research/rea-native/n4/N4A-READBACK.md §2
+B-09	身体	camera.native.eye.crouchEye	蹲 / 滑铲眼高	Length	u	32	0.8128	0.4444 H	—	32	—	一致	—	[实测] C3	research/rea-native/camera/C3-CAPTURE.md
+B-10	身体	camera.native.eye.sprintOffset	冲刺时眼高偏移	Length	u	-6	-0.1524	-0.08333 H	-6	-6	—	一致	R5-DIFF-ARCHIVE.md K-4	[数据] sprintViewOffset −6；[实测] C3 冲刺中 64	research/rea-native/subsystems/N2-C-CAMERA.md 眼高一行
+B-11	身体	camera.native.eye.duckTime	站 ↔ 蹲眼高过渡时间	Time	s	0.4	—	—	—	0.4	—	一致	—	[反编译] Duck 计时器 400 ms	research/rea-native/subsystems/N2-C-CAMERA.md §7
+B-12	身体	camera.native.eye.slideDuckTime	滑铲时眼高下沉时间	Time	s	0.2	—	—	—	0.2	—	一致	"R5-DIFF-ARCHIVE.md 二节""滑铲下沉""（Unity 约 0.19 s 到底，R5 0.167 s，D-70 只记录）"	[反编译] Duck 200 ms；[实测] C3 0.208–0.213 s	research/rea-native/subsystems/N2-S-SLIDE.md §3
+B-13	身体	preset.Reference.motor.hullCrouchTime	按住下蹲多久碰撞体变矮	Time	s	0.2	—	—	—	0.2	0.2	一致	—	[实测] M5 0.21–0.24 s；[反编译] Duck 200 ms	research/phase2-local/m5/reference_config/README.md
+B-14	身体	preset.Reference.motor.airUnduckDrop	空中松开下蹲时原点下降（头不动）	Length	u	16.5	0.4191	0.2292 H	—	16.5	16.5	一致	R5-DIFF-ARCHIVE.md RUD（D-49）	[实测] M5，8 次	research/phase2-local/m5/reference_config/README.md
+B-15	身体	preset.Reference.motor.airUnduckMinAfterTakeoff	起跳后多久才允许空中松蹲下降	Time	s	0.08	—	—	—	0.08	0.08	一致	—	[实测] M5	research/phase2-local/m5/reference_config/README.md
+G-01	地面移动	preset.Reference.motor.speed	走路上限（× moveScale = 199.525）	Velocity	u/s	173.5	4.4069	2.41 H/s	173.5	173.5	173.5	一致	—	[数据] setfile speed	research/phase2-local/static-values/STATIC-VALUES.md §1；tf2/static-values/T1-REPORT.md
+G-02	地面移动	preset.Reference.motor.sprintspeed	冲刺上限（× moveScale = 299）	Velocity	u/s	260	6.604	3.611 H/s	260	260	260	一致	—	[数据] setfile sprintspeed	research/phase2-local/static-values/STATIC-VALUES.md §1
+G-03	地面移动	preset.Reference.motor.moveScale	空手移动倍率 msc（拿枪 1.0）	Ratio	-	1.15	—	—	—	1.15	1.15	一致	—	[数据] 武器 move_speed_modifier 1.15；[实测] M2	research/phase2-local/static-values/STATIC-VALUES.md §1、§4
+G-04	地面移动	preset.Reference.motor.acceleration	中速段加速度（× msc）	Acceleration	u/s²	450	11.43	6.25 H/s²	2500	450	450	一致	—	[数据] setfile；[实测] M2 × 1.1499	research/phase2-local/static-values/STATIC-VALUES.md §1；research/rea-native/subsystems/N2-G-GROUND.md G-01
+G-05	地面移动	preset.Reference.motor.lowSpeed	低速段分界（× msc = 138）	Velocity	u/s	120	3.048	1.667 H/s	-1（关）	120	120	一致	—	[数据] setfile；[反编译] G-02	research/rea-native/subsystems/N2-G-GROUND.md G-02
+G-06	地面移动	preset.Reference.motor.lowAcceleration	低速段加速度（× msc）	Acceleration	u/s²	2500	63.5	34.72 H/s²	-1（关）	2500	2500	一致	—	[数据] setfile	research/phase2-local/static-values/STATIC-VALUES.md §1
+G-07	地面移动	preset.Reference.motor.sprintAcceleration	冲刺段加速度（× msc）	Acceleration	u/s²	100	2.54	1.389 H/s²	-1（关）	102	102	不一致	R5-DIFF 没有这一条：Unity 所有装备都用 102（M2 那次会话的传奇的值），其余传奇 R5 是 100	[数据] setfile 100；只有 Wraith 102	research/phase2-local/static-values/STATIC-VALUES.md §1；HSD-Unity R5MotorV2Params.cs 第 38 行注释
+G-08	地面移动	preset.Reference.motor.deceleration	无输入减速（不乘 msc）	Acceleration	u/s²	1250	31.75	17.36 H/s²	-1（关）	1250	1250	一致	—	[数据] setfile；[实测] M2 × 1.0000	research/rea-native/subsystems/N2-G-GROUND.md G-01
+G-09	地面移动	preset.Reference.motor.sprintDeceleration	冲刺时无输入减速	Acceleration	u/s²	1250	31.75	17.36 H/s²	—	1250	1250	一致	—	[数据] setfile	research/phase2-local/static-values/STATIC-VALUES.md §1
+G-10	地面移动	preset.Reference.motor.speedScaleSide	侧移速度系数	Ratio	-	1	—	—	1	1	1	一致	—	[数据] setfile	research/phase2-local/static-values/STATIC-VALUES.md §1
+G-11	地面移动	preset.Reference.motor.speedScaleBack	后退速度系数（sv_backspeed 0.6 不起作用）	Ratio	-	1	—	—	1	1	1	一致	—	[数据] setfile	research/phase2-local/static-values/STATIC-VALUES.md §1；research/rea-native/convar-defaults/CONVAR-DEFAULTS.md
+G-12	地面移动	preset.Reference.motor.crouchSpeed	蹲走上限（× msc = 92）	Velocity	u/s	80	2.032	1.111 H/s	—	80	80	一致	—	[实测] M2 拟合（census 只读了站姿）	research/phase2-local/m2/PARAMETER-TABLE.md；research/rea-native/subsystems/N2-G-GROUND.md G-05
+G-13	地面移动	preset.Reference.motor.crouchDeceleration	蹲姿减速	Acceleration	u/s²	1500	38.1	20.83 H/s²	—	1500	1500	一致	—	[实测] M2 拟合	research/rea-native/subsystems/N2-G-GROUND.md G-05
+G-14	地面移动	preset.Reference.motor.stopSnapSpeed	低于这个速度直接归零	Velocity	u/s	1	0.0254	0.01389 H/s	—	1	1	一致	—	[实测] M2 区间 (0.58, 1.58]；[反编译] WalkMove G-06	research/rea-native/subsystems/N2-G-GROUND.md G-06
+J-01	跳跃 · 空中	preset.Reference.motor.svGravity	重力 sv_gravity	Acceleration	u/s²	750	19.05	10.42 H/s²	750	750	750	一致	—	[数据] ConVar，Ghidra + 运行时	research/rea-native/convar-defaults/CONVAR-DEFAULTS.md
+J-02	跳跃 · 空中	preset.Reference.motor.gravityScale	重力倍率	Ratio	-	1	—	—	0.8（下落 600）	1	1	一致	—	[数据] setfile	research/phase2-local/static-values/STATIC-VALUES.md §2；tf2/static-values/T1-REPORT.md
+J-03	跳跃 · 空中	preset.Reference.motor.jumpHeight	起跳高度（起跳速度 √(2gH) = 289.83）	Length	u	56	1.4224	0.7778 H	60	56	56	一致	—	[数据] setfile；[实测] M2 289.823	research/phase2-local/static-values/STATIC-VALUES.md §2；README 示范条目
+J-04	跳跃 · 空中	preset.Reference.motor.antiMultiJumpHeightFrac	落地后马上再跳的高度系数下限	Ratio	-	0.3	—	—	—	0.3	0.3	一致	—	[数据] setfile	research/phase2-local/static-values/STATIC-VALUES.md §2；research/rea-native/subsystems/N2-J-JUMP-AIR.md J-02
+J-05	跳跃 · 空中	preset.Reference.motor.multiJumpHoldT0	连跳系数开始恢复（antiMultiJumpTimeMin）	Time	s	0.15	—	—	—	0.15	0.15	一致	—	[数据] N4-A 读回	research/rea-native/subsystems/N2-J-JUMP-AIR.md J-02
+J-06	跳跃 · 空中	preset.Reference.motor.multiJumpRampT	连跳系数恢复用时（TimeMax 0.75 − TimeMin 0.15）	Time	s	0.6	—	—	—	0.6	0.6	一致	—	[数据] N4-A 读回	research/rea-native/subsystems/N2-J-JUMP-AIR.md J-02
+J-07	跳跃 · 空中	preset.Reference.motor.groundJumpSkipTime	超速削减窗口 skip_time	Time	s	1	—	—	0.1	1	1	一致	—	[数据] ConVar	research/rea-native/convar-defaults/CONVAR-DEFAULTS.md
+J-08	跳跃 · 空中	preset.Reference.motor.groundJumpSkipReduce	超速削减量 skip_speed_reduce	Velocity	u/s	100	2.54	1.389 H/s	12（扣到 450 为止）	100	0	一致	回放电机 0（D-66：回放电机只当尺子）	[数据] ConVar；[实测]	research/rea-native/convar-defaults/CONVAR-DEFAULTS.md；tf2/static-values/T1-REPORT.md
+J-09	跳跃 · 空中	preset.Reference.motor.airSpeed	空中期望速度上限（× msc）	Velocity	u/s	60	1.524	0.8333 H/s	60	60	60	一致	—	[数据] setfile；Horizon 80	research/phase2-local/static-values/STATIC-VALUES.md §2
+J-10	跳跃 · 空中	preset.Reference.motor.airAcceleration	空中加速度（不乘 wishspeed）	Acceleration	u/s²	500	12.7	6.944 H/s²	500	500	500	一致	—	[数据] setfile；Horizon 800；[实测] M2	research/phase2-local/static-values/STATIC-VALUES.md §2
+J-11	跳跃 · 空中	preset.Reference.motor.extraAirAccel	空中额外加速 player_extraairaccelleration	Acceleration	u/s²	2	0.0508	0.02778 H/s²	2.0	2	0	一致	回放电机 0（D-66）	[反编译] J-05；[实测] M2 +0.301 u/s / 跳	research/rea-native/subsystems/N2-J-JUMP-AIR.md §2、J-05
+J-12	跳跃 · 空中	preset.Reference.motor.jumpSurfacePush	起跳时朝上一帧撞到的墙加速	Velocity	u/s	30	0.762	0.4167 H/s	—	30	0	一致	回放电机 0（D-66）	[反编译] Jump；[实测] M8 328.98	research/rea-native/subsystems/N2-M-TRAVERSAL.md M-05
+L-01	Lurch / tap strafe	preset.Reference.motor.lurchLamMax	lurch 强度 jump_grace_strength	Ratio	-	0.7	—	—	0.7	0.7	0.7	一致	—	[数据] ConVar（只在 S21 客户端）；[实测] M3 λ = 0.70000	research/rea-native/convar-defaults/CONVAR-DEFAULTS.md；research/rea-native/subsystems/N2-L-LURCH.md
+L-02	Lurch / tap strafe	preset.Reference.motor.lurchFullEnd	起跳后满强度窗口 jump_graceperiodmin	Time	s	0.2	—	—	0.2	0.2	0.2	一致	—	[数据] ConVar	research/rea-native/convar-defaults/CONVAR-DEFAULTS.md
+L-03	Lurch / tap strafe	preset.Reference.motor.lurchZero	强度降到 0 的时刻 jump_graceperiodmax	Time	s	0.5	—	—	0.5	0.5	0.5	一致	—	[数据] ConVar	research/rea-native/convar-defaults/CONVAR-DEFAULTS.md
+L-04	Lurch / tap strafe	preset.Reference.motor.lurchClampSprintFraction	lurch 上限 = 这个 × msc × sprintspeed（jump_grace_max）	Ratio	-	0.7	—	—	0.7	0.7	0	一致	回放电机 0：用固定的 lurchClamp（D-66）	[数据] ConVar	research/rea-native/convar-defaults/CONVAR-DEFAULTS.md
+L-05	Lurch / tap strafe	preset.Reference.motor.lurchClamp	lurch 固定上限（L-04 = 0 时用）	Velocity	u/s	209.3	5.3162	2.907 H/s	—	209.3	209.3	一致	—	[实测] M3（= 0.7 × 1.15 × 260）	research/phase2-local/m3/lurch/LURCH-MODEL.md
+L-06	Lurch / tap strafe	preset.Reference.motor.lurchCutoffSpeed	水平速度超过这个不触发 lurch	Velocity	u/s	1100	27.94	15.28 H/s	—	1100	0	一致	回放电机 0（D-66）	[数据] ConVar jump_grace_cutoff_speed；[实测] N4-D	research/rea-native/convar-defaults/CONVAR-DEFAULTS.md
+S-01	滑铲	preset.Reference.motor.slideRequiredStartSpeed	能开始滑铲的最低速度	Velocity	u/s	200	5.08	2.778 H/s	200	200	200	一致	—	[数据] setfile	research/phase2-local/static-values/STATIC-VALUES.md §3.1
+S-02	滑铲	preset.Reference.motor.slideSpeedBoost	滑铲加速（× msc = 172.5）	Velocity	u/s	150	3.81	2.083 H/s	150	150	150	一致	—	[数据] setfile；[反编译] S-01	research/rea-native/subsystems/N2-S-SLIDE.md S-01
+S-03	滑铲	preset.Reference.motor.slideSpeedBoostCap	加速后的上限（× msc = 460）	Velocity	u/s	400	10.16	5.556 H/s	400	400	400	一致	—	[数据] setfile	research/rea-native/subsystems/N2-S-SLIDE.md S-01
+S-04	滑铲	preset.Reference.motor.slideSteerAccel	滑铲中转向加速 slideAccel（× msc）	Acceleration	u/s²	50	1.27	0.6944 H/s²	50	50	50	一致	R5-DIFF-ARCHIVE.md RPS（D-47）	[数据] setfile；[实测] N4-C 41.1	research/phase2-local/static-values/STATIC-VALUES.md §3.1；research/rea-native/subsystems/N2-G-GROUND.md G-12
+S-05	滑铲	preset.Reference.motor.slideDecel	滑铲线性减速	Acceleration	u/s²	100	2.54	1.389 H/s²	50	100	100	一致	—	[数据] setfile；[实测] M2	research/rea-native/subsystems/N2-G-GROUND.md G-10
+S-06	滑铲	preset.Reference.motor.slideVelocityDecay	滑铲每秒比例衰减（v × 0.7^dt）	Ratio	-	0.7	—	—	0.7	0.7	0.7	一致	—	[数据] setfile；[实测] M2	research/rea-native/subsystems/N2-G-GROUND.md G-10
+S-07	滑铲	preset.Reference.motor.slideStopSpeed	按住下蹲时滑铲结束速度	Velocity	u/s	125	3.175	1.736 H/s	125	125	125	一致	—	[数据] setfile；[实测] M10 112（S-05 数值差，待细读）	research/rea-native/subsystems/N2-S-SLIDE.md S-05
+S-08	滑铲	preset.Reference.motor.slideMaxStopSpeed	松开下蹲时 ≤ 这个速度就结束	Velocity	u/s	350	8.89	4.861 H/s	350	350	350	一致	R5-DIFF-ARCHIVE.md RPS（D-47）	[数据] setfile	research/rea-native/subsystems/N2-S-SLIDE.md S-04
+S-09	滑铲	preset.Reference.motor.slideWantToStopDecel	松开下蹲后的减速	Acceleration	u/s²	400	10.16	5.556 H/s²	400	400	400	一致	—	[数据] setfile；[实测] M10	research/rea-native/subsystems/N2-S-SLIDE.md S-04
+S-10	滑铲	preset.Reference.motor.slideJumpHeight	滑铲跳高度	Length	u	50	1.27	0.6944 H	50	50	50	一致	—	[数据] setfile	research/phase2-local/static-values/STATIC-VALUES.md §3.1
+S-11	滑铲	preset.Reference.motor.slideMaxJumpSpeed	滑铲跳水平速度的抬升线（297.5–350 抬到 350）	Velocity	u/s	350	8.89	4.861 H/s	350	350	350	一致	—	[数据] setfile	research/rea-native/subsystems/N2-J-JUMP-AIR.md J-07
+S-12	滑铲	preset.Reference.motor.slideJumpFloorLowFrac	抬到 350 的下限比例（0.85 × 350 = 297.5）	Ratio	-	0.85	—	—	—	0.85	0.85	一致	R5-DIFF-ARCHIVE.md RPS（D-47）	[反编译] J-07；[实测] M10	research/rea-native/subsystems/N2-J-JUMP-AIR.md J-07
+S-13	滑铲	preset.Reference.motor.slideBoostRearm	滑铲加速冷却 player_slideBoostCooldown（从上次滑铲开始算）	Time	s	2	—	—	—	2	2	一致	R5-DIFF-ARCHIVE.md RPS（D-47）	[反编译] S-02；[实测] N4-C	research/rea-native/subsystems/N2-S-SLIDE.md S-02
+S-14	滑铲	preset.Reference.motor.slideBoostRefundWindow	加速后多久内起跳退还加速	Time	s	0.4	—	—	—	0.4	0.4	一致	R5-DIFF-ARCHIVE.md RPS（D-47）	[反编译] J-08；[实测] M10	research/rea-native/subsystems/N2-J-JUMP-AIR.md J-08
+S-15	滑铲	preset.Reference.motor.slideDuckTransitionTime	滑铲下蹲过渡（退还还要求它没完成）	Time	s	0.2	—	—	—	0.2	0.2	一致	R5-DIFF-ARCHIVE.md RPS（D-47）	[反编译] Duck 200 ms	research/rea-native/subsystems/N2-S-SLIDE.md §3
+S-16	滑铲	preset.Reference.motor.slideSlopeGravityScale	坡上滑铲的沿坡重力倍率	Ratio	-	1	—	—	—	1	1	一致	—	[反编译] S-09 Gravity_HalfStep g·n_h·n_z	research/rea-native/subsystems/N2-S-SLIDE.md S-09
+S-17	滑铲	（没有：slide_step_velocity_reduction）	上台阶的滑铲减速 slide_step_velocity_reduction（× 台阶高度）	Rate	1/s	10	—	—	10	没实现	—	Unity 没有	Unity 没有这条规则（滑铲上台阶不减速）；R5-DIFF 没记	[数据] ConVar	research/rea-native/convar-defaults/CONVAR-DEFAULTS.md
+S-18	滑铲	（没有：slide_max_angle_dot）	冲刺时能起滑的最大偏角（余弦）slide_max_angle_dot	Ratio	×	0.6	—	—	0.6	没实现	—	Unity 没有	Unity 没有这条限制；R5-DIFF 没记	[数据] ConVar	research/rea-native/convar-defaults/CONVAR-DEFAULTS.md
+M-01	翻越和 superglide	preset.Reference.advanced.climb.nativeTraversal.height	翻越最大高度 mantleHeight	Length	u	80	2.032	1.111 H	—	80	—	一致	—	[数据] setfile，N4-A 读回	research/rea-native/n4/N4A-READBACK.md §2
+M-02	翻越和 superglide	preset.Reference.advanced.climb.ledge.maxHeight	台面探测的最高点（离脚）	Length	u	80	2.032	1.111 H	—	80	—	一致	—	[数据] = mantleHeight	research/rea-native/n4/N4A-READBACK.md §2
+M-03	翻越和 superglide	preset.Reference.advanced.climb.nativeTraversal.edge4	翻越分档：低于这个用 Below 动画 automantle_height_below	Length	u	-10	-0.254	-0.1389 H	—	-10	—	一致	—	[数据] ConVar	research/rea-native/subsystems/N2-M-TRAVERSAL.md §1
+M-04	翻越和 superglide	preset.Reference.advanced.climb.nativeTraversal.edge5	翻越分档 automantle_height_level	Length	u	10	0.254	0.1389 H	—	10	—	一致	—	[数据] ConVar	research/rea-native/subsystems/N2-M-TRAVERSAL.md §1
+M-05	翻越和 superglide	preset.Reference.advanced.climb.nativeTraversal.edge6	翻越分档 automantle_height_above	Length	u	30	0.762	0.4167 H	—	30	—	一致	—	[数据] ConVar	research/rea-native/subsystems/N2-M-TRAVERSAL.md §1
+M-06	翻越和 superglide	preset.Reference.advanced.climb.nativeTraversal.len4	翻越时长 状态 4（站姿 Level）	Time	s	0.6	—	—	—	0.6	—	一致	R5-DIFF-ARCHIVE.md D-75 B	[反编译 + Frida] D72 TraversalMove	research/phase2-local/D72-REPORT.md §8
+M-07	翻越和 superglide	preset.Reference.advanced.climb.nativeTraversal.len5	翻越时长 状态 5（Above）	Time	s	0.5	—	—	—	0.5	—	一致	R5-DIFF-ARCHIVE.md D-75 B	[反编译 + Frida] D72	research/phase2-local/D72-REPORT.md §8
+M-08	翻越和 superglide	preset.Reference.advanced.climb.nativeTraversal.len6	翻越时长 状态 6（High）	Time	s	0.35	—	—	—	0.35	—	一致	R5-DIFF-ARCHIVE.md D-75 B	[反编译 + Frida] D72	research/phase2-local/D72-REPORT.md §8
+M-09	翻越和 superglide	preset.Reference.advanced.climb.nativeTraversal.airDuckLift	空中蹲到底时探台面的起点抬高	Length	u	16.5	0.4191	0.2292 H	—	16.5	—	一致	R5-DIFF-ARCHIVE.md D-75 E	[实测] = airUnduckDrop	research/phase2-local/D72-REPORT.md §8
+M-10	翻越和 superglide	preset.Reference.advanced.climb.fsm.poseSpeed	翻越自然结束的出口速度（冲刺上限）	Velocity	u/s	299	7.5946	4.153 H/s	—	299	—	一致	—	[反编译] M-01；[实测] M8	research/rea-native/subsystems/N2-M-TRAVERSAL.md M-01
+M-11	翻越和 superglide	preset.Reference.advanced.climb.fsm.boostSpeedScale	S27 mantle boost 速度倍率（SDK bridge_mantle_boost_sprint_mult）	Ratio	-	1.3	—	—	—	1.3	—	一致	D-20 / D-32：S27 移植，游戏里默认开（有意不同）	[数据] SDK ConVar（不是 S21 原生）	research/phase2-local/static-values/STATIC-VALUES.md §5.1
+M-12	翻越和 superglide	preset.Reference.advanced.climb.fsm.boostHeight	S27 mantle boost 跳高（SDK）	Length	u	90	2.286	1.25 H	—	90	—	一致	D-20 / D-32	[数据] SDK ConVar	research/phase2-local/static-values/STATIC-VALUES.md §5.1
+M-13	翻越和 superglide	preset.Reference.advanced.climb.s27.sweetSpotAngle	S27 boost 最佳俯仰角（SDK）	Angle	deg	1.5	—	—	—	1.5	—	一致	D-20 / D-32	[数据] SDK ConVar	research/phase2-local/static-values/STATIC-VALUES.md §5.1
+M-14	翻越和 superglide	preset.Reference.advanced.climb.s27.minValidFrac	S27 boost 最小有效翻越进度（SDK）	Ratio	-	0.5	—	—	—	0.5	—	一致	D-20 / D-32	[数据] SDK ConVar	research/phase2-local/static-values/STATIC-VALUES.md §5.1
+M-15	翻越和 superglide	preset.Reference.superglideReducedBand	superglide 降速带（自然结束前 117.5 → 102.5 ms 出 425）	Time	s	没测过	—	—	—	0.015	—	没测过	Fun 设 0（用户简化，D-xx 见 F2）	[实测] M8（F2 C-2）；原生规则没读通（M-04）	research/rea-native/subsystems/N2-M-TRAVERSAL.md M-04；research/feel/FEEL.md C-2
+W-01	跑墙 · 二段跳	preset.Reference.hsd.wallRun.maxDuration	M7 跑墙最长时间（HSD 设计，游戏默认规则）	Time	s	—（R5 没有）	—	—	1.75（wallrun_timeLimit）	1.6	—	只有 HSD	D-08：Fun 的 HSD 设计	—（R5 setfile wallrun = false）	research/phase2-local/m7/；research/phase2-local/static-values/STATIC-VALUES.md §3.3
+W-02	跑墙 · 二段跳	preset.Reference.hsd.wallRun.runSpeed	M7 跑墙速度（HSD 设计）	Velocity	u/s	—（R5 没有）	—	—	420（MaxSpeedHorizontal）	300	—	只有 HSD	D-08	—	research/phase2-local/m7/
+W-03	跑墙 · 二段跳	preset.Reference.hsd.wallRun.gravityScale	M7 跑墙重力倍率（HSD 设计）	Ratio	-	—（R5 没有）	—	—	—	0.15	—	只有 HSD	D-08	—	research/phase2-local/m7/
+W-04	跑墙 · 二段跳	preset.Reference.hsd.wallRun.tf2.timeLimit	TF2 规则跑墙最长时间（预设 B：R5 残留值）	Time	s	2	—	—	1.75	2	—	一致	P-01：预设 B = TF2 规则 + R5 残留值；预设 A 用 TF2 值	[数据] setfile 残留 wallrun_timeLimit（R5 默认关）	tf2/static-values/T1-REPORT.md；TF2-Research/wallrun/WALLRUN-B-SPEC.md
+W-05	跑墙 · 二段跳	preset.Reference.hsd.wallRun.tf2.maxSpeedHorizontal	TF2 规则跑墙水平上限（预设 B）	Velocity	u/s	225	5.715	3.125 H/s	420	225	—	一致	P-01	[数据] setfile 残留	tf2/static-values/T1-REPORT.md
+W-06	跑墙 · 二段跳	preset.Reference.hsd.wallRun.tf2.accelerateHorizontal	TF2 规则跑墙水平加速（预设 B）	Acceleration	u/s²	200	5.08	2.778 H/s²	1500	200	—	一致	P-01	[数据] setfile 残留	tf2/static-values/T1-REPORT.md
+W-07	跑墙 · 二段跳	preset.Reference.hsd.wallRun.tf2.maxSpeedVertical	TF2 规则跑墙竖直上限（预设 B）	Velocity	u/s	112	2.8448	1.556 H/s	225	112	—	一致	P-01	[数据] setfile 残留	tf2/static-values/T1-REPORT.md
+W-08	跑墙 · 二段跳	preset.Reference.hsd.wallRun.tf2.accelerateVertical	TF2 规则跑墙竖直加速（预设 B）	Acceleration	u/s²	450	11.43	6.25 H/s²	360	450	—	一致	P-01	[数据] setfile 残留	tf2/static-values/T1-REPORT.md
+W-09	跑墙 · 二段跳	preset.Reference.hsd.wallRun.tf2.jumpOutwardSpeed	TF2 规则蹬墙跳向外速度（预设 B）	Velocity	u/s	188	4.7752	2.611 H/s	205	188	—	一致	P-01	[数据] setfile 残留	tf2/static-values/T1-REPORT.md
+W-10	跑墙 · 二段跳	preset.Reference.hsd.wallRun.tf2.jumpUpSpeed	TF2 规则蹬墙跳向上速度（预设 B）	Velocity	u/s	240	6.096	3.333 H/s	230	240	—	一致	P-01	[数据] setfile 残留	tf2/static-values/T1-REPORT.md
+W-11	跑墙 · 二段跳	preset.Reference.hsd.wallRun.tf2.jumpInputDirSpeed	TF2 规则蹬墙跳按键方向速度（预设 B）	Velocity	u/s	75	1.905	1.042 H/s	80	75	—	一致	P-01	[数据] setfile 残留	tf2/static-values/T1-REPORT.md
+W-12	跑墙 · 二段跳	preset.Reference.hsd.wallRun.tf2.upWallBoost	TF2 规则贴墙上冲（预设 B）	Velocity	u/s	250	6.35	3.472 H/s	250	250	—	一致	P-01	[数据] setfile wallrunUpWallBoost	research/phase2-local/static-values/STATIC-VALUES.md §3.3；tf2/static-values/T1-REPORT.md
+W-13	跑墙 · 二段跳	preset.Reference.hsd.wallRun.tf2.heightCutoff	TF2 规则竖直增益截止 verticalGainCutoff_wallrun（预设 B）	Length	u	175	4.445	2.431 H	—	175	—	一致	P-01	[数据] setfile 残留	research/phase2-local/static-values/STATIC-VALUES.md §3.3
+W-14	跑墙 · 二段跳	preset.Reference.hsd.doubleJump.height	HSD 二段跳高度（设计）	Length	u	—（R5 没有）	—	—	60（superjumpMin/MaxHeight 60 / 60）	45	—	只有 HSD	D-08	—（R5 只有 Sparrow：superjumpMinHeight 112）	research/phase2-local/m7/；research/phase2-local/static-values/STATIC-VALUES.md §2；tf2/static-values/T1-REPORT.md
+W-15	跑墙 · 二段跳	preset.Reference.hsd.doubleJump.horizontalSpeed	HSD 二段跳水平速度（设计）	Velocity	u/s	—（R5 没有）	—	—	180	180	—	只有 HSD	D-08	—（Sparrow superjumpHorzSpeed 250）	tf2/static-values/T1-REPORT.md
+Z-01	滑索	preset.Reference.advanced.zipline.speed	滑索速度 ziplineSpeed	Velocity	u/s	600	15.24	8.333 H/s	—	600	—	一致	—	[数据] setfile（Gibraltar / Valkyrie 会话）	research/phase2-local/static-values/STATIC-VALUES.md §3.4
+Z-02	滑索	preset.Reference.advanced.zipline.detachSpeed	端点脱离速度 ziplineDetachSpeed	Velocity	u/s	600	15.24	8.333 H/s	—	600	—	一致	—	[数据] setfile；[反编译] Z-02	research/rea-native/subsystems/N2-P2-GRAPPLE-ZIPLINE-PADS.md Z-02
+Z-03	滑索	preset.Reference.advanced.zipline.maxVerticalDetachSpeed	竖直脱离速度上限	Velocity	u/s	1500	38.1	20.83 H/s	—	1500	—	一致	—	[数据] setfile	research/phase2-local/static-values/STATIC-VALUES.md §3.4
+Z-04	滑索	preset.Reference.advanced.zipline.jumpOffCap	跳离滑索沿绳速度上限 ziplineJumpOffSpeed	Velocity	u/s	400	10.16	5.556 H/s	—	400	—	一致	—	[数据] N4-A；[反编译] Z-01	research/rea-native/subsystems/N2-P2-GRAPPLE-ZIPLINE-PADS.md Z-01
+Z-05	滑索	preset.Reference.advanced.zipline.jumpOffVz	跳离滑索竖直速度（= 起跳速度）	Velocity	u/s	289.828	7.3616	4.025 H/s	—	289.828	—	一致	—	[算] √(2·750·56)	research/rea-native/subsystems/N2-P2-GRAPPLE-ZIPLINE-PADS.md Z-01
+Z-06	滑索	preset.Reference.advanced.zipline.rideAccel	滑索上加速 pathGravityAcceleration	Acceleration	u/s²	400	10.16	5.556 H/s²	—	400	—	一致	名字对应是推断	[数据] setfile pathGravityAcceleration 400	research/phase2-local/static-values/STATIC-VALUES.md §3.4
+P-01	钩爪	preset.Reference.grapple.range	钩爪最远距离 grapple_maxLength	Length	u	850	21.59	11.81 H	—	850	—	一致	—	[数据] 武器 .txt（这个构建 census 读不到）	HSD-Unity GrappleAbility.cs GrappleParams.range 注释
+P-02	钩爪	preset.Reference.grapple.s21.rampMin	拉力速度斜坡起点 grapple_speedRampMin	Velocity	u/s	50	1.27	0.6944 H/s	—	50	—	一致	—	[数据] setfile；[实测] M10	research/rea-native/subsystems/N2-P2-GRAPPLE-ZIPLINE-PADS.md P-01
+P-03	钩爪	preset.Reference.grapple.s21.rampMax	拉力速度斜坡终点 grapple_speedRampMax	Velocity	u/s	800	20.32	11.11 H/s	—	800	—	一致	—	[数据] setfile	research/rea-native/subsystems/N2-P2-GRAPPLE-ZIPLINE-PADS.md P-01
+P-04	钩爪	preset.Reference.grapple.s21.rampTime	斜坡用时 grapple_speedRampTime	Time	s	1.5	—	—	—	1.5	—	一致	—	[数据] setfile	research/rea-native/subsystems/N2-P2-GRAPPLE-ZIPLINE-PADS.md P-01
+P-05	钩爪	preset.Reference.grapple.s21.accel	沿绳加速 grapple_accel	Acceleration	u/s²	1500	38.1	20.83 H/s²	—	1500	—	一致	—	[数据] setfile	research/phase2-local/static-values/STATIC-VALUES.md §3.6
+P-06	钩爪	preset.Reference.grapple.s21.decel	切向刹车 grapple_decel	Acceleration	u/s²	425	10.795	5.903 H/s²	—	425	—	一致	—	[数据] setfile；[实测] M10	research/rea-native/subsystems/N2-P2-GRAPPLE-ZIPLINE-PADS.md P-02
+P-07	钩爪	preset.Reference.grapple.s21.airAccel	钩爪中侧键空中加速 grapple_airAccel	Acceleration	u/s²	650	16.51	9.028 H/s²	—	650	—	一致	—	[数据] setfile	research/rea-native/subsystems/N2-P2-GRAPPLE-ZIPLINE-PADS.md P-04
+P-08	钩爪	preset.Reference.grapple.wishCap	钩爪中空中速度上限 grapple_airSpeedMax	Velocity	u/s	420	10.668	5.833 H/s	—	420	—	一致	—	[数据] setfile	research/rea-native/subsystems/N2-P2-GRAPPLE-ZIPLINE-PADS.md P-04
+P-09	钩爪	preset.Reference.grapple.hopVz	挂上时上抬 grapple_attachVerticalBoost	Velocity	u/s	200	5.08	2.778 H/s	—	200	—	一致	—	[数据] setfile	research/phase2-local/static-values/STATIC-VALUES.md §3.6
+P-10	钩爪	preset.Reference.grapple.s21.gravityFrac	拉的时候保留的重力比例 grapple_gravityFracMin	Ratio	-	0.25	—	—	—	0.25	—	一致	—	[数据] setfile	research/phase2-local/static-values/STATIC-VALUES.md §3.6
+P-11	钩爪	preset.Reference.grapple.s21.detachLengthMin	接近脱钩距离下限	Length	u	33	0.8382	0.4583 H	—	33	—	一致	R5-DIFF-ARCHIVE.md GN（D-50）	[反编译] P-05；[实测] M10 35–53	research/rea-native/subsystems/N2-P2-GRAPPLE-ZIPLINE-PADS.md P-05
+P-12	钩爪	preset.Reference.grapple.s21.detachLengthMax	接近脱钩距离上限	Length	u	50	1.27	0.6944 H	—	50	—	一致	R5-DIFF-ARCHIVE.md GN（D-50）	[反编译] P-05	research/rea-native/subsystems/N2-P2-GRAPPLE-ZIPLINE-PADS.md P-05
+P-13	钩爪	preset.Reference.grapple.s21.detachAwaySpeed	离开锚点速度超过这个脱钩 grapple_detachAwaySpeed	Velocity	u/s	500	12.7	6.944 H/s	—	500	—	一致	R5-DIFF-ARCHIVE.md GN G-5（只对世界钩点）	[数据] setfile	research/rea-native/subsystems/N2-P2-GRAPPLE-ZIPLINE-PADS.md P-08
+P-14	钩爪	preset.Reference.grapple.s21.releaseSpeedLoss	按键脱钩扣速 grapple_detachSpeedLoss	Velocity	u/s	300	7.62	4.167 H/s	—	300	—	一致	—	[数据] setfile；[实测] M10	research/rea-native/subsystems/N2-P2-GRAPPLE-ZIPLINE-PADS.md P-06
+P-15	钩爪	preset.Reference.grapple.s21.releaseSpeedMin	按键脱钩扣速下限 grapple_detachSpeedLossMin	Velocity	u/s	460	11.684	6.389 H/s	—	460	—	一致	—	[数据] setfile；[实测] M10 458.7	research/rea-native/subsystems/N2-P2-GRAPPLE-ZIPLINE-PADS.md P-06
+P-16	钩爪	preset.Reference.grapple.s21.lowSpeed	低速超时脱钩的速度线	Velocity	u/s	250	6.35	3.472 H/s	—	250	—	一致	—	[数据] setfile	research/rea-native/subsystems/N2-P2-GRAPPLE-ZIPLINE-PADS.md P-07
+P-17	钩爪	preset.Reference.grapple.s21.lowSpeedTime	低速超时（空中）	Time	s	1.5	—	—	—	1.5	—	一致	—	[数据] setfile	research/rea-native/subsystems/N2-P2-GRAPPLE-ZIPLINE-PADS.md P-07
+P-18	钩爪	preset.Reference.grapple.s21.impactBoostSpeed	撞上上抬 grapple_impactVerticalBoost	Velocity	u/s	300	7.62	4.167 H/s	—	300	—	一致	R5-DIFF-ARCHIVE.md G6（D-52）：Unity 默认关 impactBoost 开关，值保留	[数据] setfile；[实测] G6：R5 算了但移动里丢掉	research/phase2-local/static-values/STATIC-VALUES.md §3.6
+F-01	跳板	defaults.JumpPadParams.push	跳板推力 JUMP_PAD_PUSH_VELOCITY	Velocity	u/s	1150	29.21	15.97 H/s	—	1150	—	一致	—	[数据] 脚本 sh_jump_pads.gnut	research/phase2-local/static-values/STATIC-VALUES.md §6；research/rea-native/subsystems/N2-P2-GRAPPLE-ZIPLINE-PADS.md F-01
+F-02	跳板	defaults.JumpPadParams.vertOverride	跳板竖直权重（v = 1150·normalize(ĥ + 2ẑ)）	Ratio	-	2	—	—	—	2	—	一致	—	[数据] 脚本	research/rea-native/subsystems/N2-P2-GRAPPLE-ZIPLINE-PADS.md F-01
+F-03	跳板	defaults.JumpPadParams.duckedVertScale	蹲着上跳板的竖直权重倍率	Ratio	-	0.5	—	—	—	0.5	—	一致	—	[数据] SDK 一致性代码（原生默认值待读）	research/rea-native/subsystems/N2-P2-GRAPPLE-ZIPLINE-PADS.md F-02
+F-04	升降机	defaults.GravityLiftParams.upSpeed	Horizon 升降机上升速度	Velocity	u/s	300	7.62	4.167 H/s	—	300	—	一致	—	[数据] 脚本 SPACEELEVATOR_TUNING_UP_SPEED	research/phase2-local/static-values/STATIC-VALUES.md §6
+F-05	升降机	defaults.GravityLiftParams.ejectUp	升降机弹出竖直速度	Velocity	u/s	450	11.43	6.25 H/s	—	450	—	一致	—	[数据] 脚本	research/phase2-local/static-values/STATIC-VALUES.md §6
+F-06	升降机	defaults.GravityLiftParams.ejectHorizontal	升降机弹出水平速度	Velocity	u/s	400	10.16	5.556 H/s	—	400	—	一致	—	[数据] 脚本	research/phase2-local/static-values/STATIC-VALUES.md §6
+F-07	升降机	defaults.GravityLiftParams.lifetime	升降机持续时间	Time	s	10	—	—	—	10	—	一致	—	[数据] 脚本	research/phase2-local/static-values/STATIC-VALUES.md §6
+F-08	兴奋剂	defaults.StimParams.fullDuration	Octane 兴奋剂持续时间 STIM_DURATION	Time	s	6	—	—	—	6	—	一致	—	[数据] 脚本	research/phase2-local/static-values/STATIC-VALUES.md §6
+F-09	兴奋剂	defaults.StimParams.severity	兴奋剂速度强度（0.15 量化成 38/255）	Ratio	-	0.15	—	—	—	0.14901960784313725	—	近似（差 0.65 %）	Unity 0.14902 = 38/255：按网络字节量化（近似，差 0.65 %）	[数据] 脚本 0.15	research/phase2-local/static-values/STATIC-VALUES.md §6
+C-01	镜头	camera.native.springK	punch 弹簧刚度 punch_pilot	Other	-	65	—	—	—	65	—	一致	—	[数据] setfile；[实测] CAM2	research/rea-native/subsystems/N2-C-CAMERA.md；camera-events.tsv
+C-02	镜头	camera.native.springC	punch 弹簧阻尼	Rate	1/s	9	—	—	—	9	—	一致	—	[数据] setfile	research/rea-native/subsystems/N2-C-CAMERA.md
+C-03	镜头	camera.native.kickFallDistMinFt	落地 kick 起始下落距离（英尺，×12 = 120 u）	Other	-	10	—	—	—	10	—	一致	—	[数据] setfile viewkickFallDistMin（ft）	research/rea-native/subsystems/N2-C-CAMERA.md §2、§7
+C-04	镜头	camera.native.kickFallDistMaxFt	落地 kick 封顶下落距离（英尺，×12 = 840 u）	Other	-	70	—	—	—	70	—	一致	—	[数据] setfile viewkickFallDistMax（ft）	research/rea-native/subsystems/N2-C-CAMERA.md §7
+C-05	镜头	camera.native.kickMaxScale	落地 kick 最大倍率	Ratio	-	12	—	—	—	12	—	一致	—	[数据] setfile viewkickFallDistMaxScale	research/rea-native/subsystems/N2-C-CAMERA.md §7
+C-06	镜头	camera.native.slideFovScale	滑铲 FOV 倍率	Ratio	-	1.1	—	—	—	1.1	—	一致	—	[数据]；[实测] 89 → 97.9	research/rea-native/subsystems/N2-C-CAMERA.md §7
+C-07	镜头	camera.native.slideTiltSide	滑铲侧倾 slide_viewTiltSide	Angle	deg	15	—	—	—	15	—	一致	—	[反编译] SlideTilt_Update	research/rea-native/subsystems/N2-C-CAMERA.md §7
+C-08	镜头	camera.native.sprintTiltMaxRoll	冲刺转向横滚上限 sprinttiltMaxRoll	Angle	deg	2	—	—	—	2	—	一致	—	[数据] setfile	research/rea-native/subsystems/N2-C-CAMERA.md §7
+C-09	镜头	camera.native.maxRoll	横滚总上限	Angle	deg	40	—	—	—	40	—	一致	待核：N2-C §7 写总上限 40°，CAM2 §5 / CR §3.9 写没有总上限、±180° 折回；两边都留（99 B07-12）	[反编译] N2-C §7 写总上限 40；但 CAM2 §5 / CR §3.9 说没有上限、±180° 回绕（来源矛盾，见 camera-events.md）	research/rea-native/subsystems/N2-C-CAMERA.md §7
+C-10	镜头	camera.native.grappleRollMax	钩爪横滚上限	Angle	deg	20	—	—	—	20	—	一致	—	[反编译]	research/rea-native/subsystems/N2-C-CAMERA.md §7
+C-11	镜头	camera.native.zipRollMax	滑索横滚上限	Angle	deg	25	—	—	—	25	—	一致	R5-DIFF-ARCHIVE.md CAM2 K-7（D-54）	[反编译]	research/rea-native/subsystems/N2-C-CAMERA.md §7
+C-12	镜头	camera.native.traversalLerpIn	翻越镜头淡入 traversal_viewLerpInDuration	Time	s	0.15	—	—	—	0.15	—	一致	R5-DIFF-ARCHIVE.md D-75 F	[数据] ConVar；[实测] D72	research/phase2-local/D72-REPORT.md §8
+A-01	开镜	（武器表：ads_move_speed_scale SMG）	开镜移速倍率 ads_move_speed_scale：SMG	Ratio	×	0.75	—	—	—	见 HSD-Unity PR #60（还没合并）的 Arsenal 表	—	不在 main	—	[数据] mp_weapon_r97.txt	research/phase2-local/static-values/STATIC-VALUES.md §4；research/DESIGN-PHILOSOPHY.md P5
+A-02	开镜	（武器表：ads_move_speed_scale 步枪）	开镜移速倍率：突击步枪	Ratio	×	0.5	—	—	—	同上	—	不在 main	—	[数据] mp_weapon_rspn101.txt	research/phase2-local/static-values/STATIC-VALUES.md §4
+A-03	开镜	（武器表：ads_move_speed_scale 机枪）	开镜移速倍率：轻机枪	Ratio	×	0.4	—	—	—	同上	—	不在 main	—	[数据] mp_weapon_lmg.txt	research/phase2-local/static-values/STATIC-VALUES.md §4
+A-04	开镜	（武器表：ads_move_speed_scale 狙击）	开镜移速倍率：狙击枪	Ratio	×	0.35	—	—	—	同上	—	不在 main	—	[数据] mp_weapon_dmr.txt	research/phase2-local/static-values/STATIC-VALUES.md §4
+A-05	开镜	（武器表：zoom_time_in 步枪）	开镜时间 zoom_time_in：突击步枪	Time	s	0.27	—	—	—	同上	—	不在 main	—	[数据] 武器 .txt（HCOG 0.29）	research/DESIGN-PHILOSOPHY.md P5
+A-06	开镜	（武器表：zoom_time_in 手枪）	开镜时间 zoom_time_in：手枪	Time	s	0.18	—	—	—	同上	—	不在 main	—	[数据] 武器 .txt	research/DESIGN-PHILOSOPHY.md P5
+A-07	开镜	（规则：ADS 曲线）	开镜 FOV 曲线（进度 zf 线性，FOV 用 smoothstep 3t²−2t³）	Other	—	没测过	—	—	—	同上	—	不在 main	—	[实测] ADS §1，残差 0.001°（规则，不是一个数）	research/DESIGN-PHILOSOPHY.md §9 表；research/combat/ADS-CURVES.md（PR #93，还没合并）
+A-08	后坐	（规则：后坐弹簧回落 R-301 腰射）	后坐回落：R-301 腰射时间常数	Time	s	0.46	—	—	—	见 HSD-Unity PR #67（还没合并）ViewKick.cs	—	不在 main	—	[实测] RV §2	research/DESIGN-PHILOSOPHY.md §5 表；research/combat/RECOIL-VIEW.md（PR #93，还没合并）
+A-09	后坐	（规则：后坐弹簧回落 R-301 开镜）	后坐回落：R-301 开镜时间常数	Time	s	0.14	—	—	—	同上	—	不在 main	—	[实测] RV §2	research/DESIGN-PHILOSOPHY.md §5 表；RECOIL-VIEW（PR #93）
+A-10	后坐	（武器表：viewkick_air_scale_ads）	空中开镜 kick 倍率 viewkick_air_scale_ads（18 把枪，G7 是 1）	Ratio	×	2	—	—	—	同上	—	不在 main	—	[数据] 武器 .txt；[反编译]，没跑	research/DESIGN-PHILOSOPHY.md P6 表
+AN-01	持枪动画	（不在导出：HoldData（每把枪，R-301））	走路晃动：每个来回的距离 D（R-301）。R5 按走过的距离推进相位	Length	u	139	3.531	1.931 H	—	HSD 按时间推进（H-1）	—	不在 main（HSD-Unity PR #65，还没合并）	R5-DIFF H-1（08）；D-224	[实测] 7 档速度	handbook/08-body-animation.md §1.3；research/combat/movement-animation/MOVEMENT-ANIMATION.md §13.5（PR #123，还没合并）
+AN-02	持枪动画	（不在导出：HoldData（多数枪））	走路晃动：每个来回的距离 D（Wingman、R-99、Spitfire 等）	Length	u	120	3.048	1.667 H	—	同上	—	不在 main（HSD-Unity PR #65，还没合并）	R5-DIFF H-1（08）	[实测]	handbook/08-body-animation.md §1.3
+AN-03	持枪动画	（不在导出：HoldData.walkPeriod）	走路晃动最短来回时间 T_min（满速 173.5 u/s 时碰到；不是固定周期）	Time	s	0.80	—	—	—	0.80（当固定周期用）	—	不在 main（HSD-Unity PR #65，还没合并）	R5-DIFF H-1（08）	[实测] 所有枪	handbook/08-body-animation.md §1.3
+AN-04	持枪动画	（不在导出：HoldData.sprintPeriod）	冲刺循环周期（25–572 u/s 都是 0.555–0.556 s）	Time	s	0.556	—	—	—	0.556	—	不在 main（HSD-Unity PR #65，还没合并）	—	[实测] R-301 / Wingman 各 2 次	handbook/08-body-animation.md §1.4
+AN-05	持枪动画	（没有：sprintfrac）	冲刺进入的幅度爬升 sprintfrac 涨满时间	Time	s	1.0	—	—	—	没实现（按状态过渡约 0.2 s 进满幅）	—	不在 main（HSD-Unity PR #65，还没合并）	R5-DIFF H-2（08）	[实测] 约 1 s，和速度无关	handbook/08-body-animation.md §1.4
+AN-06	持枪动画	（不在导出：HoldData.TurnLead）	转视角时枪的偏航超前（233 °/s 时；Sheila 0.9°）	Angle	deg	2.44	—	—	—	2.44	—	不在 main（HSD-Unity PR #65，还没合并）	—	[实测] 全部枪各 2 次	handbook/08-body-animation.md §1.7；research/combat/hold-pose/HOLD-POSE.md §7（PR #95，还没合并）
+AN-07	持枪动画	（不在导出：HoldData.TurnRate）	测超前时的转速（只有这一档）	Other	°/s	233	—	—	—	233	—	不在 main（HSD-Unity PR #65，还没合并）	—	[实测]	handbook/08-body-animation.md §1.7
+AN-08	持枪动画	（不在导出：HoldData.TurnSettle）	超前的跟随时间常数（HSD 由"停转回到 10 %"拟合）	Time	s	—	—	—	—	0.26	—	不在 main（HSD-Unity PR #65，还没合并）	—	[算]	handbook/08-body-animation.md §1.7
+AN-09	持枪动画	（不在导出：HoldBlend.SmoothstepAt90）	动作过渡"到 90 %"的时间换成 smoothstep 全长的系数（过渡时长按 90 % 点实测）	Ratio	×	—	—	—	—	0.804	—	不在 main（HSD-Unity PR #65，还没合并）	—	[算]	handbook/08-body-animation.md §1.5
+TG-01	泰坦步态	（TF2 规则：走→跑门槛系数）	走 → 跑门槛 = 0.45 × 站姿速度（中型 112.5 u/s = 2.858 m/s = 0.479 H_t/s）	Ratio	×	—	—	—	0.45	—	—	不在 main（HSD-Unity PR #78 / #66，还没合并）	—	[TF2 反编译] [TF2 实测]	handbook/08-body-animation.md §2.1
+TG-02	泰坦步态	（TF2 规则：起步 / 停步混合）	待机 ↔ 移动混合时长（min(旧混出, 新混入)、smoothstep）	Time	s	—	—	—	0.2	一阶跟随 τ 0.22 / 0.14 s	—	不在 main（HSD-Unity PR #78 / #66，还没合并）	R5-DIFF H-7（08）；D-225	[TF2 实测] 0.189–0.208 s（32 次停步）	handbook/08-body-animation.md §2.1
+TG-03	泰坦步态	（TF2 规则：走 ↔ 跑混合）	走 ↔ 跑、跑 → 冲刺混合时长	Time	s	—	—	—	0.55	同上	—	不在 main（HSD-Unity PR #78 / #66，还没合并）	R5-DIFF H-7（08）；D-225	[TF2 实测] 0.557–0.64 s	handbook/08-body-animation.md §2.1
+TG-04	泰坦步态	（TF2 规则：播放速度死区）	播放速度死区（地速 / 片段地速在 1 ± 0.15 内按 1 播）	Ratio	×	—	—	—	0.15	—	—	不在 main（HSD-Unity PR #78 / #66，还没合并）	—	[TF2 反编译] [TF2 实测]	handbook/08-body-animation.md §2.2
+TG-05	泰坦步态	（TF2 ConVar：播放速度下限）	播放速度下限（上限 10、冲刺上限 1.25）	Ratio	×	—	—	—	0.25	—	—	不在 main（HSD-Unity PR #78 / #66，还没合并）	—	[TF2 反编译] ConVar	handbook/08-body-animation.md §2.2
+TG-06	泰坦步态	（TF2 数据：走一步距离）	走一步距离（3.543 m，0.594 H_t）	Length	u	—	—	—	139.5	—	—	不在 main（HSD-Unity PR #78 / #66，还没合并）	—	[TF2 数据]	handbook/08-body-animation.md §2.2
+TG-07	泰坦步态	（TF2 ConVar：mp_maxbodyyaw）	身体落后视线上限 mp_maxbodyyaw	Angle	deg	—	—	—	60	—	—	不在 main（HSD-Unity PR #78 / #66，还没合并）	R5-DIFF H-8（08）	[TF2 反编译] [TF2 实测]	handbook/08-body-animation.md §2.3
+TG-08	泰坦步态	（TF2 ConVar：mp_bodyyawrate）	腿追视线峰值速度 mp_bodyyawrate（× min(1, 差 / 60)）	Other	°/s	—	—	—	400	固定 0.42 s 两脚摆动	—	不在 main（HSD-Unity PR #78 / #66，还没合并）	R5-DIFF H-8（08）	[TF2 反编译]	handbook/08-body-animation.md §2.3
+TG-09	泰坦驾驶舱	（TF2 数据：footstepInterval 走）	驾驶舱步伐定时器：走（冲刺 0.417 s；三种底盘相同）	Time	s	—	—	—	0.70	0.70	—	不在 main（HSD-Unity PR #78 / #66，还没合并）	—	[TF2 实测] [TF2 数据]	handbook/08-body-animation.md §3.1
+TG-10	泰坦驾驶舱	（TF2 数据：footstepInterval 冲刺）	驾驶舱步伐定时器：冲刺	Time	s	—	—	—	0.417	0.417	—	不在 main（HSD-Unity PR #78 / #66，还没合并）	—	[TF2 实测] [TF2 数据]	handbook/08-body-animation.md §3.1
+TG-11	泰坦驾驶舱	（TF2 数据：cockpit_stepJolt_origin z）	每步踏步冲量（竖直，中型；轻 −6、重 −4；−0.127 m/s）	Velocity	u/s	—	—	—	-5	—	—	不在 main（HSD-Unity PR #78 / #66，还没合并）	—	[TF2 数据]	handbook/08-body-animation.md §3.1
+TG-12	泰坦驾驶舱	（TF2 数据：sprintViewOffset）	冲刺下沉（实测 25.4–25.6 u；0.635 m，0.106 H_t）	Length	u	—	—	—	25	—	—	不在 main（HSD-Unity PR #78 / #66，还没合并）	—	[TF2 数据] [TF2 实测]	handbook/08-body-animation.md §3.2
+TG-13	泰坦驾驶舱	（TF2 实测：dash 滚转峰值）	左右 dash 镜头滚转峰值（dodge_viewTiltMax 10 × …；0.171–0.18 s 到峰，0.52 s 回零）	Angle	deg	—	—	—	8.5	—	—	不在 main（HSD-Unity PR #78 / #66，还没合并）	—	[TF2 实测]	handbook/08-body-animation.md §3.3
+TG-14	泰坦驾驶舱	（TF2 数据：舱框晃动位移上限）	舱框晃动位移上限（角度上限 ±1.5°；回位时间常数 0.37 s；±0.076 m，0.013 H_t）	Length	u	—	—	—	3	—	—	不在 main（HSD-Unity PR #78 / #66，还没合并）	—	[TF2 数据]	handbook/08-body-animation.md §3.4

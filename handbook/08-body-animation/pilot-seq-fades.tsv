@@ -1,0 +1,20 @@
+sequence	gun	layer	fade_in_s	fade_out_s	flags	note	source
+ads_out	R-301	main	0.2	0.2	-	hip idle = last frame of ads_out	MA §13.7 (PR #123)
+ads_in	R-301	main	0.1	0.2	-	progress = zf	MA §13.7
+sprint	R-301	main	0.2	0.2	loop	0.556 s, not scaled by speed	MA §13.4, §13.7
+sprintraise	R-301	main	0.2	0.2	-	0.30 s; cut by first shot	MA §3, §13.7
+sprintslide	R-301	main	0.2	0.2	-	0.43 s	MA §3, §13.7
+reload	R-301	main	0.2	0.2	-	2.40 s = reload_time	MA §13.7
+reload_late1	R-301	main	0.2	0.2	-	1.80 s; finishes a reload cut before unlock	MA §13.2, §13.7
+idle	R-301	overlay0	0.3	0.3	loop delta	off during sprint and reload	MA §13.7, §13.9
+crouch	R-301	overlay0	0.3	0.3	loop delta	new-model crouch	MA §13.7
+idle_to_crouch	R-301	overlay0	0.2	0.2	delta		MA §13.7
+crouch_to_idle	R-301	overlay0	0.2	0.2	delta		MA §13.7
+fire	R-301	overlay0	0.05	0.2	delta	alternates with fire_regrip	MA §13.7, §13.8
+fire_regrip	R-301	overlay0	0.05	0.2	delta		MA §13.7, §13.8
+jump	R-301	overlay1	0.2	0.35	delta		MA §13.7
+land*	R-301	overlay1	0.05	0.35	delta	land / land_low / land_med / land_high	MA §13.7
+run_layer_wall	R-301	(not seen)	0.2	0.2	loop delta	presumed wall-run layer; R5 wall-run off	MA §13.7
+crouch_to_idle_TEMP	Wingman	main	0.2	0.1	-	old-model crouch, ~0.83 s	MA §13.6
+idle_to_crouch_TEMP	Wingman	main	-	-	-	~0.84 s	MA §13.6
+# rule: transition length = min(old.fade_out, new.fade_in), smoothstep weight; 482 of 482 measured switches agree (FADES.tsv, PR #123)

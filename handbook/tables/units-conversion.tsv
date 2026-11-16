@@ -1,0 +1,18 @@
+类别	量纲(Unity 导出)	u 体系单位	米体系单位	乘以	长度次方 k	例子 [u] → [m]
+长度、位置、高度、距离	Length	u	m	0.0254	1	jumpHeight 56 u → 1.4224 m
+速度、速度增量	Velocity	u/s	m/s	0.0254	1	sprintspeed 260 u/s → 6.604 m/s
+加速度、重力	Acceleration	u/s²	m/s²	0.0254	1	svGravity 750 u/s² → 19.05 m/s²
+加加速度	Jerk	u/s³	m/s³	0.0254	1	climb.slideRiseB −727 u/s³ → −18.47 m/s³
+面积、长度平方	LengthSq	u²	m²	0.00064516	2	—
+速度平方（门槛）	VelocitySq	u²/s²	m²/s²	0.00064516	2	300² u²/s² → 58.06 m²/s²
+每单位长度	InvLength	1/u	1/m	39.370079	-1	zipNoiseScale 0.001 /u → 0.03937 /m
+每单位速度	InvVelocity	s/u	s/m	39.370079	-1	climb.mantleTimePerUnit 0.0055 s/u → 0.2165 s/m
+每单位速度平方	InvVelocitySq	s²/u²	s²/m²	1550.0031	-2	—
+时间	Time	s	s	1	0	antiMultiJumpTimeMax 0.75 s
+速率（每秒）	Rate	1/s	1/s	1	0	sprintRiseRate 1.25 /s；slide_step_velocity_reduction 10（(u/s)/u）
+角度	Angle	deg	deg	1	0	sprintTiltMaxRoll 2°
+角速度	AngularRate	deg/s	deg/s	1	0	—
+比例、倍率、系数	Ratio	×	×	1	0	moveScale 1.15
+次数、计数	Count	个	个	1	0	—
+英尺写的键	Other（英尺）	ft	ft	1（先 ×12 到 u，再按长度换）	0	kickFallDistMinFt 10 ft = 120 u = 3.048 m
+其他（弹簧常数等）	Other	—	—	1	0	springK 65

@@ -1,0 +1,12 @@
+from	to	blend_s	old_fade_out_s	new_fade_in_s	measured_s	note	source
+idle	walk/run	0.2	0.2	0.95	0.194	start	RN §4.2, RG §2
+walk/run	idle	0.2	0.55	0.2	0.189-0.208 (30 of 32)	stop; starts when v <= 0.5 u/s	RN §4.2, RG §3
+walk	run	0.55	0.55	0.95	0.58-0.64 incl. 0.2 start	threshold 0.45 x stand speed, no hysteresis	RN §3, RG §2
+run	walk	0.55	0.55	0.95	-		RN §4.2
+walk/run	sprint	0.55	0.55	0.95	0.557-0.563	light/heavy sprint fade-in 0.2 -> 0.2 s	RN §4.2, RG §2
+idle	sprint	0.2	0.2	0.95	0.195		RG §2
+sprint	walk/run	0.2	0.2	0.95	0.208-0.215		RG §2
+walk/run	dash (SLIDE)	0.15	-	0.15	-	v > 1.05 x sprint speed (back: 1.05 x stand)	RN §3.2, §4.2
+dash	walk/run	0.95	0.95	0.95	-		RN §4.2
+gesture	(in/out)	0.2	0.2	0.2	-	fire / reload / flinch, upper body only	TAF §2.10-2.12
+# rule: blend = min(old.fadeout, new.fadein), smoothstep; units s; medium chassis (titan_atlas) unless noted

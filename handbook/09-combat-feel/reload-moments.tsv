@@ -1,0 +1,58 @@
+# 换弹三个时刻（D-118 的数据来源：RM-SUMMARY）。从换弹开始算 [实测]。Sentinel 的 length 只到解锁，动画全长用 C-MOTIONS 的 2.99 / 4.05 s（D-118 例外）；Mastiff、30-30 是逐发装填，见正文 §7.3。出处 research/combat/gun-measure/reload-motion/RM-SUMMARY.tsv (PR #95, combat/gun-measure, 还没合并)
+gun	name	kind(tac/emp)	runs	length[s]	ammo_moment[s]	unlock_moment[s]	ammo_frac[x]	unlock_frac[x]
+alternator	Alternator	emp	2	2.229	1.779	2.055	0.798	0.922
+alternator	Alternator	tac	2	1.897	1.250	1.575	0.659	0.830
+car	C.A.R.	emp	2	2.132	1.578	1.949	0.740	0.914
+car	C.A.R.	tac	2	1.700	1.187	1.431	0.698	0.842
+chargerifle	Charge Rifle	emp	2	4.591	3.799	4.304	0.827	0.937
+chargerifle	Charge Rifle	tac	2	3.502	2.735	3.222	0.781	0.920
+devotion	Devotion	emp	2	4.099	2.952	3.530	0.720	0.861
+devotion	Devotion	tac	2	3.221	1.893	2.711	0.588	0.842
+ehemlok	Hemlok (auto)	emp	2	2.549	2.014	2.347	0.790	0.921
+ehemlok	Hemlok (auto)	tac	2	2.300	1.373	1.945	0.597	0.846
+eva8	EVA-8	emp	2	2.497	2.003	2.325	0.802	0.931
+eva8	EVA-8	tac	2	2.301	1.606	2.082	0.698	0.905
+flatline	VK-47 Flatline	emp	2	3.102	2.471	2.841	0.797	0.916
+flatline	VK-47 Flatline	tac	2	2.397	1.571	2.091	0.655	0.872
+g7	G7 Scout	emp	2	2.999	2.047	2.609	0.683	0.870
+g7	G7 Scout	tac	2	2.397	1.516	2.040	0.632	0.851
+havoc	Havoc	emp	2	3.197	1.918	2.816	0.600	0.881
+havoc	Havoc	tac	2	3.186	1.919	2.814	0.602	0.883
+hemlok	Hemlok	emp	2	2.853	2.255	2.628	0.790	0.921
+hemlok	Hemlok	tac	2	2.401	1.435	2.035	0.598	0.848
+kraber	Kraber	emp	2	4.304	2.918	4.043	0.678	0.939
+kraber	Kraber	tac	2	3.151	1.911	2.766	0.606	0.878
+longbow	Longbow	emp	2	3.664	2.905	3.269	0.793	0.892
+longbow	Longbow	tac	2	2.661	1.702	2.130	0.640	0.800
+mastiff	Mastiff	emp	2	3.722	0.753	3.175	0.202	0.853
+mastiff	Mastiff	tac	2	1.802	0.713	1.257	0.396	0.698
+mozambique	Mozambique	emp	2	2.300	1.308	2.153	0.569	0.936
+mozambique	Mozambique	tac	2	1.899	1.186	1.707	0.625	0.899
+nemesis	Nemesis	emp	2	3.001	2.315	2.615	0.771	0.871
+nemesis	Nemesis	tac	2	2.701	1.986	2.466	0.735	0.913
+p2020	P2020	emp	2	1.248	0.941	1.094	0.754	0.877
+p2020	P2020	tac	2	1.250	0.785	1.099	0.628	0.879
+peacekeeper	Peacekeeper	emp	2	3.501	2.499	3.307	0.714	0.945
+peacekeeper	Peacekeeper	tac	2	2.498	1.284	2.225	0.514	0.891
+prowler	Prowler	emp	2	2.597	2.035	2.346	0.784	0.903
+prowler	Prowler	tac	2	1.999	1.348	1.702	0.674	0.851
+r301	R-301	emp	2	3.200	1.980	2.425	0.619	0.758
+r301	R-301	tac	2	2.396	1.386	1.643	0.578	0.686
+r3030	30-30	emp	2	3.121	0.584	2.524	0.187	0.809
+r3030	30-30	tac	2	1.535	0.449	1.090	0.293	0.710
+r99	R-99	emp	2	2.450	1.954	2.193	0.798	0.895
+r99	R-99	tac	2	1.801	1.430	1.605	0.794	0.891
+rampage	Rampage	emp	2	4.002	2.528	3.605	0.632	0.901
+rampage	Rampage	tac	2	3.102	2.450	2.760	0.790	0.890
+re45	RE-45	emp	2	1.947	1.571	1.751	0.807	0.899
+re45	RE-45	tac	2	1.498	0.778	1.307	0.519	0.872
+sentinel	Sentinel	emp	2	3.570	3.449	3.577	0.966	1.002
+sentinel	Sentinel	tac	2	2.360	1.829	2.367	0.775	1.003
+spitfire	M600 Spitfire	emp	2	4.201	3.285	3.833	0.782	0.912
+spitfire	M600 Spitfire	tac	2	3.399	2.032	2.841	0.598	0.836
+tripletake	Triple Take	emp	2	3.400	2.218	2.990	0.652	0.879
+tripletake	Triple Take	tac	2	2.597	1.817	2.298	0.700	0.885
+volt	Volt	emp	2	2.498	1.817	2.285	0.727	0.915
+volt	Volt	tac	2	1.999	1.278	1.581	0.639	0.791
+wingman	Wingman	emp	2	2.100	1.482	1.941	0.706	0.924
+wingman	Wingman	tac	2	2.099	1.485	1.941	0.707	0.925
